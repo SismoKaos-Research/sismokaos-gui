@@ -1,7 +1,8 @@
 #include <QtTest>
 
-#include "jobs/job.h"
 #include "jobs/jobmodel.h"
+#include "jobs/processjob.h"
+#include "jobs/taskjob.h"
 
 using namespace skg;
 
@@ -20,11 +21,9 @@ class TstJob : public QObject {
   Q_OBJECT
 private slots:
   void exitCodeAndLog() {
-    Job job(shell("echo hello; echo oops 1>&2; exit 3"));
-    QSignalSpy done(&job, &Job::stateChanged);
+    ProcessJob job(shell("echo hello; echo oops 1>&2; exit 3"));
     job.start();
     QCOMPARE(job.state(), Job::State::Running);
-    QVERIFY(done.wait(5000) || job.state() != Job::State::Running);
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Failed, 5000);
     QCOMPARE(job.exitCode(), 3);
     QVERIFY(job.log().contains("hello"));
@@ -35,9 +34,9 @@ private slots:
   }
 
   void progressFromOutput() {
-    Job job(shell("printf '[1/2] a\\n@sfc "
-                  "{\"event\":\"day\",\"done\":2,\"total\":2}\\nlast line "
-                  "without newline'"));
+    ProcessJob job(shell("printf '[1/2] a\\n@sfc "
+                         "{\"event\":\"day\",\"done\":2,\"total\":2}\\nlast line "
+                         "without newline'"));
     job.start();
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Done, 5000);
     QCOMPARE(job.exitCode(), 0);
@@ -48,7 +47,7 @@ private slots:
   }
 
   void cancelKillsProcess() {
-    Job job(shell("sleep 30"));
+    ProcessJob job(shell("sleep 30"));
     job.start();
     QTest::qWait(200);
     job.cancel();
@@ -60,39 +59,99 @@ private slots:
     JobSpec s;
     s.name = "missing";
     s.program = "/nonexistent/binary";
-    Job job(s);
+    ProcessJob job(s);
     job.start();
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Failed, 5000);
-    QVERIFY(job.log().last().contains("could not start"));
+    QVERIFY(job.log().at(job.log().size() - 2).contains("could not start"));
   }
 
   void environment() {
     JobSpec s = shell("echo \"$PYTHONUNBUFFERED $MYVAR\"");
     s.env.insert("MYVAR", "set");
-    Job job(s);
+    ProcessJob job(s);
     job.start();
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Done, 5000);
     QVERIFY(job.log().contains("1 set"));
+  }
+
+  void taskRunsInThreadAndReports() {
+    const Qt::HANDLE main = QThread::currentThreadId();
+    Qt::HANDLE seen = nullptr;
+    TaskJob job("task", "tdvms", "count to three", [&](TaskContext &ctx) {
+      seen = QThread::currentThreadId();
+      for (int i = 1; i <= 3; ++i) {
+        ctx.log(QStringLiteral("step %1").arg(i));
+        ctx.progress(i / 3.0, QStringLiteral("%1/3").arg(i));
+      }
+      return 0;
+    });
+    job.start();
+    QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Done, 5000);
+    QVERIFY(seen != nullptr && seen != main);
+    QCOMPARE(job.exitCode(), 0);
+    QVERIFY(job.log().contains("step 2"));
+    QCOMPARE(job.log().first(), QString("$ count to three"));
+    QCOMPARE(job.progress().fraction, 1.0);
+    QCOMPARE(job.progress().text, QString("3/3"));
+  }
+
+  void taskFailureAndException() {
+    TaskJob bad("bad", "", "fails", [](TaskContext &) { return 7; });
+    bad.start();
+    QTRY_COMPARE_WITH_TIMEOUT(bad.state(), Job::State::Failed, 5000);
+    QCOMPARE(bad.exitCode(), 7);
+
+    TaskJob thrower("throw", "", "throws", [](TaskContext &) -> int {
+      throw std::runtime_error("kaboom");
+    });
+    thrower.start();
+    QTRY_COMPARE_WITH_TIMEOUT(thrower.state(), Job::State::Failed, 5000);
+    QCOMPARE(thrower.exitCode(), -1);
+    QVERIFY(thrower.log().join('\n').contains("kaboom"));
+  }
+
+  void taskCancelIsCooperative() {
+    TaskJob job("loop", "", "loops until cancelled", [](TaskContext &ctx) {
+      while (!ctx.cancelled())
+        QThread::msleep(10);
+      ctx.log("saw the cancel");
+      return 130;
+    });
+    job.start();
+    QTest::qWait(100);
+    job.cancel();
+    QCOMPARE(job.state(), Job::State::Cancelled);
+    QVERIFY(job.wait(5000));
+    QTRY_VERIFY_WITH_TIMEOUT(job.log().contains("saw the cancel"), 5000);
+    QCOMPARE(job.state(), Job::State::Cancelled); // finish() keeps Cancelled
+    QCOMPARE(job.exitCode(), 130);
   }
 
   void model() {
     JobModel model;
     QSignalSpy added(&model, &JobModel::jobAdded);
     QSignalSpy finished(&model, &JobModel::jobFinished);
-    Job *a = model.add(shell("exit 0"));
-    Job *b = model.add(shell("exit 2"));
-    QCOMPARE(model.rowCount(), 2);
+    Job *a = model.addProcess(shell("exit 0"));
+    Job *b = model.addProcess(shell("exit 2"));
+    Job *c = model.add(new TaskJob("t", "tdvms", "task", [](TaskContext &) {
+      return 0;
+    }));
+    QCOMPARE(model.rowCount(), 3);
     QCOMPARE(model.rowOf(b), 1);
-    QCOMPARE(added.count(), 2);
-    QTRY_COMPARE_WITH_TIMEOUT(finished.count(), 2, 5000);
+    QCOMPARE(added.count(), 3);
+    QTRY_COMPARE_WITH_TIMEOUT(finished.count(), 3, 5000);
     QCOMPARE(model.runningCount(), 0);
-    QCOMPARE(
-        model.data(model.index(0, JobModel::State), Qt::DisplayRole).toString(),
-        stateName(Job::State::Done));
+    QCOMPARE(model.data(model.index(0, JobModel::State), Qt::DisplayRole)
+                 .toString(),
+             stateName(Job::State::Done));
     QVERIFY(model.data(model.index(1, JobModel::State), Qt::DisplayRole)
                 .toString()
                 .contains("2"));
+    QCOMPARE(model.data(model.index(2, JobModel::Tool), Qt::DisplayRole)
+                 .toString(),
+             QString("tdvms"));
     QCOMPARE(a->state(), Job::State::Done);
+    QCOMPARE(c->state(), Job::State::Done);
   }
 };
 

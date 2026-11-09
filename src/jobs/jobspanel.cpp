@@ -97,7 +97,7 @@ void JobsPanel::showJob(Job *job) {
   log_->verticalScrollBar()->setValue(log_->verticalScrollBar()->maximum());
   connect(job, &Job::lineReceived, this, &JobsPanel::appendLine);
   connect(job, &Job::stateChanged, this, &JobsPanel::updateButtons);
-  summary_->setText(job->commandLine());
+  summary_->setText(job->description());
   updateButtons();
 }
 

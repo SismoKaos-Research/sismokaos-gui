@@ -1,30 +1,17 @@
-// A Job is one run of an external tool (sismokaos, sfc, tdvms, ...) under
-// QProcess: merged stdout/stderr read line by line, progress parsed by the
-// tool's ProgressParser, exit status and elapsed time kept.
+// A Job is one unit of work the user can watch in the jobs panel: a log, a
+// state, progress, elapsed time, and a way to cancel it. Two kinds exist:
+// ProcessJob runs an external program (jobs/processjob.h); TaskJob runs C++
+// code in a worker thread (jobs/taskjob.h), which is how the ported tools run.
 #pragma once
 
 #include <QElapsedTimer>
 #include <QObject>
-#include <QProcess>
-#include <QProcessEnvironment>
 #include <QString>
 #include <QStringList>
-
-#include <memory>
 
 #include "jobs/progress.h"
 
 namespace skg {
-
-struct JobSpec {
-  QString name; // shown to the user, e.g. "extract FRT"
-  QString tool; // tool id ("sismokaos", "sfc", "tdvms") or "" for anything else
-  QString program; // executable
-  QStringList args;
-  QString workDir;
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  QString progressParser; // name for makeProgressParser(); "" = default chain
-};
 
 class Job : public QObject {
   Q_OBJECT
@@ -32,37 +19,40 @@ public:
   enum class State { Queued, Running, Done, Failed, Cancelled };
   Q_ENUM(State)
 
-  explicit Job(JobSpec spec, QObject *parent = nullptr);
+  Job(QString name, QString tool, QObject *parent = nullptr);
 
-  const JobSpec &spec() const { return spec_; }
+  const QString &name() const { return name_; }
+  const QString &tool() const { return tool_; }
   State state() const { return state_; }
+  // Exit code of the work: 0 success, >0 failure, -1 abnormal end.
   int exitCode() const { return exitCode_; }
   qint64 elapsedMs() const;
   const QStringList &log() const { return log_; }
-  QString commandLine() const;
   const ProgressState &progress() const { return progress_; }
+  // One line saying what runs: a command line, or a task summary.
+  virtual QString description() const = 0;
 
-  // Feeds one output line as the process would; public for tests.
-  void feedLine(const QString &line);
-
-  void start();
-  void cancel();
+  virtual void start() = 0;
+  virtual void cancel() = 0;
 
 signals:
   void lineReceived(const QString &line);
   void progressChanged();
   void stateChanged();
 
-private:
+protected:
+  // For subclasses: mark the start, append output, report progress, end.
+  void begin();
+  void appendLine(const QString &line);
+  void setProgress(const ProgressState &p);
   void setState(State s);
-  void onReadyRead();
-  void onFinished(int code, QProcess::ExitStatus status);
-  void onErrorOccurred(QProcess::ProcessError error);
+  // Writes the "= exit N after T s" trailer and moves to Done/Failed, unless
+  // the job was cancelled, in which case the state stays Cancelled.
+  void finish(int exitCode);
 
-  JobSpec spec_;
-  std::unique_ptr<ProgressParser> parser_;
-  QProcess process_;
-  QByteArray partial_;
+private:
+  QString name_;
+  QString tool_;
   QStringList log_;
   QElapsedTimer timer_;
   qint64 finalElapsedMs_ = -1;

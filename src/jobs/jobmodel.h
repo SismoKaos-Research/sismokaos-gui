@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include "jobs/job.h"
+#include "jobs/processjob.h"
 
 namespace skg {
 
@@ -17,7 +18,9 @@ public:
   explicit JobModel(QObject *parent = nullptr);
 
   // Takes ownership and starts the job.
-  Job *add(JobSpec spec);
+  Job *add(Job *job);
+  // Convenience: a ProcessJob for `spec`.
+  Job *addProcess(JobSpec spec);
   Job *jobAt(int row) const;
   int rowOf(const Job *job) const;
   int runningCount() const;

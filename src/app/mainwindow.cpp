@@ -68,11 +68,11 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
 
   connect(ctx_.jobs, &JobModel::jobAdded, this, [this](Job *job) {
     jobsDock_->show();
-    statusBar()->showMessage(tr("Started: %1").arg(job->spec().name), 5000);
+    statusBar()->showMessage(tr("Started: %1").arg(job->name()), 5000);
   });
   connect(ctx_.jobs, &JobModel::jobFinished, this, [this](Job *job) {
     statusBar()->showMessage(
-        tr("%1: %2").arg(job->spec().name, stateName(job->state())), 8000);
+        tr("%1: %2").arg(job->name(), stateName(job->state())), 8000);
   });
 
   retranslate();

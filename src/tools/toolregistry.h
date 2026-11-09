@@ -12,7 +12,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "jobs/job.h"
+#include "jobs/processjob.h"
 
 namespace skg {
 

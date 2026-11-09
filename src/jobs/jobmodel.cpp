@@ -14,8 +14,12 @@ JobModel::JobModel(QObject *parent) : QAbstractTableModel(parent) {
   });
 }
 
-Job *JobModel::add(JobSpec spec) {
-  auto *job = new Job(std::move(spec), this);
+Job *JobModel::addProcess(JobSpec spec) {
+  return add(new ProcessJob(std::move(spec)));
+}
+
+Job *JobModel::add(Job *job) {
+  job->setParent(this);
   beginInsertRows({}, jobs_.size(), jobs_.size());
   jobs_ << job;
   endInsertRows();
@@ -78,9 +82,9 @@ QVariant JobModel::data(const QModelIndex &index, int role) const {
   if (role == Qt::DisplayRole) {
     switch (index.column()) {
     case Name:
-      return job->spec().name;
+      return job->name();
     case Tool:
-      return job->spec().tool;
+      return job->tool();
     case State:
       if (job->state() == Job::State::Failed && job->exitCode() >= 0)
         return tr("failed (%1)").arg(job->exitCode());
@@ -108,7 +112,7 @@ QVariant JobModel::data(const QModelIndex &index, int role) const {
     }
   }
   if (role == Qt::ToolTipRole)
-    return job->commandLine();
+    return job->description();
   return {};
 }
 
