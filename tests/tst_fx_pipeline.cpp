@@ -17,6 +17,10 @@
 
 using namespace skg::fx;
 
+// The station list lives in skg_tdvms's resources; a static library's
+// resources are linked only when something asks for them.
+static void initTdvmsData() { Q_INIT_RESOURCE(data); }
+
 namespace {
 const QString kData = QStringLiteral(SKG_TEST_DATA "/fx/enz");
 
@@ -129,6 +133,16 @@ private slots:
     // M3.2 coda: 3 * 10^((3.2 + 0.87) / 2) = 324 s > min_post 300.
     QVERIFY(std::abs(postEventSec(3.2, opts) -
                      3.0 * std::pow(10.0, (3.2 + 0.87) / 2.0)) < 1e-9);
+  }
+
+  void embeddedStationList() {
+    initTdvmsData();
+    // The AFAD list the tdvms port embeds serves as the default station list.
+    const auto pos = stationCoords(QStringLiteral(":/tdvms/data/stations.csv"),
+                                   QStringLiteral("ADVT"));
+    QVERIFY(pos.has_value());
+    QVERIFY(std::abs(pos->first - 40.4332) < 1e-6);
+    QVERIFY(std::abs(pos->second - 29.7383) < 1e-6);
   }
 
   void processComponentKeepsLengthAndMask() {

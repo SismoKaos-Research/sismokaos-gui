@@ -6,7 +6,7 @@ ported into it one by one so that nothing outside the application is needed:
 | tool | repository | status in the GUI |
 |---|---|---|
 | `tdvms` | tdvms-pull | **ported to C++** (`src/tdvms`): campaigns, ledger, portal, mail, archives, coverage, FDSN pulls run in-process |
-| `sismokaos` | Sismokaos-featureExtract | still driven as a process (download, preprocess, chaotic feature extraction from config.json) |
+| `sismokaos` | Sismokaos-featureExtract, sismokaos-cli | **ported to C++** (`src/fx`): miniSEED decoding, preprocessing, calibration of the chaos parameters on quiet periods, feature extraction, CSV/npy/f32 outputs run in-process |
 | `sfc` | seismic-features-classification | still driven as a process (projects, feature extraction, classification runs, reports) |
 
 Every piece of work, ported or external, is a *job*: it appears in the jobs
@@ -39,6 +39,39 @@ time: the two use different lock files.
 
 The tests under `tests/tst_tdvms_*.cpp` mirror the Python suite case by case.
 
+## The featureExtract port
+
+`src/fx` ports the feature-extraction pipeline as redesigned by sismokaos-cli
+(the Rust rewrite of Sismokaos-featureExtract, whose chaos parameters are the
+current ones), with the Python tool's output formats. A run takes a directory
+of miniSEED files (zips included) for one station and produces, per band:
+
+| file | content |
+|---|---|
+| `<dir>_features.npy`, `.csv` | one row per window: `Pencere_ID`, `Zaman_Dk` (epoch minutes), the features (3 cross-component + 21 per component, or the 15 chaos ones with *chaos only*), their `_DEV` first differences, and `E/N/Z_INTERP_FRAC`, the fraction of each window the gap interpolant fabricated |
+| `<dir>_calibration.json` | the chaos parameters estimated on quiet periods (tau, dim, mean period, SampEn tolerances) with their spread and how many windows were used; reusable by later runs |
+| `<dir>_run_metadata.json` | the configuration the run used, in sismokaos-cli's layout |
+| `<dir>_preprocessed.f32`, `.f32.json` | *Preprocess only*: filtered, decimated E N Z interleaved as little-endian float32 with a segment table for the time axis |
+
+The config (`config.json`) reads both layouts, the Rust keys and the Python
+upper-case ones. Quiet periods come from the AFAD earthquake catalog
+(CSV or `.csv.gz`) and the station's position, looked up in a station list
+(the AFAD list embedded with the tdvms port by default) or set directly.
+
+| file | what it ports |
+|---|---|
+| `config` | `config.rs`: settings, bands, validation, decimation check |
+| `mseed` | record headers with blockette 1000, Steim1/Steim2, INT16/INT32/FLOAT32/FLOAT64, both byte orders |
+| `dsp` | scipy-equivalent Butterworth SOS bandpass with `filtfilt`, FFT (radix-2 and Bluestein), Catmull-Rom gap interpolation, detrend, STA/LTA |
+| `features` | the statistical and chaos features: Wolf and Rosenstein LLE (dynamic horizon and rise fit), SampEn (relative and absolute tolerance), correlation dimension, AMI tau, FNN dimension |
+| `catalog`, `calibrate` | the catalog and exclusion intervals (Lee 1972 coda), reservoir-sampled quiet windows, loudness screening, the medians |
+| `preprocess` | the streaming assembler: index every record, hour blocks on one time grid with filter context on both sides, decimation |
+| `engine`, `npy` | the window loop with carry-over between chunks, the writers, structured `.npy` numpy loads unchanged |
+
+`tests/tst_fx_core.cpp` checks every piece against the Python tool's values
+and obspy-decoded fixtures (`tests/data/fx`); `tests/tst_fx_pipeline.cpp`
+runs the whole thing on a synthetic station (`tests/data/fx/enz`).
+
 ## Build
 
 Needs CMake 3.21+, a C++20 compiler and Qt 6.5+ (Widgets, LinguistTools; Test
@@ -68,12 +101,13 @@ Settings tab shows which one applies and can ask the tool for its version.
 src/jobs/      Job (QProcess + progress parsing), JobModel, JobsPanel, ProgressParser
 src/tools/     ToolDesc, ToolRegistry: descriptors and resolution of the CLIs
 src/tdvms/     the C++ port of tdvms-pull (library, no GUI)
+src/fx/        the C++ port of the feature extraction (library, no GUI)
 third_party/   vendored libraries, each with a PROVENANCE.md
 src/core/      Module interface, AppContext, ModuleRegistry, I18n
 src/modules/   one directory per GUI module (tab), each its own CMake target
-               (tdvms is the first real one; settings; placeholders)
+               (tdvms, features, settings; placeholders for the rest)
 src/app/       MainWindow and main()
-tests/         QtTest suites: jobs, progress, tool resolution, the tdvms port
+tests/         QtTest suites: jobs, progress, tool resolution, the tdvms and fx ports
 translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
 ```
 

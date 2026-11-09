@@ -6,6 +6,7 @@
 #include "core/i18n.h"
 #include "core/moduleregistry.h"
 #include "jobs/jobmodel.h"
+#include "modules/features/featuresmodule.h"
 #include "modules/placeholder/placeholdermodule.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/tdvms/tdvmsmodule.h"
@@ -30,13 +31,7 @@ int main(int argc, char *argv[]) {
   // The tabs, in order. A new module is one more line here.
   ModuleRegistry modules;
   modules.emplace<TdvmsModule>();
-  modules.emplace<PlaceholderModule>(
-      QStringLiteral("features"), [] { return QObject::tr("Features"); },
-      [] {
-        return QObject::tr("Preprocessing and feature extraction: "
-                           "config.json, preprocess, extract, results.");
-      },
-      QStringList{QStringLiteral("sismokaos"), QStringLiteral("sfc")});
+  modules.emplace<FeaturesModule>();
   modules.emplace<PlaceholderModule>(
       QStringLiteral("classification"),
       [] { return QObject::tr("Classification"); },
