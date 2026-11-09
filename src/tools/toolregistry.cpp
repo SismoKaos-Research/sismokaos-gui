@@ -1,5 +1,6 @@
 #include "tools/toolregistry.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QProcess>
@@ -15,19 +16,29 @@ const QList<ToolDesc> kTools = {
      QStringLiteral("https://github.com/hogib/Sismokaos-featureExtract"),
      {QStringLiteral("--help")},
      QStringLiteral("counter"),
+     {},
      {}},
     {QStringLiteral("sfc"),
      QStringLiteral("seismic-features-classification"),
      QStringLiteral("https://github.com/hogib/seismic-features-classification"),
      {QStringLiteral("--version")},
      QStringLiteral("sfc-json"),
-     {QStringLiteral("SEISMIC_PROGRESS=json")}},
+     {QStringLiteral("SEISMIC_PROGRESS=json")},
+     {}},
     {QStringLiteral("tdvms"),
      QStringLiteral("tdvms"),
      QStringLiteral("https://github.com/hogib/tdvms-pull"),
      {QStringLiteral("--help")},
      QStringLiteral("counter"),
+     {},
      {}},
+    {QStringLiteral("ayzek"),
+     QStringLiteral("ayzek"),
+     QStringLiteral("https://github.com/hogib/ayzek"),
+     {QStringLiteral("--help")},
+     QString(),
+     {},
+     QStringLiteral("ayzek")},
 };
 
 QString venvExecutable(const QString &projectDir, const QString &id) {
@@ -49,6 +60,8 @@ QString sourceName(ToolStatus::Source s) {
     return ToolRegistry::tr("not found");
   case ToolStatus::Source::Explicit:
     return ToolRegistry::tr("configured path");
+  case ToolStatus::Source::Bundled:
+    return ToolRegistry::tr("shipped with the application");
   case ToolStatus::Source::Path:
     return ToolRegistry::tr("on PATH");
   case ToolStatus::Source::Venv:
@@ -57,6 +70,23 @@ QString sourceName(ToolStatus::Source s) {
     return ToolRegistry::tr("uv run --project");
   }
   return {};
+}
+
+QStringList bundledToolDirs(const QString &subdir) {
+  QStringList dirs;
+  const QString env = qEnvironmentVariable("SKG_BUNDLED_TOOLS_DIR");
+  if (!env.isEmpty())
+    dirs << env + '/' + subdir;
+  const QString app = QCoreApplication::applicationDirPath();
+  if (!app.isEmpty())
+    dirs << app + '/' + subdir << app + "/../share/sismokaos-gui/" + subdir
+         << app + "/../Resources/" + subdir;
+#ifdef SKG_BUILD_DIR
+  dirs << QStringLiteral(SKG_BUILD_DIR) + '/' + subdir;
+#endif
+  for (QString &d : dirs)
+    d = QDir::cleanPath(d);
+  return dirs;
 }
 
 ToolRegistry::ToolRegistry(QSettings *settings, QObject *parent)
@@ -106,6 +136,21 @@ ToolStatus ToolRegistry::status(const QString &id) const {
       st.program = explicitPath;
     }
     return st; // an explicit path that does not work is reported as such
+  }
+  if (const ToolDesc *d = desc(id); d && !d->bundledSubdir.isEmpty()) {
+#ifdef Q_OS_WIN
+    const QString exe = id + QStringLiteral(".exe");
+#else
+    const QString exe = id;
+#endif
+    for (const QString &dir : bundledToolDirs(d->bundledSubdir)) {
+      const QString candidate = dir + '/' + exe;
+      if (QFileInfo(candidate).isExecutable()) {
+        st.source = ToolStatus::Source::Bundled;
+        st.program = candidate;
+        return st;
+      }
+    }
   }
   const QString onPath = QStandardPaths::findExecutable(id);
   if (!onPath.isEmpty()) {

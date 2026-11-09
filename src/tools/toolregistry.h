@@ -2,8 +2,9 @@
 //
 // A ToolDesc describes one tool (id, display name, how to ask its version,
 // which progress parser reads its output). The registry resolves each tool
-// to an executable: an explicit path from the settings, then the PATH, then
-// the .venv of a configured project directory, then `uv run --project DIR`.
+// to an executable: an explicit path from the settings, then a copy shipped
+// beside the application (bundledToolDirs), then the PATH, then the .venv
+// of a configured project directory, then `uv run --project DIR`.
 // Adding a tool is one more entry in kTools (toolregistry.cpp).
 #pragma once
 
@@ -23,10 +24,12 @@ struct ToolDesc {
   QStringList versionArgs; // e.g. {"--version"}
   QString progressParser;  // name for makeProgressParser()
   QStringList extraEnv;    // "KEY=value" entries set for every run
+  QString bundledSubdir;   // directory shipped beside the application that
+                           // holds the tool ("ayzek"), "" for none
 };
 
 struct ToolStatus {
-  enum class Source { None, Explicit, Path, Venv, Uv };
+  enum class Source { None, Explicit, Bundled, Path, Venv, Uv };
   Source source = Source::None;
   QString program;        // what will be executed ("" when not found)
   QStringList prefixArgs; // arguments placed before the tool's own ("run",
@@ -67,5 +70,11 @@ private:
 };
 
 QString sourceName(ToolStatus::Source s);
+
+// Where a tool shipped with the application may be, for `subdir`: the
+// directory named by the environment variable SKG_BUNDLED_TOOLS_DIR, then
+// beside the executable, then share/sismokaos-gui (Linux install, AppImage),
+// Contents/Resources (macOS bundle), and the build tree of a source build.
+QStringList bundledToolDirs(const QString &subdir);
 
 } // namespace skg

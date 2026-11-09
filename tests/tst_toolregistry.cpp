@@ -30,10 +30,31 @@ private slots:
   }
 
   void descriptors() {
-    QCOMPARE(reg_->ids(), (QStringList{"sismokaos", "sfc", "tdvms"}));
+    QCOMPARE(reg_->ids(), (QStringList{"sismokaos", "sfc", "tdvms", "ayzek"}));
     QVERIFY(reg_->desc("sfc") != nullptr);
     QCOMPARE(reg_->desc("sfc")->progressParser, QString("sfc-json"));
     QVERIFY(reg_->desc("nope") == nullptr);
+  }
+
+  void bundledExecutable() {
+    // A copy shipped beside the application wins over the PATH; the
+    // environment variable names the directory in the tests.
+    QVERIFY(QDir(tmp_->path()).mkdir("ayzek"));
+    const QString exe = tmp_->filePath("ayzek/ayzek" + kExe);
+    QVERIFY(fakeTool(exe));
+    qputenv("SKG_BUNDLED_TOOLS_DIR", tmp_->path().toUtf8());
+    const ToolStatus st = reg_->status("ayzek");
+    qunsetenv("SKG_BUNDLED_TOOLS_DIR");
+    QVERIFY(st.found());
+    QCOMPARE(st.source, ToolStatus::Source::Bundled);
+    QCOMPARE(QFileInfo(st.program).canonicalFilePath(),
+             QFileInfo(exe).canonicalFilePath());
+    QVERIFY(bundledToolDirs("ayzek").size() >= 4);
+    // An explicit path still comes first.
+    const QString other = tmp_->filePath("own-ayzek" + kExe);
+    QVERIFY(fakeTool(other));
+    reg_->setExecutable("ayzek", other);
+    QCOMPARE(reg_->status("ayzek").source, ToolStatus::Source::Explicit);
   }
 
   void explicitExecutable() {
