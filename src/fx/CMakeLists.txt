@@ -7,6 +7,10 @@ qt_add_library(skg_fx STATIC
   dsp.cpp       dsp.h
   npy.cpp       npy.h
   features.cpp  features.h
+  catalog.cpp   catalog.h
+  preprocess.cpp preprocess.h
+  calibrate.cpp calibrate.h
+  engine.cpp    engine.h
 )
 target_include_directories(skg_fx PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_fx PUBLIC Qt6::Core Qt6::Network miniz skg_jobs
