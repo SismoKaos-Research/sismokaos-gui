@@ -1,19 +1,43 @@
 # sismokaos-gui
 
-A desktop front end for the sismokaos command-line tools:
+A desktop front end for the sismokaos tools, with the tools themselves being
+ported into it one by one so that nothing outside the application is needed:
 
-| tool | repository | what it does |
+| tool | repository | status in the GUI |
 |---|---|---|
-| `sismokaos` | Sismokaos-featureExtract | download, preprocess, chaotic feature extraction from config.json |
-| `sfc` | seismic-features-classification | projects, feature extraction, classification runs, reports |
-| `tdvms` | tdvms-pull | AFAD/TDVMS download campaigns |
+| `tdvms` | tdvms-pull | **ported to C++** (`src/tdvms`): campaigns, ledger, portal, mail, archives, coverage, FDSN pulls run in-process |
+| `sismokaos` | Sismokaos-featureExtract | still driven as a process (download, preprocess, chaotic feature extraction from config.json) |
+| `sfc` | seismic-features-classification | still driven as a process (projects, feature extraction, classification runs, reports) |
 
-The GUI never imports their code. It runs them as processes, hands them their
-own config files and command lines, and reads what they print and write. Every
-run is a *job*: it appears in the jobs panel with its live output, progress,
-elapsed time and exit status, and can be cancelled.
+Every piece of work, ported or external, is a *job*: it appears in the jobs
+panel with its live output, progress, elapsed time and exit status, and can be
+cancelled. External tools are `ProcessJob`s around QProcess; ported code runs
+as `TaskJob`s in worker threads.
 
-Native C++20 with Qt 6 Widgets. Turkish and English, switchable at run time.
+Native C++20 with Qt 6 Widgets and one vendored C library (miniz, for ZIP
+archives; `third_party/miniz/PROVENANCE.md`). Turkish and English, switchable
+at run time.
+
+## The tdvms port
+
+`src/tdvms` is a module-for-module port of tdvms-pull, the AFAD/TDVMS
+download campaign tool. It reads and writes the same files as the Python
+tool: the JSON-lines ledger (`campaigns/<name>/ledger.jsonl` or
+`<name>_ledger.jsonl`), `mailbox.env` and `settings.env` in the config
+directory, the `.coverage.json` cache, and the FDSN day ledger. A campaign
+started with one tool can be continued with the other, but not at the same
+time: the two use different lock files.
+
+| file | what it ports |
+|---|---|
+| `ledger`, `plan`, `campaign`, `slots`, `disk`, `settings`, `history`, `report` | the ledger and its states, window planning, campaign layouts, the address pool and its lock, the disk guard, credentials and defaults, station history, `tdvms status` |
+| `mail`, `imap` | the MIME reader and classifier (Link, NoData, Foreign, Unrelated), a synchronous IMAP client with BODY.PEEK |
+| `http`, `portal` | blocking HTTP behind an interface (fakes in the tests), the portal's typed outcomes |
+| `fetch`, `coverage` | download and verification of archives, filing, miniSEED header scanning and gap reports |
+| `supervisor`, `runner` | the reap/reclaim/retire/submit cycle, the campaign and queue loops as TaskJob work, the Watch and ntfy/desktop notifications |
+| `fdsn`, `catalog` | whole-day pulls from an FDSN service, the embedded station and event catalogs |
+
+The tests under `tests/tst_tdvms_*.cpp` mirror the Python suite case by case.
 
 ## Build
 
@@ -43,10 +67,13 @@ Settings tab shows which one applies and can ask the tool for its version.
 ```
 src/jobs/      Job (QProcess + progress parsing), JobModel, JobsPanel, ProgressParser
 src/tools/     ToolDesc, ToolRegistry: descriptors and resolution of the CLIs
+src/tdvms/     the C++ port of tdvms-pull (library, no GUI)
+third_party/   vendored libraries, each with a PROVENANCE.md
 src/core/      Module interface, AppContext, ModuleRegistry, I18n
 src/modules/   one directory per GUI module (tab), each its own CMake target
+               (tdvms is the first real one; settings; placeholders)
 src/app/       MainWindow and main()
-tests/         QtTest suites for jobs, progress parsing, tool resolution
+tests/         QtTest suites: jobs, progress, tool resolution, the tdvms port
 translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
 ```
 
@@ -64,6 +91,15 @@ translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
 
 User-visible strings go through `tr()`; widgets re-read them in
 `changeEvent(QEvent::LanguageChange)`.
+
+### Porting a tool
+
+A ported tool is a library under `src/<tool>/` with no Qt Widgets in it,
+tested on its own, plus a module under `src/modules/<tool>/` that drives it.
+Long work is wrapped as `TaskJob` work (`jobs/taskjob.h`): it gets a
+`TaskContext` for logging, progress and cooperative cancellation, and may
+block on the network since it has its own thread. Keep file formats
+compatible with the original tool so the two can share data.
 
 ### Adding a tool
 
