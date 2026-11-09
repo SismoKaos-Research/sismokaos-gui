@@ -20,9 +20,10 @@ For building from source, the code layout and how to add a tab, see
 4. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
 5. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
 6. [Analysis tab: earthquakes, faults, labels and figures](#analysis-tab-earthquakes-faults-labels-and-figures)
-7. [Settings tab](#settings-tab)
-8. [Where files live](#where-files-live)
-9. [Troubleshooting](#troubleshooting)
+7. [Early warning tab: ayzek](#early-warning-tab-ayzek)
+8. [Settings tab](#settings-tab)
+9. [Where files live](#where-files-live)
+10. [Troubleshooting](#troubleshooting)
 
 ## Install and update
 
@@ -433,6 +434,73 @@ Station comparison: add the feature tables of several stations, pick the
 column, and *Build grid* renders the daily figures of every station for the
 days they share, stations down and days across, as one PNG.
 
+## Early warning tab: ayzek
+
+This tab runs **ayzek**, the earthquake early-warning pipeline: it reads
+continuous three-component waveforms from several stations, detects an
+earthquake at each station with a learned detector, declares an event when
+the stations agree within the P travel time, estimates the magnitude from the
+peak P displacement and locates the event. ayzek is a separate program
+(GPL-3.0-or-later, by H. Oğuz Bolat, Sibel Çimen, Bülent Bolat and Tülay
+Yıldırım, Yıldız Technical University; <https://doi.org/10.5281/zenodo.23672495>),
+frozen at its version 1.0.0 and shipped beside the application with its
+model weights, its licence and its source (`third_party/ayzek`). The tab
+builds its command line and shows what it prints; nothing of the method is
+reimplemented here. Please cite ayzek when you use its results.
+
+The line at the top says which copy will run: the one shipped with the
+application, a path you chose (*Choose executable...*), or one found on the
+PATH; *Use the shipped copy* forgets a chosen path. The shipped copy's
+`models/` folder is used unless you set another one.
+
+### Replay
+
+- **Input: Replay miniSEED files.** Add one file per station, each holding
+  that station's HH? channels at 100 Hz. The station code is read from the
+  records and its position from the station table, which lists the TU and
+  KO networks; for another network give your own table (`code,lat,lon`).
+- **Speed**: 1 is real time, 10 ten times faster, 0 as fast as the machine
+  allows. **Detect from (UTC)** suppresses triggers before a time while the
+  earlier data still warms up the filters.
+- **AFAD catalog**: an AFAD export (CSV). With it, every alarm is compared
+  with the catalogue and the final report counts correct, false and missed
+  alarms; without it, alarms are reported but not scored.
+
+### Live
+
+- **Input: Live SeedLink stream.** Give the server as `HOST:PORT` and the
+  streams as `NET.STA[,NET.STA...]`; every station needs coordinates in the
+  station table. **Archive to** appends every record received to
+  `DIR/STATION.mseed`, which replays later like any file. **Duration** stops
+  the input after that many seconds; 0 runs until you press *Stop*.
+- Live input is not available in the Windows build of ayzek (it needs POSIX
+  sockets); replay files instead.
+
+### Detection settings
+
+The defaults are ayzek's frozen ones; a field reading *default* leaves the
+option out. **Detector** chooses the 6 s window detector (three seeds), the
+streaming onset transformer, or the STA/LTA and FilterPicker references.
+**Stations to declare**, **Trigger threshold**, **Trigger windows**,
+**Instant threshold** and **Release** are the trigger rule; **Location**
+picks the transformer's geometry head or the P and S picks. **Assess every
+alarm** judges each alarm from its S-P picks and writes `assess.csv` in the
+output folder; **Write every window's detector probability** fills
+`scores/` there. **Warning sites** (`NAME,LAT,LON`, one per line) add the
+S-wave warning time at those places to the report. **Extra options** passes
+anything else as on the command line (`ayzek --help` lists them;
+`third_party/ayzek/README.md` explains them).
+
+### Results
+
+While the run goes, every tagged line ayzek prints (`ALARM`, `PLOC`, `PDMAG`,
+`LOCATE`, `ASSESS`...) is a row of the table: the alarm number, its time
+and the message. The full output, including the final report, is in the
+log below it, and the line under the log summarises the report's counts:
+alarms, how many match a catalogue event, catalogue events detected (and
+detected before the S wave) and missed. *Open output folder* opens the
+working directory of the run.
+
 ## Settings tab
 
 **Interface** chooses the language. The **tools** section locates the
@@ -440,7 +508,9 @@ original command-line tools (`sismokaos`, `sfc`, `tdvms`) for anyone who
 wants to run them beside the application: give the executable or the
 project directory (a checkout with its `pyproject.toml`), and *Check* asks
 the tool for its version. Nothing in the other tabs needs this; every tool
-is built into the application.
+is built into the application. The `ayzek` entry is the exception: it is a
+separate program, shown here as *shipped with the application*, and the
+Early warning tab runs it.
 
 ## Where files live
 
@@ -451,6 +521,8 @@ is built into the application.
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
 | feature extraction results, labelled tables | the output directory you chose | | |
 | classification projects (`project.toml`, `results/`) | the project folder you chose | | |
+| ayzek's assessment table and scores | the output folder you chose (your home folder when empty) | | |
+| the shipped ayzek (executable, `models/`, licence) | inside the AppImage, `usr/share/sismokaos-gui/ayzek` | `sismokaos-gui.app/Contents/Resources/ayzek` | `ayzek\` beside the executable |
 
 Campaign files are shared with the command-line `tdvms` tool, which uses the
 same ledger and env files but a different lock file: never run both on the
@@ -482,4 +554,8 @@ same campaign at the same time.
 ## Licence
 
 MIT, see `LICENSE`. Qt is used under the LGPL v3; miniz under MIT
-(`third_party/miniz/PROVENANCE.md`).
+(`third_party/miniz/PROVENANCE.md`). ayzek, which the Early warning tab
+runs, is a separate program under the GPL-3.0-or-later: it is not linked
+into the application but shipped beside it with its licence, and its
+source is the `third_party/ayzek` submodule
+(`third_party/AYZEK-PROVENANCE.md`).

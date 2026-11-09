@@ -11,12 +11,17 @@ times slower on the feature extraction, whose chaos features are O(n²) per
 window.
 
 ```sh
-git submodule update --init --recursive   # XGBoost, built with the project
+git submodule update --init --recursive   # XGBoost and ayzek, built with the project
 cmake -S . -B build -G Ninja
 cmake --build build
 ctest --test-dir build --output-on-failure
 ./build/src/app/sismokaos-gui
 ```
+
+With Meson, Ninja, zig and Python on the PATH the build also compiles ayzek
+and stages it in `build/ayzek/` (see *ayzek* below); without them the
+application builds and the Early warning tab reports that ayzek was not
+found.
 
 Formatting is LLVM style with the repository's `.clang-format`.
 
@@ -30,14 +35,16 @@ src/tdvms/     the C++ port of tdvms-pull (library, no Widgets)
 src/fx/        the C++ port of the feature extraction, after sismokaos-cli (library, no Widgets)
 src/analysis/  the SCAP port: catalogs, faults, labelling, figures (library, QtGui only)
 src/sfc/       the classification port: settings, dataset, split, models, tuning, run (library)
+src/ayzek/     the launcher logic for the bundled ayzek: command line, output parsing (not a port)
 src/core/      Module interface, AppContext, ModuleRegistry, I18n
 src/modules/   one directory per tab, each its own static library target
 src/app/       MainWindow, UpdateCheck, main()
 third_party/   vendored libraries (miniz, libsvm, toml++) with a PROVENANCE.md each,
-               and the XGBoost submodule (XGBOOST-PROVENANCE.md beside it)
+               and the XGBoost and ayzek submodules (*-PROVENANCE.md beside them)
+packaging/     desktop entry and icon; ayzek/ holds the Meson driver and zig cross file
 tests/         QtTest suites and their fixtures (tests/data)
 translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
-packaging/     desktop entry and icon; install.sh / install.ps1 live at the root
+               install.sh / install.ps1 live at the root
 .github/       CI on every push; the release workflow on tags
 ```
 
@@ -90,6 +97,39 @@ values from the Python tool and sismokaos-cli (`tests/data/fx/reference.json`,
 obspy-encoded miniSEED fixtures) and run the whole pipeline on a synthetic
 station (`tests/data/fx/enz`). `tests/data/fx/*.json` record how the fixtures
 were made. Tests run offscreen (`QT_QPA_PLATFORM=offscreen`).
+
+## ayzek
+
+ayzek (`third_party/ayzek`, GPL-3.0-or-later, `third_party/AYZEK-PROVENANCE.md`)
+is not ported and not linked: the Early warning tab starts it as a process.
+It is C++23 (`std::print`, `std::expected`, `std::mdspan`), beyond GCC 12,
+MSVC 2022 and Apple Clang 16 in CI, so `third_party/CMakeLists.txt` builds
+it with **zig** as the compiler (a recent clang and libc++, one static
+binary per target) through its own Meson build:
+
+- `packaging/ayzek/cross.ini.in` is the Meson cross file CMake writes per
+  target; `zigwrap.py` runs `zig cc`/`c++`/`ar` with the target and drops the
+  two linker flags Meson adds that zig's linker rejects; `build.py` runs
+  `meson setup` once and then `ninja app/ayzek`.
+- Targets: `x86_64-linux-musl` (Linux), `x86_64-windows-gnu` (Windows), and
+  on macOS one build per `CMAKE_OSX_ARCHITECTURES` entry joined with `lipo`
+  and ad-hoc signed again. All were built on Linux with zig 0.17.1; CI pins
+  that version (`mlugg/setup-zig`) and installs Meson with pip (brew on
+  macOS).
+- `SKG_BUNDLE_AYZEK` is ON when meson, ninja, zig and python3 are found,
+  OFF otherwise (`-DSKG_BUNDLE_AYZEK=ON` fails loudly if one is missing).
+  The staged `build/ayzek/` holds the executable, `models/`, `LICENSE`,
+  `CITATION.cff` and the provenance note; it is installed to
+  `share/sismokaos-gui/ayzek` on Linux, copied beside the executable on
+  Windows and into `Contents/Resources/ayzek` on macOS (`src/app/CMakeLists.txt`).
+- At run time the tool registry looks for `ayzek/<exe>` beside the
+  application, in `../share/sismokaos-gui`, in `../Resources`, in
+  `$SKG_BUNDLED_TOOLS_DIR` and, for a source build, in the build tree
+  (`bundledToolDirs` in `src/tools/toolregistry.cpp`).
+
+To move to a newer ayzek: check out its tag in the submodule, `git add
+third_party/ayzek`, update `AYZEK-PROVENANCE.md`, and compare
+`app/ayzek.cpp`'s options with `src/ayzek/launcher.cpp` and the tab's form.
 
 ## Releasing
 
