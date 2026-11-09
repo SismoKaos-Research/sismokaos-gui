@@ -9,6 +9,7 @@
 #include "jobs/jobmodel.h"
 #include "modules/analysis/analysismodule.h"
 #include "modules/classification/classificationmodule.h"
+#include "modules/earlywarning/earlywarningmodule.h"
 #include "modules/features/featuresmodule.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/tdvms/tdvmsmodule.h"
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
   modules.emplace<FeaturesModule>();
   modules.emplace<ClassificationModule>();
   modules.emplace<AnalysisModule>();
+  modules.emplace<EarlyWarningModule>();
   modules.emplace<SettingsModule>(&i18n);
 
   MainWindow w(ctx, modules, &i18n);

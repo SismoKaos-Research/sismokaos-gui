@@ -2,6 +2,49 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en" sourcelanguage="en">
 <context>
+    <name>ayzek</name>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="128"/>
+        <source>Add at least one miniSEED file (one per station).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="132"/>
+        <source>File not found: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="135"/>
+        <source>The speed must be 0 (as fast as possible) or more.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="139"/>
+        <source>Give the SeedLink server as HOST:PORT.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="142"/>
+        <source>Give the streams as NET.STA[,NET.STA...].</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="145"/>
+        <source>Live SeedLink input is not available in the Windows build of ayzek; replay files instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="151"/>
+        <source>Catalog not found: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ayzek/launcher.cpp" line="154"/>
+        <source>Models directory not found: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>skg::AnalysisModule</name>
     <message>
         <location filename="../src/modules/analysis/analysismodule.h" line="60"/>
@@ -188,6 +231,29 @@
     <message>
         <location filename="../src/modules/analysis/analysismodule.cpp" line="410"/>
         <source>Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::AyzekEventsModel</name>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="109"/>
+        <source>Kind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="111"/>
+        <source>Alarm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="113"/>
+        <source>Time (UTC)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="115"/>
+        <source>Message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -907,6 +973,439 @@
     <message>
         <location filename="../src/modules/tdvms/coveragepane.cpp" line="189"/>
         <source>Select a channel to list its gaps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::EarlyWarningModule</name>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.h" line="38"/>
+        <source>Early warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.h" line="40"/>
+        <source>Runs ayzek, the earthquake early-warning pipeline, on replayed miniSEED files or a live SeedLink stream</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::EarlyWarningWidget</name>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="349"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="356"/>
+        <source>CSV files (*.csv);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="381"/>
+        <source>ayzek:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="382"/>
+        <source>Choose executable...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="383"/>
+        <source>Use the shipped copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="384"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="464"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="385"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="386"/>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="387"/>
+        <source>Replay miniSEED files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="388"/>
+        <source>Live SeedLink stream</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="389"/>
+        <source>Replay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="390"/>
+        <source>Add files...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="391"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="392"/>
+        <source>One miniSEED file per station, HH? channels; the station code is read from the records and its position from the station table.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="395"/>
+        <source>Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="396"/>
+        <source>1 = real time, 10 = ten times faster, 0 = as fast as the machine allows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="398"/>
+        <source>as fast as possible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="399"/>
+        <source>Detect from (UTC)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="400"/>
+        <source>No triggers before this time; earlier data still warms up the filters. Empty: from the start.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="402"/>
+        <source>AFAD catalog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="403"/>
+        <source>An AFAD catalogue export (CSV). Each alarm is compared with it; without one, alarms are reported but not scored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="406"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="415"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="450"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="458"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="461"/>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="407"/>
+        <source>Live</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="408"/>
+        <source>SeedLink server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="409"/>
+        <source>Streams</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="410"/>
+        <source>NET.STA or NET.STA.LOC, comma-separated; every station needs coordinates in the station table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="412"/>
+        <source>Archive to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="413"/>
+        <source>Every record received is appended to DIR/STATION.mseed, which replays like any file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="416"/>
+        <source>Duration (s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="417"/>
+        <source>until stopped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="418"/>
+        <source>Detection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="419"/>
+        <source>Detector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="420"/>
+        <source>6 s window detector (3-seed ensemble)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="421"/>
+        <source>Streaming onset transformer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="422"/>
+        <source>STA/LTA (reference)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="423"/>
+        <source>FilterPicker (reference)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="424"/>
+        <source>Stations to declare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="425"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="430"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="432"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="434"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="436"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="438"/>
+        <source>default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="426"/>
+        <source>Station detections needed to declare an event; ayzek&apos;s default is 2 (3 for the transformer)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="429"/>
+        <source>Trigger threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="431"/>
+        <source>Trigger windows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="433"/>
+        <source>Instant threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="435"/>
+        <source>Release</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="437"/>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="439"/>
+        <source>geometry head of the transformer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="440"/>
+        <source>P and S picks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="441"/>
+        <source>Assess every alarm from its S-P picks (writes assess.csv in the output folder)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="443"/>
+        <source>Write every window&apos;s detector probability (scores/ in the output folder)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="445"/>
+        <source>No magnitude estimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="446"/>
+        <source>Verbose: every station detection, pick and Pd</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="447"/>
+        <source>Output folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="448"/>
+        <source>Working directory of the run; the assessment table and the scores go here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="451"/>
+        <source>Warning sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="452"/>
+        <source>One place per line as NAME,LAT,LON; the S-wave warning time at each is reported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="454"/>
+        <source>Station table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="455"/>
+        <source>code,lat,lon[,...] in place of the shipped table (TU and KO stations), for another network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="459"/>
+        <source>Models folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="460"/>
+        <source>Weights directory; empty uses the shipped models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="462"/>
+        <source>Extra options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="463"/>
+        <source>Any other ayzek option, as on the command line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="465"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="466"/>
+        <source>Open output folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="468"/>
+        <source>ayzek is a separate program, GPL-3.0-or-later, by H. Oğuz Bolat, Sibel Çimen, Bülent Bolat and Tülay Yıldırım (Yıldız Technical University), shipped beside this application with its source (third_party/ayzek) and models. Please cite it: &lt;a href=&quot;https://doi.org/10.5281/zenodo.23672495&quot;&gt;doi:10.5281/zenodo.23672495&lt;/a&gt;; &lt;a href=&quot;https://github.com/hogib/ayzek&quot;&gt;github.com/hogib/ayzek&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="477"/>
+        <source>No run yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="487"/>
+        <source>ayzek was not found beside the application or on the PATH; choose its executable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="499"/>
+        <source>models: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="502"/>
+        <source>no models/ beside it; set the models folder below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="511"/>
+        <source>ayzek executable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="521"/>
+        <source>miniSEED files, one per station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="523"/>
+        <source>miniSEED (*.mseed *.msd *.seed);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="663"/>
+        <source>ayzek was not found; choose its executable above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="669"/>
+        <source>The start time must be UTC like 2025-11-10T18:20:00.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="678"/>
+        <source>Cannot create the output folder %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="688"/>
+        <source>ayzek live %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="689"/>
+        <source>ayzek replay, %n file(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="694"/>
+        <source>Running...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="702"/>
+        <source>Started: %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="725"/>
+        <source>%n alarm(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="727"/>
+        <source>%1 matching a catalogue event, %2 without one</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="731"/>
+        <source>%1 catalogue events: %2 detected (%3 before S), %4 missed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="738"/>
+        <source> (exit %1; see the log)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1648,6 +2147,451 @@
     <message>
         <location filename="../src/modules/analysis/gridpane.cpp" line="237"/>
         <source> days</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::IndicatorTableModel</name>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="76"/>
+        <source>Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="78"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="80"/>
+        <source>End</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::IndicatorsModule</name>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.h" line="41"/>
+        <source>Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.h" line="43"/>
+        <source>Sliding-window seismicity indicators from an earthquake catalog: b- and a-value, magnitude deficit, energy release, η, μ, with moving averages and Bollinger bands</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::IndicatorsResultsPane</name>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="139"/>
+        <source>Open folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="140"/>
+        <source>Open an earlier run…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="142"/>
+        <source>No run yet. Run the indicators or open an earlier output folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/indicators/resultspane.cpp" line="175"/>
+        <source>%1: %n window(s), %2 figure(s)%3</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="208"/>
+        <source>Output folder of an indicators run</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::IndicatorsWidget</name>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="214"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="525"/>
+        <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="217"/>
+        <source>GeoJSON (*.geojson *.json);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="220"/>
+        <source>Magnitude conversion (*.json);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="253"/>
+        <source>Catalog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="255"/>
+        <source>AFAD export CSV: Date, Latitude, Longitude, Magnitude…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="256"/>
+        <source>Describe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="257"/>
+        <source>Loads the catalog, applies the selection and reports the events kept.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="259"/>
+        <source>Events</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
+        <source>Whole catalog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
+        <source>Near the East Anatolian Fault Zone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
+        <source>Near a fault trace (GeoJSON file)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
+        <source>Within a circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="265"/>
+        <source>Fault GeoJSON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
+        <source>FeatureCollection of LineString features; property &quot;strand&quot; optional</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
+        <source>Strands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="271"/>
+        <source>comma-separated, empty = all (EAFZ: main, northern)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="272"/>
+        <source>Buffer (km)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="273"/>
+        <source>Centre lat, lon, radius (km)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="274"/>
+        <source>From date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="275"/>
+        <source>drop earlier events</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="276"/>
+        <source>Homogenise magnitudes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="278"/>
+        <source>Converts AFAD magnitudes before 2013-11-20 onto the 2014-2019 ML/Mw practice by rate matching. Empty file = the conversion shipped with the app.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="281"/>
+        <source>conversion JSON (empty = shipped)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="282"/>
+        <source>Fit…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="283"/>
+        <source>Fits a conversion on a national AFAD catalog (declustered) and saves it as JSON.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="285"/>
+        <source>Decluster (Gardner-Knopoff mainshocks only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="286"/>
+        <source>Completeness Mc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="287"/>
+        <source>Estimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="289"/>
+        <source>Maximum curvature + 0.2 on the selected events.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="290"/>
+        <source>Magnitude bin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="291"/>
+        <source>Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="292"/>
+        <source>Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <source>days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <source>weeks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <source>months</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <source>years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="298"/>
+        <source>Half-Gauss σ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="299"/>
+        <source>Moving averages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="300"/>
+        <source>window counts, e.g. 7,15,23</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="301"/>
+        <source>on one figure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="302"/>
+        <source>Bollinger bands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="303"/>
+        <source>window </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="304"/>
+        <source>k </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="305"/>
+        <source>Risk label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="306"/>
+        <source>M ≥ </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="307"/>
+        <source> days before</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="308"/>
+        <source>Output root</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="309"/>
+        <source>Figures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="310"/>
+        <source> dpi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="311"/>
+        <source>write PNG figures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="312"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="313"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="314"/>
+        <source>Settings and run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="315"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="317"/>
+        <source>Catalog and selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="320"/>
+        <source>Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="396"/>
+        <source>Choose a catalog file first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="404"/>
+        <source>Choose the fault GeoJSON file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="435"/>
+        <source>Moving averages: comma-separated positive counts, e.g. 7,15,23.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="449"/>
+        <source>Choose the output root folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="486"/>
+        <source>Catalog: %n event(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="489"/>
+        <source>%n event(s) selected.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="505"/>
+        <source>No event matches the selection.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="511"/>
+        <source>Mc by maximum curvature + 0.2: %1 (%n event(s))</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="523"/>
+        <source>National AFAD catalog to calibrate on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="529"/>
+        <source>Save the conversion as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="531"/>
+        <source>JSON (*.json)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="536"/>
+        <source>Magnitude calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="537"/>
+        <source>Rate matching on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="587"/>
+        <source>Indicators %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="589"/>
+        <source>%1, window %2, step %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="620"/>
+        <source>Done: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="621"/>
+        <source>The run did not finish; see the log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="626"/>
+        <source>Running…</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2791,32 +3735,37 @@ Overwrite the existing archive?</source>
 <context>
     <name>skg::ToolRegistry</name>
     <message>
-        <location filename="../src/tools/toolregistry.cpp" line="49"/>
+        <location filename="../src/tools/toolregistry.cpp" line="60"/>
         <source>not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools/toolregistry.cpp" line="51"/>
+        <location filename="../src/tools/toolregistry.cpp" line="62"/>
         <source>configured path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools/toolregistry.cpp" line="53"/>
+        <location filename="../src/tools/toolregistry.cpp" line="64"/>
+        <source>shipped with the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/tools/toolregistry.cpp" line="66"/>
         <source>on PATH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools/toolregistry.cpp" line="55"/>
+        <location filename="../src/tools/toolregistry.cpp" line="68"/>
         <source>project .venv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools/toolregistry.cpp" line="57"/>
+        <location filename="../src/tools/toolregistry.cpp" line="70"/>
         <source>uv run --project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools/toolregistry.cpp" line="154"/>
+        <location filename="../src/tools/toolregistry.cpp" line="199"/>
         <source>no answer within %1 s</source>
         <translation type="unfinished"></translation>
     </message>

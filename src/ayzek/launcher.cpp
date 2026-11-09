@@ -8,8 +8,6 @@
 namespace skg::ayzek {
 
 namespace {
-QString tr(const char *s) { return QCoreApplication::translate("ayzek", s); }
-
 QString num(double v) { return QString::number(v, 'g', 10); }
 
 const QStringList kTags = {QStringLiteral("ALARM"),  QStringLiteral("PLOC"),
@@ -127,26 +125,35 @@ QStringList arguments(const Options &o) {
 QString validate(const Options &o) {
   if (o.mode == Mode::Replay) {
     if (o.files.isEmpty())
-      return tr("Add at least one miniSEED file (one per station).");
+      return QCoreApplication::translate(
+          "ayzek", "Add at least one miniSEED file (one per station).");
     for (const QString &f : o.files)
       if (!QFileInfo(f).isFile())
-        return tr("File not found: %1").arg(f);
+        return QCoreApplication::translate("ayzek", "File not found: %1")
+            .arg(f);
     if (o.speed < 0)
-      return tr("The speed must be 0 (as fast as possible) or more.");
+      return QCoreApplication::translate(
+          "ayzek", "The speed must be 0 (as fast as possible) or more.");
   } else {
     if (o.server.trimmed().isEmpty())
-      return tr("Give the SeedLink server as HOST:PORT.");
+      return QCoreApplication::translate(
+          "ayzek", "Give the SeedLink server as HOST:PORT.");
     if (o.streams.trimmed().isEmpty())
-      return tr("Give the streams as NET.STA[,NET.STA...].");
+      return QCoreApplication::translate(
+          "ayzek", "Give the streams as NET.STA[,NET.STA...].");
 #ifdef Q_OS_WIN
-    return tr("Live SeedLink input is not available in the Windows build of "
-              "ayzek; replay files instead.");
+    return QCoreApplication::translate(
+        "ayzek", "Live SeedLink input is not available in the Windows build of "
+                 "ayzek; replay files instead.");
 #endif
   }
   if (!o.catalog.isEmpty() && !QFileInfo(o.catalog).isFile())
-    return tr("Catalog not found: %1").arg(o.catalog);
+    return QCoreApplication::translate("ayzek", "Catalog not found: %1")
+        .arg(o.catalog);
   if (!o.modelsDir.isEmpty() && !QFileInfo(o.modelsDir).isDir())
-    return tr("Models directory not found: %1").arg(o.modelsDir);
+    return QCoreApplication::translate("ayzek",
+                                       "Models directory not found: %1")
+        .arg(o.modelsDir);
   return {};
 }
 
