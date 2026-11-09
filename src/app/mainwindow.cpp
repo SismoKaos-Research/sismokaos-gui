@@ -11,6 +11,9 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QTabWidget>
+#include <QTimer>
+
+#include "app/updatecheck.h"
 
 #include "core/i18n.h"
 #include "jobs/jobmodel.h"
@@ -56,6 +59,17 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
       a->setChecked(a->data().toString() == code);
   });
   helpMenu_ = menuBar()->addMenu(QString());
+  updates_ = new UpdateCheck(ctx_.settings, this, this);
+  checkUpdatesAction_ =
+      helpMenu_->addAction(QString(), this, [this] { updates_->check(false); });
+  updatesOnStartAction_ = helpMenu_->addAction(QString());
+  updatesOnStartAction_->setCheckable(true);
+  updatesOnStartAction_->setChecked(
+      ctx_.settings->value(UpdateCheck::kSettingOnStart, true).toBool());
+  connect(updatesOnStartAction_, &QAction::toggled, this, [this](bool on) {
+    ctx_.settings->setValue(UpdateCheck::kSettingOnStart, on);
+  });
+  helpMenu_->addSeparator();
   aboutAction_ = helpMenu_->addAction(QString(), this, [this] {
     QMessageBox::about(
         this, tr("About sismokaos-gui"),
@@ -80,6 +94,8 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
   restoreState(ctx_.settings->value("ui/state").toByteArray());
   if (size().isEmpty() || width() < 400)
     resize(1100, 750);
+  if (updatesOnStartAction_->isChecked())
+    QTimer::singleShot(3000, this, [this] { updates_->check(true); });
 }
 
 void MainWindow::changeEvent(QEvent *e) {
@@ -120,6 +136,8 @@ void MainWindow::retranslate() {
   languageMenu_->setTitle(tr("&Language"));
   helpMenu_->setTitle(tr("&Help"));
   aboutAction_->setText(tr("&About"));
+  checkUpdatesAction_->setText(tr("Check for &updates…"));
+  updatesOnStartAction_->setText(tr("Check for updates at start"));
 }
 
 } // namespace skg

@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/app">
+    <file alias="sismokaos-gui.svg">../../packaging/sismokaos-gui.svg</file>
+  </qresource>
+</RCC>

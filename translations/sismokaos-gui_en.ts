@@ -4,22 +4,22 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/app/main.cpp" line="37"/>
+        <location filename="../src/app/main.cpp" line="39"/>
         <source>Classification</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="39"/>
+        <location filename="../src/app/main.cpp" line="41"/>
         <source>sfc projects: settings, runs, experiments, reports.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="44"/>
+        <location filename="../src/app/main.cpp" line="46"/>
         <source>Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="46"/>
+        <location filename="../src/app/main.cpp" line="48"/>
         <source>Feature matrices, run metadata and HTML reports, browsed and plotted.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1037,32 +1037,32 @@
 <context>
     <name>skg::MainWindow</name>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="61"/>
+        <location filename="../src/app/mainwindow.cpp" line="75"/>
         <source>About sismokaos-gui</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="62"/>
+        <location filename="../src/app/mainwindow.cpp" line="76"/>
         <source>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;A desktop front end for the sismokaos tools: feature extraction, classification and AFAD/TDVMS downloads.&lt;br&gt;Qt %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="71"/>
+        <location filename="../src/app/mainwindow.cpp" line="85"/>
         <source>Started: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="75"/>
+        <location filename="../src/app/mainwindow.cpp" line="89"/>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="94"/>
+        <location filename="../src/app/mainwindow.cpp" line="110"/>
         <source>Jobs still running</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="95"/>
+        <location filename="../src/app/mainwindow.cpp" line="111"/>
         <source>%n job(s) are still running. Quit and stop them?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1070,38 +1070,48 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="116"/>
+        <location filename="../src/app/mainwindow.cpp" line="132"/>
         <source>Jobs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="117"/>
+        <location filename="../src/app/mainwindow.cpp" line="133"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="118"/>
+        <location filename="../src/app/mainwindow.cpp" line="134"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="119"/>
+        <location filename="../src/app/mainwindow.cpp" line="135"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="120"/>
+        <location filename="../src/app/mainwindow.cpp" line="136"/>
         <source>&amp;Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="121"/>
+        <location filename="../src/app/mainwindow.cpp" line="137"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="122"/>
+        <location filename="../src/app/mainwindow.cpp" line="138"/>
         <source>&amp;About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="139"/>
+        <source>Check for &amp;updates…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="140"/>
+        <source>Check for updates at start</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1664,6 +1674,76 @@ Overwrite the existing archive?</source>
     <message>
         <location filename="../src/tools/toolregistry.cpp" line="154"/>
         <source>no answer within %1 s</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::UpdateCheck</name>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="109"/>
+        <location filename="../src/app/updatecheck.cpp" line="120"/>
+        <location filename="../src/app/updatecheck.cpp" line="127"/>
+        <source>Check for updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="110"/>
+        <source>Could not reach GitHub: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="121"/>
+        <source>No release has been published yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="128"/>
+        <source>sismokaos-gui %1 is the latest version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="140"/>
+        <source>Update available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="141"/>
+        <source>sismokaos-gui %1 is available (this is %2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="145"/>
+        <source>No updater was found beside the application; the release page has the downloads.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="147"/>
+        <source>Update now closes the application, replaces it with the new version and starts it again. Your settings and data are kept.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="155"/>
+        <source>Update now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="157"/>
+        <source>Open release page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="158"/>
+        <source>Later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="165"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="166"/>
+        <source>The updater could not be started: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

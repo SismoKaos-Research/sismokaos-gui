@@ -72,7 +72,46 @@ upper-case ones. Quiet periods come from the AFAD earthquake catalog
 and obspy-decoded fixtures (`tests/data/fx`); `tests/tst_fx_pipeline.cpp`
 runs the whole thing on a synthetic station (`tests/data/fx/enz`).
 
-## Build
+## Install
+
+One command installs the latest release; the same command updates it later.
+Nothing else is needed: no Python, no Qt, no compiler.
+
+```sh
+# Linux (x86_64) and macOS
+curl -fsSL https://raw.githubusercontent.com/SismoKaos-Research/sismokaos-gui/main/install.sh | sh
+```
+
+```powershell
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/SismoKaos-Research/sismokaos-gui/main/install.ps1 | iex
+```
+
+The scripts download the bundle for the platform from the GitHub release,
+verify it against the release's `SHA256SUMS`, and install it for the current
+user only: under `~/.local/opt/sismokaos-gui` with a launcher in
+`~/.local/bin` and a desktop entry (Linux), in `~/Applications` (macOS), or
+under `%LOCALAPPDATA%\Programs\sismokaos-gui` with a Start Menu shortcut
+(Windows). A copy of the script stays beside the application as the
+updater (`update` / `update.ps1`). Settings, campaigns and results live
+elsewhere and survive updates and `--uninstall`.
+
+The application checks for a new release at start (Help menu to turn off or
+to check now) and offers *Update now*, which runs that updater: it waits for
+the application to quit, replaces the installation and starts it again.
+
+The macOS bundle is not notarised; the installer clears the quarantine flag.
+A downloaded zip opened by hand needs `xattr -dr com.apple.quarantine`.
+
+### Releases
+
+A tag `vX.Y.Z` (matching `project(... VERSION X.Y.Z)` in `CMakeLists.txt`)
+makes GitHub Actions build, test and publish `sismokaos-gui-X.Y.Z-linux-x86_64.AppImage`,
+`-windows-x86_64.zip`, `-macos-universal.zip`, `SHA256SUMS` and the two
+install scripts (`.github/workflows/release.yml`). Every push is built and
+tested on the three platforms (`ci.yml`).
+
+## Build from source
 
 Needs CMake 3.21+, a C++20 compiler and Qt 6.5+ (Widgets, LinguistTools; Test
 for the tests).
@@ -84,8 +123,8 @@ ctest --test-dir build
 ./build/src/app/sismokaos-gui
 ```
 
-On Windows, `windeployqt build/src/app/sismokaos-gui.exe` collects the Qt
-libraries next to the executable.
+The release workflow shows the packaging steps per platform (`windeployqt`,
+`macdeployqt`, `linuxdeploy` with its Qt plugin).
 
 ## Where the tools are found
 
@@ -106,7 +145,8 @@ third_party/   vendored libraries, each with a PROVENANCE.md
 src/core/      Module interface, AppContext, ModuleRegistry, I18n
 src/modules/   one directory per GUI module (tab), each its own CMake target
                (tdvms, features, settings; placeholders for the rest)
-src/app/       MainWindow and main()
+src/app/       MainWindow, the update check, main()
+packaging/     desktop entry and icon for the bundles; install.sh / install.ps1 at the root
 tests/         QtTest suites: jobs, progress, tool resolution, the tdvms and fx ports
 translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
 ```

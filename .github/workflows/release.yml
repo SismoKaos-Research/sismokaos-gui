@@ -1,0 +1,144 @@
+# A tag vX.Y.Z builds the release bundles and publishes them:
+#   sismokaos-gui-X.Y.Z-linux-x86_64.AppImage
+#   sismokaos-gui-X.Y.Z-windows-x86_64.zip
+#   sismokaos-gui-X.Y.Z-macos-universal.zip
+#   SHA256SUMS, install.sh, install.ps1
+# install.sh / install.ps1 fetch "the latest release" through these names,
+# so the names are part of the contract.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022, macos-14]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Version from the tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          # The tag and CMakeLists.txt must agree; the binary reports the latter.
+          grep -q "project(sismokaos-gui VERSION $VERSION " CMakeLists.txt || {
+            echo "CMakeLists.txt does not say VERSION $VERSION"; exit 1; }
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          cache: true
+
+      - name: Linux packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build g++-12 libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libfuse2
+          echo "CC=gcc-12" >> "$GITHUB_ENV"
+          echo "CXX=g++-12" >> "$GITHUB_ENV"
+
+      - name: macOS packages
+        if: runner.os == 'macOS'
+        run: brew install ninja
+
+      - name: MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Ninja (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ninja --no-progress
+
+      - name: Configure
+        shell: bash
+        run: |
+          EXTRA=""
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            EXTRA='-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0'
+          fi
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release $EXTRA
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+        env:
+          QT_QPA_PLATFORM: offscreen
+
+      - name: Package (Linux AppImage)
+        if: runner.os == 'Linux'
+        run: |
+          cmake --install build --prefix AppDir/usr
+          curl -fsSLo linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          curl -fsSLo linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy linuxdeploy-plugin-qt
+          export PATH="$PWD:$PATH"
+          export OUTPUT="sismokaos-gui-$VERSION-linux-x86_64.AppImage"
+          export LINUXDEPLOY_OUTPUT_VERSION="$VERSION"
+          linuxdeploy --appimage-extract-and-run --appdir AppDir \
+            --desktop-file packaging/sismokaos-gui.desktop \
+            --icon-file packaging/sismokaos-gui.svg \
+            --plugin qt --output appimage
+          mkdir -p dist && mv "$OUTPUT" dist/
+
+      - name: Package (Windows zip)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $name = "sismokaos-gui-$env:VERSION-windows-x86_64"
+          New-Item -ItemType Directory -Force -Path "dist\$name" | Out-Null
+          Copy-Item build\src\app\sismokaos-gui.exe "dist\$name\"
+          Copy-Item install.ps1 "dist\$name\update.ps1"
+          Copy-Item LICENSE "dist\$name\LICENSE.txt"
+          windeployqt --release --no-compiler-runtime "dist\$name\sismokaos-gui.exe"
+          # The MSVC runtime, so no separate redistributable is needed.
+          $redist = Get-ChildItem "$env:VCToolsRedistDir\x64\Microsoft.VC*.CRT\*.dll" -ErrorAction SilentlyContinue
+          if ($redist) { Copy-Item $redist "dist\$name\" }
+          Compress-Archive -Path "dist\$name" -DestinationPath "dist\$name.zip"
+          Remove-Item -Recurse -Force "dist\$name"
+
+      - name: Package (macOS zip)
+        if: runner.os == 'macOS'
+        run: |
+          macdeployqt build/src/app/sismokaos-gui.app
+          mkdir -p dist
+          ditto -c -k --keepParent build/src/app/sismokaos-gui.app "dist/sismokaos-gui-$VERSION-macos-universal.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Checksums and scripts
+        run: |
+          cp install.sh install.ps1 artifacts/
+          cd artifacts && sha256sum sismokaos-gui-* > SHA256SUMS && cat SHA256SUMS
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
+          draft: false

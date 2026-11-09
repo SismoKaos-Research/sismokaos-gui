@@ -15,6 +15,7 @@ namespace skg {
 
 class I18n;
 class JobsPanel;
+class UpdateCheck;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -41,6 +42,9 @@ private:
   QMenu *helpMenu_;
   QAction *quitAction_;
   QAction *aboutAction_;
+  QAction *checkUpdatesAction_;
+  QAction *updatesOnStartAction_;
+  UpdateCheck *updates_;
 };
 
 } // namespace skg

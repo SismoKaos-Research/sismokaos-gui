@@ -1,0 +1,13 @@
+# Text files are checked out with LF everywhere: the test fixtures and the
+# parsers (catalog CSV, JSON references) are byte-exact across platforms.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+
+# Binary fixtures and archives.
+*.mseed binary
+*.zip binary
+*.npy binary
+*.gz binary
+*.png binary
+*.icns binary
+*.ico binary

@@ -1,5 +1,6 @@
 // Entry point: registers the modules and shows the main window.
 #include <QApplication>
+#include <QIcon>
 #include <QSettings>
 
 #include "app/mainwindow.h"
@@ -19,6 +20,7 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setOrganizationName(QStringLiteral("sismokaos"));
   QCoreApplication::setApplicationName(QStringLiteral("sismokaos-gui"));
   QCoreApplication::setApplicationVersion(QStringLiteral(SKG_VERSION));
+  app.setWindowIcon(QIcon(QStringLiteral(":/app/sismokaos-gui.svg")));
 
   QSettings settings;
   I18n i18n(&settings);

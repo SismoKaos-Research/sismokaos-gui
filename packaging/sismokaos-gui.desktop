@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=sismokaos-gui
+Comment=Seismic feature extraction, classification and AFAD/TDVMS downloads
+Exec=sismokaos-gui
+Icon=sismokaos-gui
+Categories=Science;Geoscience;Qt;
+Terminal=false
+StartupWMClass=sismokaos-gui
