@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/cbi">
+    <file>eafz.geojson</file>
+    <file>afad_magnitude_map.json</file>
+  </qresource>
+</RCC>
