@@ -1,0 +1,9 @@
+build/
+build-*/
+.cache/
+compile_commands.json
+*.qm
+*.user
+CMakeLists.txt.user
+.vscode/
+.idea/
