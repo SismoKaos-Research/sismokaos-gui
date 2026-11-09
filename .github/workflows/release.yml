@@ -36,6 +36,19 @@ jobs:
           grep -q "project(sismokaos-gui VERSION $VERSION " CMakeLists.txt || {
             echo "CMakeLists.txt does not say VERSION $VERSION"; exit 1; }
 
+      # ayzek (third_party/ayzek) is C++23 and is compiled with zig through
+      # Meson; see third_party/CMakeLists.txt and packaging/ayzek/.
+      - name: zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.17.1
+
+      - name: Meson
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then brew install meson
+          else python3 -m pip install --user meson==1.12.1; fi
+
       - name: Drop the Microsoft apt repository
         if: runner.os == 'Linux'
         run: sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
@@ -112,6 +125,7 @@ jobs:
           $exe = Get-ChildItem -Path build -Recurse -Filter sismokaos-gui.exe | Select-Object -First 1
           if (-not $exe) { throw "sismokaos-gui.exe not found under build" }
           Copy-Item $exe.FullName "dist\$name\"
+          Copy-Item -Recurse build\ayzek "dist\$name\ayzek"
           Copy-Item install.ps1 "dist\$name\update.ps1"
           Copy-Item LICENSE "dist\$name\LICENSE.txt"
           windeployqt --release --no-compiler-runtime "dist\$name\sismokaos-gui.exe"

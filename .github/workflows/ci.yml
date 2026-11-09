@@ -22,6 +22,19 @@ jobs:
         with:
           submodules: recursive
 
+      # ayzek (third_party/ayzek) is C++23 and is compiled with zig through
+      # Meson; see third_party/CMakeLists.txt and packaging/ayzek/.
+      - name: zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.17.1
+
+      - name: Meson
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then brew install meson
+          else python3 -m pip install --user meson==1.12.1; fi
+
       - name: Drop the Microsoft apt repository
         if: runner.os == 'Linux'
         run: sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list

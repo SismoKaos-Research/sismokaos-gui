@@ -1,0 +1,19 @@
+# Meson cross file for building ayzek with zig, written by CMake from
+# packaging/ayzek/cross.ini.in for the target @AYZEK_TARGET@.
+[binaries]
+c = [@AYZEK_PY@, @AYZEK_WRAP@, @AYZEK_ZIG@, 'cc', '@AYZEK_TARGET@']
+cpp = [@AYZEK_PY@, @AYZEK_WRAP@, @AYZEK_ZIG@, 'c++', '@AYZEK_TARGET@']
+ar = [@AYZEK_PY@, @AYZEK_WRAP@, @AYZEK_ZIG@, 'ar', '@AYZEK_TARGET@']
+
+[host_machine]
+system = '@AYZEK_SYSTEM@'
+cpu_family = '@AYZEK_CPU@'
+cpu = '@AYZEK_CPU@'
+endian = 'little'
+
+[properties]
+# Never run what was built: the sanity check compiles and links only.
+needs_exe_wrapper = true
+
+[built-in options]
+cpp_args = ['-Wno-nullability-completeness']
