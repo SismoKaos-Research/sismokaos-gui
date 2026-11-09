@@ -20,14 +20,12 @@
         <translation type="vanished">Ön işleme ve öznitelik çıkarımı: config.json, preprocess, extract, sonuçlar.</translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="40" />
         <source>Classification</source>
-        <translation>Sınıflandırma</translation>
+        <translation type="vanished">Sınıflandırma</translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="42" />
         <source>sfc projects: settings, runs, experiments, reports.</source>
-        <translation>sfc projeleri: ayarlar, çalıştırmalar, deneyler, raporlar.</translation>
+        <translation type="vanished">sfc projeleri: ayarlar, çalıştırmalar, deneyler, raporlar.</translation>
     </message>
     <message>
         <source>Results</source>
@@ -393,6 +391,174 @@
         <location filename="../src/modules/analysis/catalogpane.cpp" line="313" />
         <source>Events as CSV…</source>
         <translation>Depremler CSV…</translation>
+    </message>
+</context>
+<context>
+    <name>skg::ClassificationModule</name>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.h" line="51" />
+        <source>Classification</source>
+        <translation>Sınıflandırma</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.h" line="53" />
+        <source>Classifying the windows by their time to the event: split by day, tuned models, metrics, experiments and reports</source>
+        <translation>Pencereleri depreme olan zamanlarına göre sınıflandırma: güne göre bölme, ayarlanmış modeller, metrikler, deneyler ve raporlar</translation>
+    </message>
+</context>
+<context>
+    <name>skg::ClassificationWidget</name>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="86" />
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="436" />
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="439" />
+        <source>Run</source>
+        <translation>Koşu</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="153" />
+        <source>Project folder (project.toml lives here)</source>
+        <translation>Proje klasörü (project.toml burada)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="171" />
+        <source>Loaded %1</source>
+        <translation>%1 yüklendi</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="173" />
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="246" />
+        <source>Cannot read %1: %2</source>
+        <translation>%1 okunamıyor: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="178" />
+        <source>New project: the settings are the defaults until you save project.toml.</source>
+        <translation>Yeni proje: project.toml kaydedilene dek ayarlar varsayılanlar.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="201" />
+        <source>Labelled windows or a feature table</source>
+        <translation>Etiketli pencereler ya da bir öznitelik tablosu</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="202" />
+        <source>sfc feature tables (*_features_labeled.csv);;fx feature tables (*.npy *.csv);;All files (*)</source>
+        <translation>sfc öznitelik tabloları (*_features_labeled.csv);;fx öznitelik tabloları (*.npy *.csv);;Tüm dosyalar (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="259" />
+        <source>Choose the labelled windows: sfc's &lt;STATION&gt;_N_features_labeled.csv, or a feature table from the Features tab, which the class table around the event then labels.</source>
+        <translation>Etiketli pencereleri seçin: sfc’nin &lt;İSTASYON&gt;_N_features_labeled.csv dosyası ya da Öznitelikler sekmesinden bir tablo; ikincisini deprem çevresindeki sınıf tablosu etiketler.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="269" />
+        <source>sfc table: %n window(s)</source>
+        <translation>
+            <numerusform>sfc tablosu: %n pencere</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="281" />
+        <source>%n selected day(s) -&gt; %1 windows</source>
+        <translation>
+            <numerusform>%n seçili gün -&gt; %1 pencere</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="287" />
+        <source>Cannot build the dataset: %1</source>
+        <translation>Veri kümesi oluşturulamıyor: %1</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="300" />
+        <source>%n window(s), %1 features; days per label %2</source>
+        <translation>
+            <numerusform>%n pencere, %1 öznitelik; etiket başına gün %2</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="316" />
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="337" />
+        <source>Choose the project folder first.</source>
+        <translation>Önce proje klasörünü seçin.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="321" />
+        <source>Saved %1</source>
+        <translation>%1 kaydedildi</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="323" />
+        <source>Cannot write %1</source>
+        <translation>%1 yazılamıyor</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="341" />
+        <source>No labelled windows to train on.</source>
+        <translation>Eğitilecek etiketli pencere yok.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="349" />
+        <source>Tick at least one step.</source>
+        <translation>En az bir adım işaretleyin.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="362" />
+        <source>Every window has a NaN feature; nothing to train on.</source>
+        <translation>Her pencerede NaN öznitelik var; eğitilecek bir şey yok.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="380" />
+        <source>sfc run %1</source>
+        <translation>sfc koşusu %1</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="381" />
+        <source>%1 on %n window(s)</source>
+        <translation>
+            <numerusform>%n pencere üzerinde %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="429" />
+        <source>Project folder</source>
+        <translation>Proje klasörü</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="430" />
+        <source>Labelled windows</source>
+        <translation>Etiketli pencereler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="432" />
+        <source>the folder with project.toml; results/ is written under it</source>
+        <translation>project.toml’un bulunduğu klasör; results/ altına yazılır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="433" />
+        <source>&lt;STATION&gt;_N_features_labeled.csv from sfc, or an fx feature table (.npy/.csv)</source>
+        <translation>sfc’den &lt;İSTASYON&gt;_N_features_labeled.csv ya da bir fx öznitelik tablosu (.npy/.csv)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="435" />
+        <source>Save project.toml</source>
+        <translation>project.toml kaydet</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="437" />
+        <source>Stop</source>
+        <translation>Durdur</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="438" />
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="440" />
+        <source>Experiments</source>
+        <translation>Deneyler</translation>
     </message>
 </context>
 <context>
@@ -820,6 +986,76 @@
         <location filename="../src/modules/analysis/catalogpane.cpp" line="115" />
         <source>Side of fault</source>
         <translation>Fayın yönü</translation>
+    </message>
+</context>
+<context>
+    <name>skg::ExperimentsPane</name>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="277" />
+        <source>No experiments yet: set the project and run.</source>
+        <translation>Henüz deney yok: projeyi belirleyin ve çalıştırın.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/experimentspane.cpp" line="292" />
+        <source>%1: %n model(s)</source>
+        <translation>
+            <numerusform>%1: %n model</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="295" />
+        <source>; the project's settings</source>
+        <translation>; projenin ayarları</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="296" />
+        <source>; changed: %1</source>
+        <translation>; değişen: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="331" />
+        <source>Cannot read %1</source>
+        <translation>%1 okunamıyor</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="340" />
+        <source>Delete run</source>
+        <translation>Koşuyu sil</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="341" />
+        <source>Delete the run '%1': its folder and its rows in experiments.csv?</source>
+        <translation>'%1' koşusu silinsin mi: klasörü ve experiments.csv’deki satırları?</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="357" />
+        <source>Report</source>
+        <translation>Rapor</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="357" />
+        <source>Could not write the report.</source>
+        <translation>Rapor yazılamadı.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="367" />
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="368" />
+        <source>HTML report</source>
+        <translation>HTML rapor</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="369" />
+        <source>Delete run…</source>
+        <translation>Koşuyu sil…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="370" />
+        <source>Open folder</source>
+        <translation>Klasörü aç</translation>
     </message>
 </context>
 <context>
@@ -1933,6 +2169,49 @@ numpy: np.memmap(path, dtype='&lt;f4', mode='r').reshape(-1, 3)</numerusform>
     </message>
 </context>
 <context>
+    <name>skg::RunsModel</name>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="93" />
+        <source>Run</source>
+        <translation>Koşu</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="93" />
+        <source>Models</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="94" />
+        <source>Best model</source>
+        <translation>En iyi model</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="94" />
+        <source>val F1</source>
+        <translation>doğ. F1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95" />
+        <source>test F1</source>
+        <translation>test F1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95" />
+        <source>test acc</source>
+        <translation>test doğruluk</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96" />
+        <source>test AUC</source>
+        <translation>test AUC</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96" />
+        <source>Settings different from the project</source>
+        <translation>Projeden farklı ayarlar</translation>
+    </message>
+</context>
+<context>
     <name>skg::SettingsModule</name>
     <message>
         <location filename="../src/modules/settings/settingsmodule.h" line="17" />
@@ -1943,6 +2222,219 @@ numpy: np.memmap(path, dtype='&lt;f4', mode='r').reshape(-1, 3)</numerusform>
         <location filename="../src/modules/settings/settingsmodule.h" line="19" />
         <source>Tool locations and language</source>
         <translation>Araç konumları ve dil</translation>
+    </message>
+</context>
+<context>
+    <name>skg::SettingsPane</name>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="39" />
+        <source>Event and labels</source>
+        <translation>Deprem ve etiketler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49" />
+        <source>Label</source>
+        <translation>Etiket</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49" />
+        <source>First day</source>
+        <translation>İlk gün</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49" />
+        <source>Last day</source>
+        <translation>Son gün</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49" />
+        <source>Step</source>
+        <translation>Adım</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49" />
+        <source>Days</source>
+        <translation>Gün</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="61" />
+        <source>Station</source>
+        <translation>İstasyon</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="62" />
+        <source>Event name</source>
+        <translation>Deprem adı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="63" />
+        <source>Event time (UTC)</source>
+        <translation>Deprem zamanı (UTC)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="64" />
+        <source>Class table</source>
+        <translation>Sınıf tablosu</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="69" />
+        <source>Merge labels into classes</source>
+        <translation>Etiketleri sınıflara birleştir</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="70" />
+        <source>Months per class</source>
+        <translation>Sınıf başına aylar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="74" />
+        <source>Features and split</source>
+        <translation>Öznitelikler ve bölme</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="100" />
+        <source>Feature columns</source>
+        <translation>Öznitelik sütunları</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="101" />
+        <source>Scaler</source>
+        <translation>Ölçekleyici</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="102" />
+        <source>Clip after scaling</source>
+        <translation>Ölçekleme sonrası kırp</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="103" />
+        <source>Train share of days</source>
+        <translation>Eğitim gün payı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="104" />
+        <source>Validation share of days</source>
+        <translation>Doğrulama gün payı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="105" />
+        <source>Random seed</source>
+        <translation>Rastgele tohum</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="109" />
+        <source>Models and tuning</source>
+        <translation>Modeller ve ayarlama</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="156" />
+        <source>Run name</source>
+        <translation>Koşu adı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="157" />
+        <source>Baseline models</source>
+        <translation>Temel modeller</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="158" />
+        <source>Tree models</source>
+        <translation>Ağaç modelleri</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="160" />
+        <source>Select the best by</source>
+        <translation>En iyiyi seçme ölçütü</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="161" />
+        <source>Cross-validation</source>
+        <translation>Çapraz doğrulama</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="163" />
+        <source>Network: max epochs</source>
+        <translation>Ağ: en çok epok</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="164" />
+        <source>Network: patience</source>
+        <translation>Ağ: sabır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="220" />
+        <source>Not applied: %1</source>
+        <translation>Uygulanmadı: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="360" />
+        <source>class table row %1: label, first day, last day and days must be numbers</source>
+        <translation>sınıf tablosu satır %1: etiket, ilk gün, son gün ve gün sayısı sayı olmalı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="377" />
+        <source>merge: one class per label of the class table (%1 numbers)</source>
+        <translation>birleştirme: sınıf tablosunun her etiketi için bir sınıf (%1 sayı)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="404" />
+        <source>choose at least one feature column</source>
+        <translation>en az bir öznitelik sütunu seçin</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="456" />
+        <source>Add label</source>
+        <translation>Etiket ekle</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="457" />
+        <source>Remove label</source>
+        <translation>Etiketi kaldır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="459" />
+        <source>class per label, e.g. 0,1,1,2; empty = no merging</source>
+        <translation>etiket başına sınıf, örn. 0,1,1,2; boş = birleştirme yok</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="461" />
+        <source>e.g. 1: 10 11 12 1 2 3; empty = all months</source>
+        <translation>örn. 1: 10 11 12 1 2 3; boş = tüm aylar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="462" />
+        <source>balanced class weights</source>
+        <translation>dengeli sınıf ağırlıkları</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="463" />
+        <source>k-fold over train + validation days</source>
+        <translation>eğitim + doğrulama günleri üzerinde k-katlı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="464" />
+        <source>limit scaled values to ±</source>
+        <translation>ölçeklenmiş değerleri ± ile sınırla</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="465" />
+        <source>save the trained models</source>
+        <translation>eğitilen modelleri kaydet</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="466" />
+        <source>network: oversample the rarer classes</source>
+        <translation>ağ: seyrek sınıfları çoğalt</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="467" />
+        <source>Apply TOML</source>
+        <translation>TOML’u uygula</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="468" />
+        <source>Every setting as TOML, the layout of sfc's project.toml. Grids and the scatter lists are edited here; the form covers the rest.</source>
+        <translation>Her ayar TOML olarak, sfc’nin project.toml düzeninde. Izgaralar ve saçılım listeleri burada düzenlenir; gerisini form kapsar.</translation>
     </message>
 </context>
 <context>
@@ -2343,6 +2835,44 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
         <location filename="../src/tools/toolregistry.cpp" line="154" />
         <source>no answer within %1 s</source>
         <translation>%1 s içinde yanıt yok</translation>
+    </message>
+</context>
+<context>
+    <name>skg::TrialsModel</name>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="156" />
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="156" />
+        <source>train F1</source>
+        <translation>eğitim F1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="156" />
+        <source>val F1</source>
+        <translation>doğ. F1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="157" />
+        <source>test F1</source>
+        <translation>test F1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="157" />
+        <source>test acc</source>
+        <translation>test doğruluk</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="157" />
+        <source>test AUC</source>
+        <translation>test AUC</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158" />
+        <source>Parameters</source>
+        <translation>Parametreler</translation>
     </message>
 </context>
 <context>

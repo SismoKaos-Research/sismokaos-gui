@@ -11,6 +11,7 @@ times slower on the feature extraction, whose chaos features are O(n²) per
 window.
 
 ```sh
+git submodule update --init --recursive   # XGBoost, built with the project
 cmake -S . -B build -G Ninja
 cmake --build build
 ctest --test-dir build --output-on-failure
@@ -27,10 +28,13 @@ src/jobs/      Job, ProcessJob (QProcess + progress parsing), TaskJob (worker th
 src/tools/     ToolDesc, ToolRegistry: descriptors and resolution of external CLIs
 src/tdvms/     the C++ port of tdvms-pull (library, no Widgets)
 src/fx/        the C++ port of the feature extraction, after sismokaos-cli (library, no Widgets)
+src/analysis/  the SCAP port: catalogs, faults, labelling, figures (library, QtGui only)
+src/sfc/       the classification port: settings, dataset, split, models, tuning, run (library)
 src/core/      Module interface, AppContext, ModuleRegistry, I18n
 src/modules/   one directory per tab, each its own static library target
 src/app/       MainWindow, UpdateCheck, main()
-third_party/   vendored libraries, each with a PROVENANCE.md
+third_party/   vendored libraries (miniz, libsvm, toml++) with a PROVENANCE.md each,
+               and the XGBoost submodule (XGBOOST-PROVENANCE.md beside it)
 tests/         QtTest suites and their fixtures (tests/data)
 translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
 packaging/     desktop entry and icon; install.sh / install.ps1 live at the root

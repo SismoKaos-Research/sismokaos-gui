@@ -8,8 +8,8 @@
 #include "core/moduleregistry.h"
 #include "jobs/jobmodel.h"
 #include "modules/analysis/analysismodule.h"
+#include "modules/classification/classificationmodule.h"
 #include "modules/features/featuresmodule.h"
-#include "modules/placeholder/placeholdermodule.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/tdvms/tdvmsmodule.h"
 #include "tools/toolregistry.h"
@@ -35,14 +35,7 @@ int main(int argc, char *argv[]) {
   ModuleRegistry modules;
   modules.emplace<TdvmsModule>();
   modules.emplace<FeaturesModule>();
-  modules.emplace<PlaceholderModule>(
-      QStringLiteral("classification"),
-      [] { return QObject::tr("Classification"); },
-      [] {
-        return QObject::tr("sfc projects: settings, runs, experiments, "
-                           "reports.");
-      },
-      QStringList{QStringLiteral("sfc")});
+  modules.emplace<ClassificationModule>();
   modules.emplace<AnalysisModule>();
   modules.emplace<SettingsModule>(&i18n);
 

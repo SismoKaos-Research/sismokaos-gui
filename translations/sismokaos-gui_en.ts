@@ -2,19 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en" sourcelanguage="en">
 <context>
-    <name>QObject</name>
-    <message>
-        <location filename="../src/app/main.cpp" line="40"/>
-        <source>Classification</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/main.cpp" line="42"/>
-        <source>sfc projects: settings, runs, experiments, reports.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>skg::AnalysisModule</name>
     <message>
         <location filename="../src/modules/analysis/analysismodule.h" line="60"/>
@@ -372,6 +359,178 @@
     <message>
         <location filename="../src/modules/analysis/catalogpane.cpp" line="313"/>
         <source>Events as CSV…</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::ClassificationModule</name>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.h" line="51"/>
+        <source>Classification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.h" line="53"/>
+        <source>Classifying the windows by their time to the event: split by day, tuned models, metrics, experiments and reports</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::ClassificationWidget</name>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="86"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="436"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="439"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="153"/>
+        <source>Project folder (project.toml lives here)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="171"/>
+        <source>Loaded %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="173"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="246"/>
+        <source>Cannot read %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="178"/>
+        <source>New project: the settings are the defaults until you save project.toml.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="201"/>
+        <source>Labelled windows or a feature table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="202"/>
+        <source>sfc feature tables (*_features_labeled.csv);;fx feature tables (*.npy *.csv);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="259"/>
+        <source>Choose the labelled windows: sfc&apos;s &lt;STATION&gt;_N_features_labeled.csv, or a feature table from the Features tab, which the class table around the event then labels.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="269"/>
+        <source>sfc table: %n window(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="281"/>
+        <source>%n selected day(s) -&gt; %1 windows</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="287"/>
+        <source>Cannot build the dataset: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="300"/>
+        <source>%n window(s), %1 features; days per label %2</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="316"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="337"/>
+        <source>Choose the project folder first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="321"/>
+        <source>Saved %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="323"/>
+        <source>Cannot write %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="341"/>
+        <source>No labelled windows to train on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="349"/>
+        <source>Tick at least one step.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="362"/>
+        <source>Every window has a NaN feature; nothing to train on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="380"/>
+        <source>sfc run %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="381"/>
+        <source>%1 on %n window(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="429"/>
+        <source>Project folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="430"/>
+        <source>Labelled windows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="432"/>
+        <source>the folder with project.toml; results/ is written under it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="433"/>
+        <source>&lt;STATION&gt;_N_features_labeled.csv from sfc, or an fx feature table (.npy/.csv)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="435"/>
+        <source>Save project.toml</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="437"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="438"/>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="440"/>
+        <source>Experiments</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -801,6 +960,77 @@
     <message>
         <location filename="../src/modules/analysis/catalogpane.cpp" line="115"/>
         <source>Side of fault</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::ExperimentsPane</name>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="277"/>
+        <source>No experiments yet: set the project and run.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/classification/experimentspane.cpp" line="292"/>
+        <source>%1: %n model(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="295"/>
+        <source>; the project&apos;s settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="296"/>
+        <source>; changed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="331"/>
+        <source>Cannot read %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="340"/>
+        <source>Delete run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="341"/>
+        <source>Delete the run &apos;%1&apos;: its folder and its rows in experiments.csv?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="357"/>
+        <source>Report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="357"/>
+        <source>Could not write the report.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="367"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="368"/>
+        <source>HTML report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="369"/>
+        <source>Delete run…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
+        <source>Open folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1924,6 +2154,49 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     </message>
 </context>
 <context>
+    <name>skg::RunsModel</name>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="93"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="93"/>
+        <source>Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="94"/>
+        <source>Best model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="94"/>
+        <source>val F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
+        <source>test F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
+        <source>test acc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
+        <source>test AUC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
+        <source>Settings different from the project</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>skg::SettingsModule</name>
     <message>
         <location filename="../src/modules/settings/settingsmodule.h" line="17"/>
@@ -1933,6 +2206,219 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     <message>
         <location filename="../src/modules/settings/settingsmodule.h" line="19"/>
         <source>Tool locations and language</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::SettingsPane</name>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="39"/>
+        <source>Event and labels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49"/>
+        <source>Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49"/>
+        <source>First day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49"/>
+        <source>Last day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49"/>
+        <source>Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="49"/>
+        <source>Days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="61"/>
+        <source>Station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="62"/>
+        <source>Event name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="63"/>
+        <source>Event time (UTC)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="64"/>
+        <source>Class table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="69"/>
+        <source>Merge labels into classes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="70"/>
+        <source>Months per class</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="74"/>
+        <source>Features and split</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="100"/>
+        <source>Feature columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="101"/>
+        <source>Scaler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="102"/>
+        <source>Clip after scaling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="103"/>
+        <source>Train share of days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="104"/>
+        <source>Validation share of days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="105"/>
+        <source>Random seed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="109"/>
+        <source>Models and tuning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="156"/>
+        <source>Run name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="157"/>
+        <source>Baseline models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="158"/>
+        <source>Tree models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="160"/>
+        <source>Select the best by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="161"/>
+        <source>Cross-validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="163"/>
+        <source>Network: max epochs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="164"/>
+        <source>Network: patience</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="220"/>
+        <source>Not applied: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="360"/>
+        <source>class table row %1: label, first day, last day and days must be numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="377"/>
+        <source>merge: one class per label of the class table (%1 numbers)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="404"/>
+        <source>choose at least one feature column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="456"/>
+        <source>Add label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="457"/>
+        <source>Remove label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="459"/>
+        <source>class per label, e.g. 0,1,1,2; empty = no merging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="461"/>
+        <source>e.g. 1: 10 11 12 1 2 3; empty = all months</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="462"/>
+        <source>balanced class weights</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="463"/>
+        <source>k-fold over train + validation days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="464"/>
+        <source>limit scaled values to ±</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="465"/>
+        <source>save the trained models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="466"/>
+        <source>network: oversample the rarer classes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="467"/>
+        <source>Apply TOML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/settingspane.cpp" line="468"/>
+        <source>Every setting as TOML, the layout of sfc&apos;s project.toml. Grids and the scatter lists are edited here; the form covers the rest.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2332,6 +2818,44 @@ Overwrite the existing archive?</source>
     <message>
         <location filename="../src/tools/toolregistry.cpp" line="154"/>
         <source>no answer within %1 s</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::TrialsModel</name>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <source>Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <source>train F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <source>val F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <source>test F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <source>test acc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <source>test AUC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
+        <source>Parameters</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

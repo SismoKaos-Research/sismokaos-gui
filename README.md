@@ -3,8 +3,9 @@
 A desktop application for the SismoKaos workflow: downloading continuous
 seismic data from AFAD/TDVMS and FDSN services, extracting statistical and
 chaotic features from it, relating them to the earthquake catalog and the
-active faults around a station with publication figures, and (coming)
-classifying the features. Everything
+active faults around a station with publication figures, and classifying
+the windows by their time to an earthquake with tuned models, experiment
+tracking and reports. Everything
 runs inside the application; no Python, Qt or other installation is needed.
 Turkish and English, switchable while running. Linux, Windows and macOS.
 
@@ -17,10 +18,11 @@ For building from source, the code layout and how to add a tab, see
 2. [The window](#the-window)
 3. [Data tab: TDVMS campaigns and FDSN pulls](#data-tab-tdvms-campaigns-and-fdsn-pulls)
 4. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
-5. [Analysis tab: earthquakes, faults, labels and figures](#analysis-tab-earthquakes-faults-labels-and-figures)
-6. [Settings tab](#settings-tab)
-7. [Where files live](#where-files-live)
-8. [Troubleshooting](#troubleshooting)
+5. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
+6. [Analysis tab: earthquakes, faults, labels and figures](#analysis-tab-earthquakes-faults-labels-and-figures)
+7. [Settings tab](#settings-tab)
+8. [Where files live](#where-files-live)
+9. [Troubleshooting](#troubleshooting)
 
 ## Install and update
 
@@ -74,9 +76,8 @@ has the AppImage, the Windows zip (unpack anywhere, run
 
 ## The window
 
-The tabs along the top are the tools: **Data**, **Features**, **Analysis**,
-**Classification** (a placeholder until the classification port lands), and
-**Settings**.
+The tabs along the top are the tools: **Data**, **Features**,
+**Classification**, **Analysis** and **Settings**.
 
 The **Jobs** panel at the bottom lists everything the application runs: a
 download campaign, a calibration, a feature extraction. Each job shows its
@@ -303,6 +304,76 @@ w = np.memmap("ELZG_preprocessed.f32", dtype="<f4", mode="r").reshape(-1, 3)
 Windows that cover a gap carry an `*_INTERP_FRAC` above zero; filter on it
 before trusting a chaos measurement there.
 
+## Classification tab: models and experiments
+
+This tab is the `sfc` tool: it labels the windows of a station by how many
+days before an earthquake they were recorded, splits them by day, trains and
+tunes several classifiers and keeps every experiment comparable. It reads
+and writes `sfc`'s own files (`project.toml`, `results/.../models/<run>/`,
+`experiments.csv`), so a project started with the Python tool can continue
+here. The models themselves come from XGBoost, libsvm and a small neural
+network built into the application; numbers differ slightly from the Python
+tool's (different random streams and solvers), so keep a paper's tables with
+the implementation that produced them.
+
+### Project and data
+
+- **Project folder**: the folder holding `project.toml`; results go under
+  `results/<station>/<event>/N/` inside it. A new folder starts from the
+  defaults; *Save project.toml* writes the settings.
+- **Labelled windows**: either `sfc`'s `<STATION>_N_features_labeled.csv`,
+  or a feature table from the Features tab. For the latter the **class
+  table** labels the days: label 0 for the days 1 to 30 before the event,
+  every day; label 1 for days 31 to 90, every second day; and so on, with
+  the planned days moved to the nearest day that has data when one is
+  missing, and the event day itself as label 0 up to the cutoff hour. The
+  line under the fields reports the windows and days per label; its tooltip
+  shows which days were chosen and why. The labelled table is also written
+  in `sfc`'s layout beside the results when a run starts.
+
+### Settings
+
+The form covers what changes between experiments; the TOML beside it is the
+whole `project.toml` for anything else (the parameter grids, the scatter
+lists). *Apply TOML* takes the text back into the form.
+
+- **Event and labels**: station, event name, event time (UTC; only the
+  hours before it are used on the event day), the class table, merging
+  labels into fewer classes (one class per label, e.g. `0,1,1,2`), and
+  months per class as a seasonal control.
+- **Features and split**: the feature columns (ticked from the source's
+  numeric columns), the scaler fitted on the training days (robust,
+  standard, minmax) with clipping, the shares of days per label that go to
+  training and validation (the rest is the test set), the seed.
+- **Models and tuning**: the run name, the baseline models (logistic
+  regression and the SVM kernels), the tree models (random forest, gradient
+  boosting, XGBoost), balanced class weights, the metric that picks the
+  best parameters (macro F1 or accuracy), k-fold cross-validation over the
+  train + validation days instead of the fixed validation days, whether to
+  save the models, and the network's epochs, patience and oversampling.
+
+### Run
+
+Tick the steps (the order is fixed): data understanding, split, split
+visualization, baseline, ann, trees, error timeline, compare. *Run* starts a
+job; its log appears beside the steps and in the Jobs panel, with the same
+lines the Python tool prints: every parameter combination with its
+validation score, the best one, train/validation/test metrics and the
+confusion matrix of every model. A rerun of a run name adds rows to
+`experiments.csv`; the latest per model counts.
+
+### Experiments
+
+Every run with the number of models, its best model by validation F1, its
+test metrics and the settings in which it differs from the project. Select
+a run to see its trials, and every file it wrote: figures (class
+distribution, box plots, histograms, correlation, split counts, feature
+distributions per split, a PCA scatter, feature scatter pairs, confusion
+matrices, ROC curves, the loss curve, error timelines, the model
+comparison), the reports and the settings snapshot. *HTML report* writes
+one self-contained page with every run's metrics, confusion matrices and
+figures and opens it. *Delete run…* removes a run's folder and rows.
+
 ## Analysis tab: earthquakes, faults, labels and figures
 
 This tab takes a feature table and puts it next to the earthquake catalog
@@ -364,11 +435,12 @@ days they share, stations down and days across, as one PNG.
 
 ## Settings tab
 
-**Interface** chooses the language. The **tools** section is for the two
-command-line tools not yet ported (`sismokaos`, `sfc`): give the executable
-or the project directory (a checkout with its `pyproject.toml`), and *Check*
-asks the tool for its version. Nothing in the Data or Features tabs needs
-this.
+**Interface** chooses the language. The **tools** section locates the
+original command-line tools (`sismokaos`, `sfc`, `tdvms`) for anyone who
+wants to run them beside the application: give the executable or the
+project directory (a checkout with its `pyproject.toml`), and *Check* asks
+the tool for its version. Nothing in the other tabs needs this; every tool
+is built into the application.
 
 ## Where files live
 
@@ -378,6 +450,7 @@ this.
 | mailbox and defaults (`mailbox.env`, `settings.env`) | `~/.config/tdvms/` | `~/.config/tdvms/` | `%APPDATA%\tdvms\` |
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
 | feature extraction results, labelled tables | the output directory you chose | | |
+| classification projects (`project.toml`, `results/`) | the project folder you chose | | |
 
 Campaign files are shared with the command-line `tdvms` tool, which uses the
 same ledger and env files but a different lock file: never run both on the
