@@ -59,3 +59,5 @@ jobs:
         run: ctest --test-dir build --output-on-failure || ctest --test-dir build --rerun-failed -V
         env:
           QT_QPA_PLATFORM: offscreen
+          # QtTest on Windows logs to the debugger when stdout is a pipe.
+          QT_LOGGING_TO_CONSOLE: "1"
