@@ -7,12 +7,14 @@
 using namespace skg;
 
 namespace {
-JobSpec shell(const QString &script, const QString &tool = {}) {
+// tests/helper.cpp stands in for external programs on every platform.
+const QString kHelper = QStringLiteral(SKG_TEST_HELPER);
+JobSpec helper(const QStringList &args, const QString &tool = {}) {
   JobSpec s;
   s.name = "test";
   s.tool = tool;
-  s.program = "/bin/sh";
-  s.args = {"-c", script};
+  s.program = kHelper;
+  s.args = args;
   return s;
 }
 } // namespace
@@ -21,23 +23,23 @@ class TstJob : public QObject {
   Q_OBJECT
 private slots:
   void exitCodeAndLog() {
-    ProcessJob job(shell("echo hello; echo oops 1>&2; exit 3"));
+    ProcessJob job(helper({"--out", "hello", "--err", "oops", "--exit", "3"}));
     job.start();
     QCOMPARE(job.state(), Job::State::Running);
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Failed, 5000);
     QCOMPARE(job.exitCode(), 3);
     QVERIFY(job.log().contains("hello"));
     QVERIFY(job.log().contains("oops")); // stderr merged
-    QVERIFY(job.log().first().startsWith("$ /bin/sh"));
+    QVERIFY(job.log().first().startsWith("$ " + kHelper));
     QVERIFY(job.log().last().startsWith("= exit 3"));
     QVERIFY(job.elapsedMs() >= 0);
   }
 
   void progressFromOutput() {
-    ProcessJob job(
-        shell("printf '[1/2] a\\n@sfc "
-              "{\"event\":\"day\",\"done\":2,\"total\":2}\\nlast line "
-              "without newline'"));
+    ProcessJob job(helper(
+        {"--raw",
+         "[1/2] a\n@sfc {\"event\":\"day\",\"done\":2,\"total\":2}\nlast line "
+         "without newline"}));
     job.start();
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Done, 5000);
     QCOMPARE(job.exitCode(), 0);
@@ -48,7 +50,7 @@ private slots:
   }
 
   void cancelKillsProcess() {
-    ProcessJob job(shell("sleep 30"));
+    ProcessJob job(helper({"--sleep", "30000"}));
     job.start();
     QTest::qWait(200);
     job.cancel();
@@ -67,12 +69,13 @@ private slots:
   }
 
   void environment() {
-    JobSpec s = shell("echo \"$PYTHONUNBUFFERED $MYVAR\"");
+    JobSpec s = helper({"--env", "PYTHONUNBUFFERED", "--env", "MYVAR"});
     s.env.insert("MYVAR", "set");
     ProcessJob job(s);
     job.start();
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Done, 5000);
-    QVERIFY(job.log().contains("1 set"));
+    QVERIFY(job.log().contains("1"));
+    QVERIFY(job.log().contains("set"));
   }
 
   void taskRunsInThreadAndReports() {
@@ -132,8 +135,8 @@ private slots:
     JobModel model;
     QSignalSpy added(&model, &JobModel::jobAdded);
     QSignalSpy finished(&model, &JobModel::jobFinished);
-    Job *a = model.addProcess(shell("exit 0"));
-    Job *b = model.addProcess(shell("exit 2"));
+    Job *a = model.addProcess(helper({"--exit", "0"}));
+    Job *b = model.addProcess(helper({"--exit", "2"}));
     Job *c = model.add(
         new TaskJob("t", "tdvms", "task", [](TaskContext &) { return 0; }));
     QCOMPARE(model.rowCount(), 3);

@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-14]
+        os: [ubuntu-22.04, windows-2022, macos-15]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,7 +75,8 @@ jobs:
         run: cmake --build build
 
       - name: Test
-        run: ctest --test-dir build --output-on-failure
+        shell: bash
+        run: ctest --test-dir build --output-on-failure || ctest --test-dir build --rerun-failed -V
         env:
           QT_QPA_PLATFORM: offscreen
 

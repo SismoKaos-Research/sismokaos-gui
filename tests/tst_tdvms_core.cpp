@@ -295,7 +295,9 @@ private slots:
     QCOMPARE(py.value("TDVMS_IMAP_USER"), QString("a b@x.org"));
     QCOMPARE(py.value("TDVMS_IMAP_PASS"), QString("it's"));
     QVERIFY(QFile(p).permissions() & QFileDevice::ReadOwner);
+#ifndef Q_OS_WIN // Windows reports everyone-readable for any readable file
     QVERIFY(!(QFile(p).permissions() & QFileDevice::ReadGroup));
+#endif
   }
 
   void credentialsEnvironmentWins() {

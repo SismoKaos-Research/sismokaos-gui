@@ -93,7 +93,13 @@ Campaign newCampaign(const QString &root, const QString &name,
   if (!rawTarget.isEmpty()) {
     const QString target = QFileInfo(rawTarget).absoluteFilePath();
     QDir().mkpath(target);
-    if (!QFileInfo::exists(raw) && !QFile::link(target, raw)) {
+    bool linked = QFileInfo::exists(raw);
+#ifndef Q_OS_WIN // QFile::link writes a .lnk shortcut there, not a directory
+                 // link
+    if (!linked)
+      linked = QFile::link(target, raw);
+#endif
+    if (!linked) {
       QFile pointer(home.filePath(kPointer));
       if (pointer.open(QIODevice::WriteOnly | QIODevice::Truncate))
         pointer.write((target + "\n").toUtf8());

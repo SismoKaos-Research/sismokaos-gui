@@ -1,9 +1,14 @@
 find_package(Qt6 REQUIRED COMPONENTS Test)
 
+# A stand-in for external programs (see helper.cpp); no shell is needed.
+add_executable(skg_testhelper helper.cpp)
+
 function(skg_test name)
   qt_add_executable(${name} ${ARGN})
   target_link_libraries(${name} PRIVATE Qt6::Test skg_jobs skg_tools skg_tdvms skg_fx skg_warnings)
-  target_compile_definitions(${name} PRIVATE SKG_TEST_DATA="${CMAKE_SOURCE_DIR}/tests/data")
+  target_compile_definitions(${name} PRIVATE SKG_TEST_DATA="${CMAKE_SOURCE_DIR}/tests/data"
+                                             SKG_TEST_HELPER="$<TARGET_FILE:skg_testhelper>")
+  add_dependencies(${name} skg_testhelper)
   add_test(NAME ${name} COMMAND ${name})
   set_tests_properties(${name} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 endfunction()

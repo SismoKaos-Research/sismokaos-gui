@@ -4,6 +4,20 @@
 
 using namespace skg;
 
+namespace {
+#ifdef Q_OS_WIN
+const QString kExe = QStringLiteral(".exe");
+const QString kVenvBin = QStringLiteral("/.venv/Scripts/");
+#else
+const QString kExe;
+const QString kVenvBin = QStringLiteral("/.venv/bin/");
+#endif
+// tests/helper.cpp copied under a tool's name answers "<name> 9.9 fake".
+bool fakeTool(const QString &path) {
+  return QFile::copy(QStringLiteral(SKG_TEST_HELPER), path);
+}
+} // namespace
+
 class TstToolRegistry : public QObject {
   Q_OBJECT
 private slots:
@@ -23,13 +37,9 @@ private slots:
   }
 
   void explicitExecutable() {
-    // A fake tool: a shell script that prints its version.
-    const QString exe = tmp_->filePath("sfc");
-    QFile f(exe);
-    QVERIFY(f.open(QIODevice::WriteOnly));
-    f.write("#!/bin/sh\necho sfc 9.9 fake\n");
-    f.close();
-    QVERIFY(f.setPermissions(f.permissions() | QFileDevice::ExeOwner));
+    // A fake tool that prints its version.
+    const QString exe = tmp_->filePath("sfc" + kExe);
+    QVERIFY(fakeTool(exe));
 
     reg_->setExecutable("sfc", exe);
     ToolStatus st = reg_->status("sfc");
@@ -57,12 +67,8 @@ private slots:
 
   void venvFallback() {
     const QString proj = tmp_->filePath("proj");
-    QVERIFY(QDir().mkpath(proj + "/.venv/bin"));
-    QFile f(proj + "/.venv/bin/sismokaos");
-    QVERIFY(f.open(QIODevice::WriteOnly));
-    f.write("#!/bin/sh\necho ok\n");
-    f.close();
-    QVERIFY(f.setPermissions(f.permissions() | QFileDevice::ExeOwner));
+    QVERIFY(QDir().mkpath(proj + kVenvBin));
+    QVERIFY(fakeTool(proj + kVenvBin + "sismokaos" + kExe));
     reg_->setProjectDir("sismokaos", proj);
     // Only meaningful when no `sismokaos` is on PATH, as in CI; otherwise PATH
     // wins by design.

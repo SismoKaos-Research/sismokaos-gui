@@ -15,7 +15,52 @@ const QRegularExpression kNoDataRe(QStringLiteral(R"(veri\s+bulunmamaktad)"),
 const QRegularExpression
     kEncodedWord(QStringLiteral(R"(=\?([^?]+)\?([bBqQ])\?([^?]*)\?=)"));
 
+// ISO-8859-9 is Latin-1 with six Turkish letters; windows-1254 is cp1252
+// with the same six. Qt without ICU (the Windows builds) knows neither.
+QString decodeTurkish(const QByteArray &bytes, bool windows1254) {
+  static const char16_t cp1252High[32] = {
+      0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
+      0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0xFFFD, 0xFFFD,
+      0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+      0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0xFFFD, 0xFFFD, 0x0178};
+  QString out;
+  out.reserve(bytes.size());
+  for (unsigned char c : bytes) {
+    char16_t u = c;
+    switch (c) {
+    case 0xD0:
+      u = 0x011E;
+      break; // Ğ
+    case 0xDD:
+      u = 0x0130;
+      break; // İ
+    case 0xDE:
+      u = 0x015E;
+      break; // Ş
+    case 0xF0:
+      u = 0x011F;
+      break; // ğ
+    case 0xFD:
+      u = 0x0131;
+      break; // ı
+    case 0xFE:
+      u = 0x015F;
+      break; // ş
+    default:
+      if (windows1254 && c >= 0x80 && c < 0xA0)
+        u = cp1252High[c - 0x80];
+    }
+    out.append(QChar(u));
+  }
+  return out;
+}
+
 QString decodeText(const QByteArray &bytes, const QString &charset) {
+  const QString cs = charset.toLower().remove('_').remove('-');
+  if (cs == QLatin1String("iso88599") || cs == QLatin1String("latin5"))
+    return decodeTurkish(bytes, false);
+  if (cs == QLatin1String("windows1254") || cs == QLatin1String("cp1254"))
+    return decodeTurkish(bytes, true);
   QStringDecoder dec(charset.isEmpty() ? "UTF-8"
                                        : charset.toLatin1().constData());
   if (!dec.isValid())
