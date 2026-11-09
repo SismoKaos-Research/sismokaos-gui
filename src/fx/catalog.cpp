@@ -1,4 +1,5 @@
 #include "fx/catalog.h"
+#include "fx/csv.h"
 
 #include <QFile>
 #include <QStringList>
@@ -58,8 +59,6 @@ QByteArray gunzip(const QByteArray &gz) {
   out.resize(qsizetype(outLen));
   return out;
 }
-
-namespace {
 
 QByteArray readMaybeGz(const QString &path) {
   QFile f(path);
@@ -126,8 +125,6 @@ QStringList lines(const QByteArray &text) {
       l.chop(1);
   return out;
 }
-
-} // namespace
 
 std::optional<double> parseAfadTime(const QString &s) {
   const QString t = s.trimmed();

@@ -7,7 +7,7 @@ qt_add_library(skg_fx STATIC
   dsp.cpp       dsp.h
   npy.cpp       npy.h
   features.cpp  features.h
-  catalog.cpp   catalog.h
+  catalog.cpp   catalog.h   csv.h
   preprocess.cpp preprocess.h
   calibrate.cpp calibrate.h
   engine.cpp    engine.h

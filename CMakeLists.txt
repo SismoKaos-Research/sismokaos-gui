@@ -26,6 +26,7 @@ target_compile_options(skg_warnings INTERFACE
 #   tools   where the sismokaos/sfc/tdvms executables are and how to call them
 #   tdvms   the C++ port of tdvms-pull (campaign ledger, portal, mail, fetch)
 #   fx      the C++ port of sismokaos-cli / Sismokaos-featureExtract (features)
+#   analysis the SCAP port: catalogs, faults, labelling, figures
 #   core    the Module interface, AppContext, registry, language switching
 #   modules/<name>  one GUI module (a tab) per directory
 #   app     the main window and main()
@@ -34,6 +35,7 @@ add_subdirectory(src/jobs)
 add_subdirectory(src/tools)
 add_subdirectory(src/tdvms)
 add_subdirectory(src/fx)
+add_subdirectory(src/analysis)
 add_subdirectory(src/core)
 add_subdirectory(src/modules)
 add_subdirectory(src/app)
