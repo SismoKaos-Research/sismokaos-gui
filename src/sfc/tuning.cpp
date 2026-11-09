@@ -13,7 +13,7 @@ Validation::Validation(const SplitData &data, const Dataset &d,
     X_ = concat(data.train, data.val);
     std::vector<QDate> groups;
     for (int i : X_.index)
-      groups.push_back(d.date[size_t(i)]);
+      groups.push_back(d.date[static_cast<size_t>(i)]);
     folds_ =
         stratifiedGroupKFold(X_.y, groups, *s.cvFolds, quint64(s.randomSeed));
   } else {
@@ -147,11 +147,11 @@ Matrix Validation::balanced(const Matrix &m) const {
     return m;
   std::vector<std::vector<int>> byClass(static_cast<size_t>(nClasses_));
   for (int r = 0; r < m.rows; ++r)
-    byClass[size_t(m.y[size_t(r)])].push_back(r);
+    byClass[static_cast<size_t>(m.y[size_t(r)])].push_back(r);
   size_t target = 0;
   for (const auto &c : byClass)
     target = std::max(target, c.size());
-  Rng rng(quint64(s_.randomSeed));
+  Rng rng{quint64(s_.randomSeed)};
   std::vector<int> rows;
   for (const auto &c : byClass) {
     if (c.empty())
@@ -279,7 +279,7 @@ Validation::FitFn fitFor(const QString &name, const QVariantMap &params,
     if (name.startsWith(QLatin1String("svm_"))) {
       Matrix sub = X;
       if (s.svmMaxTrainWindows && X.rows > *s.svmMaxTrainWindows) {
-        Rng rng(quint64(s.randomSeed));
+        Rng rng{quint64(s.randomSeed)};
         sub = take(X, rng.choice(X.rows, *s.svmMaxTrainWindows, false));
       }
       m->fit(sub, {});

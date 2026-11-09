@@ -19,12 +19,13 @@
 namespace skg::sfc {
 
 std::vector<double> balancedWeights(const std::vector<int> &y, int nClasses) {
-  std::vector<int> count(size_t(nClasses), 0);
+  std::vector<int> count(static_cast<size_t>(nClasses), 0);
   for (int v : y)
-    ++count[size_t(v)];
+    ++count[static_cast<size_t>(v)];
   std::vector<double> w(y.size());
   for (size_t i = 0; i < y.size(); ++i)
-    w[i] = double(y.size()) / (double(nClasses) * double(count[size_t(y[i])]));
+    w[i] = double(y.size()) /
+           (double(nClasses) * double(count[static_cast<size_t>(y[i])]));
   return w;
 }
 
@@ -32,8 +33,10 @@ std::vector<int> Model::predict(const Matrix &m) const {
   const std::vector<double> p = proba(m);
   std::vector<int> out(static_cast<size_t>(m.rows));
   for (int r = 0; r < m.rows; ++r) {
-    const double *row = p.data() + size_t(r) * size_t(nClasses);
-    out[size_t(r)] = int(std::max_element(row, row + nClasses) - row);
+    const double *row =
+        p.data() + static_cast<size_t>(r) * static_cast<size_t>(nClasses);
+    out[static_cast<size_t>(r)] =
+        int(std::max_element(row, row + nClasses) - row);
   }
   return out;
 }
@@ -214,7 +217,7 @@ std::vector<double> XgbModel::proba(const Matrix &m) const {
   check(XGBoosterPredict(booster_, d.h, 0, 0, 0, &len, &out),
         "XGBoosterPredict");
   std::vector<double> p;
-  p.reserve(size_t(m.rows) * size_t(nClasses));
+  p.reserve(static_cast<size_t>(m.rows) * static_cast<size_t>(nClasses));
   if (nClasses > 2) {
     p.assign(out, out + len);
   } else
@@ -261,10 +264,10 @@ struct SvmModel::Impl {
 
 namespace {
 std::vector<svm_node> toNodes(const double *row, int cols) {
-  std::vector<svm_node> n(size_t(cols) + 1);
+  std::vector<svm_node> n(static_cast<size_t>(cols) + 1);
   for (int c = 0; c < cols; ++c)
-    n[size_t(c)] = {c + 1, row[c]};
-  n[size_t(cols)] = {-1, 0};
+    n[static_cast<size_t>(c)] = {c + 1, row[c]};
+  n[static_cast<size_t>(cols)] = {-1, 0};
   return n;
 }
 void quiet(const char *) {}
@@ -283,12 +286,12 @@ void SvmModel::fit(const Matrix &m, const std::vector<double> &) {
   if (nClasses == 0)
     nClasses = *std::max_element(m.y.begin(), m.y.end()) + 1;
   impl_ = std::make_unique<Impl>();
-  impl_->nodes.resize(size_t(m.rows));
+  impl_->nodes.resize(static_cast<size_t>(m.rows));
   std::vector<svm_node *> rows(static_cast<size_t>(m.rows));
   std::vector<double> labels(m.y.begin(), m.y.end());
   for (int r = 0; r < m.rows; ++r) {
-    impl_->nodes[size_t(r)] = toNodes(m.row(r), m.cols);
-    rows[size_t(r)] = impl_->nodes[size_t(r)].data();
+    impl_->nodes[static_cast<size_t>(r)] = toNodes(m.row(r), m.cols);
+    rows[static_cast<size_t>(r)] = impl_->nodes[static_cast<size_t>(r)].data();
   }
   svm_problem prob{m.rows, labels.data(), rows.data()};
   svm_parameter p{};
@@ -321,14 +324,14 @@ void SvmModel::fit(const Matrix &m, const std::vector<double> &) {
   std::vector<int> wl;
   std::vector<double> ww;
   if (classWeight_ && *classWeight_ == QLatin1String("balanced")) {
-    std::vector<int> count(size_t(nClasses), 0);
+    std::vector<int> count(static_cast<size_t>(nClasses), 0);
     for (int v : m.y)
-      ++count[size_t(v)];
+      ++count[static_cast<size_t>(v)];
     for (int c = 0; c < nClasses; ++c)
-      if (count[size_t(c)]) {
+      if (count[static_cast<size_t>(c)]) {
         wl.push_back(c);
-        ww.push_back(double(m.rows) /
-                     (double(nClasses) * double(count[size_t(c)])));
+        ww.push_back(double(m.rows) / (double(nClasses) *
+                                       double(count[static_cast<size_t>(c)])));
       }
     p.nr_weight = int(wl.size());
     p.weight_label = wl.data();
@@ -349,15 +352,18 @@ std::vector<double> SvmModel::proba(const Matrix &m) const {
   const int k = svm_get_nr_class(impl_->model);
   std::vector<int> labels(static_cast<size_t>(k));
   svm_get_labels(impl_->model, labels.data());
-  std::vector<double> out(size_t(m.rows) * size_t(nClasses), 0.0);
+  std::vector<double> out(
+      static_cast<size_t>(m.rows) * static_cast<size_t>(nClasses), 0.0);
   std::vector<double> est(static_cast<size_t>(k));
   for (int r = 0; r < m.rows; ++r) {
     const std::vector<svm_node> n = toNodes(m.row(r), m.cols);
     svm_predict_probability(impl_->model, n.data(), est.data());
     for (int i = 0; i < k; ++i)
-      if (labels[size_t(i)] >= 0 && labels[size_t(i)] < nClasses)
-        out[size_t(r) * size_t(nClasses) + size_t(labels[size_t(i)])] =
-            est[size_t(i)];
+      if (labels[static_cast<size_t>(i)] >= 0 &&
+          labels[static_cast<size_t>(i)] < nClasses)
+        out[static_cast<size_t>(r) * static_cast<size_t>(nClasses) +
+            static_cast<size_t>(labels[size_t(i)])] =
+            est[static_cast<size_t>(i)];
   }
   return out;
 }
@@ -368,7 +374,7 @@ std::vector<int> SvmModel::predict(const Matrix &m) const {
   std::vector<int> out(static_cast<size_t>(m.rows));
   for (int r = 0; r < m.rows; ++r) {
     const std::vector<svm_node> n = toNodes(m.row(r), m.cols);
-    out[size_t(r)] = int(svm_predict(impl_->model, n.data()));
+    out[static_cast<size_t>(r)] = int(svm_predict(impl_->model, n.data()));
   }
   return out;
 }

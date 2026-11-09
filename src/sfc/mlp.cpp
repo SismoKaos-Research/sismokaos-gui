@@ -22,10 +22,10 @@ Mlp::Mlp(const MlpOptions &opt, int nFeatures, int nClasses)
     double bound = std::sqrt(6.0 / (l.in + l.out));
     if (opt.activation == QLatin1String("logistic"))
       bound *= 4;
-    l.W.resize(size_t(l.in) * size_t(l.out));
+    l.W.resize(static_cast<size_t>(l.in) * static_cast<size_t>(l.out));
     for (double &w : l.W)
       w = (rng_.uniform() * 2 - 1) * bound;
-    l.b.assign(size_t(l.out), 0.0);
+    l.b.assign(static_cast<size_t>(l.out), 0.0);
     for (double &bb : l.b)
       bb = (rng_.uniform() * 2 - 1) * bound;
     l.mW.assign(l.W.size(), 0.0);
@@ -59,13 +59,14 @@ void Mlp::forward(const double *x,
   for (size_t li = 0; li < layers_.size(); ++li) {
     const Layer &l = layers_[li];
     std::vector<double> &out = acts[li + 1];
-    out.assign(size_t(l.out), 0.0);
+    out.assign(static_cast<size_t>(l.out), 0.0);
     for (int o = 0; o < l.out; ++o) {
-      double s = l.b[size_t(o)];
-      const double *w = l.W.data() + size_t(o) * size_t(l.in);
+      double s = l.b[static_cast<size_t>(o)];
+      const double *w =
+          l.W.data() + static_cast<size_t>(o) * static_cast<size_t>(l.in);
       for (int i = 0; i < l.in; ++i)
-        s += w[i] * acts[li][size_t(i)];
-      out[size_t(o)] = s;
+        s += w[i] * acts[li][static_cast<size_t>(i)];
+      out[static_cast<size_t>(o)] = s;
     }
     if (li + 1 < layers_.size())
       for (double &v : out)
@@ -100,27 +101,34 @@ void Mlp::epoch(const std::vector<double> &X, const std::vector<int> &y) {
       db[li].assign(layers_[li].b.size(), 0.0);
     }
     for (int k = start; k < end; ++k) {
-      const int r = order[size_t(k)];
-      forward(X.data() + size_t(r) * size_t(nFeatures_), acts);
+      const int r = order[static_cast<size_t>(k)];
+      forward(X.data() +
+                  static_cast<size_t>(r) * static_cast<size_t>(nFeatures_),
+              acts);
       // delta at the output: p - onehot
       std::vector<double> delta = acts.back();
-      delta[size_t(y[size_t(r)])] -= 1.0;
+      delta[static_cast<size_t>(y[size_t(r)])] -= 1.0;
       for (int li = int(layers_.size()) - 1; li >= 0; --li) {
-        const Layer &l = layers_[size_t(li)];
-        const std::vector<double> &in = acts[size_t(li)];
+        const Layer &l = layers_[static_cast<size_t>(li)];
+        const std::vector<double> &in = acts[static_cast<size_t>(li)];
         for (int o = 0; o < l.out; ++o) {
-          db[size_t(li)][size_t(o)] += delta[size_t(o)];
-          double *g = dW[size_t(li)].data() + size_t(o) * size_t(l.in);
+          db[static_cast<size_t>(li)][static_cast<size_t>(o)] +=
+              delta[static_cast<size_t>(o)];
+          double *g = dW[static_cast<size_t>(li)].data() +
+                      static_cast<size_t>(o) * static_cast<size_t>(l.in);
           for (int i = 0; i < l.in; ++i)
-            g[i] += delta[size_t(o)] * in[size_t(i)];
+            g[i] += delta[static_cast<size_t>(o)] * in[static_cast<size_t>(i)];
         }
         if (li > 0) {
-          std::vector<double> prev(size_t(l.in), 0.0);
+          std::vector<double> prev(static_cast<size_t>(l.in), 0.0);
           for (int i = 0; i < l.in; ++i) {
             double s = 0;
             for (int o = 0; o < l.out; ++o)
-              s += l.W[size_t(o) * size_t(l.in) + size_t(i)] * delta[size_t(o)];
-            prev[size_t(i)] = s * actGrad(in[size_t(i)]);
+              s += l.W[static_cast<size_t>(o) * static_cast<size_t>(l.in) +
+                       static_cast<size_t>(i)] *
+                   delta[static_cast<size_t>(o)];
+            prev[static_cast<size_t>(i)] =
+                s * actGrad(in[static_cast<size_t>(i)]);
           }
           delta = std::move(prev);
         }
@@ -157,10 +165,10 @@ void Mlp::epoch(const std::vector<double> &X, const std::vector<int> &y) {
 
 std::vector<double> Mlp::proba(const double *X, int rows) const {
   std::vector<double> out;
-  out.reserve(size_t(rows) * size_t(nClasses_));
+  out.reserve(static_cast<size_t>(rows) * static_cast<size_t>(nClasses_));
   std::vector<std::vector<double>> acts;
   for (int r = 0; r < rows; ++r) {
-    forward(X + size_t(r) * size_t(nFeatures_), acts);
+    forward(X + static_cast<size_t>(r) * static_cast<size_t>(nFeatures_), acts);
     out.insert(out.end(), acts.back().begin(), acts.back().end());
   }
   return out;

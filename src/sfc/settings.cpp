@@ -627,11 +627,11 @@ double Rng::uniform() { return double(next() >> 11) / double(1ull << 53); }
 int Rng::below(int n) { return n <= 1 ? 0 : int(next() % quint64(n)); }
 
 std::vector<int> Rng::permutation(int n) {
-  std::vector<int> p(size_t(std::max(0, n)));
+  std::vector<int> p(static_cast<size_t>(std::max(0, n)));
   for (int i = 0; i < n; ++i)
-    p[size_t(i)] = i;
+    p[static_cast<size_t>(i)] = i;
   for (int i = n - 1; i > 0; --i)
-    std::swap(p[size_t(i)], p[size_t(below(i + 1))]);
+    std::swap(p[static_cast<size_t>(i)], p[static_cast<size_t>(below(i + 1))]);
   return p;
 }
 
@@ -643,7 +643,7 @@ std::vector<int> Rng::choice(int n, int k, bool replace) {
     return out;
   }
   std::vector<int> p = permutation(n);
-  p.resize(size_t(std::min(k, n)));
+  p.resize(static_cast<size_t>(std::min(k, n)));
   return p;
 }
 

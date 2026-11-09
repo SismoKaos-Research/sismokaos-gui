@@ -144,8 +144,9 @@ bool saveSfcCsv(const QString &path, const Dataset &d, const Settings &s,
   header << d.featureNames;
   f.write(header.join(sep).toUtf8() + '\n');
   for (int r = 0; r < d.rows(); ++r) {
-    QStringList cells{s.station, d.date[size_t(r)].toString(Qt::ISODate)};
-    const QString start = d.windowStart[size_t(r)];
+    QStringList cells{s.station,
+                      d.date[static_cast<size_t>(r)].toString(Qt::ISODate)};
+    const QString start = d.windowStart[static_cast<size_t>(r)];
     QString end;
     if (!start.isEmpty()) {
       QDateTime dt =
@@ -154,8 +155,8 @@ bool saveSfcCsv(const QString &path, const Dataset &d, const Settings &s,
       end = dt.addSecs(qint64(winSec))
                 .toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
     }
-    cells << start << end << QString::number(d.daysToEq[size_t(r)])
-          << QString::number(d.label[size_t(r)]);
+    cells << start << end << QString::number(d.daysToEq[static_cast<size_t>(r)])
+          << QString::number(d.label[static_cast<size_t>(r)]);
     for (int c = 0; c < d.nFeatures(); ++c)
       cells << numberTo(d.at(r, c), dec);
     f.write(cells.join(sep).toUtf8() + '\n');
@@ -334,7 +335,7 @@ Dataset fromFxTable(const fx::NpyTable &table, const Settings &s,
     d.windowStart.push_back(
         start.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss")));
     for (int c : cols)
-      d.X.push_back(table.numeric[c][size_t(r)]);
+      d.X.push_back(table.numeric[c][static_cast<size_t>(r)]);
   }
   d.cls = d.label;
   return d;
@@ -343,21 +344,22 @@ Dataset fromFxTable(const fx::NpyTable &table, const Settings &s,
 int prepareClasses(Dataset &d, const Settings &s, QStringList *log) {
   const QMap<int, int> map = s.labelToClass();
   // Merge, then the month filter per class, then drop NaN rows.
-  std::vector<char> keep(size_t(d.rows()), 1);
+  std::vector<char> keep(static_cast<size_t>(d.rows()), 1);
   for (int r = 0; r < d.rows(); ++r) {
-    d.cls[size_t(r)] = map.value(d.label[size_t(r)], d.label[size_t(r)]);
+    d.cls[static_cast<size_t>(r)] = map.value(d.label[static_cast<size_t>(r)],
+                                              d.label[static_cast<size_t>(r)]);
     for (auto it = s.classMonths.begin(); it != s.classMonths.end(); ++it)
-      if (d.cls[size_t(r)] == it.key() &&
-          !it.value().contains(d.date[size_t(r)].month()))
-        keep[size_t(r)] = 0;
+      if (d.cls[static_cast<size_t>(r)] == it.key() &&
+          !it.value().contains(d.date[static_cast<size_t>(r)].month()))
+        keep[static_cast<size_t>(r)] = 0;
   }
   int nan = 0;
   for (int r = 0; r < d.rows(); ++r) {
-    if (!keep[size_t(r)])
+    if (!keep[static_cast<size_t>(r)])
       continue;
     for (int c = 0; c < d.nFeatures(); ++c)
       if (std::isnan(d.at(r, c))) {
-        keep[size_t(r)] = 0;
+        keep[static_cast<size_t>(r)] = 0;
         ++nan;
         break;
       }
@@ -367,17 +369,19 @@ int prepareClasses(Dataset &d, const Settings &s, QStringList *log) {
   out.extraColumns = d.extraColumns;
   const int ne = d.extraColumns.size();
   for (int r = 0; r < d.rows(); ++r) {
-    if (!keep[size_t(r)])
+    if (!keep[static_cast<size_t>(r)])
       continue;
-    out.label.push_back(d.label[size_t(r)]);
-    out.cls.push_back(d.cls[size_t(r)]);
-    out.date.push_back(d.date[size_t(r)]);
-    out.daysToEq.push_back(d.daysToEq[size_t(r)]);
-    out.windowStart.push_back(d.windowStart[size_t(r)]);
+    out.label.push_back(d.label[static_cast<size_t>(r)]);
+    out.cls.push_back(d.cls[static_cast<size_t>(r)]);
+    out.date.push_back(d.date[static_cast<size_t>(r)]);
+    out.daysToEq.push_back(d.daysToEq[static_cast<size_t>(r)]);
+    out.windowStart.push_back(d.windowStart[static_cast<size_t>(r)]);
     for (int c = 0; c < d.nFeatures(); ++c)
       out.X.push_back(d.at(r, c));
     for (int c = 0; c < ne; ++c)
-      out.extra.push_back(d.extra[size_t(r) * size_t(ne) + size_t(c)]);
+      out.extra.push_back(
+          d.extra[static_cast<size_t>(r) * static_cast<size_t>(ne) +
+                  static_cast<size_t>(c)]);
   }
   if (log)
     *log << QStringLiteral(

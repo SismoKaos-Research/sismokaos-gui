@@ -21,12 +21,13 @@ double Metrics::value(const QString &name) const {
 std::vector<std::vector<int>> confusionMatrix(const std::vector<int> &yTrue,
                                               const std::vector<int> &yPred,
                                               int nClasses) {
-  std::vector<std::vector<int>> cm(size_t(nClasses),
-                                   std::vector<int>(size_t(nClasses), 0));
+  std::vector<std::vector<int>> cm(
+      static_cast<size_t>(nClasses),
+      std::vector<int>(static_cast<size_t>(nClasses), 0));
   for (size_t i = 0; i < yTrue.size(); ++i)
     if (yTrue[i] >= 0 && yTrue[i] < nClasses && yPred[i] >= 0 &&
         yPred[i] < nClasses)
-      ++cm[size_t(yTrue[i])][size_t(yPred[i])];
+      ++cm[static_cast<size_t>(yTrue[i])][static_cast<size_t>(yPred[i])];
   return cm;
 }
 
@@ -107,10 +108,11 @@ Metrics computeMetrics(const std::vector<int> &yTrue,
   m.accuracy = double(right) / double(n);
   double p = 0, r = 0, f = 0;
   for (int c = 0; c < nClasses; ++c) {
-    int tp = cm[size_t(c)][size_t(c)], predicted = 0, actual = 0;
+    int tp = cm[static_cast<size_t>(c)][static_cast<size_t>(c)], predicted = 0,
+        actual = 0;
     for (int k = 0; k < nClasses; ++k) {
-      predicted += cm[size_t(k)][size_t(c)];
-      actual += cm[size_t(c)][size_t(k)];
+      predicted += cm[static_cast<size_t>(k)][static_cast<size_t>(c)];
+      actual += cm[static_cast<size_t>(c)][static_cast<size_t>(k)];
     }
     const double prec = predicted ? double(tp) / predicted : 0.0;
     const double rec = actual ? double(tp) / actual : 0.0;
@@ -121,7 +123,7 @@ Metrics computeMetrics(const std::vector<int> &yTrue,
   m.precisionMacro = p / nClasses;
   m.recallMacro = r / nClasses;
   m.f1Macro = f / nClasses;
-  if (!scores.empty() && scores.size() == n * size_t(nClasses)) {
+  if (!scores.empty() && scores.size() == n * static_cast<size_t>(nClasses)) {
     double sum = 0;
     int counted = 0;
     for (int c = 0; c < nClasses; ++c) {
@@ -131,7 +133,8 @@ Metrics computeMetrics(const std::vector<int> &yTrue,
       for (size_t i = 0; i < n; ++i) {
         pos[i] = yTrue[i] == c;
         nPos += pos[i];
-        sc[i] = scores[i * size_t(nClasses) + size_t(c)];
+        sc[i] =
+            scores[i * static_cast<size_t>(nClasses) + static_cast<size_t>(c)];
       }
       if (nPos == 0 || nPos == n)
         continue;
@@ -147,7 +150,8 @@ double logLoss(const std::vector<int> &yTrue, const std::vector<double> &proba,
                int nClasses) {
   double sum = 0;
   for (size_t i = 0; i < yTrue.size(); ++i) {
-    const double p = std::clamp(proba[i * size_t(nClasses) + size_t(yTrue[i])],
+    const double p = std::clamp(proba[i * static_cast<size_t>(nClasses) +
+                                      static_cast<size_t>(yTrue[i])],
                                 1e-15, 1.0 - 1e-15);
     sum -= std::log(p);
   }
