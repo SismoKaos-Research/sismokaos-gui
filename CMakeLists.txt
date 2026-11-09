@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network LinguistTools)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Network Svg LinguistTools)
 qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES tr en)
 
 add_library(skg_warnings INTERFACE)
