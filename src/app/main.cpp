@@ -8,6 +8,7 @@
 #include "jobs/jobmodel.h"
 #include "modules/placeholder/placeholdermodule.h"
 #include "modules/settings/settingsmodule.h"
+#include "modules/tdvms/tdvmsmodule.h"
 #include "tools/toolregistry.h"
 
 using namespace skg;
@@ -28,13 +29,7 @@ int main(int argc, char *argv[]) {
 
   // The tabs, in order. A new module is one more line here.
   ModuleRegistry modules;
-  modules.emplace<PlaceholderModule>(
-      QStringLiteral("data"), [] { return QObject::tr("Data"); },
-      [] {
-        return QObject::tr("AFAD/TDVMS campaigns and FDSN downloads: "
-                           "ledgers, fetch progress, coverage.");
-      },
-      QStringList{QStringLiteral("tdvms"), QStringLiteral("sismokaos")});
+  modules.emplace<TdvmsModule>();
   modules.emplace<PlaceholderModule>(
       QStringLiteral("features"), [] { return QObject::tr("Features"); },
       [] {
