@@ -67,3 +67,17 @@ FiledArchive fileArchive(const QString &path, const Row &row,
 QString archivePath(const QString &raw, const Row &row);
 
 } // namespace skg::tdvms
+
+namespace skg::tdvms {
+
+// File an archive already on disk against its window (the recovery path,
+// port of tdvms/ingest.py). The file is never deleted on a failed parse.
+struct IngestResult {
+  bool ok = false;
+  QString chunkId; // when matched
+  QString message; // what happened, for the log
+};
+IngestResult ingestFromDisk(Ledger &ledger, const QString &path,
+                            const QString &outDir, bool force = false);
+
+} // namespace skg::tdvms

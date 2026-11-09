@@ -184,3 +184,70 @@ FiledArchive fileArchive(const QString &path, const Row &row,
 }
 
 } // namespace skg::tdvms
+
+namespace skg::tdvms {
+
+IngestResult ingestFromDisk(Ledger &ledger, const QString &path,
+                            const QString &outDir, bool force) {
+  IngestResult out;
+  if (!QFileInfo::exists(path)) {
+    out.message = QStringLiteral("%1 does not exist").arg(path);
+    return out;
+  }
+  const Inspection insp = inspectArchive(path);
+  if (insp.problem != Inspection::Problem::None) {
+    out.message =
+        QStringLiteral("%1 -- %2 left where it is").arg(insp.detail, path);
+    return out;
+  }
+  const MemberWindow w = windowFromMember(insp.members.first());
+  if (!w.valid) {
+    out.message = QStringLiteral(
+                      "'%1' does not carry a TDVMS window; %2 left where it is")
+                      .arg(insp.members.first(), path);
+    return out;
+  }
+  const QString want = w.start.toString(QStringLiteral("yyyy-MM-dd"));
+  std::optional<Row> row;
+  for (const Row &r : ledger.rows())
+    if (str(r, "station") == w.station && str(r, "start").left(10) == want) {
+      row = r;
+      break;
+    }
+  if (!row) {
+    out.message = QStringLiteral("%1 %2 is not in %3; %4 left where it is")
+                      .arg(w.station, want, ledger.path(), path);
+    return out;
+  }
+  out.chunkId = chunkId(*row);
+  if (!insp.hasWaveform()) {
+    const QString notice =
+        QString::fromUtf8(readMember(path, insp.members.first(), 200))
+            .trimmed();
+    ledger.update(out.chunkId, {{"state", "nodata"},
+                                {"fetched_at", nowStamp()},
+                                {"bytes", double(insp.size)},
+                                {"note", notice}});
+    out.ok = true;
+    out.message = QStringLiteral("[NODATA] %1 -- %2").arg(out.chunkId, notice);
+    return out;
+  }
+  const FiledArchive filed =
+      fileArchive(path, *row, outDir, insp.members.size(), insp.size, force);
+  if (filed.kind == FiledArchive::Kind::Fetched) {
+    ledger.update(out.chunkId,
+                  {{"state", "fetched"},
+                   {"fetched_at", nowStamp()},
+                   {"bytes", double(insp.size)},
+                   {"note", QStringLiteral("%1 file(s), ingested from disk")
+                                .arg(insp.members.size())}});
+    out.ok = true;
+    out.message = QStringLiteral("[OK] %1 -- %2 -> %3")
+                      .arg(out.chunkId, filed.detail, filed.path);
+    return out;
+  }
+  out.message = QStringLiteral("[WARN] %1").arg(filed.detail);
+  return out;
+}
+
+} // namespace skg::tdvms

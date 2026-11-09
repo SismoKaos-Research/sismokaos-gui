@@ -16,6 +16,11 @@ qt_add_library(skg_tdvms STATIC
   portal.cpp    portal.h
   fetch.cpp     fetch.h
   coverage.cpp  coverage.h
+  supervisor.cpp supervisor.h
+  fdsn.cpp      fdsn.h
+  runner.cpp    runner.h
+  catalog.cpp   catalog.h
+  data/data.qrc
 )
 target_include_directories(skg_tdvms PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_tdvms PUBLIC Qt6::Core Qt6::Network miniz skg_jobs
