@@ -20,10 +20,11 @@ For building from source, the code layout and how to add a tab, see
 4. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
 5. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
 6. [Analysis tab: earthquakes, faults, labels and figures](#analysis-tab-earthquakes-faults-labels-and-figures)
-7. [Early warning tab: ayzek](#early-warning-tab-ayzek)
-8. [Settings tab](#settings-tab)
-9. [Where files live](#where-files-live)
-10. [Troubleshooting](#troubleshooting)
+7. [Indicators tab: catalog-based seismicity indicators](#indicators-tab-catalog-based-seismicity-indicators)
+8. [Early warning tab: ayzek](#early-warning-tab-ayzek)
+9. [Settings tab](#settings-tab)
+10. [Where files live](#where-files-live)
+11. [Troubleshooting](#troubleshooting)
 
 ## Install and update
 
@@ -434,6 +435,84 @@ Station comparison: add the feature tables of several stations, pick the
 column, and *Build grid* renders the daily figures of every station for the
 days they share, stations down and days across, as one PNG.
 
+## Indicators tab: catalog-based seismicity indicators
+
+This tab works on the earthquake catalog alone, the way the
+Catalog-Based-Indicators tool did: it slides a time window over the events
+of a region and computes, for every window, the Gutenberg-Richter b- and
+a-value, the magnitude deficit, the square-root energy release rate, η (the
+scatter around the Gutenberg-Richter line), μ (the mean interval between
+characteristic events), the mean magnitude and the elapsed time, then
+smooths them and plots them with the M5+ events marked. It follows the
+tested fork of that tool, so undefined values are blank rather than zero.
+
+### Catalog and selection
+
+- **Catalog**: an AFAD export (CSV or `.gz`) with `Date` in
+  `dd/mm/YYYY HH:MM:SS`, `Latitude`, `Longitude` and `Magnitude`. *Describe*
+  loads it, applies the selection below and reports what is left.
+- **Events**: the *whole catalog*, the events within a *buffer* of the
+  **East Anatolian Fault Zone** (its main strand from Karlıova to Antakya
+  and the northern Sürgü-Çardak strand, from the GEM Global Active Faults
+  Database, CC BY-SA 4.0, shipped with the application), the events near
+  the traces of your own **GeoJSON** file (LineString features; a `strand`
+  property lets you pick strands), or the events **within a circle**. The
+  default is the EAFZ with a 30 km buffer.
+- **From date** drops the events before a date, for instance before a
+  network densified.
+- **Homogenise magnitudes** maps the AFAD magnitudes before 2013-11-20 (Md,
+  then the older Ml) onto the 2014-2019 ML/Mw practice by matching
+  exceedance rates. The conversion shipped with the application was fitted
+  on the declustered national catalog; *Fit…* refits it on a national AFAD
+  catalog of your own and saves it as JSON. Mixing the periods without this
+  puts an artificial regime change into every indicator (within 30 km of
+  the EAFZ, Mc and the b-value both jump at the start of 2014).
+- **Decluster** keeps only the Gardner-Knopoff mainshocks and singles. Most
+  indicators then rest on far fewer events.
+
+### Indicators
+
+- **Completeness Mc**: events below it do not enter the b-value, a-value
+  and η. *Estimate* gives the maximum-curvature estimate plus 0.2 on the
+  selected events. The original analysis used 1.3 for the EAFZ; with the
+  2014+ ML catalog use about 2.0.
+- **Magnitude bin**: the catalog's rounding (0.1 for AFAD); the b-value
+  uses Mc minus half a bin.
+- **Window** and **Step** in days, weeks, months or years, as calendar
+  durations (a month step from the 31st lands on the last day of the next
+  month). The windows start at the first event and advance by the step while
+  they fit before the last event; an event on a window's end belongs to the
+  next window.
+- **Half-Gauss σ**: the mean magnitude and the energy rate are also
+  computed with weights rising towards the newest event.
+- **Moving averages**: trailing averages over the given numbers of windows,
+  one figure per average, or all of them *on one figure*.
+- **Bollinger bands**: a trailing mean with bands at ± k sample standard
+  deviations.
+- **Risk label**: `Risk_Durumu` marks the windows that end within the given
+  number of days before an event of at least the given magnitude ("3 aydan
+  az", otherwise "3 aydan fazla").
+- **Output root**, **Figures**: the run writes into
+  `Deprem_Analiz_Grafikleri_<catalog>_<selection>_<window>_<step>_Dikdörtgen/`
+  under the root, with PNG figures at the chosen dpi, or the table alone.
+
+### Results
+
+The run is a job (stop it from the jobs panel or the *Stop* button). Its
+folder holds `<prefix>_pencereler.csv`, the window table with the columns
+of the original tool (`Window_Index`, `x_label`, `Window_Start_Time`,
+`Window_End_Time`, `T`, `b_value`, `a_value`, `Delta_M`, `eta`, `mu`,
+`Event_Count`, `Mmax_obs`, `Mmean_rectangular`, `dE_sqrt_rectangular`,
+`Mmean_half_gauss`, `dE_sqrt_half_gauss`, `Mmax_obs_first_5_to_6`,
+`Mmax_obs_first_6_plus`, `Risk_Durumu`), the annual event counts and one
+figure per indicator, moving average and Bollinger setting. The *Results*
+pane shows the table and the figures of the last run; *Open an earlier
+run…* shows any such folder.
+
+The figures mark the window in which each M5-6 (purple star) and M6+
+(orange star) event first appears. The table is readable by the Python
+tools; numbers are written as pandas writes them.
+
 ## Early warning tab: ayzek
 
 This tab runs **ayzek**, the earthquake early-warning pipeline: it reads
@@ -521,6 +600,7 @@ Early warning tab runs it.
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
 | feature extraction results, labelled tables | the output directory you chose | | |
 | classification projects (`project.toml`, `results/`) | the project folder you chose | | |
+| indicator tables and figures (`Deprem_Analiz_Grafikleri_*/`) | the output root you chose (`~/indicators` by default) | | |
 | ayzek's assessment table and scores | the output folder you chose (your home folder when empty) | | |
 | the shipped ayzek (executable, `models/`, licence) | inside the AppImage, `usr/share/sismokaos-gui/ayzek` | `sismokaos-gui.app/Contents/Resources/ayzek` | `ayzek\` beside the executable |
 

@@ -35,6 +35,9 @@ src/tdvms/     the C++ port of tdvms-pull (library, no Widgets)
 src/fx/        the C++ port of the feature extraction, after sismokaos-cli (library, no Widgets)
 src/analysis/  the SCAP port: catalogs, faults, labelling, figures (library, QtGui only)
 src/sfc/       the classification port: settings, dataset, split, models, tuning, run (library)
+src/cbi/       the catalog-based indicators port, after indicators-forecast: zones, Mc and
+               homogenisation, Gardner-Knopoff, windows, indicators, table, figures, run
+               (library; data/ holds the EAFZ GeoJSON and the AFAD magnitude map)
 src/ayzek/     the launcher logic for the bundled ayzek: command line, output parsing (not a port)
 src/core/      Module interface, AppContext, ModuleRegistry, I18n
 src/modules/   one directory per tab, each its own static library target

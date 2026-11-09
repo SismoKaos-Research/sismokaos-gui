@@ -66,7 +66,7 @@
     <message>
         <location filename="../src/ayzek/launcher.cpp" line="145"/>
         <source>Live SeedLink input is not available in the Windows build of ayzek; replay files instead.</source>
-        <translation>Canlı SeedLink girişi ayzek'in Windows derlemesinde yok; bunun yerine dosyaları yeniden oynatın.</translation>
+        <translation>Canlı SeedLink girişi ayzek&apos;in Windows derlemesinde yok; bunun yerine dosyaları yeniden oynatın.</translation>
     </message>
     <message>
         <location filename="../src/ayzek/launcher.cpp" line="151"/>
@@ -1011,7 +1011,7 @@
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.h" line="40"/>
         <source>Runs ayzek, the earthquake early-warning pipeline, on replayed miniSEED files or a live SeedLink stream</source>
-        <translation>Deprem erken uyarı hattı ayzek'i yeniden oynatılan miniSEED dosyaları ya da canlı bir SeedLink akışı üzerinde çalıştırır</translation>
+        <translation>Deprem erken uyarı hattı ayzek&apos;i yeniden oynatılan miniSEED dosyaları ya da canlı bir SeedLink akışı üzerinde çalıştırır</translation>
     </message>
 </context>
 <context>
@@ -1215,7 +1215,7 @@
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="426"/>
         <source>Station detections needed to declare an event; ayzek&apos;s default is 2 (3 for the transformer)</source>
-        <translation>Bir olayı ilan etmek için gereken istasyon algılaması; ayzek'in varsayılanı 2 (dönüştürücü için 3)</translation>
+        <translation>Bir olayı ilan etmek için gereken istasyon algılaması; ayzek&apos;in varsayılanı 2 (dönüştürücü için 3)</translation>
     </message>
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="429"/>
@@ -1424,7 +1424,7 @@
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="731"/>
         <source>%1 catalogue events: %2 detected (%3 before S), %4 missed</source>
-        <translation>%1 katalog olayı: %2 algılandı (%3 tanesi S'den önce), %4 kaçırıldı</translation>
+        <translation>%1 katalog olayı: %2 algılandı (%3 tanesi S&apos;den önce), %4 kaçırıldı</translation>
     </message>
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="738"/>
@@ -2168,17 +2168,17 @@
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="76"/>
         <source>Window</source>
-        <translation type="unfinished">Pencere</translation>
+        <translation>Pencere</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="78"/>
         <source>Start</source>
-        <translation type="unfinished">Başlangıç</translation>
+        <translation>Başlangıç</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="80"/>
         <source>End</source>
-        <translation type="unfinished">Bitiş</translation>
+        <translation>Bitiş</translation>
     </message>
 </context>
 <context>
@@ -2186,12 +2186,12 @@
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.h" line="41"/>
         <source>Indicators</source>
-        <translation type="unfinished"></translation>
+        <translation>Göstergeler</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.h" line="43"/>
         <source>Sliding-window seismicity indicators from an earthquake catalog: b- and a-value, magnitude deficit, energy release, η, μ, with moving averages and Bollinger bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Deprem kataloğundan kayan pencereli sismisite göstergeleri: b- ve a-değeri, büyüklük açığı, enerji boşalımı, η, μ; hareketli ortalamalar ve Bollinger bantlarıyla</translation>
     </message>
 </context>
 <context>
@@ -2199,29 +2199,27 @@
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="139"/>
         <source>Open folder</source>
-        <translation type="unfinished">Klasörü aç</translation>
+        <translation>Klasörü aç</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="140"/>
         <source>Open an earlier run…</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki bir çalıştırmayı aç…</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="142"/>
         <source>No run yet. Run the indicators or open an earlier output folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Henüz çalıştırma yok. Göstergeleri çalıştırın ya da önceki bir çıktı klasörünü açın.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/indicators/resultspane.cpp" line="175"/>
         <source>%1: %n window(s), %2 figure(s)%3</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
+        <translation><numerusform>%1: %n pencere, %2 grafik%3</numerusform></translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="208"/>
         <source>Output folder of an indicators run</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir gösterge çalıştırmasının çıktı klasörü</translation>
     </message>
 </context>
 <context>
@@ -2230,378 +2228,376 @@
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="214"/>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="525"/>
         <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
-        <translation type="unfinished">Kataloglar (*.csv *.csv.gz);;Tüm dosyalar (*)</translation>
+        <translation>Kataloglar (*.csv *.csv.gz);;Tüm dosyalar (*)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="217"/>
         <source>GeoJSON (*.geojson *.json);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>GeoJSON (*.geojson *.json);;Tüm dosyalar (*)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="220"/>
         <source>Magnitude conversion (*.json);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Büyüklük dönüşümü (*.json);;Tüm dosyalar (*)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="253"/>
         <source>Catalog</source>
-        <translation type="unfinished">Katalog</translation>
+        <translation>Katalog</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="255"/>
         <source>AFAD export CSV: Date, Latitude, Longitude, Magnitude…</source>
-        <translation type="unfinished"></translation>
+        <translation>AFAD dışa aktarım CSV: Date, Latitude, Longitude, Magnitude…</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="256"/>
         <source>Describe</source>
-        <translation type="unfinished"></translation>
+        <translation>Özetle</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="257"/>
         <source>Loads the catalog, applies the selection and reports the events kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kataloğu yükler, seçimi uygular ve kalan olayları bildirir.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="259"/>
         <source>Events</source>
-        <translation type="unfinished"></translation>
+        <translation>Olaylar</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
         <source>Whole catalog</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm katalog</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
         <source>Near the East Anatolian Fault Zone</source>
-        <translation type="unfinished"></translation>
+        <translation>Doğu Anadolu Fay Zonu yakınında</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
         <source>Near a fault trace (GeoJSON file)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir fay hattı yakınında (GeoJSON dosyası)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
         <source>Within a circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir daire içinde</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="265"/>
         <source>Fault GeoJSON</source>
-        <translation type="unfinished"></translation>
+        <translation>Fay GeoJSON</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
         <source>FeatureCollection of LineString features; property &quot;strand&quot; optional</source>
-        <translation type="unfinished"></translation>
+        <translation>LineString öğelerinden oluşan FeatureCollection; "strand" özelliği isteğe bağlı</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
         <source>Strands</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollar</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="271"/>
         <source>comma-separated, empty = all (EAFZ: main, northern)</source>
-        <translation type="unfinished"></translation>
+        <translation>virgülle ayrılmış, boş = tümü (DAFZ: main, northern)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="272"/>
         <source>Buffer (km)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampon (km)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="273"/>
         <source>Centre lat, lon, radius (km)</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkez enlem, boylam, yarıçap (km)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="274"/>
         <source>From date</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlangıç tarihi</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="275"/>
         <source>drop earlier events</source>
-        <translation type="unfinished"></translation>
+        <translation>öncesini at</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="276"/>
         <source>Homogenise magnitudes</source>
-        <translation type="unfinished"></translation>
+        <translation>Büyüklükleri homojenleştir</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="278"/>
         <source>Converts AFAD magnitudes before 2013-11-20 onto the 2014-2019 ML/Mw practice by rate matching. Empty file = the conversion shipped with the app.</source>
-        <translation type="unfinished"></translation>
+        <translation>2013-11-20 öncesi AFAD büyüklüklerini oran eşleştirmesiyle 2014-2019 ML/Mw uygulamasına dönüştürür. Boş dosya = uygulamayla gelen dönüşüm.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="281"/>
         <source>conversion JSON (empty = shipped)</source>
-        <translation type="unfinished"></translation>
+        <translation>dönüşüm JSON (boş = uygulamayla gelen)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="282"/>
         <source>Fit…</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalibre et…</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="283"/>
         <source>Fits a conversion on a national AFAD catalog (declustered) and saves it as JSON.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ulusal bir AFAD kataloğu üzerinde (artçılar ayıklanmış) dönüşümü kalibre eder ve JSON olarak kaydeder.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="285"/>
         <source>Decluster (Gardner-Knopoff mainshocks only)</source>
-        <translation type="unfinished"></translation>
+        <translation>Artçıları ayıkla (yalnızca Gardner-Knopoff ana şoklar)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="286"/>
         <source>Completeness Mc</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamamlanma Mc</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="287"/>
         <source>Estimate</source>
-        <translation type="unfinished"></translation>
+        <translation>Kestir</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="289"/>
         <source>Maximum curvature + 0.2 on the selected events.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçili olaylarda en büyük eğrilik + 0,2.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="290"/>
         <source>Magnitude bin</source>
-        <translation type="unfinished"></translation>
+        <translation>Büyüklük aralığı</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="291"/>
         <source>Window</source>
-        <translation type="unfinished">Pencere</translation>
+        <translation>Pencere</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="292"/>
         <source>Step</source>
-        <translation type="unfinished">Adım</translation>
+        <translation>Adım</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
         <source>days</source>
-        <translation type="unfinished"></translation>
+        <translation>gün</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
         <source>weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>hafta</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
         <source>months</source>
-        <translation type="unfinished"></translation>
+        <translation>ay</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
         <source>years</source>
-        <translation type="unfinished"></translation>
+        <translation>yıl</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="298"/>
         <source>Half-Gauss σ</source>
-        <translation type="unfinished"></translation>
+        <translation>Yarı Gauss σ</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="299"/>
         <source>Moving averages</source>
-        <translation type="unfinished"></translation>
+        <translation>Hareketli ortalamalar</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="300"/>
         <source>window counts, e.g. 7,15,23</source>
-        <translation type="unfinished"></translation>
+        <translation>pencere sayıları, örn. 7,15,23</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="301"/>
         <source>on one figure</source>
-        <translation type="unfinished"></translation>
+        <translation>tek grafikte</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="302"/>
         <source>Bollinger bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Bollinger bantları</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="303"/>
         <source>window </source>
-        <translation type="unfinished"></translation>
+        <translation>pencere </translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="304"/>
         <source>k </source>
-        <translation type="unfinished"></translation>
+        <translation>k </translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="305"/>
         <source>Risk label</source>
-        <translation type="unfinished"></translation>
+        <translation>Risk etiketi</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="306"/>
         <source>M ≥ </source>
-        <translation type="unfinished"></translation>
+        <translation>M ≥ </translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="307"/>
         <source> days before</source>
-        <translation type="unfinished"></translation>
+        <translation> gün öncesi</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="308"/>
         <source>Output root</source>
-        <translation type="unfinished"></translation>
+        <translation>Çıktı kök klasörü</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="309"/>
         <source>Figures</source>
-        <translation type="unfinished">Grafikler</translation>
+        <translation>Grafikler</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="310"/>
         <source> dpi</source>
-        <translation type="unfinished"></translation>
+        <translation> dpi</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="311"/>
         <source>write PNG figures</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG grafikleri yaz</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="312"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Çalıştır</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="313"/>
         <source>Stop</source>
-        <translation type="unfinished">Durdur</translation>
+        <translation>Durdur</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="314"/>
         <source>Settings and run</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayarlar ve çalıştırma</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="315"/>
         <source>Results</source>
-        <translation type="unfinished">Sonuçlar</translation>
+        <translation>Sonuçlar</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="317"/>
         <source>Catalog and selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalog ve seçim</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="320"/>
         <source>Indicators</source>
-        <translation type="unfinished"></translation>
+        <translation>Göstergeler</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="396"/>
         <source>Choose a catalog file first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Önce bir katalog dosyası seçin.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="404"/>
         <source>Choose the fault GeoJSON file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fay GeoJSON dosyasını seçin.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="435"/>
         <source>Moving averages: comma-separated positive counts, e.g. 7,15,23.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hareketli ortalamalar: virgülle ayrılmış pozitif sayılar, örn. 7,15,23.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="449"/>
         <source>Choose the output root folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çıktı kök klasörünü seçin.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="486"/>
         <source>Catalog: %n event(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Katalog: %n deprem</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="489"/>
         <source>%n event(s) selected.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="505"/>
         <source>No event matches the selection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçime uyan olay yok.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="511"/>
         <source>Mc by maximum curvature + 0.2: %1 (%n event(s))</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
+        <translation><numerusform>En büyük eğrilik + 0,2 ile Mc: %1 (%n olay)</numerusform></translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="523"/>
         <source>National AFAD catalog to calibrate on</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalibrasyon için ulusal AFAD kataloğu</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="529"/>
         <source>Save the conversion as</source>
-        <translation type="unfinished"></translation>
+        <translation>Dönüşümü farklı kaydet</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="531"/>
         <source>JSON (*.json)</source>
-        <translation type="unfinished"></translation>
+        <translation>JSON (*.json)</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="536"/>
         <source>Magnitude calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Büyüklük kalibrasyonu</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="537"/>
         <source>Rate matching on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 üzerinde oran eşleştirmesi</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="587"/>
         <source>Indicators %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Göstergeler %1</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="589"/>
         <source>%1, window %2, step %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, pencere %2, adım %3</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="620"/>
         <source>Done: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamamlandı: %1</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="621"/>
         <source>The run did not finish; see the log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çalıştırma tamamlanmadı; günlüğe bakın.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="626"/>
         <source>Running…</source>
-        <translation type="unfinished"></translation>
+        <translation>Çalışıyor…</translation>
     </message>
 </context>
 <context>
