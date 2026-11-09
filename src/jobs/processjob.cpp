@@ -41,8 +41,13 @@ void ProcessJob::cancel() {
     return;
   setState(State::Cancelled);
   process_.terminate();
-  if (!process_.waitForFinished(3000))
+  // A console program on Windows ignores terminate() (it is WM_CLOSE), and
+  // kill() finishes asynchronously; wait so the exit trailer is written
+  // before cancel() returns.
+  if (!process_.waitForFinished(3000)) {
     process_.kill();
+    process_.waitForFinished(3000);
+  }
 }
 
 void ProcessJob::feedLine(const QString &line) {
