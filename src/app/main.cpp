@@ -7,6 +7,7 @@
 #include "core/i18n.h"
 #include "core/moduleregistry.h"
 #include "jobs/jobmodel.h"
+#include "modules/analysis/analysismodule.h"
 #include "modules/features/featuresmodule.h"
 #include "modules/placeholder/placeholdermodule.h"
 #include "modules/settings/settingsmodule.h"
@@ -42,12 +43,7 @@ int main(int argc, char *argv[]) {
                            "reports.");
       },
       QStringList{QStringLiteral("sfc")});
-  modules.emplace<PlaceholderModule>(
-      QStringLiteral("results"), [] { return QObject::tr("Results"); },
-      [] {
-        return QObject::tr("Feature matrices, run metadata and HTML "
-                           "reports, browsed and plotted.");
-      });
+  modules.emplace<AnalysisModule>();
   modules.emplace<SettingsModule>(&i18n);
 
   MainWindow w(ctx, modules, &i18n);

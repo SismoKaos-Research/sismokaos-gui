@@ -4,6 +4,7 @@ add_subdirectory(placeholder)
 add_subdirectory(settings)
 add_subdirectory(tdvms)
 add_subdirectory(features)
+add_subdirectory(analysis)
 
 set(SKG_MODULE_TARGETS ${SKG_MODULE_TARGETS} PARENT_SCOPE)
 set(SKG_TRANSLATED_TARGETS ${SKG_TRANSLATED_TARGETS} PARENT_SCOPE)

@@ -2,7 +2,9 @@
 
 A desktop application for the SismoKaos workflow: downloading continuous
 seismic data from AFAD/TDVMS and FDSN services, extracting statistical and
-chaotic features from it, and (coming) classifying the features. Everything
+chaotic features from it, relating them to the earthquake catalog and the
+active faults around a station with publication figures, and (coming)
+classifying the features. Everything
 runs inside the application; no Python, Qt or other installation is needed.
 Turkish and English, switchable while running. Linux, Windows and macOS.
 
@@ -15,9 +17,10 @@ For building from source, the code layout and how to add a tab, see
 2. [The window](#the-window)
 3. [Data tab: TDVMS campaigns and FDSN pulls](#data-tab-tdvms-campaigns-and-fdsn-pulls)
 4. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
-5. [Settings tab](#settings-tab)
-6. [Where files live](#where-files-live)
-7. [Troubleshooting](#troubleshooting)
+5. [Analysis tab: earthquakes, faults, labels and figures](#analysis-tab-earthquakes-faults-labels-and-figures)
+6. [Settings tab](#settings-tab)
+7. [Where files live](#where-files-live)
+8. [Troubleshooting](#troubleshooting)
 
 ## Install and update
 
@@ -71,9 +74,9 @@ has the AppImage, the Windows zip (unpack anywhere, run
 
 ## The window
 
-The tabs along the top are the tools: **Data**, **Features**,
-**Classification** and **Results** (the last two are placeholders until the
-classification port lands), and **Settings**.
+The tabs along the top are the tools: **Data**, **Features**, **Analysis**,
+**Classification** (a placeholder until the classification port lands), and
+**Settings**.
 
 The **Jobs** panel at the bottom lists everything the application runs: a
 download campaign, a calibration, a feature extraction. Each job shows its
@@ -300,6 +303,65 @@ w = np.memmap("ELZG_preprocessed.f32", dtype="<f4", mode="r").reshape(-1, 3)
 Windows that cover a gap carry an `*_INTERP_FRAC` above zero; filter on it
 before trusting a chaos measurement there.
 
+## Analysis tab: earthquakes, faults, labels and figures
+
+This tab takes a feature table and puts it next to the earthquake catalog
+and the active faults, the way the SCAP platform did: which events happened
+near the station and when, which fault is closest, a label per window, and
+the figures.
+
+### Inputs (top of the tab)
+
+- **Feature table**: a `<name>_features.npy` or `.csv` from the Features
+  tab. The run metadata beside it supplies the station code and the window
+  length. SCAP's own result CSVs (`YYYY_MM_DD_HH_wNN` window ids) load too.
+- **Earthquake catalog**: the AFAD export, CSV or `.gz`, with the time zone
+  its times are in (AFAD exports are UTC; SCAP kept a copy in Turkey time).
+- **Station list** and **Station**: the code is looked up in the list (the
+  built-in AFAD list when the field is empty); tick *position* to type the
+  latitude and longitude instead.
+- **Fault lines**: the MTA active fault shapefile (`.shp` with its `.dbf`),
+  optional. MTA sells this data and does not allow redistribution, so it is
+  not shipped with the application; any polyline shapefile works.
+
+Everything below updates as soon as these are set.
+
+### Catalog
+
+The events of the table's period that matter at the station, by SCAP's
+distance bands (all events within 100 km, M3+ to 300 km, M5+ to 500 km, M6+
+to 1000 km), with distance, direction and, when the fault lines are loaded,
+the nearest fault to each epicentre and which side of it the event lies. The
+summary names the main event (the largest M5+). The map shows the station,
+the events coloured by band and sized by magnitude, the main event, the
+distance rings and the faults; set the half-width to zoom. *Map as PNG/SVG*
+and *Events as CSV* export them.
+
+### Labels
+
+Adds SCAP's columns to the table: for every window the events whose origin
+time falls inside it, their magnitudes, positions, distances, distance
+classes (1: to 100 km, 2: to 300, 3: to 500, 4: beyond) and directions from
+the station, the count, and a 0/1 flag. Writes `<name>_etiketli.csv` and
+`.npy` beside the table and previews the result.
+
+### Figures
+
+Any numeric column as SCAP drew its metrics: a filled trace (red above zero,
+blue below) with the earthquakes on a right-hand magnitude axis, one marker
+shape per distance band, coloured by depth, labelled from M5. Three views:
+*One day*, *All days* end to end (with the main event as a red line), or a
+window of days *Around the main event*. The y range follows SCAP for its
+five metrics and the data otherwise; untick *automatic range* to fix it.
+Export the shown figure as PNG (at the chosen dpi) or SVG, or every daily
+figure plus the combined one into a folder as a job.
+
+### Grid
+
+Station comparison: add the feature tables of several stations, pick the
+column, and *Build grid* renders the daily figures of every station for the
+days they share, stations down and days across, as one PNG.
+
 ## Settings tab
 
 **Interface** chooses the language. The **tools** section is for the two
@@ -315,7 +377,7 @@ this.
 | application settings (window layout, language, last folders) | `~/.config/sismokaos/sismokaos-gui.conf` | `~/Library/Preferences/com.sismokaos.sismokaos-gui.plist` | registry, `HKCU\Software\sismokaos\sismokaos-gui` |
 | mailbox and defaults (`mailbox.env`, `settings.env`) | `~/.config/tdvms/` | `~/.config/tdvms/` | `%APPDATA%\tdvms\` |
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
-| feature extraction results | the output directory you chose | | |
+| feature extraction results, labelled tables | the output directory you chose | | |
 
 Campaign files are shared with the command-line `tdvms` tool, which uses the
 same ledger and env files but a different lock file: never run both on the
