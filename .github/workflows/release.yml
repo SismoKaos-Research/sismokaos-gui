@@ -104,7 +104,10 @@ jobs:
         run: |
           $name = "sismokaos-gui-$env:VERSION-windows-x86_64"
           New-Item -ItemType Directory -Force -Path "dist\$name" | Out-Null
-          Copy-Item build\src\app\sismokaos-gui.exe "dist\$name\"
+          # Ninja on Windows puts the executable in the build root, not src/app.
+          $exe = Get-ChildItem -Path build -Recurse -Filter sismokaos-gui.exe | Select-Object -First 1
+          if (-not $exe) { throw "sismokaos-gui.exe not found under build" }
+          Copy-Item $exe.FullName "dist\$name\"
           Copy-Item install.ps1 "dist\$name\update.ps1"
           Copy-Item LICENSE "dist\$name\LICENSE.txt"
           windeployqt --release --no-compiler-runtime "dist\$name\sismokaos-gui.exe"
