@@ -11,6 +11,7 @@
 #include "modules/classification/classificationmodule.h"
 #include "modules/earlywarning/earlywarningmodule.h"
 #include "modules/features/featuresmodule.h"
+#include "modules/indicators/indicatorsmodule.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/tdvms/tdvmsmodule.h"
 #include "tools/toolregistry.h"
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]) {
   modules.emplace<FeaturesModule>();
   modules.emplace<ClassificationModule>();
   modules.emplace<AnalysisModule>();
+  modules.emplace<IndicatorsModule>();
   modules.emplace<EarlyWarningModule>();
   modules.emplace<SettingsModule>(&i18n);
 
