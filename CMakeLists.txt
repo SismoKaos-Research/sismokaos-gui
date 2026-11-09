@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network LinguistTools)
 qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES tr en)
 
 add_library(skg_warnings INTERFACE)
@@ -19,12 +19,14 @@ target_compile_options(skg_warnings INTERFACE
 # Layered libraries, each in its own directory with its own CMakeLists.txt:
 #   jobs    running external tools, progress, the jobs table and panel
 #   tools   where the sismokaos/sfc/tdvms executables are and how to call them
+#   tdvms   the C++ port of tdvms-pull (campaign ledger, portal, mail, fetch)
 #   core    the Module interface, AppContext, registry, language switching
 #   modules/<name>  one GUI module (a tab) per directory
 #   app     the main window and main()
 add_subdirectory(third_party)
 add_subdirectory(src/jobs)
 add_subdirectory(src/tools)
+add_subdirectory(src/tdvms)
 add_subdirectory(src/core)
 add_subdirectory(src/modules)
 add_subdirectory(src/app)
