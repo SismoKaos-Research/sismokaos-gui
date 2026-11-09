@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(sismokaos-gui VERSION 0.1.0 LANGUAGES CXX)
+project(sismokaos-gui VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,6 +22,7 @@ target_compile_options(skg_warnings INTERFACE
 #   core    the Module interface, AppContext, registry, language switching
 #   modules/<name>  one GUI module (a tab) per directory
 #   app     the main window and main()
+add_subdirectory(third_party)
 add_subdirectory(src/jobs)
 add_subdirectory(src/tools)
 add_subdirectory(src/core)
