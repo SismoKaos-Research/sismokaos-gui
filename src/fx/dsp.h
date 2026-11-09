@@ -4,6 +4,7 @@
 // linear detrending and the moving-average STA/LTA.
 #pragma once
 
+#include <array>
 #include <complex>
 #include <vector>
 

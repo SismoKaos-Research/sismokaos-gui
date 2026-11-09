@@ -28,7 +28,8 @@ public:
 
 signals:
   void lineLogged(const QString &line);
-  void progressReported(double fraction, const QString &text, bool withFraction);
+  void progressReported(double fraction, const QString &text,
+                        bool withFraction);
   // Emitted (in the job's thread) when cancel() is called; long waits can
   // connect to it to wake up.
   void cancelRequested();

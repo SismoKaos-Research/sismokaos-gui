@@ -5,6 +5,7 @@
 
 #include "fx/npy.h"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 

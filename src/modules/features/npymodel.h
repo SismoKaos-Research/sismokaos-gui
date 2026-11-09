@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include <QList>
 #include <QStringList>
+#include <QVariant>
 
 namespace skg {
 

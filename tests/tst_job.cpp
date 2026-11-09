@@ -34,9 +34,10 @@ private slots:
   }
 
   void progressFromOutput() {
-    ProcessJob job(shell("printf '[1/2] a\\n@sfc "
-                         "{\"event\":\"day\",\"done\":2,\"total\":2}\\nlast line "
-                         "without newline'"));
+    ProcessJob job(
+        shell("printf '[1/2] a\\n@sfc "
+              "{\"event\":\"day\",\"done\":2,\"total\":2}\\nlast line "
+              "without newline'"));
     job.start();
     QTRY_COMPARE_WITH_TIMEOUT(job.state(), Job::State::Done, 5000);
     QCOMPARE(job.exitCode(), 0);
@@ -133,23 +134,22 @@ private slots:
     QSignalSpy finished(&model, &JobModel::jobFinished);
     Job *a = model.addProcess(shell("exit 0"));
     Job *b = model.addProcess(shell("exit 2"));
-    Job *c = model.add(new TaskJob("t", "tdvms", "task", [](TaskContext &) {
-      return 0;
-    }));
+    Job *c = model.add(
+        new TaskJob("t", "tdvms", "task", [](TaskContext &) { return 0; }));
     QCOMPARE(model.rowCount(), 3);
     QCOMPARE(model.rowOf(b), 1);
     QCOMPARE(added.count(), 3);
     QTRY_COMPARE_WITH_TIMEOUT(finished.count(), 3, 5000);
     QCOMPARE(model.runningCount(), 0);
-    QCOMPARE(model.data(model.index(0, JobModel::State), Qt::DisplayRole)
-                 .toString(),
-             stateName(Job::State::Done));
+    QCOMPARE(
+        model.data(model.index(0, JobModel::State), Qt::DisplayRole).toString(),
+        stateName(Job::State::Done));
     QVERIFY(model.data(model.index(1, JobModel::State), Qt::DisplayRole)
                 .toString()
                 .contains("2"));
-    QCOMPARE(model.data(model.index(2, JobModel::Tool), Qt::DisplayRole)
-                 .toString(),
-             QString("tdvms"));
+    QCOMPARE(
+        model.data(model.index(2, JobModel::Tool), Qt::DisplayRole).toString(),
+        QString("tdvms"));
     QCOMPARE(a->state(), Job::State::Done);
     QCOMPARE(c->state(), Job::State::Done);
   }
@@ -157,3 +157,4 @@ private slots:
 
 QTEST_GUILESS_MAIN(TstJob)
 #include "tst_job.moc"
+#include <stdexcept>

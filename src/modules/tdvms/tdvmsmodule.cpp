@@ -43,6 +43,7 @@
 #include "tdvms/runner.h"
 #include "tdvms/settings.h"
 #include "tdvms/slots.h"
+#include <algorithm>
 
 namespace skg {
 

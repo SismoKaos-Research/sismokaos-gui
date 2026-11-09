@@ -89,8 +89,7 @@ void TaskJob::start() {
       },
       Qt::QueuedConnection);
   connect(
-      worker, &Worker::finished, this,
-      [this](int rc) { finish(rc); },
+      worker, &Worker::finished, this, [this](int rc) { finish(rc); },
       Qt::QueuedConnection);
   connect(&thread_, &QThread::finished, worker, &QObject::deleteLater);
   connect(&thread_, &QThread::finished, context_, &QObject::deleteLater);
@@ -122,3 +121,4 @@ bool TaskJob::wait(int ms) {
 } // namespace skg
 
 #include "taskjob.moc"
+#include <utility>

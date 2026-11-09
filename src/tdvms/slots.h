@@ -15,6 +15,7 @@
 #include <optional>
 
 #include "tdvms/ledger.h"
+#include <stdexcept>
 
 namespace skg::tdvms {
 

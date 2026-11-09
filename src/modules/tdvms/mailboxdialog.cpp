@@ -12,6 +12,7 @@
 #include "jobs/taskjob.h"
 #include "tdvms/imap.h"
 #include "tdvms/settings.h"
+#include <QVBoxLayout>
 
 namespace skg {
 

@@ -7,6 +7,7 @@
 
 #include "jobs/job.h"
 #include "jobs/processjob.h"
+#include <QVariant>
 
 namespace skg {
 

@@ -13,6 +13,7 @@
 #include "tdvms/catalog.h"
 #include "tdvms/history.h"
 #include "tdvms/plan.h"
+#include <QVBoxLayout>
 
 namespace skg {
 

@@ -380,3 +380,4 @@ private slots:
 
 QTEST_GUILESS_MAIN(TstTdvmsCore)
 #include "tst_tdvms_core.moc"
+#include <stdexcept>

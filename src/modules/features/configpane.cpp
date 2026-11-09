@@ -16,6 +16,10 @@
 #include <QVBoxLayout>
 
 #include "modules/features/bandsmodel.h"
+#include <QDir>
+#include <QFileInfo>
+#include <QSignalBlocker>
+#include <algorithm>
 
 namespace skg {
 

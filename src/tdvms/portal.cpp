@@ -5,6 +5,7 @@
 #include <QJsonObject>
 
 #include <stdexcept>
+#include <utility>
 
 namespace skg::tdvms {
 

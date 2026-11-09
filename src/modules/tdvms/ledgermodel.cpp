@@ -2,6 +2,7 @@
 
 #include <QBrush>
 #include <QColor>
+#include <QVariant>
 
 namespace skg {
 

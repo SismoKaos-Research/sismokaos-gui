@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QSaveFile>
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 

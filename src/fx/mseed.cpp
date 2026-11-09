@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QtEndian>
 
+#include <algorithm>
 #include <cstring>
 #include <stdexcept>
 

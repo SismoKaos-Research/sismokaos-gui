@@ -17,6 +17,7 @@
 #include <stdexcept>
 
 #include "fx/npy.h"
+#include <utility>
 
 namespace skg::fx {
 

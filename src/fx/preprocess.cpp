@@ -14,6 +14,8 @@
 #include "fx/dsp.h"
 #include "fx/mseed.h"
 #include "miniz.h"
+#include <QSet>
+#include <utility>
 
 namespace skg::fx {
 

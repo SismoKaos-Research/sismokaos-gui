@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include "tdvms/coverage.h"
+#include <cmath>
 
 namespace skg::tdvms {
 

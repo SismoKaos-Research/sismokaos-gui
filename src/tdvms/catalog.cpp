@@ -15,6 +15,8 @@
 
 #include "tdvms/portal.h"
 #include "tdvms/settings.h"
+#include <QFileInfo>
+#include <algorithm>
 
 namespace skg::tdvms {
 

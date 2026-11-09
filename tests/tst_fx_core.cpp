@@ -538,3 +538,5 @@ private slots:
 
 QTEST_GUILESS_MAIN(TstFxCore)
 #include "tst_fx_core.moc"
+#include <algorithm>
+#include <stdexcept>

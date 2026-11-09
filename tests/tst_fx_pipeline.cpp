@@ -377,3 +377,5 @@ private slots:
 
 QTEST_GUILESS_MAIN(TstFxPipeline)
 #include "tst_fx_pipeline.moc"
+#include <algorithm>
+#include <stdexcept>

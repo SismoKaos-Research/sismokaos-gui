@@ -1,5 +1,6 @@
 #include "modules/features/bandsmodel.h"
 
+#include <QVariant>
 #include <algorithm>
 
 namespace skg {

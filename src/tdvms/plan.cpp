@@ -4,6 +4,7 @@
 #include <QSet>
 #include <QTimeZone>
 
+#include <algorithm>
 #include <stdexcept>
 
 namespace skg::tdvms {

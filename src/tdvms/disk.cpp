@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QStorageInfo>
+#include <algorithm>
 
 namespace skg::tdvms {
 

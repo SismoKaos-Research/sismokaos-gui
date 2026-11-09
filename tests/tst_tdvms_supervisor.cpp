@@ -355,3 +355,4 @@ private slots:
 
 QTEST_GUILESS_MAIN(TstTdvmsSupervisor)
 #include "tst_tdvms_supervisor.moc"
+#include <stdexcept>

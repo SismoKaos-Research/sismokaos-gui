@@ -279,3 +279,4 @@ private slots:
 
 QTEST_GUILESS_MAIN(TstTdvmsFetch)
 #include "tst_tdvms_fetch.moc"
+#include <stdexcept>

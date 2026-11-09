@@ -26,6 +26,10 @@
 #include "jobs/taskjob.h"
 #include "modules/features/configpane.h"
 #include "modules/features/resultspane.h"
+#include <QFile>
+#include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 namespace skg {
 

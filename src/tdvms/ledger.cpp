@@ -9,6 +9,7 @@
 #include <QTimeZone>
 
 #include <algorithm>
+#include <utility>
 
 namespace skg::tdvms {
 

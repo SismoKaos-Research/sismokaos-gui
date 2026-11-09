@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <utility>
 
 namespace skg {
 

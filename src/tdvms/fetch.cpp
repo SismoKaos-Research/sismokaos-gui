@@ -8,6 +8,7 @@
 #include <QTimeZone>
 
 #include "miniz.h"
+#include <algorithm>
 
 namespace skg::tdvms {
 

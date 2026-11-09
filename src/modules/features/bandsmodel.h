@@ -5,6 +5,7 @@
 #include <QList>
 
 #include "fx/config.h"
+#include <QVariant>
 
 namespace skg {
 

@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 
 #include "tdvms/ledger.h"
+#include <QVariant>
 
 namespace skg {
 

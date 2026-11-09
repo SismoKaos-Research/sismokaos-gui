@@ -15,6 +15,8 @@
 
 #include "miniz.h"
 #include "tdvms/fetch.h"
+#include <cmath>
+#include <utility>
 
 namespace skg::tdvms {
 

@@ -5,7 +5,9 @@
 #include <QSaveFile>
 #include <QtEndian>
 
+#include <algorithm>
 #include <cstring>
+#include <limits>
 #include <stdexcept>
 
 namespace skg::fx {

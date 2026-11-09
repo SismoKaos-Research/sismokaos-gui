@@ -9,6 +9,8 @@
 
 #include "tdvms/disk.h"
 #include "tdvms/imap.h"
+#include <algorithm>
+#include <utility>
 
 namespace skg::tdvms {
 

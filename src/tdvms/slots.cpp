@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include "tdvms/settings.h"
+#include <QFileInfo>
 
 namespace skg::tdvms {
 

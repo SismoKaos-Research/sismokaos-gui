@@ -18,6 +18,7 @@
 #include "core/i18n.h"
 #include "jobs/jobmodel.h"
 #include "jobs/jobspanel.h"
+#include <QEvent>
 
 namespace skg {
 
