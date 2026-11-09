@@ -1,0 +1,6 @@
+{
+  "synthetic_catalog.csv": "tests/data/synthetic_catalog.csv of SismoKaos-Research/indicators-forecast, made by its tests/make_synthetic_catalog.py (numpy default_rng(42): 2500 Gutenberg-Richter events b=1, M>=1.0, Poisson in time 2018-06-01..2021-06-01, capped at M4.9, plus six hand-placed M5.1-6.4 events; AFAD export columns).",
+  "legacy_6M_15D_mc1.3.csv": "Indicator table the ORIGINAL SismoKaos-Catalog-Based-Indicators wrote for synthetic_catalog.csv with Mc 1.3, 6-month windows, 15-day step (its b-value used Mc - 0.005, i.e. mag_bin 0.01; its half-Gauss energy rate used weights summing to 1; undefined values are 0).",
+  "legacy_3M_3D_mc2.0.csv": "Same, with Mc 2.0, 3-month windows, 3-day step.",
+  "copied": "2026-11-10, unchanged, from the fork's tests/data."
+}
