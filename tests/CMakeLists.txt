@@ -31,4 +31,5 @@ skg_test(tst_update tst_update.cpp ${CMAKE_SOURCE_DIR}/src/app/updatecheck.cpp $
 target_link_libraries(tst_update PRIVATE Qt6::Widgets Qt6::Network)
 skg_test(tst_sfc_deps tst_sfc_deps.cpp)
 skg_test(tst_sfc_core tst_sfc_core.cpp)
+skg_test(tst_sfc_models tst_sfc_models.cpp)
 target_link_libraries(tst_sfc_deps PRIVATE xgboost libsvm tomlplusplus)

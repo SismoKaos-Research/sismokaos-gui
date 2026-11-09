@@ -7,6 +7,9 @@ qt_add_library(skg_sfc STATIC
   dataset.cpp   dataset.h
   split.cpp     split.h
   metrics.cpp   metrics.h
+  mlp.cpp       mlp.h
+  models.cpp    models.h
+  tuning.cpp    tuning.h
 )
 target_include_directories(skg_sfc PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_sfc PUBLIC Qt6::Core Qt6::Gui skg_fx skg_analysis xgboost libsvm tomlplusplus
