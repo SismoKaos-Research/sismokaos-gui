@@ -22,6 +22,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Drop the Microsoft apt repository
+        if: runner.os == 'Linux'
+        run: sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:

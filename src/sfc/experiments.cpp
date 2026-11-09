@@ -130,8 +130,8 @@ std::vector<Trial> loadTrials(const QString &path, bool latest) {
   if (lines.isEmpty())
     return out;
   const QStringList header = splitSemicolon(lines.first());
-  auto col = [&](const char *name) {
-    return header.indexOf(QLatin1String(name));
+  auto col = [&](const char *name) -> int {
+    return static_cast<int>(header.indexOf(QLatin1String(name)));
   };
   const int ct = col("time"), cr = col("run"), cm = col("model"),
             cp = col("params"), cn = col("n_features"), cf = col("features");

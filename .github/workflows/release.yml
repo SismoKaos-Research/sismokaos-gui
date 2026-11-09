@@ -36,6 +36,10 @@ jobs:
           grep -q "project(sismokaos-gui VERSION $VERSION " CMakeLists.txt || {
             echo "CMakeLists.txt does not say VERSION $VERSION"; exit 1; }
 
+      - name: Drop the Microsoft apt repository
+        if: runner.os == 'Linux'
+        run: sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
