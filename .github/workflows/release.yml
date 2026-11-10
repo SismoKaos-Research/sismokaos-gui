@@ -46,8 +46,14 @@ jobs:
       - name: Meson
         shell: bash
         run: |
+          # pip puts meson in the user scripts directory of the Python that
+          # ran it; a later step (the Qt action) may switch Python, so put
+          # that directory on PATH and let CMake find the meson executable.
           if [ "$RUNNER_OS" = "macOS" ]; then brew install meson
-          else python3 -m pip install --user meson==1.12.1; fi
+          else
+            python3 -m pip install --user meson==1.12.1
+            python3 -c "import os, sysconfig; print(sysconfig.get_path('scripts', os.name + '_user'))" >> "$GITHUB_PATH"
+          fi
 
       - name: Drop the Microsoft apt repository
         if: runner.os == 'Linux'
@@ -86,7 +92,7 @@ jobs:
           if [ "$RUNNER_OS" = "macOS" ]; then
             EXTRA='-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0'
           fi
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release $EXTRA
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSKG_BUNDLE_AYZEK=ON $EXTRA
 
       - name: Build
         run: cmake --build build

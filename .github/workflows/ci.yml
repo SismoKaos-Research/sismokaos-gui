@@ -32,8 +32,14 @@ jobs:
       - name: Meson
         shell: bash
         run: |
+          # pip puts meson in the user scripts directory of the Python that
+          # ran it; a later step (the Qt action) may switch Python, so put
+          # that directory on PATH and let CMake find the meson executable.
           if [ "$RUNNER_OS" = "macOS" ]; then brew install meson
-          else python3 -m pip install --user meson==1.12.1; fi
+          else
+            python3 -m pip install --user meson==1.12.1
+            python3 -c "import os, sysconfig; print(sysconfig.get_path('scripts', os.name + '_user'))" >> "$GITHUB_PATH"
+          fi
 
       - name: Drop the Microsoft apt repository
         if: runner.os == 'Linux'
@@ -66,7 +72,7 @@ jobs:
         run: choco install ninja --no-progress
 
       - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSKG_BUNDLE_AYZEK=ON
 
       - name: Build
         run: cmake --build build
