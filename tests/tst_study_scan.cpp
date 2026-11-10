@@ -212,6 +212,7 @@ private slots:
   void cacheSparesASecondStudy();
   void cacheFollowsAMovedFolder();
   void cacheFollowsADriveWithCoarseTimes();
+  void identityLineSurvivesAMove();
   void cacheIsNotFooledByALookAlike();
   void cacheTellsTwinsApart();
   void cacheThatCannotBeWritten();
@@ -853,6 +854,41 @@ void TstStudyScan::cacheFollowsADriveWithCoarseTimes() {
                             .arg(again.read)
                             .arg(again.cached)));
   }
+}
+
+// The line a stamp of input files is made of: the same for the same file
+// on another drive with another time, another for other content.
+void TstStudyScan::identityLineSurvivesAMove() {
+  QTemporaryDir dir;
+  const QString a = dir.filePath("laptop/S1/a.mseed");
+  const QString b = dir.filePath("usb/S1/a.mseed");
+  write(a, days("S1", utc(2021, 1, 1), 2));
+  const QString line = ScanCache::identityLine(a);
+  QVERIFY(line.startsWith(
+      QStringLiteral("a.mseed|%1|").arg(QFileInfo(a).size())));
+  QDir().mkpath(QFileInfo(b).absolutePath());
+  QVERIFY(QFile::copy(a, b));
+  {
+    QFile f(b);
+    QVERIFY(f.open(QIODevice::ReadWrite));
+    QVERIFY(f.setFileTime(QDateTime::fromMSecsSinceEpoch(1700000002000LL),
+                          QFileDevice::FileModificationTime));
+  }
+  QCOMPARE(ScanCache::identityLine(b), line);
+  QCOMPARE(ScanCache::identityLine(a), line); // asked again: the same
+  // Same name and size, other data: another line.
+  const QDateTime was = QFileInfo(b).lastModified();
+  QVERIFY(QFile::remove(b));
+  write(b, days("S1", utc(2022, 5, 1), 2));
+  {
+    QFile f(b);
+    QVERIFY(f.open(QIODevice::ReadWrite));
+    QVERIFY(f.setFileTime(was.addSecs(60),
+                          QFileDevice::FileModificationTime));
+  }
+  QCOMPARE(QFileInfo(b).size(), QFileInfo(a).size());
+  QVERIFY(ScanCache::identityLine(b) != line);
+  QVERIFY(ScanCache::identityLine(dir.filePath("none")).isEmpty());
 }
 
 void TstStudyScan::cacheIsNotFooledByALookAlike() {

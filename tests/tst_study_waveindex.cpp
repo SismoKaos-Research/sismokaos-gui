@@ -521,10 +521,40 @@ void TstStudyWaveIndex::namesAreTheFallback() {
   QString how;
   const QStringList files =
       waveFilesFor(s, WaveIndex(), c, utc(2021, 1, 1), utc(2021, 2, 1), &how);
-  QCOMPARE(files, (QStringList{data.filePath("CCC/CCC_2020-12-20.zip"),
+  // The file of 2019 is followed by one that starts on 2020-12-20, less
+  // than five weeks before the span: nothing says the 2019 file ends before
+  // the span, so it is kept (it used to be dropped for starting too early).
+  QCOMPARE(files, (QStringList{data.filePath("CCC/CCC_2019-01-01.zip"),
+                               data.filePath("CCC/CCC_2020-12-20.zip"),
                                data.filePath("CCC/CCC_2021-01-05.zip"),
                                data.filePath("CCC/undated.mseed")}));
   QVERIFY2(how.contains("not indexed"), qPrintable(how));
+  // With a file in between that starts long before the span, the 2019 one
+  // is bounded by it and left out; the one in between is bounded by the
+  // file of 2020-12-20 and kept.
+  write(data.filePath("CCC/CCC_2020-06-01.zip"), "x");
+  QCOMPARE(waveFilesFor(s, WaveIndex(), c, utc(2021, 1, 1), utc(2021, 2, 1)),
+           (QStringList{data.filePath("CCC/CCC_2020-06-01.zip"),
+                        data.filePath("CCC/CCC_2020-12-20.zip"),
+                        data.filePath("CCC/CCC_2021-01-05.zip"),
+                        data.filePath("CCC/undated.mseed")}));
+  // A name that carries its period is taken by the period: a year-long file
+  // that covers the span, and not a day file from long before.
+  write(data.filePath("CCC/TU_CCC_01072020_000000_01072021_000000_HH.mseed"),
+        "x");
+  write(data.filePath("CCC/TU_CCC_01032020_000000_02032020_000000_HH.mseed"),
+        "x");
+  const QStringList withPeriods =
+      waveFilesFor(s, WaveIndex(), c, utc(2021, 1, 1), utc(2021, 2, 1));
+  QVERIFY(withPeriods.contains(
+      data.filePath("CCC/TU_CCC_01072020_000000_01072021_000000_HH.mseed")));
+  QVERIFY(!withPeriods.contains(
+      data.filePath("CCC/TU_CCC_01032020_000000_02032020_000000_HH.mseed")));
+  QFile::remove(data.filePath("CCC/CCC_2020-06-01.zip"));
+  QFile::remove(
+      data.filePath("CCC/TU_CCC_01072020_000000_01072021_000000_HH.mseed"));
+  QFile::remove(
+      data.filePath("CCC/TU_CCC_01032020_000000_02032020_000000_HH.mseed"));
   QVERIFY(hasWaveforms(s, c));
   // A folder chosen for the station by hand wins over the index.
   StationRef own;

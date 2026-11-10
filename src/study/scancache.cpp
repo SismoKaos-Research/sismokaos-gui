@@ -5,6 +5,7 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMutex>
@@ -196,6 +197,36 @@ QString ScanCache::fingerprint(const QString &path) {
       hash.addData(f.read(kEnd));
   }
   return QString::fromLatin1(hash.result().toHex());
+}
+
+QString ScanCache::identityLine(const QString &absolutePath) {
+  struct Entry {
+    qint64 size = -1, mtime = 0;
+    QString print;
+  };
+  static QMutex mutex;
+  static QHash<QString, Entry> known;
+  const QFileInfo fi(absolutePath);
+  if (!fi.isFile())
+    return {};
+  const qint64 size = fi.size();
+  const qint64 mtime = fi.lastModified().toMSecsSinceEpoch();
+  QString print;
+  {
+    const QMutexLocker lock(&mutex);
+    const auto it = known.constFind(absolutePath);
+    if (it != known.constEnd() && it->size == size && it->mtime == mtime)
+      print = it->print;
+  }
+  if (print.isEmpty()) {
+    print = fingerprint(absolutePath);
+    if (print.isEmpty())
+      return {};
+    const QMutexLocker lock(&mutex);
+    known.insert(absolutePath, Entry{size, mtime, print});
+  }
+  return QStringLiteral("%1|%2|%3").arg(fi.fileName()).arg(size).arg(
+      print.left(16));
 }
 
 bool ScanCache::lookup(const QString &absolutePath, qint64 size, double mtime,

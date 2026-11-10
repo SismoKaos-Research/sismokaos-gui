@@ -53,6 +53,17 @@ public:
   // large plain file it is a sample. Empty when the file cannot be read.
   static QString fingerprint(const QString &absolutePath);
 
+  // One line that names a file by what it is, not by where or when:
+  // "<file name>|<size>|<start of its fingerprint>". The same file on
+  // another drive gives the same line whatever that drive makes of its
+  // modification time (FAT rounds to two seconds, which a line holding the
+  // time would not survive); a file replaced under the same name and size
+  // gives another. For stamps that say "these input files" (a run's inputs,
+  // a kept calibration). The fingerprint is read once per file and kept in
+  // memory by path, size and time, so asking again costs a stat. Empty when
+  // the file cannot be read. Any thread.
+  static QString identityLine(const QString &absolutePath);
+
   // The exact result for the file at this path, if it was scanned before
   // with the same size, time and content.
   bool lookup(const QString &absolutePath, qint64 size, double mtime,

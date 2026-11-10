@@ -19,6 +19,7 @@
 
 #include "analysis/events.h"
 #include "core/nativepath.h"
+#include "fx/catalog.h"
 #include "fx/mseed.h"
 #include "fx/npy.h"
 #include "fx/preprocess.h"
@@ -296,6 +297,29 @@ void TstPaths::featureTableAndCatalog() {
   QCOMPARE(events[0].mag, 6.8);
   QCOMPARE(events[0].place, QString::fromUtf8("Sivrice (Elazığ)"));
   QCOMPARE(events[1].place, QString::fromUtf8("Pazarcık (Kahramanmaraş)"));
+
+  // The same catalog as a spreadsheet saves it on a Turkish Windows, in
+  // Windows-1254, under the same kind of path: ğ F0, ı FD, ş FE, İ DD.
+  const QString ansi = dir_ + QString::fromUtf8("/katalog/İhraç ğışç.csv");
+  QVERIFY(writeFile(
+      ansi,
+      QByteArray(
+          "Date,Latitude,Longitude,Depth,Type,Magnitude,Location,EventID\n"
+          "24/01/2020 17:55:14,38.3593,39.0630,8.06,Mw,6.8,\"Sivrice "
+          "(Elaz\xfd\xf0)\",1\n"
+          "06/02/2023 01:17:34,37.288,37.043,8.6,Mw,7.7,\"Pazarc\xfdk "
+          "(Kahramanmara\xfe)\",2\n"
+          "30/10/2020 11:51:24,37.888,26.777,16.5,Mw,6.6,\"\xddzmir "
+          "a\xe7\xfdklar\xfd\",3\n")));
+  const auto ansiEvents = analysis::loadEvents(ansi);
+  QCOMPARE(int(ansiEvents.size()), 3);
+  QCOMPARE(ansiEvents[0].place, QString::fromUtf8("Sivrice (Elazığ)"));
+  // (in order of time, as the reader returns them)
+  QCOMPARE(ansiEvents[1].place, QString::fromUtf8("İzmir açıkları"));
+  QCOMPARE(ansiEvents[2].place, QString::fromUtf8("Pazarcık (Kahramanmaraş)"));
+  // The Features calibration reads the same files through its own reader.
+  QCOMPARE(int(fx::loadCatalog(csv).size()), 2);
+  QCOMPARE(int(fx::loadCatalog(ansi).size()), 3);
 }
 
 // A library that calls fopen() (libsvm) is given a path it can open.

@@ -1155,14 +1155,40 @@ QStringList waveFilesFor(const Study &study, const WaveIndex &index,
       *how = QStringLiteral("no folder");
     return out;
   }
-  const QDate first = from.toUTC().date().addDays(-35);
-  const QDate last = to.toUTC().date();
-  int dated = 0;
-  for (const QFileInfo &fi : QDir(dir).entryInfoList(QDir::Files, QDir::Name)) {
+  // What the names say. A name with a period (..._ddMMyyyy_HHmmss_ddMMyyyy_
+  // HHmmss_...) says what the file covers: it is taken when that overlaps the
+  // span, with a day of margin. A name with one date says only where the
+  // file starts, not how far it reaches: it is taken unless it starts after
+  // the span, or a later file of the folder starts more than five weeks
+  // before the span (the downloaders file one request after the other, so
+  // the next file's start bounds this one's reach; without a later file
+  // nothing bounds it, and a file of a whole year is not dropped). A name
+  // with no date is always taken.
+  const double lo = double(from.toSecsSinceEpoch());
+  const double hi = double(to.toSecsSinceEpoch());
+  const QDate spanFirst = from.toUTC().date();
+  const QDate spanLast = to.toUTC().date();
+  const QFileInfoList all = QDir(dir).entryInfoList(QDir::Files, QDir::Name);
+  QList<QDate> starts; // of every dated file, for "the next one"
+  for (const QFileInfo &fi : all) {
+    const QDate d = dateInFileName(fi.fileName());
+    if (d.isValid())
+      starts << d;
+  }
+  std::sort(starts.begin(), starts.end());
+  for (const QFileInfo &fi : all) {
+    double a = 0, b = 0;
+    if (periodInFileName(fi.fileName(), &a, &b)) {
+      if (a < hi + kDay && b > lo - kDay)
+        out << fi.filePath();
+      continue;
+    }
     const QDate d = dateInFileName(fi.fileName());
     if (d.isValid()) {
-      ++dated;
-      if (d < first || d > last)
+      if (d > spanLast)
+        continue;
+      const auto next = std::upper_bound(starts.begin(), starts.end(), d);
+      if (next != starts.end() && *next < spanFirst.addDays(-35))
         continue;
     }
     out << fi.filePath();
@@ -1172,8 +1198,7 @@ QStringList waveFilesFor(const Study &study, const WaveIndex &index,
                           "(%2 of %3 files kept; not indexed)")
                .arg(dir)
                .arg(out.size())
-               .arg(QDir(dir).entryList(QDir::Files).size());
-  Q_UNUSED(dated);
+               .arg(all.size());
   return out;
 }
 
