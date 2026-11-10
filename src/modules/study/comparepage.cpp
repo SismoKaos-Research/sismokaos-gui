@@ -2,7 +2,9 @@
 #include "modules/study/casemap.h"
 
 #include <QApplication>
+#include <QClipboard>
 #include <QComboBox>
+#include <QCryptographicHash>
 #include <QDesktopServices>
 #include <QDir>
 #include <QEvent>
@@ -15,6 +17,7 @@
 #include <QHelpEvent>
 #include <QImage>
 #include <QKeyEvent>
+#include <QLocale>
 #include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
@@ -24,11 +27,13 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSettings>
 #include <QSignalBlocker>
 #include <QStackedWidget>
 #include <QSvgGenerator>
 #include <QTableWidget>
 #include <QThreadPool>
+#include <QTimer>
 #include <QToolButton>
 #include <QToolTip>
 #include <QUrl>
@@ -189,17 +194,49 @@ bool ScoreTable::event(QEvent *e) {
   if (e->type() == QEvent::ToolTip) {
     const auto *help = static_cast<QHelpEvent *>(e);
     const int row = help->pos().y() > kHead ? rowAt(help->pos()) : -1;
-    if (row >= 0 && row < rows_.size() && !rows_[row].warnings.isEmpty()) {
-      QStringList lines{tr("These scores were made with:")};
-      for (const QString &w : rows_[row].warnings)
-        lines << QStringLiteral("⚠  ") + w;
-      QToolTip::showText(help->globalPos(),
-                         ui::helpText(lines.join(QLatin1Char('\n'))), this);
+    if (row >= 0 && row < rows_.size()) {
+      QToolTip::showText(help->globalPos(), ui::helpText(rowTip(rows_[row])),
+                         this);
       return true;
     }
     // Otherwise the table's own help.
   }
   return QWidget::event(e);
+}
+
+QString ScoreTable::rowTip(const ScoreRow &r) {
+  const QLocale loc;
+  const auto num = [&loc](double v, int decimals) {
+    return std::isnan(v) ? QStringLiteral("–") : loc.toString(v, 'f', decimals);
+  };
+  QStringList lines;
+  lines << (r.station.isEmpty()
+                ? r.caseName
+                : tr("%1, station %2").arg(r.caseName, r.station));
+  if (r.reference)
+    lines << tr("A reference date (no earthquake).");
+  else if (!std::isnan(r.magnitude))
+    lines << (std::isnan(r.distanceKm)
+                  ? tr("Magnitude %1").arg(num(r.magnitude, 1))
+                  : tr("Magnitude %1, %2 km from the station")
+                        .arg(num(r.magnitude, 1), num(r.distanceKm, 0)));
+  if (r.state != study::CellState::Done || r.bestModel.isEmpty()) {
+    lines << tr("No finished run: nothing to score yet.");
+  } else {
+    lines << tr("Best model on the validation days: %1").arg(r.bestModel);
+    lines << tr("Test F1 %1 (baseline %2: %3, difference %4)")
+                 .arg(num(r.testF1, 3), r.baselineModel, num(r.baseF1, 3),
+                      num(r.testF1 - r.baseF1, 3));
+    lines << tr("Test AUC %1 (baseline %2, difference %3)")
+                 .arg(num(r.testAuc, 3), num(r.baseAuc, 3),
+                      num(r.testAuc - r.baseAuc, 3));
+  }
+  if (!r.warnings.isEmpty()) {
+    lines << tr("These scores were made with:");
+    for (const QString &w : r.warnings)
+      lines << QStringLiteral("⚠  ") + w;
+  }
+  return lines.join(QLatin1Char('\n'));
 }
 
 void ScoreTable::mousePressEvent(QMouseEvent *e) {
@@ -403,7 +440,151 @@ void ScoreTable::paintEvent(QPaintEvent *) {
 SeriesPlot::SeriesPlot(Theme *theme, QWidget *parent)
     : QWidget(parent), theme_(theme) {
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  setMouseTracking(true);
+  setFocusPolicy(Qt::StrongFocus);
   connect(theme_, &Theme::changed, this, qOverload<>(&QWidget::update));
+}
+
+QString SeriesPlot::seriesKey(const Series &s) {
+  return s.caseId + QLatin1Char('|') + s.station;
+}
+
+QStringList SeriesPlot::hiddenSeries() const {
+  QStringList keys(off_.begin(), off_.end());
+  keys.sort();
+  return keys;
+}
+
+void SeriesPlot::setHiddenSeries(const QStringList &keys) {
+  off_ = QSet<QString>(keys.begin(), keys.end());
+  update();
+}
+
+bool SeriesPlot::toggleSeries(const QString &key) {
+  bool known = false;
+  for (const Series &s : series_)
+    known = known || seriesKey(s) == key;
+  if (!known)
+    return false;
+  if (!off_.remove(key))
+    off_.insert(key);
+  update();
+  emit hiddenChanged();
+  return true;
+}
+
+QList<double> SeriesPlot::days() const {
+  QList<double> out;
+  for (const Series &s : series_) {
+    if (off_.contains(seriesKey(s)))
+      continue;
+    for (size_t k = 0; k < s.values.size(); ++k)
+      if (!std::isnan(s.values[k]))
+        out << s.daysBefore[k];
+  }
+  std::sort(out.begin(), out.end());
+  out.erase(std::unique(out.begin(), out.end()), out.end());
+  return out;
+}
+
+bool SeriesPlot::setGuide(double day) {
+  const QList<double> all = days();
+  if (all.isEmpty()) {
+    guide_.reset();
+    update();
+    return false;
+  }
+  double best = all.first();
+  for (const double d : all)
+    if (std::abs(d - day) < std::abs(best - day))
+      best = d;
+  guide_ = best;
+  update();
+  return true;
+}
+
+void SeriesPlot::clearGuide() {
+  guide_.reset();
+  byKeys_ = false;
+  update();
+}
+
+SeriesPlot::Readout SeriesPlot::readout() const {
+  Readout out;
+  if (!guide_)
+    return out;
+  out.day = *guide_;
+  for (const Series &s : series_) {
+    if (off_.contains(seriesKey(s)))
+      continue;
+    // The series' value on that day, if it has one (within half a day).
+    double value = std::numeric_limits<double>::quiet_NaN();
+    double nearest = 0.5 + 1e-9;
+    for (size_t k = 0; k < s.values.size(); ++k) {
+      const double off = std::abs(s.daysBefore[k] - *guide_);
+      if (off < nearest && !std::isnan(s.values[k])) {
+        nearest = off;
+        value = s.values[k];
+      }
+    }
+    out.names << seriesLabel(s);
+    out.values << value;
+  }
+  return out;
+}
+
+void SeriesPlot::mouseMoveEvent(QMouseEvent *e) {
+  if (plotRect_.width() > 0 &&
+      plotRect_.adjusted(-6, -6, 6, 6).contains(e->position())) {
+    byKeys_ = false;
+    setGuide((e->position().x() - plotRect_.left()) / plotRect_.width() * span_ -
+             span_);
+  } else if (guide_ && !byKeys_) {
+    clearGuide();
+  }
+  // A name in the legend is a switch: say so with the pointer.
+  bool onLegend = false;
+  for (const QRectF &r : std::as_const(legend_))
+    onLegend = onLegend || r.contains(e->position());
+  setCursor(onLegend ? Qt::PointingHandCursor : Qt::ArrowCursor);
+  QWidget::mouseMoveEvent(e);
+}
+
+void SeriesPlot::mousePressEvent(QMouseEvent *e) {
+  for (int i = 0; i < int(legend_.size()) && i < int(series_.size()); ++i)
+    if (legend_[i].contains(e->position())) {
+      toggleSeries(seriesKey(series_[i]));
+      return;
+    }
+  QWidget::mousePressEvent(e);
+}
+
+void SeriesPlot::leaveEvent(QEvent *e) {
+  if (guide_ && !byKeys_)
+    clearGuide();
+  QWidget::leaveEvent(e);
+}
+
+void SeriesPlot::keyPressEvent(QKeyEvent *e) {
+  const QList<double> all = days();
+  if (e->key() == Qt::Key_Escape && guide_) {
+    clearGuide();
+    return;
+  }
+  if ((e->key() != Qt::Key_Left && e->key() != Qt::Key_Right) ||
+      all.isEmpty()) {
+    QWidget::keyPressEvent(e);
+    return;
+  }
+  // From the event backwards on the first press; then point by point.
+  qsizetype at = all.size() - 1;
+  if (guide_) {
+    at = std::lower_bound(all.begin(), all.end(), *guide_ - 1e-9) - all.begin();
+    at += e->key() == Qt::Key_Left ? -1 : 1;
+  }
+  guide_ = all[std::clamp<qsizetype>(at, 0, all.size() - 1)];
+  byKeys_ = true;
+  update();
 }
 
 void SeriesPlot::setSeries(const QList<Series> &series, const QString &column,
@@ -420,7 +601,89 @@ void SeriesPlot::setSeries(const QList<Series> &series, const QString &column,
 
 void SeriesPlot::paintEvent(QPaintEvent *) {
   QPainter p(this);
+  plotRect_ = QRectF();
+  legend_.clear();
   paintPlot(p, QRectF(rect()));
+  if (guide_ && plotRect_.width() > 0)
+    paintGuide(p);
+  if (hasFocus()) { // the keys act on the plot
+    p.setPen(QPen(theme_->color(QStringLiteral("accent")), 1, Qt::DotLine));
+    p.setBrush(Qt::NoBrush);
+    p.drawRoundedRect(QRectF(rect()).adjusted(3, 3, -3, -3), 7, 7);
+  }
+}
+
+void SeriesPlot::paintGuide(QPainter &p) const {
+  const auto col = [this](const char *t) {
+    return theme_->color(QLatin1String(t));
+  };
+  const Readout r = readout();
+  const double x =
+      plotRect_.left() + (r.day + span_) / span_ * plotRect_.width();
+  p.setRenderHint(QPainter::Antialiasing);
+  p.setPen(QPen(col("muted"), 1));
+  p.drawLine(QPointF(x, plotRect_.top()), QPointF(x, plotRect_.bottom()));
+  QFont small = font();
+  small.setPointSizeF(small.pointSizeF() * 0.88);
+  QFont bold = small;
+  bold.setWeight(QFont::DemiBold);
+  const QLocale loc;
+  // The day: 0 is the event; before it, a true minus sign.
+  const QString day =
+      std::abs(r.day) < 1e-9
+          ? tr("the event's day")
+          : tr("%1%2 days")
+                .arg(r.day < 0 ? QStringLiteral("−") : QStringLiteral("+"))
+                .arg(loc.toString(std::abs(r.day), 'f',
+                                  std::abs(r.day - std::round(r.day)) < 1e-6
+                                      ? 0
+                                      : 1));
+  QStringList lines;
+  QList<int> which; // the drawn series, in the readout's order
+  for (int i = 0; i < int(series_.size()); ++i)
+    if (!off_.contains(seriesKey(series_[i])))
+      which << i;
+  double width = QFontMetricsF(bold).horizontalAdvance(day);
+  for (int k = 0; k < int(r.names.size()); ++k) {
+    const QString value = std::isnan(r.values[k])
+                              ? QStringLiteral("–")
+                              : loc.toString(r.values[k], 'g', 5);
+    lines << QStringLiteral("%1   %2").arg(r.names[k], value);
+    width = std::max(width,
+                     16 + QFontMetricsF(small).horizontalAdvance(lines.last()));
+    // The point itself, ringed in the surface colour.
+    if (!std::isnan(r.values[k])) {
+      const double y = plotRect_.bottom() -
+                       (r.values[k] - lo_) / (hi_ - lo_) * plotRect_.height();
+      p.setPen(QPen(col("surface"), 2));
+      p.setBrush(colors_.value(which.value(k), col("muted")));
+      p.drawEllipse(QPointF(x, y), 4.5, 4.5);
+    }
+  }
+  const double h = 12 + 18 * (1 + double(lines.size()));
+  const double w = width + 20;
+  // Beside the guide, on the side with room.
+  double left = x + 12;
+  if (left + w > plotRect_.right())
+    left = x - 12 - w;
+  left = std::max(left, plotRect_.left());
+  const QRectF box(left, plotRect_.top() + 6, w, h);
+  QColor back = col("surface2");
+  p.setPen(col("border"));
+  p.setBrush(back);
+  p.drawRoundedRect(box, 6, 6);
+  p.setPen(col("text"));
+  p.setFont(bold);
+  p.drawText(QPointF(box.left() + 10, box.top() + 19), day);
+  p.setFont(small);
+  for (int k = 0; k < int(lines.size()); ++k) {
+    const double y = box.top() + 19 + 18 * (k + 1);
+    p.setPen(Qt::NoPen);
+    p.setBrush(colors_.value(which.value(k), col("muted")));
+    p.drawEllipse(QPointF(box.left() + 14, y - 4), 4, 4);
+    p.setPen(col("text"));
+    p.drawText(QPointF(box.left() + 26, y), lines[k]);
+  }
 }
 
 void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect,
@@ -467,30 +730,54 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect,
                              : caseColor(palette, col("muted"), order_,
                                          series_[i].caseId));
 
-  // Legend, wrapping to further lines when it is long.
+  // Legend, wrapping to further lines when it is long. On the screen a name
+  // is a switch: a hidden series stays listed, struck through, with an open
+  // mark (never by colour alone); a file lists only what it draws.
   p.setFont(small);
+  QFont struck = small;
+  struck.setStrikeOut(true);
   double lx = r.left() + 18, ly = r.top() + 20;
+  int shown = 0;
   for (int i = 0; i < int(series_.size()); ++i) {
+    const bool off = off_.contains(seriesKey(series_[i]));
+    if (!forFile)
+      legend_ << QRectF();
+    if (off && forFile)
+      continue;
+    shown += off ? 0 : 1;
     const QString text = seriesLabel(series_[i]);
     const double w = 26 + p.fontMetrics().horizontalAdvance(text) + 22;
     if (lx + w > r.right() - 12 && lx > r.left() + 18) {
       lx = r.left() + 18;
       ly += 18;
     }
-    p.setPen(QPen(colors[i], 2,
-                  series_[i].reference ? Qt::DashLine : Qt::SolidLine));
-    p.drawLine(QPointF(lx, ly), QPointF(lx + 20, ly));
-    p.setPen(col("text"));
-    p.drawText(QPointF(lx + 26, ly + 4), text);
+    if (off) {
+      p.setPen(QPen(col("muted"), 1));
+      p.setBrush(Qt::NoBrush);
+      p.drawEllipse(QPointF(lx + 10, ly), 4, 4);
+      p.setFont(struck);
+      p.drawText(QPointF(lx + 26, ly + 4), text);
+      p.setFont(small);
+    } else {
+      p.setPen(QPen(colors[i], 2,
+                    series_[i].reference ? Qt::DashLine : Qt::SolidLine));
+      p.drawLine(QPointF(lx, ly), QPointF(lx + 20, ly));
+      p.setPen(col("text"));
+      p.drawText(QPointF(lx + 26, ly + 4), text);
+    }
+    if (!forFile)
+      legend_[i] = QRectF(lx - 2, ly - 9, w - 14, 18);
     lx += w;
   }
+  if (!forFile)
+    colors_ = colors;
   if (hidden_ > 0) {
     p.setPen(col("muted"));
     p.drawText(QPointF(lx, ly + 4),
                tr("+%1 more not drawn (choose with Series)").arg(hidden_));
   }
 
-  const bool direct = series_.size() <= 4;
+  const bool direct = shown <= 4;
   const QRectF plot(r.left() + 62, ly + 26,
                     r.width() - 62 - (direct ? 156 : 26),
                     r.bottom() - 46 - (ly + 26));
@@ -498,12 +785,15 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect,
     return;
 
   double lo = std::numeric_limits<double>::infinity(), hi = -lo;
-  for (const Series &s : series_)
+  for (const Series &s : series_) {
+    if (off_.contains(seriesKey(s)))
+      continue;
     for (double v : s.values)
       if (!std::isnan(v)) {
         lo = std::min(lo, v);
         hi = std::max(hi, v);
       }
+  }
   if (!(hi >= lo)) {
     lo = 0;
     hi = 1;
@@ -515,6 +805,11 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect,
   const double ystep = niceStep(hi - lo, 5);
   lo = std::floor(lo / ystep) * ystep;
   hi = std::ceil(hi / ystep) * ystep;
+  if (!forFile) { // where the guide and the pointer find things
+    plotRect_ = plot;
+    lo_ = lo;
+    hi_ = hi;
+  }
   const auto X = [&](double d) {
     return plot.left() + (d + span_) / span_ * plot.width();
   };
@@ -560,6 +855,8 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect,
   p.setClipRect(plot.adjusted(-2, -2, 2, 2));
   for (int i = 0; i < int(series_.size()); ++i) {
     const Series &s = series_[i];
+    if (off_.contains(seriesKey(s)))
+      continue;
     QPainterPath path;
     bool pen = false;
     double lastY = std::numeric_limits<double>::quiet_NaN();
@@ -626,12 +923,23 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   headline_->setObjectName(QStringLiteral("fieldLabel"));
   headline_->setWordWrap(true);
   exportTable_ = new QPushButton(main);
+  copyTable_ = new QPushButton(main);
+  copyTable_->setObjectName(QStringLiteral("copyTable"));
+  busy_ = new QLabel(main);
+  busy_->setObjectName(QStringLiteral("compareBusy"));
+  busy_->hide();
+  again_ = new QPushButton(main);
+  again_->setObjectName(QStringLiteral("readAgain"));
+  again_->hide();
   auto *top = new QHBoxLayout;
   top->setSpacing(8);
   top->addWidget(recipeLabel_);
   top->addWidget(recipe_);
   top->addSpacing(10);
   top->addWidget(headline_, 1);
+  top->addWidget(busy_);
+  top->addWidget(again_);
+  top->addWidget(copyTable_);
   top->addWidget(exportTable_);
 
   scores_ = new ScoreTable(ctx_.theme, main);
@@ -754,8 +1062,14 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   seriesNote_ = new QLabel(main);
   seriesNote_->setObjectName(QStringLiteral("seriesNote"));
   seriesNote_->setWordWrap(true);
-  seriesNote_->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  seriesNote_->setTextInteractionFlags(Qt::TextSelectableByMouse |
+                                       Qt::LinksAccessibleByMouse |
+                                       Qt::LinksAccessibleByKeyboard);
   seriesNote_->hide();
+  // After an export the note has links to the file and to its folder.
+  connect(seriesNote_, &QLabel::linkActivated, this, [](const QString &link) {
+    QDesktopServices::openUrl(QUrl(link));
+  });
 
   auto *mainLayout = new QVBoxLayout(main);
   mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -771,12 +1085,22 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(stack_);
 
-  connect(recipe_, &QComboBox::activated, this, &ComparePage::load);
-  connect(seriesRecipe_, &QComboBox::activated, this, [this] {
-    column_->clear(); // the other recipe has other columns
+  connect(recipe_, &QComboBox::activated, this, [this] {
+    saveChoices();
     load();
   });
-  connect(column_, &QComboBox::activated, this, &ComparePage::load);
+  connect(seriesRecipe_, &QComboBox::activated, this, [this] {
+    column_->clear(); // the other recipe has other columns
+    saveChoices();
+    load();
+  });
+  connect(column_, &QComboBox::activated, this, [this] {
+    saveChoices();
+    load();
+  });
+  connect(plot_, &SeriesPlot::hiddenChanged, this, &ComparePage::saveChoices);
+  connect(copyTable_, &QPushButton::clicked, this, &ComparePage::copyTable);
+  connect(again_, &QPushButton::clicked, this, &ComparePage::load);
   connect(exportTable_, &QPushButton::clicked, this, &ComparePage::exportTable);
   connect(exportFigure_, &QPushButton::clicked, this,
           &ComparePage::exportFigure);
@@ -849,6 +1173,23 @@ void ComparePage::retranslate() {
          "days; the baseline is the best of logistic regression and the "
          "SVMs, chosen the same way."));
   exportTable_->setText(tr("Export table…"));
+  copyTable_->setText(tr("Copy table"));
+  copyTable_->setToolTip(ui::helpText(
+      tr("Copies the score table as it is shown, with a heading line and "
+         "tabs between the columns, ready to paste into a spreadsheet. "
+         "Numbers are written with a decimal point.")));
+  busy_->setText(tr("◔  reading the results…"));
+  again_->setText(tr("Read again"));
+  again_->setToolTip(ui::helpText(
+      tr("Reads the runs from the disk again. Offered when a finished run "
+         "could not be read (its files may have been open elsewhere, or "
+         "still being written).")));
+  aligned_->setToolTip(ui::helpText(
+      tr("Point at the plot to read each series' value on a day: a guide "
+         "follows the pointer to the nearest day with a value. With the "
+         "plot selected (Tab, or a click), Left and Right move the guide "
+         "point by point and Escape removes it. A click on a name in the "
+         "legend hides that series or shows it again.")));
   seriesLabel_->setText(tr("Series of"));
   columnLabel_->setText(tr("column"));
   aligned_->setText(tr("Aligned by days before each case's event"));
@@ -905,8 +1246,18 @@ void ComparePage::refresh() {
     return;
   }
   const Study &s = ctx_.study->study();
-  const auto fill = [&s](QComboBox *box, const QStringList &tools) {
-    const QString keep = box->currentData().toString();
+  // What was chosen stays chosen; a study opened anew gets what it had the
+  // last time (kept per study in the settings).
+  const bool another = property("choicesOf").toString() != s.dir;
+  const auto stored = [this, another](const char *name) {
+    return another && ctx_.settings
+               ? ctx_.settings->value(choiceKey(name)).toString()
+               : QString();
+  };
+  const auto fill = [&s](QComboBox *box, const QStringList &tools,
+                         const QString &wanted) {
+    const QString keep =
+        wanted.isEmpty() ? box->currentData().toString() : wanted;
     const QSignalBlocker block(box);
     box->clear();
     for (const Recipe &r : s.recipes)
@@ -916,9 +1267,43 @@ void ComparePage::refresh() {
     if (i >= 0)
       box->setCurrentIndex(i);
   };
-  fill(recipe_, {study::kToolClassification});
-  fill(seriesRecipe_, {study::kToolIndicators, study::kToolFeatures});
+  fill(recipe_, {study::kToolClassification}, stored("scores"));
+  fill(seriesRecipe_, {study::kToolIndicators, study::kToolFeatures},
+       stored("series"));
+  if (another) {
+    setProperty("choicesOf", s.dir);
+    const QString column = stored("column");
+    if (!column.isEmpty()) {
+      const QSignalBlocker block(column_);
+      column_->clear();
+      column_->addItem(column); // asked for; load() says what there is
+    }
+    plot_->setHiddenSeries(
+        ctx_.settings
+            ? ctx_.settings->value(choiceKey("hidden")).toStringList()
+            : QStringList());
+  }
   load();
+}
+
+QString ComparePage::choiceKey(const char *name) const {
+  const QString dir =
+      ctx_.study->isOpen() ? ctx_.study->study().dir : QString();
+  return QStringLiteral("compare/%1/%2")
+      .arg(QString::fromLatin1(
+               QCryptographicHash::hash(dir.toUtf8(), QCryptographicHash::Sha1)
+                   .toHex()
+                   .left(16)),
+           QLatin1String(name));
+}
+
+void ComparePage::saveChoices() {
+  if (!ctx_.settings || !ctx_.study->isOpen())
+    return;
+  ctx_.settings->setValue(choiceKey("scores"), recipe_->currentData());
+  ctx_.settings->setValue(choiceKey("series"), seriesRecipe_->currentData());
+  ctx_.settings->setValue(choiceKey("column"), column_->currentText());
+  ctx_.settings->setValue(choiceKey("hidden"), plot_->hiddenSeries());
 }
 
 void ComparePage::load() {
@@ -928,6 +1313,10 @@ void ComparePage::load() {
   // shown. Until it is back the page keeps what it showed.
   const int generation = ++generation_;
   loading_ = true;
+  // Said only when the read takes a moment, so a quick one does not flicker.
+  QTimer::singleShot(250, this, [this, generation] {
+    busy_->setVisible(loading_ && generation == generation_);
+  });
   study::CompareRequest q;
   q.scoreRecipe = recipe_->currentData().toString();
   q.seriesRecipe = seriesRecipe_->currentData().toString();
@@ -953,6 +1342,8 @@ void ComparePage::load() {
 
 void ComparePage::apply(const study::CompareData &d) {
   loading_ = false;
+  busy_->hide();
+  again_->setVisible(!d.skipped.isEmpty());
   data_ = d;
   if (!ctx_.study->isOpen())
     return;
@@ -965,6 +1356,7 @@ void ComparePage::apply(const study::CompareData &d) {
     scroll->setFixedHeight(std::min(scores_->minimumSizeHint().height(), 300) +
                            2);
   exportTable_->setEnabled(!d.scores.isEmpty());
+  copyTable_->setEnabled(!d.scores.isEmpty());
   int done = 0;
   for (const ScoreRow &row : d.scores)
     done += row.state == study::CellState::Done ? 1 : 0;
@@ -1060,6 +1452,7 @@ void ComparePage::apply(const study::CompareData &d) {
   fitted_->horizontalHeader()->setStretchLastSection(true);
 
   // Runs that are finished but could not be drawn are named, with why.
+  seriesNote_->setTextFormat(Qt::PlainText);
   seriesNote_->setText(
       d.skipped.isEmpty()
           ? QString()
@@ -1176,12 +1569,46 @@ bool ComparePage::writeFigure(const QString &path, QString *error) const {
   return true;
 }
 
+void ComparePage::noteExport(const QString &path) {
+  lastExport_ = path;
+  // The file's name, and two links: the file itself and the folder it is in.
+  seriesNote_->setTextFormat(Qt::RichText);
+  seriesNote_->setText(
+      tr("Written: %1 · <a href=\"%2\">Open file</a> · <a href=\"%3\">Open "
+         "folder</a>")
+          .arg(QDir::toNativeSeparators(path).toHtmlEscaped(),
+               QUrl::fromLocalFile(path).toString(QUrl::FullyEncoded),
+               QUrl::fromLocalFile(QFileInfo(path).absolutePath())
+                   .toString(QUrl::FullyEncoded)));
+  seriesNote_->show();
+}
+
+QString ComparePage::scoresTsv() const {
+  // The same columns and numbers as the exported file (a decimal point,
+  // whatever the language), with tabs for a spreadsheet's clipboard.
+  QString text = study::scoresCsv(scores_->rows());
+  text.replace(QLatin1Char('\t'), QLatin1Char(' '));
+  text.replace(QLatin1Char(';'), QLatin1Char('\t'));
+  return text;
+}
+
+void ComparePage::copyTable() {
+  QApplication::clipboard()->setText(scoresTsv());
+  seriesNote_->setTextFormat(Qt::PlainText);
+  seriesNote_->setText(
+      tr("Copied: %n row(s) of the score table, ready to paste.", nullptr,
+         int(scores_->rows().size())));
+  seriesNote_->show();
+}
+
 void ComparePage::exportTable() {
   const QString name =
       QStringLiteral("scores_%1.csv").arg(recipe_->currentData().toString());
-  const QString path = QFileDialog::getSaveFileName(
-      this, tr("Export the score table"), QDir(exportDir()).filePath(name),
-      tr("CSV (*.csv)"));
+  // Starts in the study's exports folder; where the reader last saved an
+  // export of this study is remembered.
+  const QString path = ui::pickSaveFile(
+      this, ctx_.settings, choiceKey("exportFolder"),
+      tr("Export the score table"), name, tr("CSV (*.csv)"), exportDir());
   if (path.isEmpty())
     return;
   QString error;
@@ -1189,17 +1616,16 @@ void ComparePage::exportTable() {
     QMessageBox::warning(this, tr("Export"), error);
     return;
   }
-  seriesNote_->setText(tr("Written: %1").arg(QDir::toNativeSeparators(path)));
-  seriesNote_->show();
+  noteExport(path);
 }
 
 void ComparePage::exportFigure() {
   const QString name = QStringLiteral("%1_%2.png")
                            .arg(seriesRecipe_->currentData().toString(),
                                 column_->currentText());
-  QString path = QFileDialog::getSaveFileName(
-      this, tr("Export the figure"), QDir(exportDir()).filePath(name),
-      tr("PNG image (*.png);;SVG drawing (*.svg)"));
+  QString path = ui::pickSaveFile(
+      this, ctx_.settings, choiceKey("exportFolder"), tr("Export the figure"),
+      name, tr("PNG image (*.png);;SVG drawing (*.svg)"), exportDir());
   if (path.isEmpty())
     return;
   if (QFileInfo(path).suffix().isEmpty())
@@ -1209,8 +1635,7 @@ void ComparePage::exportFigure() {
     QMessageBox::warning(this, tr("Export"), error);
     return;
   }
-  seriesNote_->setText(tr("Written: %1").arg(QDir::toNativeSeparators(path)));
-  seriesNote_->show();
+  noteExport(path);
 }
 
 } // namespace skg
