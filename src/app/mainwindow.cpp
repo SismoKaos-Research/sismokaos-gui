@@ -246,6 +246,10 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
   // Long work that ends while the user is elsewhere is announced; a click on
   // the announcement brings the window back, on the job.
   notifier_ = new JobNotifier(ctx_.jobs, ctx_.settings, this, this);
+  // Runs that wait their turn on the Runs page are work too.
+  notifier_->setQueue(ctx_.queue);
+  if (ctx_.queue)
+    connect(ctx_.queue, &WorkQueue::changed, this, &MainWindow::updateStrip);
   connect(notifier_, &JobNotifier::activated, this, [this](Job *job) {
     showNormal();
     raise();
@@ -677,12 +681,22 @@ QString MainWindow::quitQuestion() const {
     lines = lines.mid(0, 8);
     lines << tr("… and %n more", nullptr, more);
   }
+  // What waits its turn would not run at all.
+  const int queued = queuedWork();
   return tr("%n job(s) are still running:", nullptr,
             ctx_.jobs->runningCount()) +
          QLatin1Char('\n') + lines.join(QLatin1Char('\n')) +
+         (queued > 0 ? QLatin1Char('\n') +
+                           tr("%n more are queued and will not run.", nullptr,
+                              queued)
+                     : QString()) +
          QStringLiteral("\n\n") +
          tr("Quitting stops them. What a run has not finished is lost and "
             "starts again next time; finished runs are kept.");
+}
+
+int MainWindow::queuedWork() const {
+  return ctx_.jobs->queuedCount() + (ctx_.queue ? ctx_.queue->waiting() : 0);
 }
 
 bool MainWindow::closeForUpdate() {
@@ -720,8 +734,8 @@ void MainWindow::updateStrip() {
   QString text;
   if (running > 0) {
     text = tr("%n job(s) running", nullptr, running);
-    // Jobs that wait for their turn (Job::State::Queued) are counted too.
-    if (const int queued = ctx_.jobs->queuedCount())
+    // What waits its turn, in the jobs table or on the Runs page.
+    if (const int queued = queuedWork())
       text += QStringLiteral(", ") + tr("%n queued", nullptr, queued);
     for (int i = ctx_.jobs->rowCount() - 1; i >= 0; --i) {
       const Job *job = ctx_.jobs->jobAt(i);

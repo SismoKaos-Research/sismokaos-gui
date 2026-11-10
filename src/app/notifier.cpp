@@ -7,6 +7,7 @@
 #include <QWidget>
 
 #include "core/appsettings.h"
+#include "core/module.h"
 #include "jobs/job.h"
 #include "jobs/jobmodel.h"
 
@@ -75,8 +76,8 @@ void JobNotifier::jobFinished(Job *job) {
     return; // not an end
   }
   onlyName_ = job->name();
-  const bool last = jobs_->runningCount() == 0 && jobs_->queuedCount() == 0;
-  if (!last) {
+  lastEnded_ = job;
+  if (stillBusy()) {
     // A failure among jobs that go on: said now, not hours later.
     if (job->state() == Job::State::Failed &&
         job->elapsedMs() >= thresholdMs())
@@ -86,6 +87,30 @@ void JobNotifier::jobFinished(Job *job) {
                job, true);
     return;
   }
+  endPeriod();
+}
+
+void JobNotifier::setQueue(WorkQueue *queue) {
+  queue_ = queue;
+  if (!queue)
+    return;
+  // The last queued run was taken out (or could not start) with nothing
+  // running: that is the end of the period, too.
+  connect(queue, &WorkQueue::changed, this, [this] {
+    if (busy_.isValid() && !stillBusy())
+      endPeriod();
+  });
+}
+
+bool JobNotifier::stillBusy() const {
+  // Runs that wait their turn outside the jobs table count: between two of
+  // them nothing is running for a moment, and that is not the end.
+  return jobs_->runningCount() > 0 || jobs_->queuedCount() > 0 ||
+         (queue_ && queue_->waiting() > 0);
+}
+
+void JobNotifier::endPeriod() {
+  Job *job = lastEnded_;
   const qint64 lasted = busy_.elapsed();
   busy_.invalidate();
   const int ended = done_ + failed_ + cancelled_;

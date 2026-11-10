@@ -42,6 +42,35 @@ signals:
 // args "job" may hold the job's row in the JobModel to select it.
 inline const QString kNavJobsPanel = QStringLiteral("@jobs");
 
+// Work that waits its turn outside the jobs table: the Runs page queues
+// cells before they become jobs. A page that keeps such a queue reports how
+// many wait (set(), under a name of its own); the shell adds them up for the
+// status strip, the question at quitting, and for not announcing "all jobs
+// have finished" between two queued runs. May be null in tests.
+class WorkQueue : public QObject {
+  Q_OBJECT
+public:
+  using QObject::QObject;
+  void set(const QString &owner, int waiting) {
+    waiting = waiting < 0 ? 0 : waiting;
+    if (counts_.value(owner).toInt() == waiting)
+      return;
+    counts_.insert(owner, waiting);
+    emit changed();
+  }
+  int waiting() const {
+    int n = 0;
+    for (auto it = counts_.cbegin(); it != counts_.cend(); ++it)
+      n += it.value().toInt();
+    return n;
+  }
+signals:
+  void changed();
+
+private:
+  QVariantMap counts_;
+};
+
 struct AppContext {
   JobModel *jobs = nullptr;
   ToolRegistry *tools = nullptr;
@@ -49,6 +78,7 @@ struct AppContext {
   Theme *theme = nullptr; // colours and icons of the current look
   study::StudyStore *study = nullptr; // the open study, if any
   Navigator *nav = nullptr;           // page-to-page navigation
+  WorkQueue *queue = nullptr;         // what waits outside the jobs table
 };
 
 class Module : public QObject {

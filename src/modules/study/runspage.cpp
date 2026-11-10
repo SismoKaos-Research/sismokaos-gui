@@ -1090,6 +1090,9 @@ void RunsPage::render(bool selection) {
   // The next step, in words, with the page that it is done on.
   QString guide, page, go;
   const int inQueue = int(queue_.size()) + waitingOnCells;
+  // The shell counts what waits here (status strip, the quit question).
+  if (ctx_.queue)
+    ctx_.queue->set(QStringLiteral("runs"), inQueue);
   if (!running_.isEmpty() || inQueue > 0) {
     // What is going on: how many run, how many wait their turn.
     guide = tr("%1 running, %2 queued (%3 at a time; the number is on the "

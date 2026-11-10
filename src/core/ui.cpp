@@ -3,7 +3,11 @@
 #include "core/appsettings.h"
 
 #include <QDir>
+#include <QCoreApplication>
+#include <QDoubleSpinBox>
 #include <QFileDialog>
+#include <QKeyEvent>
+#include <QPointer>
 #include <QFileInfo>
 #include <QLocale>
 #include <QSplitter>
@@ -255,9 +259,43 @@ QString pickSaveFile(QWidget *parent, QSettings *settings, const QString &key,
   return file;
 }
 
+namespace {
+
+// A comma typed into a number field becomes a decimal point: the decimal key
+// of a Turkish (or German, French …) keypad types a comma, and the fields
+// would otherwise refuse it without a word.
+class DecimalComma : public QObject {
+public:
+  using QObject::QObject;
+
+protected:
+  bool eventFilter(QObject *o, QEvent *e) override {
+    if (e->type() != QEvent::KeyPress)
+      return false;
+    auto *key = static_cast<QKeyEvent *>(e);
+    if (key->text() != QLatin1String(","))
+      return false;
+    // The field, or the line edit inside it.
+    if (!qobject_cast<QDoubleSpinBox *>(o) &&
+        !qobject_cast<QDoubleSpinBox *>(o->parent()))
+      return false;
+    QKeyEvent dot(QEvent::KeyPress, Qt::Key_Period,
+                  key->modifiers() & ~Qt::KeypadModifier, QStringLiteral("."));
+    QCoreApplication::sendEvent(o, &dot);
+    return true;
+  }
+};
+
+} // namespace
+
 void pinNumberFormat() {
   QLocale::setDefault(QLocale::c());
   std::setlocale(LC_NUMERIC, "C");
+  static QPointer<DecimalComma> comma;
+  if (!comma && qApp) {
+    comma = new DecimalComma(qApp);
+    qApp->installEventFilter(comma);
+  }
 }
 
 void polishPage(QWidget *page) {

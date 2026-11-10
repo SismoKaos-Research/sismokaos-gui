@@ -69,6 +69,8 @@ public:
   // The question asked at quitting while jobs run: which jobs, and for how
   // long each has been running.
   QString quitQuestion() const;
+  // Work that waits its turn: queued jobs, and the Runs page's queue.
+  int queuedWork() const;
   // Asks it; true means "stop them and quit". Tests replace it.
   std::function<bool(const QString &question)> confirmQuit;
   // Closes the window for an update: the jobs are stopped without a second

@@ -77,7 +77,8 @@ int main(int argc, char *argv[]) {
   QString reopenError;
   studies.reopenLast(&reopenError);
   Navigator nav;
-  AppContext ctx{&jobs, &tools, &settings, &theme, &studies, &nav};
+  WorkQueue queue;
+  AppContext ctx{&jobs, &tools, &settings, &theme, &studies, &nav, &queue};
 
   // The pages, in order within their sidebar section. A new module is one
   // more line here.

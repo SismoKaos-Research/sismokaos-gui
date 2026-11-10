@@ -34,12 +34,17 @@ namespace skg {
 
 class Job;
 class JobModel;
+class WorkQueue;
 
 class JobNotifier : public QObject {
   Q_OBJECT
 public:
   JobNotifier(JobModel *jobs, QSettings *settings, QWidget *window,
               QObject *parent = nullptr);
+
+  // Runs that wait outside the jobs table (the Runs page's queue) keep the
+  // busy period open: its end is not announced between two of them.
+  void setQueue(WorkQueue *queue);
 
   // Whether the user is looking at the application. The default asks Qt for
   // an active window; tests replace it.
@@ -65,6 +70,8 @@ private:
   void showOnDesktop(const QString &title, const QString &text, bool failure);
   qint64 thresholdMs() const;
   bool enabled() const;
+  bool stillBusy() const;
+  void endPeriod();
 
   JobModel *jobs_;
   QSettings *settings_;
@@ -77,6 +84,8 @@ private:
   int done_ = 0, failed_ = 0, cancelled_ = 0;
   QString onlyName_;
   QPointer<Job> firstFailed_;
+  QPointer<Job> lastEnded_;
+  QPointer<WorkQueue> queue_;
 };
 
 } // namespace skg

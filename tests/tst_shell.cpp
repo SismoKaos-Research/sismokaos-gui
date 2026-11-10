@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QLabel>
+#include <QLineEdit>
 #include <QLocale>
 #include <QMenu>
 #include <QMenuBar>
@@ -130,6 +131,7 @@ private slots:
   void longWorkIsAnnounced();
   void shortOrWatchedWorkIsNot();
   void aFailureAmongOthersIsAnnouncedAtOnce();
+  void queuedRunsKeepThePeriodOpen();
   // The study lock.
   void aStudyIsOpenInOneStore();
   void aLockLeftByACrashIsTakenOver();
@@ -158,6 +160,7 @@ private:
     std::unique_ptr<Theme> theme;
     std::unique_ptr<StudyStore> store;
     std::unique_ptr<Navigator> nav;
+    std::unique_ptr<WorkQueue> queue;
     std::unique_ptr<I18n> i18n;
     std::unique_ptr<ModuleRegistry> modules;
     std::unique_ptr<MainWindow> window;
@@ -190,6 +193,7 @@ TstShell::Shell TstShell::makeShell() {
   s.theme = std::make_unique<Theme>(s.settings.get());
   s.store = std::make_unique<StudyStore>(s.settings.get());
   s.nav = std::make_unique<Navigator>();
+  s.queue = std::make_unique<WorkQueue>();
   s.i18n = std::make_unique<I18n>(s.settings.get());
   s.i18n->setLanguage(QStringLiteral("en"));
   s.modules = std::make_unique<ModuleRegistry>();
@@ -200,7 +204,8 @@ TstShell::Shell TstShell::makeShell() {
   s.modules->emplace<FakeModule>(QStringLiteral("features"),
                                  Module::Section::Tools);
   AppContext ctx{s.jobs.get(),  s.tools.get(), s.settings.get(),
-                 s.theme.get(), s.store.get(), s.nav.get()};
+                 s.theme.get(), s.store.get(), s.nav.get(),
+                 s.queue.get()};
   s.window = std::make_unique<MainWindow>(ctx, *s.modules, s.i18n.get());
   s.window->notifier()->show = [](const QString &, const QString &, bool) {};
   return s;
@@ -283,6 +288,22 @@ void TstShell::oneNumberFormatOnScreen() {
   box.setValue(1234.5);
   QCOMPARE(box.text(), QStringLiteral("1234.50"));
   QCOMPARE(QString::number(1234.5, 'f', 2), box.text());
+  // A typed comma (the decimal key of a Turkish keypad) is taken as the
+  // decimal point, not refused.
+  box.selectAll();
+  QTest::keyClicks(&box, "12,75");
+  QCOMPARE(box.value(), 12.75);
+  QCOMPARE(box.text(), QStringLiteral("12.75"));
+  // In a text field a comma stays a comma (lists of station codes).
+  QLineEdit line;
+  QTest::keyClicks(&line, "ISK,BNGB");
+  QCOMPARE(line.text(), QStringLiteral("ISK,BNGB"));
+  // Dates read the same in both languages: the fields are given their
+  // format, and nothing is formatted by the locale's long names.
+  QCOMPARE(QDate(2020, 1, 24).toString(Qt::ISODate),
+           QStringLiteral("2020-01-24"));
+  QVERIFY(!QLocale().toString(QDate(2020, 1, 24), QLocale::ShortFormat)
+               .contains(QStringLiteral("Oca")));
   QCOMPARE(QStringLiteral("%L1").arg(1234567), QStringLiteral("1234567"));
   char buf[32];
   std::snprintf(buf, sizeof buf, "%.2f", 1.5);
@@ -356,11 +377,27 @@ void TstShell::jobsTableStartedAndClear() {
   QCOMPARE(jobs.finishedCount(), 1);
   // Clearing takes the ended one out of the table and leaves the running
   // one; the object lives on for whoever still points at it.
+  // A page keeps a pointer to the job it started last (a plain one, as the
+  // tool pages do) and goes on using it after the row has gone.
+  Job *kept = first;
+  const QPointer<Job> watched(first);
   clear->click();
   QCOMPARE(jobs.rowCount(), 1);
   QCOMPARE(jobs.jobAt(0), second);
   QCOMPARE(jobs.rowOf(first), -1);
   QCOMPARE(first->name(), QStringLiteral("first"));
+  QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+  QCoreApplication::processEvents();
+  QVERIFY(watched); // not deleted, now or later
+  QCOMPARE(kept->state(), Job::State::Done);
+  QVERIFY(kept->elapsedMs() >= 0);
+  QVERIFY(!kept->log().isEmpty());
+  kept->cancel(); // what a page's Stop would do: harmless on an ended job
+  QVERIFY(qobject_cast<TaskJob *>(kept)->wait(1000));
+  QVERIFY(kept->state() == Job::State::Done ||
+          kept->state() == Job::State::Cancelled);
+  QCOMPARE(jobs.rowOf(kept), -1); // what "show in the Jobs panel" asks
+  panel.showJob(kept);            // and what it then does with the answer
   QVERIFY(!clear->isEnabled());
   QCOMPARE(JobModel::elapsedText(12000), QStringLiteral("12 s"));
   QCOMPARE(JobModel::elapsedText(187000), QStringLiteral("3:07"));
@@ -461,6 +498,60 @@ void TstShell::shortOrWatchedWorkIsNot() {
   settings.setValue(appsettings::kNotifyKey, true);
   runOne(0);
   QTRY_COMPARE(announced.size(), 1);
+  endJobs(jobs);
+}
+
+void TstShell::queuedRunsKeepThePeriodOpen() {
+  QSettings settings(dir_->filePath("n.ini"), QSettings::IniFormat);
+  settings.setValue(appsettings::kNotifyAfterKey, 0);
+  JobModel jobs;
+  WorkQueue queue;
+  JobNotifier notifier(&jobs, &settings, nullptr);
+  notifier.setQueue(&queue);
+  notifier.userIsLooking = [] { return false; };
+  notifier.show = [](const QString &, const QString &, bool) {};
+  QSignalSpy announced(&notifier, &JobNotifier::announced);
+
+  // One run, another waiting its turn on the Runs page: when the first
+  // ends nothing is running for a moment, and that is not the end.
+  queue.set("runs", 1);
+  auto a = std::make_shared<Latch>(), b = std::make_shared<Latch>();
+  Job *first = jobs.add(latchJob("first", a));
+  QTRY_COMPARE(jobs.runningCount(), 1);
+  a->code = 0;
+  QTRY_VERIFY(ended(first));
+  QCoreApplication::processEvents();
+  QCOMPARE(announced.size(), 0);
+  // The page starts the second and has nothing left in its queue.
+  Job *second = jobs.add(latchJob("second", b));
+  queue.set("runs", 0);
+  QTRY_COMPARE(jobs.runningCount(), 1);
+  QCOMPARE(announced.size(), 0);
+  b->code = 0;
+  QTRY_VERIFY(ended(second));
+  QTRY_COMPARE(announced.size(), 1);
+  QVERIFY2(announced[0][1].toString().contains("2 finished"),
+           qPrintable(announced[0][1].toString()));
+
+  // A queued run that is taken out again with nothing running ends the
+  // period there and then.
+  queue.set("runs", 1);
+  auto c = std::make_shared<Latch>();
+  Job *third = jobs.add(latchJob("third", c));
+  QTRY_COMPARE(jobs.runningCount(), 1);
+  c->code = 0;
+  QTRY_VERIFY(ended(third));
+  QCoreApplication::processEvents();
+  QCOMPARE(announced.size(), 1);
+  queue.set("runs", 0);
+  QTRY_COMPARE(announced.size(), 2);
+  QVERIFY(announced[1][1].toString().contains("third"));
+  // The counter adds up what several pages report.
+  queue.set("runs", 2);
+  queue.set("other", 3);
+  QCOMPARE(queue.waiting(), 5);
+  queue.set("runs", -4);
+  QCOMPARE(queue.waiting(), 3);
   endJobs(jobs);
 }
 
@@ -774,6 +865,19 @@ void TstShell::quittingNamesTheJobs() {
   QVERIFY2(question.contains("Features · Van 2011 · TVAN"),
            qPrintable(question));
   QVERIFY2(question.contains("running for"), qPrintable(question));
+  QVERIFY(!question.contains("queued"));
+  // Runs that wait their turn on the Runs page are named as lost, and the
+  // status strip counts them.
+  s.queue->set("runs", 5);
+  QCOMPARE(w.queuedWork(), 5);
+  QVERIFY2(w.quitQuestion().contains("5 more are queued and will not run"),
+           qPrintable(w.quitQuestion()));
+  auto *strip = w.findChild<QLabel *>("statusText");
+  QVERIFY(strip);
+  QTRY_VERIFY2(strip->text().contains("1 job(s) running, 5 queued"),
+               qPrintable(strip->text()));
+  s.queue->set("runs", 0);
+  QTRY_VERIFY(!strip->text().contains("queued"));
 
   // "Keep running": the window stays and the job goes on.
   QStringList asked;
