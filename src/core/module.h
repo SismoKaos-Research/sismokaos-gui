@@ -19,12 +19,16 @@ namespace skg {
 class JobModel;
 class ToolRegistry;
 class Theme;
+namespace study {
+class StudyStore;
+}
 
 struct AppContext {
   JobModel *jobs = nullptr;
   ToolRegistry *tools = nullptr;
   QSettings *settings = nullptr;
   Theme *theme = nullptr; // colours and icons of the current look
+  study::StudyStore *study = nullptr; // the open study, if any
 };
 
 class Module : public QObject {

@@ -29,6 +29,8 @@ target_compile_options(skg_warnings INTERFACE
 #   analysis the SCAP port: catalogs, faults, labelling, figures
 #   sfc     the classification port (XGBoost, libsvm, own MLP)
 #   ayzek   the launcher logic for the bundled ayzek (not a port; third_party/)
+#   cbi     the catalog-based indicators port
+#   study   studies: cases, recipes, the layout of runs, the comparison
 #   core    the Module interface, AppContext, registry, language switching
 #   modules/<name>  one GUI module (a tab) per directory
 #   app     the main window and main()
@@ -41,6 +43,7 @@ add_subdirectory(src/analysis)
 add_subdirectory(src/sfc)
 add_subdirectory(src/ayzek)
 add_subdirectory(src/cbi)
+add_subdirectory(src/study)
 add_subdirectory(src/core)
 add_subdirectory(src/modules)
 add_subdirectory(src/app)

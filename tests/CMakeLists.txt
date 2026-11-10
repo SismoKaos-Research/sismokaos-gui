@@ -5,7 +5,7 @@ add_executable(skg_testhelper helper.cpp)
 
 function(skg_test name)
   qt_add_executable(${name} ${ARGN})
-  target_link_libraries(${name} PRIVATE Qt6::Test skg_jobs skg_tools skg_tdvms skg_fx skg_analysis skg_sfc skg_cbi skg_ayzek skg_warnings)
+  target_link_libraries(${name} PRIVATE Qt6::Test skg_jobs skg_tools skg_tdvms skg_fx skg_analysis skg_sfc skg_cbi skg_ayzek skg_study skg_warnings)
   target_compile_definitions(${name} PRIVATE SKG_TEST_DATA="${CMAKE_SOURCE_DIR}/tests/data"
                                              SKG_TEST_HELPER="$<TARGET_FILE:skg_testhelper>")
   add_dependencies(${name} skg_testhelper)
@@ -43,3 +43,4 @@ skg_test(tst_cbi_run tst_cbi_run.cpp)
 target_link_libraries(tst_cbi_run PRIVATE Qt6::Widgets)
 skg_test(tst_theme tst_theme.cpp)
 target_link_libraries(tst_theme PRIVATE skg_core Qt6::Widgets)
+skg_test(tst_study tst_study.cpp)
