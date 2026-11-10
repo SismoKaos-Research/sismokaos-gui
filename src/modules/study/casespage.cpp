@@ -324,7 +324,7 @@ void CasesPage::refresh() {
   const QString keep = currentId();
   updating_ = true;
   catalog_->setText(s.catalogPath());
-  dataRoot_->setText(s.resolved(s.dataRoot));
+  dataRoot_->setText(s.waveformRoots().value(0));
   catalogTime_->setCurrentIndex(s.catalogUtcOffsetHours == 3.0 ? 1 : 0);
   add_->setEnabled(!s.catalog.isEmpty());
   table_->setRowCount(int(s.cases.size()));
@@ -539,7 +539,7 @@ void CasesPage::chooseDataRoot() {
       this, tr("Waveform folder"), ctx_.study->study().dir);
   if (path.isEmpty())
     return;
-  ctx_.study->update([&path](Study &s) { s.dataRoot = s.stored(path); });
+  ctx_.study->update([&path](Study &s) { s.addWaveformRoot(path); });
 }
 
 } // namespace skg

@@ -137,7 +137,7 @@ bool TstGuided::makeStudy(const QString &name, const QString &station) {
   return store_->update([&](Study &s) {
     s.catalog = QStringLiteral("catalog.csv");
     s.catalogUtcOffsetHours = 3.0;
-    s.dataRoot = QStringLiteral("mseed");
+    s.addWaveformRoot(QDir(s.dir).filePath("mseed"));
     s.cases << caseAt(QStringLiteral("a"),
                       QStringLiteral("2019-04-02T14:00:00Z"), 38.1, 38.5,
                       {station, QStringLiteral("ZZZ")});
@@ -399,8 +399,8 @@ void TstGuided::movedInputsAreAskedForOnce() {
   QVERIFY(store_->create(dir_->filePath("far"), QStringLiteral("Far")));
   QVERIFY(store_->update([&](Study &s) {
     s.catalog = oldDisk.filePath("lab/catalog.csv");
-    s.dataRoot = oldDisk.filePath("lab/stations");
-    s.moreDataRoots << oldDisk.filePath("lab/fdsn_raw");
+    s.addWaveformRoot(oldDisk.filePath("lab/stations"));
+    s.addWaveformRoot(oldDisk.filePath("lab/fdsn_raw"));
   }));
   // Nothing is missing: nobody is asked.
   int asked = 0;

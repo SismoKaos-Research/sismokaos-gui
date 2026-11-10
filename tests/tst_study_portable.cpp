@@ -40,7 +40,9 @@ void TstStudyPortable::waveformRootsRoundTrip() {
   s.dir = dir.path();
   QVERIFY(s.waveformRoots().isEmpty());
   QVERIFY(s.addWaveformRoot(dir.filePath("raw")));
-  QCOMPARE(s.dataRoot, QStringLiteral("raw")); // the first one is data_root
+  // Stored relative, as the first [[waveforms]] folder.
+  QCOMPARE(s.waveRoots.size(), 1);
+  QCOMPARE(s.waveRoots[0].path, QStringLiteral("raw"));
   QVERIFY(s.addWaveformRoot(QStringLiteral("/elsewhere/fdsn_raw")));
   QVERIFY(!s.addWaveformRoot(dir.filePath("raw"))); // already listed
   QVERIFY(!s.addWaveformRoot(QStringLiteral("/elsewhere/fdsn_raw/")));
@@ -49,8 +51,16 @@ void TstStudyPortable::waveformRootsRoundTrip() {
   QCOMPARE(s.waveformRoots(), want);
   const Study back = Study::fromToml(s.toToml(), dir.path());
   QCOMPARE(back.waveformRoots(), want);
-  QCOMPARE(back.dataRoot, QStringLiteral("raw"));
-  QCOMPARE(back.moreDataRoots.size(), 1);
+  QCOMPARE(back.waveRoots.size(), 2);
+  QCOMPARE(back.waveRoots[0].path, QStringLiteral("raw"));
+  // The ids, which key the index of what the folders hold, are kept.
+  QCOMPARE(back.waveRoots[0].id, s.waveRoots[0].id);
+  QCOMPARE(back.waveRoots[1].id, s.waveRoots[1].id);
+  QVERIFY(back.waveRoots[0].id != back.waveRoots[1].id);
+  // The file names them as [[waveforms]], not in the older keys.
+  QVERIFY(s.toToml().contains(QStringLiteral("[[waveforms]]")));
+  QVERIFY(!s.toToml().contains(QStringLiteral("waveform_roots")));
+  QVERIFY(!s.toToml().contains(QStringLiteral("data_root")));
 }
 
 void TstStudyPortable::oldFilesWithOnlyDataRootStillRead() {
@@ -63,8 +73,17 @@ void TstStudyPortable::oldFilesWithOnlyDataRootStillRead() {
   const Study t = Study::fromToml(
       QStringLiteral("schema = 1\nwaveform_roots = [\"a\", \"b\"]\n"),
       dir.path());
-  QCOMPARE(t.dataRoot, QStringLiteral("a"));
-  QCOMPARE(t.waveformRoots().size(), 2);
+  QCOMPARE(t.waveRoots.size(), 2);
+  QCOMPARE(t.waveRoots[0].path, QStringLiteral("a"));
+  QCOMPARE(t.waveformRoots(),
+           (QStringList{dir.filePath("a"), dir.filePath("b")}));
+  // Both old keys together: data_root first, and it is not listed twice.
+  const Study u = Study::fromToml(
+      QStringLiteral("schema = 1\ndata_root = \"a\"\n"
+                     "waveform_roots = [\"a\", \"b\"]\n"),
+      dir.path());
+  QCOMPARE(u.waveformRoots(),
+           (QStringList{dir.filePath("a"), dir.filePath("b")}));
 }
 
 void TstStudyPortable::aStationIsLookedForInEveryRoot() {
@@ -139,8 +158,8 @@ void TstStudyPortable::locateRewritesEverythingUnderTheMovedFolder() {
   s.dir = studyTop.filePath("s");
   s.name = QStringLiteral("S");
   s.catalog = oldData.filePath("lab/catalog.csv");
-  s.dataRoot = oldData.filePath("lab/stations");
-  s.moreDataRoots << oldData.filePath("lab/fdsn_raw");
+  QVERIFY(s.addWaveformRoot(oldData.filePath("lab/stations")));
+  QVERIFY(s.addWaveformRoot(oldData.filePath("lab/fdsn_raw")));
   Case c = referenceCase(
       QStringLiteral("R"),
       QDateTime::fromString(QStringLiteral("2020-01-01T00:00:00Z"),

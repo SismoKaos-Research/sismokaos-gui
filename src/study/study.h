@@ -20,9 +20,22 @@
 //   catalog = "catalog_afad.csv"       # relative to the folder, or absolute
 //   catalog_utc_offset_hours = 0.0
 //   station_list = ""                  # empty: the built-in AFAD list
-//   data_root = ""                     # <data_root>/<STATION>/ miniSEED
-//   waveform_roots = []                # every such folder, data_root first;
-//                                      # a station is looked for in each
+//   data_root = ""                     # old files only: read, not written
+//   waveform_roots = []                # old files only: read, not written
+//
+//   [[waveforms]]                      # folders holding miniSEED, any layout
+//   id = "w1"                          # key of the folder in the index file
+//   path = "/data/stations"            # re-point here when the data moves
+//
+//   [[station]]                        # stations the station list lacks
+//   code = "XYZ"
+//   network = "KO"
+//   latitude = 38.1
+//   longitude = 38.6
+//   source = "typed"                   # or "stationxml"
+//
+// What the waveform folders hold is indexed in waveforms.index.json beside
+// study.toml (study/waveindex.h); paths in it are relative to their folder.
 //
 // Paths are stored relative to the study folder when they lie inside it, and
 // also when they lie beside it under a common folder (so a study and its data
@@ -93,6 +106,23 @@ struct MissingInput {
   QString path; // absolute, as resolved
 };
 
+// A folder of waveforms. `id` names it in the index, so the path can change
+// (the data moved to another drive) without a rescan.
+struct WaveRoot {
+  QString id;
+  QString path; // as stored: relative to the study folder, or absolute
+};
+
+// A station the study knows the place of although the station list does not.
+struct ExtraStation {
+  QString code, network;
+  double lat = 0, lon = 0;
+  QString source; // "typed" or "stationxml"
+};
+
+// How many stations around an epicentre are offered at most.
+inline constexpr int kStationCandidates = 40;
+
 struct Zone {
   enum class Kind { Circle, Fault };
   Kind kind = Kind::Circle;
@@ -141,8 +171,8 @@ public:
   QString catalog;
   double catalogUtcOffsetHours = 0.0;
   QString stationList;
-  QString dataRoot;           // the first waveform folder
-  QStringList moreDataRoots;  // further waveform folders, as stored
+  QList<WaveRoot> waveRoots; // the waveform folders, in the order added
+  QList<ExtraStation> extraStations;
   QList<Case> cases;
   QList<Recipe> recipes;
 
@@ -153,20 +183,27 @@ public:
   // The station list to read: the study's, or the built-in AFAD one.
   QString stationListPath() const;
   // The station's own folder if it names one; otherwise <root>/<code> in the
-  // first waveform root that has it (the first root when none has).
+  // first waveform folder that has it (the first folder when none has).
+  // Empty when the study has no waveform folder.
   QString dataDirFor(const StationRef &s) const;
-  // Every waveform folder, absolute, `dataRoot` first.
+  // Every waveform folder, absolute, in the order added.
   QStringList waveformRoots() const;
-  // Adds a waveform folder (it becomes `dataRoot` when there is none yet).
-  // False when the study already lists it.
+  // Adds a waveform folder. False when the study already lists it.
   bool addWaveformRoot(const QString &absolutePath);
+  // The same, returning the folder's id (also when it was already listed).
+  QString addWaveRoot(const QString &absolutePath);
+  QString waveRootPath(const QString &id) const; // absolute, or empty
+  // The station list with the study's extra stations appended. Throws when
+  // the list cannot be read and there are no extras.
+  std::vector<analysis::Station> stations() const;
 
   // The inputs that are named but not found on disk.
   QList<MissingInput> missingInputs() const;
   // The user found `oldPath` at `newPath`: what the two have in common at
   // the end is dropped to get the folder that moved (/old/disk -> /mnt/usb),
   // and every missing input under it that exists at the new place is
-  // rewritten. Returns how many paths changed.
+  // rewritten, the waveform folders among them: they keep their id, so the
+  // index stays valid. Returns how many paths changed.
   int relocate(const QString &oldPath, const QString &newPath);
 
   const Case *findCase(const QString &id) const;
@@ -191,6 +228,6 @@ Case referenceCase(const QString &name, const QDateTime &timeUtc, double lat,
 // Stations within maxKm of the case, nearest first, at most `limit`.
 QList<StationRef> nearestStations(const std::vector<analysis::Station> &all,
                                   double lat, double lon, double maxKm,
-                                  int limit = 12);
+                                  int limit = kStationCandidates);
 
 } // namespace skg::study

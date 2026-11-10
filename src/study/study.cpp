@@ -249,10 +249,8 @@ QString Study::dataDirFor(const StationRef &s) const {
 
 QStringList Study::waveformRoots() const {
   QStringList out;
-  if (!dataRoot.isEmpty())
-    out << resolved(dataRoot);
-  for (const QString &r : moreDataRoots) {
-    const QString abs = resolved(r);
+  for (const WaveRoot &r : waveRoots) {
+    const QString abs = QDir::cleanPath(resolved(r.path));
     if (!abs.isEmpty() && !out.contains(abs))
       out << abs;
   }
@@ -263,11 +261,58 @@ bool Study::addWaveformRoot(const QString &absolutePath) {
   const QString abs = QDir::cleanPath(absolutePath);
   if (abs.isEmpty() || waveformRoots().contains(abs))
     return false;
-  if (dataRoot.isEmpty())
-    dataRoot = stored(abs);
-  else
-    moreDataRoots << stored(abs);
+  addWaveRoot(abs);
   return true;
+}
+
+QString Study::addWaveRoot(const QString &absolutePath) {
+  const QString clean = QDir::cleanPath(absolutePath);
+  for (const WaveRoot &r : waveRoots)
+    if (QDir::cleanPath(resolved(r.path)) == clean)
+      return r.id;
+  int n = 1;
+  const auto taken = [this](const QString &id) {
+    for (const WaveRoot &r : waveRoots)
+      if (r.id == id)
+        return true;
+    return false;
+  };
+  while (taken(QStringLiteral("w%1").arg(n)))
+    ++n;
+  waveRoots << WaveRoot{QStringLiteral("w%1").arg(n), stored(clean)};
+  return waveRoots.last().id;
+}
+
+QString Study::waveRootPath(const QString &id) const {
+  for (const WaveRoot &r : waveRoots)
+    if (r.id == id)
+      return resolved(r.path);
+  return {};
+}
+
+std::vector<analysis::Station> Study::stations() const {
+  std::vector<analysis::Station> out;
+  try {
+    out = analysis::loadStations(stationListPath());
+  } catch (const std::exception &) {
+    if (extraStations.isEmpty())
+      throw;
+  }
+  for (const ExtraStation &e : extraStations) {
+    const bool known =
+        std::any_of(out.begin(), out.end(), [&e](const analysis::Station &s) {
+          return s.code.compare(e.code, Qt::CaseInsensitive) == 0;
+        });
+    if (known)
+      continue;
+    analysis::Station st;
+    st.code = e.code;
+    st.network = e.network;
+    st.lat = e.lat;
+    st.lon = e.lon;
+    out.push_back(st);
+  }
+  return out;
 }
 
 QList<MissingInput> Study::missingInputs() const {
@@ -284,9 +329,8 @@ QList<MissingInput> Study::missingInputs() const {
   };
   check(MissingInput::Kind::Catalog, catalog);
   check(MissingInput::Kind::StationList, stationList);
-  check(MissingInput::Kind::WaveformRoot, dataRoot);
-  for (const QString &r : moreDataRoots)
-    check(MissingInput::Kind::WaveformRoot, r);
+  for (const WaveRoot &r : waveRoots)
+    check(MissingInput::Kind::WaveformRoot, r.path);
   for (const Case &c : cases) {
     check(MissingInput::Kind::FaultFile, c.zone.faultGeoJson);
     for (const StationRef &st : c.stations)
@@ -331,9 +375,9 @@ int Study::relocate(const QString &oldPath, const QString &newPath) {
   };
   fix(catalog);
   fix(stationList);
-  fix(dataRoot);
-  for (QString &r : moreDataRoots)
-    fix(r);
+  // A waveform folder keeps its id: the index of what it holds stays valid.
+  for (WaveRoot &r : waveRoots)
+    fix(r.path);
   for (Case &c : cases) {
     fix(c.zone.faultGeoJson);
     for (StationRef &st : c.stations)
@@ -385,15 +429,18 @@ QString Study::toToml() const {
   line(QStringLiteral("catalog_utc_offset_hours"),
        number(catalogUtcOffsetHours));
   line(QStringLiteral("station_list"), quoted(stationList));
-  line(QStringLiteral("data_root"), quoted(dataRoot));
-  {
-    QStringList roots;
-    if (!dataRoot.isEmpty())
-      roots << dataRoot;
-    for (const QString &r : moreDataRoots)
-      if (!r.isEmpty() && !roots.contains(r))
-        roots << r;
-    line(QStringLiteral("waveform_roots"), stringList(roots));
+  for (const WaveRoot &r : waveRoots) {
+    out += QStringLiteral("\n[[waveforms]]\n");
+    line(QStringLiteral("id"), quoted(r.id));
+    line(QStringLiteral("path"), quoted(r.path));
+  }
+  for (const ExtraStation &e : extraStations) {
+    out += QStringLiteral("\n[[station]]\n");
+    line(QStringLiteral("code"), quoted(e.code));
+    line(QStringLiteral("network"), quoted(e.network));
+    line(QStringLiteral("latitude"), number(e.lat));
+    line(QStringLiteral("longitude"), number(e.lon));
+    line(QStringLiteral("source"), quoted(e.source));
   }
   for (const Case &c : cases) {
     out += QStringLiteral("\n[[case]]\n");
@@ -465,16 +512,35 @@ Study Study::fromToml(const QString &text, const QString &dir) {
   s.catalog = str(tbl, "catalog");
   s.catalogUtcOffsetHours = num(tbl, "catalog_utc_offset_hours", 0.0);
   s.stationList = str(tbl, "station_list");
-  s.dataRoot = str(tbl, "data_root");
-  // Schema 1 began with data_root alone; waveform_roots repeats it first.
-  for (const QString &r : strings(tbl, "waveform_roots")) {
-    if (r.isEmpty())
-      continue;
-    if (s.dataRoot.isEmpty())
-      s.dataRoot = r;
-    else if (r != s.dataRoot && !s.moreDataRoots.contains(r))
-      s.moreDataRoots << r;
+  if (const toml::array *arr = tbl["waveforms"].as_array())
+    for (const toml::node &n : *arr)
+      if (const toml::table *t = n.as_table()) {
+        WaveRoot r{str(*t, "id"), str(*t, "path")};
+        if (!r.id.isEmpty() && !r.path.isEmpty())
+          s.waveRoots << r;
+      }
+  // Files from before [[waveforms]] named their folders in data_root and in
+  // the waveform_roots list (data_root first): each becomes a folder here.
+  {
+    QStringList old;
+    old << str(tbl, "data_root");
+    old += strings(tbl, "waveform_roots");
+    for (const QString &path : std::as_const(old))
+      if (!path.isEmpty())
+        s.addWaveformRoot(s.resolved(path));
   }
+  if (const toml::array *arr = tbl["station"].as_array())
+    for (const toml::node &n : *arr)
+      if (const toml::table *t = n.as_table()) {
+        ExtraStation e;
+        e.code = str(*t, "code");
+        e.network = str(*t, "network");
+        e.lat = num(*t, "latitude", 0);
+        e.lon = num(*t, "longitude", 0);
+        e.source = str(*t, "source", QStringLiteral("typed"));
+        if (!e.code.isEmpty())
+          s.extraStations << e;
+      }
   if (const toml::array *arr = tbl["case"].as_array()) {
     for (const toml::node &n : *arr) {
       const toml::table *t = n.as_table();

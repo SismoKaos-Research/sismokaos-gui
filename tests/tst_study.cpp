@@ -23,7 +23,7 @@ Study sample(const QString &dir) {
   s.name = QStringLiteral("Örnek \"çalışma\"");
   s.catalog = QStringLiteral("catalog.csv");
   s.catalogUtcOffsetHours = 3.0;
-  s.dataRoot = QStringLiteral("/data/mseed");
+  s.waveRoots << WaveRoot{QStringLiteral("w1"), QStringLiteral("/data/mseed")};
   analysis::Event e;
   e.epoch = 1579888511; // 2020-01-24 17:55:11 UTC
   e.lat = 38.36;
@@ -98,7 +98,9 @@ void TstStudy::tomlRoundTrip() {
   QCOMPARE(b.name, a.name);
   QCOMPARE(b.catalog, a.catalog);
   QCOMPARE(b.catalogUtcOffsetHours, 3.0);
-  QCOMPARE(b.dataRoot, a.dataRoot);
+  QCOMPARE(b.waveRoots.size(), 1);
+  QCOMPARE(b.waveRoots[0].id, a.waveRoots[0].id);
+  QCOMPARE(b.waveRoots[0].path, a.waveRoots[0].path);
   QCOMPARE(b.cases.size(), 2);
   const Case &c = b.cases[0];
   QCOMPARE(c.id, QStringLiteral("sivrice-elazig-2020"));
@@ -173,7 +175,7 @@ void TstStudy::pathsAreRelativeInsideTheStudy() {
   StationRef st;
   st.code = QStringLiteral("STA1");
   QVERIFY(s.dataDirFor(st).isEmpty());
-  s.dataRoot = QStringLiteral("mseed");
+  QVERIFY(s.addWaveformRoot(dir.filePath("mseed")));
   QCOMPARE(s.dataDirFor(st), dir.filePath("mseed/STA1"));
   st.dataDir = QStringLiteral("/other/STA1");
   QCOMPARE(s.dataDirFor(st), QStringLiteral("/other/STA1"));
@@ -243,7 +245,7 @@ void TstStudy::builtInStationsNearAPoint() {
       QStringLiteral(SKG_TEST_DATA "/../../src/tdvms/data/stations.csv"));
   QVERIFY(all.size() > 100);
   const QList<StationRef> near = nearestStations(all, 38.1228, 38.5626, 200.0);
-  QCOMPARE(near.size(), 12);
+  QCOMPARE(near.size(), kStationCandidates); // more than that are in reach
   QVERIFY(near[0].distanceKm < 60.0);
   for (int i = 1; i < near.size(); ++i)
     QVERIFY(near[i - 1].distanceKm <= near[i].distanceKm);
