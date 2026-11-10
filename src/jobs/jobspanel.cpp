@@ -10,6 +10,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QSplitter>
 #include <QTableView>
 #include <QVBoxLayout>
@@ -42,8 +43,12 @@ JobsPanel::JobsPanel(JobModel *model, QWidget *parent)
   summary_ = new QLabel(this);
   summary_->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
+  clear_ = new QPushButton(this);
+  clear_->setObjectName(QStringLiteral("clearFinishedJobs"));
+
   auto *buttons = new QHBoxLayout;
   buttons->addWidget(summary_, 1);
+  buttons->addWidget(clear_);
   buttons->addWidget(copy_);
   buttons->addWidget(cancel_);
 
@@ -67,9 +72,17 @@ JobsPanel::JobsPanel(JobModel *model, QWidget *parent)
           this, &JobsPanel::onSelectionChanged);
   connect(model_, &JobModel::jobAdded, this,
           [this](Job *job) { table_->selectRow(model_->rowOf(job)); });
-  connect(model_, &JobModel::jobFinished, this, [this](Job *job) {
-    if (job == current_)
-      updateButtons();
+  connect(model_, &JobModel::jobFinished, this, [this](Job *) {
+    updateButtons();
+  });
+  connect(model_, &QAbstractItemModel::rowsRemoved, this,
+          &JobsPanel::updateButtons);
+  connect(clear_, &QPushButton::clicked, this, [this] {
+    // The log on show may be of a job that is about to leave the table.
+    if (current_ && current_->state() != Job::State::Running &&
+        current_->state() != Job::State::Queued)
+      showJob(nullptr);
+    model_->clearFinished();
   });
   connect(cancel_, &QPushButton::clicked, this, [this] {
     if (current_)
@@ -98,6 +111,13 @@ void JobsPanel::showJob(Job *job) {
   connect(job, &Job::lineReceived, this, &JobsPanel::appendLine);
   connect(job, &Job::stateChanged, this, &JobsPanel::updateButtons);
   summary_->setText(job->description());
+  // Asked for from outside (a failure's link): the table follows.
+  const int row = model_->rowOf(job);
+  if (row >= 0 && !table_->selectionModel()->isRowSelected(row, {})) {
+    const QSignalBlocker block(table_->selectionModel());
+    table_->selectRow(row);
+    table_->scrollTo(model_->index(row, 0));
+  }
   updateButtons();
 }
 
@@ -117,6 +137,7 @@ void JobsPanel::appendLine(const QString &line) {
 void JobsPanel::updateButtons() {
   cancel_->setEnabled(current_ && current_->state() == Job::State::Running);
   copy_->setEnabled(current_ != nullptr);
+  clear_->setEnabled(model_->finishedCount() > 0);
 }
 
 void JobsPanel::changeEvent(QEvent *e) {
@@ -128,6 +149,12 @@ void JobsPanel::changeEvent(QEvent *e) {
 void JobsPanel::retranslate() {
   cancel_->setText(tr("Cancel"));
   copy_->setText(tr("Copy log"));
+  clear_->setText(tr("Clear finished"));
+  clear_->setToolTip(
+      tr("Takes the jobs that have ended out of this list. Their results "
+         "and the logs written beside them stay where they are."));
+  cancel_->setToolTip(tr("Stops the selected job."));
+  copy_->setToolTip(tr("Copies the selected job's output to the clipboard."));
   log_->setPlaceholderText(tr("Select a job to see its output."));
 }
 

@@ -30,6 +30,7 @@ qint64 Job::elapsedMs() const {
 
 void Job::begin() {
   timer_.start();
+  startedAt_ = QDateTime::currentDateTime();
   setState(State::Running);
   appendLine(QStringLiteral("$ ") + description());
 }

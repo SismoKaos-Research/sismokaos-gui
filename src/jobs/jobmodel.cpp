@@ -57,6 +57,35 @@ int JobModel::runningCount() const {
   return n;
 }
 
+int JobModel::queuedCount() const {
+  int n = 0;
+  for (const Job *j : jobs_)
+    n += j->state() == Job::State::Queued;
+  return n;
+}
+
+static bool ended(const Job *j) {
+  return j->state() == Job::State::Done || j->state() == Job::State::Failed ||
+         j->state() == Job::State::Cancelled;
+}
+
+int JobModel::finishedCount() const {
+  int n = 0;
+  for (const Job *j : jobs_)
+    n += ended(j);
+  return n;
+}
+
+void JobModel::clearFinished() {
+  for (int row = jobs_.size() - 1; row >= 0; --row) {
+    if (!ended(jobs_[row]))
+      continue;
+    beginRemoveRows({}, row, row);
+    cleared_ << jobs_.takeAt(row);
+    endRemoveRows();
+  }
+}
+
 int JobModel::rowCount(const QModelIndex &parent) const {
   return parent.isValid() ? 0 : jobs_.size();
 }
@@ -65,7 +94,7 @@ int JobModel::columnCount(const QModelIndex &parent) const {
   return parent.isValid() ? 0 : ColumnCount;
 }
 
-static QString elapsedText(qint64 ms) {
+QString JobModel::elapsedText(qint64 ms) {
   const qint64 s = ms / 1000;
   if (s < 60)
     return QStringLiteral("%1 s").arg(s);
@@ -97,10 +126,22 @@ QVariant JobModel::data(const QModelIndex &index, int role) const {
         return p.text;
       return QStringLiteral("%1%  %2").arg(int(p.fraction * 100)).arg(p.text);
     }
+    case Started: {
+      const QDateTime &t = job->startedAt();
+      if (!t.isValid())
+        return QString();
+      // Today's jobs by the clock; older ones with their day.
+      return t.date() == QDate::currentDate()
+                 ? t.toString(QStringLiteral("HH:mm:ss"))
+                 : t.toString(QStringLiteral("yyyy-MM-dd HH:mm"));
+    }
     case Elapsed:
       return elapsedText(job->elapsedMs());
     }
   }
+  if (role == Qt::ToolTipRole && index.column() == Started &&
+      job->startedAt().isValid())
+    return job->startedAt().toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
   if (role == Qt::ForegroundRole && index.column() == State) {
     switch (job->state()) {
     case Job::State::Done:
@@ -130,6 +171,8 @@ QVariant JobModel::headerData(int section, Qt::Orientation o, int role) const {
     return tr("State");
   case Progress:
     return tr("Progress");
+  case Started:
+    return tr("Started");
   case Elapsed:
     return tr("Elapsed");
   }

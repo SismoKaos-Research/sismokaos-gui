@@ -36,6 +36,7 @@ private:
   QPlainTextEdit *log_;
   QPushButton *cancel_;
   QPushButton *copy_;
+  QPushButton *clear_;
   QLabel *summary_;
 };
 

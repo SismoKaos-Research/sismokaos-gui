@@ -4,6 +4,7 @@
 // code in a worker thread (jobs/taskjob.h), which is how the ported tools run.
 #pragma once
 
+#include <QDateTime>
 #include <QElapsedTimer>
 #include <QObject>
 #include <QString>
@@ -27,6 +28,8 @@ public:
   // Exit code of the work: 0 success, >0 failure, -1 abnormal end.
   int exitCode() const { return exitCode_; }
   qint64 elapsedMs() const;
+  // When the work began (local time); invalid before it has.
+  const QDateTime &startedAt() const { return startedAt_; }
   const QStringList &log() const { return log_; }
   const ProgressState &progress() const { return progress_; }
   // One line saying what runs: a command line, or a task summary.
@@ -55,6 +58,7 @@ private:
   QString tool_;
   QStringList log_;
   QElapsedTimer timer_;
+  QDateTime startedAt_;
   qint64 finalElapsedMs_ = -1;
   State state_ = State::Queued;
   int exitCode_ = -1;
