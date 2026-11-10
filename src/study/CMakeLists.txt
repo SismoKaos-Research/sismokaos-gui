@@ -8,6 +8,7 @@ qt_add_library(skg_study STATIC
   runs.cpp    runs.h
   compare.cpp compare.h
   waveindex.cpp waveindex.h
+  scancache.cpp scancache.h
   catalogs.cpp catalogs.h
 )
 target_include_directories(skg_study PUBLIC ${CMAKE_SOURCE_DIR}/src)

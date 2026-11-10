@@ -41,6 +41,12 @@ public:
 private:
   QByteArray pending_;
   ScanResult spans_;
+  // Records of one channel and one year follow each other by the million:
+  // the channel's name and the year's first second are worked out once.
+  char lastId_[12] = {};
+  QString lastCid_;
+  int lastYear_ = 0;
+  double lastYearBase_ = 0;
 };
 ScanResult scanBytes(const QByteArray &bytes);
 // Every .mseed member of one archive, merged per channel.

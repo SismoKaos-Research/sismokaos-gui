@@ -140,9 +140,7 @@ QString catalogProblem(const Study &s) {
 // sizes and times, not their contents and not where the folder is. New or
 // replaced files for the span change it; a file elsewhere, or the same
 // folder on another drive, does not.
-QString stampOfFiles(const QStringList &files) {
-  if (files.isEmpty())
-    return {};
+QStringList linesOfFiles(const QStringList &files) {
   QStringList lines;
   for (const QString &f : files) {
     const QFileInfo fi(f);
@@ -152,6 +150,13 @@ QString stampOfFiles(const QStringList &files) {
                  .arg(fi.lastModified().toSecsSinceEpoch());
   }
   lines.sort();
+  return lines;
+}
+
+QString stampOfFiles(const QStringList &files) {
+  if (files.isEmpty())
+    return {};
+  const QStringList lines = linesOfFiles(files);
   return QStringLiteral("%1 files, %2")
       .arg(files.size())
       .arg(QString::fromLatin1(
@@ -159,6 +164,26 @@ QString stampOfFiles(const QStringList &files) {
                                    QCryptographicHash::Sha1)
               .toHex()
               .left(16)));
+}
+
+// Whether the files a features run would read now put a finished run out of
+// date. Files taken on an estimate (not read through by the scan yet) prove
+// nothing either way: a run is not called stale for a file that only may
+// overlap its span, nor for having read, on such an estimate, more than the
+// exact scan later says it needed.
+bool filesChanged(const RunRecord &rec, const WaveChoice &now) {
+  if (rec.waveFiles.isEmpty())
+    return true; // recorded before the files were listed: only the stamp
+  const QStringList nowLines = linesOfFiles(now.files);
+  const QStringList unsure = linesOfFiles(now.uncertain);
+  for (const QString &line : nowLines)
+    if (!unsure.contains(line) && !rec.waveFiles.contains(line))
+      return true; // a file known to hold the span that the run did not read
+  if (!rec.waveEstimated)
+    for (const QString &line : rec.waveFiles)
+      if (!nowLines.contains(line))
+        return true; // a file the run read is gone or was replaced
+  return false;
 }
 
 QDateTime utcOf(double epoch) {
@@ -282,10 +307,12 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   if (!st)
     fail(RunText::tr("the case has no station %1").arg(station));
   // Only the files that overlap the case's span are read (waveindex.h).
-  QString chosenHow;
-  const QStringList inputFiles =
-      waveFilesFor(s, *WaveIndex::shared(s.dir), *st, c.spanStart(), c.time,
-                   &chosenHow);
+  // While the exact scan is still running, some are taken on an estimate
+  // with a day of margin: more may be read than needed, never less.
+  const WaveChoice chosen = chooseWaveFiles(s, *WaveIndex::shared(s.dir), *st,
+                                            c.spanStart(), c.time);
+  const QString chosenHow = chosen.how;
+  const QStringList inputFiles = chosen.files;
   if (inputFiles.isEmpty())
     fail(RunText::tr("no waveform files for %1 in the span %2 to %3 (%4): "
                      "add or scan its waveform folder on the Cases page, or "
@@ -296,6 +323,8 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   if (hooks.log)
     hooks.log(RunText::tr(" Waveforms from %1").arg(chosenHow));
   rec.waveStamp = stampOfFiles(inputFiles);
+  rec.waveFiles = linesOfFiles(inputFiles);
+  rec.waveEstimated = !chosen.uncertain.isEmpty();
   fx::Config cfg;
   const QString json = strOf(r, "config_json");
   if (!json.trimmed().isEmpty()) {
@@ -611,6 +640,14 @@ void runClassification(const Study &s, const Case &c, const QString &station,
 
 } // namespace
 
+bool waveFilesChanged(const RunRecord &record, const WaveChoice &now) {
+  return filesChanged(record, now);
+}
+
+QStringList waveFileLines(const QStringList &files) {
+  return linesOfFiles(files);
+}
+
 QStringList recipeTools() {
   return {kToolIndicators, kToolFeatures, kToolClassification};
 }
@@ -749,6 +786,11 @@ bool RunRecord::write(const QString &dir) const {
   o.insert(QStringLiteral("catalog_sha256"), catalogSha);
   o.insert(QStringLiteral("upstream"), upstream);
   o.insert(QStringLiteral("waveforms"), waveStamp);
+  if (!waveFiles.isEmpty()) {
+    o.insert(QStringLiteral("waveform_files"),
+             QJsonArray::fromStringList(waveFiles));
+    o.insert(QStringLiteral("waveforms_estimated"), waveEstimated);
+  }
   o.insert(QStringLiteral("app_version"), appVersion);
   o.insert(QStringLiteral("started"), iso(started));
   o.insert(QStringLiteral("finished"), iso(finished));
@@ -782,6 +824,10 @@ std::optional<RunRecord> RunRecord::read(const QString &dir) {
   r.catalogSha = o.value(QStringLiteral("catalog_sha256")).toString();
   r.upstream = o.value(QStringLiteral("upstream")).toString();
   r.waveStamp = o.value(QStringLiteral("waveforms")).toString();
+  for (const QJsonValue v :
+       o.value(QStringLiteral("waveform_files")).toArray())
+    r.waveFiles << v.toString();
+  r.waveEstimated = o.value(QStringLiteral("waveforms_estimated")).toBool();
   r.appVersion = o.value(QStringLiteral("app_version")).toString();
   r.started = QDateTime::fromString(
       o.value(QStringLiteral("started")).toString(), Qt::ISODate);
@@ -841,6 +887,7 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
 
   // What a run would need that is not there.
   QString blocked, upstream, waveNow;
+  WaveChoice waveChoice;
   Fix fix = Fix::None;
   bool studyCatalog = false; // whether the run reads the study's catalog
   if (r.tool == kToolIndicators) {
@@ -871,8 +918,9 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
       } else {
         // The files a run would read now, to tell a finished run that read
         // other ones.
-        waveNow = stampOfFiles(waveFilesFor(s, *WaveIndex::shared(s.dir), *st,
-                                            c.spanStart(), c.time));
+        waveChoice = chooseWaveFiles(s, *WaveIndex::shared(s.dir), *st,
+                                     c.spanStart(), c.time);
+        waveNow = stampOfFiles(waveChoice.files);
       }
     }
   } else if (r.tool == kToolClassification) {
@@ -904,7 +952,8 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
       // (A catalog that cannot be read now proves nothing either way.)
       stale = RunText::tr("the catalog file has changed since this run");
     } else if (r.tool == kToolFeatures && !rec.waveStamp.isEmpty() &&
-               !waveNow.isEmpty() && rec.waveStamp != waveNow) {
+               !waveNow.isEmpty() && rec.waveStamp != waveNow &&
+               filesChanged(rec, waveChoice)) {
       stale = RunText::tr("the waveform files for the case's span have "
                           "changed since this run (new or replaced files)");
     } else if (r.tool == kToolClassification && rec.ok) {

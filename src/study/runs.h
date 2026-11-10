@@ -84,6 +84,11 @@ struct RunRecord {
   QString upstream;      // classification: when its features run finished
   QString waveStamp;     // features: the waveform files read (names, sizes,
                          // times), so new files for the span are noticed
+  QStringList waveFiles; // the same, one "name|size|time" line per file
+  // Some of them were taken on an estimate from their names, with margin,
+  // because the exact scan had not read them yet: the run may have read
+  // more than the span needed.
+  bool waveEstimated = false;
   QString appVersion;
   QDateTime started, finished; // UTC
   bool ok = false;
@@ -106,6 +111,18 @@ struct RunRecord {
 // is part of the first two.
 QString runSignature(const Study &s, const Case &c, const QString &station,
                      const QString &tool);
+
+// Whether the waveform files a features run would read now (`now`, from
+// chooseWaveFiles) put the finished run `record` out of date. Files taken on
+// an estimate, which the exact scan has not read yet, prove nothing either
+// way: a run is not called stale for a file that only may overlap its span,
+// nor for having read, on such an estimate, more than the exact scan later
+// says the span needed. A file known to hold the span that the run did not
+// read, or a file it read that is gone or replaced, does make it stale.
+struct WaveChoice;
+bool waveFilesChanged(const RunRecord &record, const WaveChoice &now);
+// The form RunRecord::waveFiles keeps the files in: "name|size|time", sorted.
+QStringList waveFileLines(const QStringList &files);
 
 enum class CellState {
   Done,          // run.json: ok, for this recipe revision and this case

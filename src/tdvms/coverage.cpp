@@ -16,6 +16,7 @@
 #include "miniz.h"
 #include "tdvms/fetch.h"
 #include <cmath>
+#include <cstring>
 #include <utility>
 
 namespace skg::tdvms {
@@ -134,17 +135,27 @@ void MseedScanner::feed(const QByteArray &bytes) {
       break;
     const double rate = sampleRate(factor, mult);
     if (nsamp && rate > 0) {
-      double start = epochOf(year, doy, hour, minute, sec, frac);
+      if (year != lastYear_) {
+        lastYear_ = year;
+        lastYearBase_ = epochOf(year, 1, 0, 0, 0, 0);
+      }
+      double start = lastYearBase_ + (doy - 1) * 86400.0 + hour * 3600.0 +
+                     minute * 60.0 + sec + frac * 1e-4;
       if (!(activity & 0x02)) // time correction not yet applied
         start += corr * 1e-4;
       const double end = start + nsamp / rate;
-      const QString cid =
-          QStringLiteral("%1.%2.%3.%4")
-              .arg(QString::fromLatin1(data.mid(off + 18, 2)).trimmed(),
-                   QString::fromLatin1(data.mid(off + 8, 5)).trimmed(),
-                   QString::fromLatin1(data.mid(off + 13, 2)).trimmed(),
-                   QString::fromLatin1(data.mid(off + 15, 3)).trimmed());
-      addSpan(spans_, cid, rate, start, end);
+      // Station, location, channel, network: bytes 8 to 19 of the header.
+      const char *id = data.constData() + off + 8;
+      if (lastCid_.isEmpty() || memcmp(id, lastId_, sizeof lastId_) != 0) {
+        memcpy(lastId_, id, sizeof lastId_);
+        lastCid_ =
+            QStringLiteral("%1.%2.%3.%4")
+                .arg(QString::fromLatin1(data.mid(off + 18, 2)).trimmed(),
+                     QString::fromLatin1(data.mid(off + 8, 5)).trimmed(),
+                     QString::fromLatin1(data.mid(off + 13, 2)).trimmed(),
+                     QString::fromLatin1(data.mid(off + 15, 3)).trimmed());
+      }
+      addSpan(spans_, lastCid_, rate, start, end);
     }
     off += *reclen;
   }
