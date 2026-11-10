@@ -852,9 +852,27 @@ Third-party parts, each with a provenance note:
 | libsvm | BSD 3-clause | `third_party/libsvm/PROVENANCE.md` |
 | toml++ | MIT | `third_party/tomlplusplus/PROVENANCE.md` |
 | miniz | MIT | `third_party/miniz/PROVENANCE.md` |
-| East Anatolian Fault traces (GEM GAF-DB) | CC BY-SA 4.0 | `src/cbi/data/PROVENANCE.md` |
+| Seismogenic fault sources of Turkey and its neighbours (EFSM20, clipped and simplified; a separate data file) | CC BY 4.0 | `data/faults/PROVENANCE.md` |
+| East Anatolian Fault Zone strands (GEM GAF-DB; a separate data file, distributed alongside, not as part of, the program; remains CC BY-SA 4.0) | CC BY-SA 4.0 | `data/faults/PROVENANCE.md` |
 | Country outlines (Natural Earth 5.1.1, clipped and simplified) | public domain | `src/analysis/data/PROVENANCE.md` |
 | ayzek (a separate program run by the Early warning tab) | GPL-3.0-or-later | `third_party/AYZEK-PROVENANCE.md` |
 
 ayzek is not linked into the application: it is shipped beside it with its
 licence, and its source is the `third_party/ayzek` submodule.
+
+The two fault files are data, not part of the program. They are installed
+as files beside it (the `data` folder of each package, with `LICENSE.txt`
+and `PROVENANCE.md`) and keep their own licences:
+
+- **Fault lines on the maps**: the crustal fault sources of the European
+  Fault-Source Model 2020. Basili R., Danciu L., Beauval C., et al. (2022),
+  *European Fault-Source Model 2020 (EFSM20): online data on fault geometry
+  and activity parameters*, Istituto Nazionale di Geofisica e Vulcanologia
+  (INGV), <https://doi.org/10.13127/efsm20>, CC BY 4.0; clipped to Turkey
+  and its neighbours, simplified and reduced in attributes. These are
+  simplified fault sources of a hazard model, not an active fault map.
+- **The EAFZ catalog zone**: fault sections of the GEM Global Active Faults
+  Database (Styron and Pagani 2020,
+  <https://github.com/GEMScienceTools/gem-global-active-faults>), CC BY-SA
+  4.0. A modified copy of this file that you pass on stays under CC BY-SA
+  4.0.
