@@ -29,6 +29,7 @@
 #include "modules/study/casespage.h"
 #include "modules/study/comparepage.h"
 #include "modules/study/coveragedialog.h"
+#include "modules/tdvms/plandialog.h"
 #include "modules/tdvms/stationmap.h"
 #include "modules/tdvms/tdvmsmodule.h"
 #include "study/store.h"
@@ -129,6 +130,8 @@ private slots:
   void faultZoneCasesShowTheirTraces();
   void compareShowsWhere();
   void coverageDialogOfTheStudy();
+  void overviewFlagsAStationOutsideTheZone();
+  void planDialogNamesItsStation();
   void dataPageMapChoosesStations();
 
 private:
@@ -684,9 +687,14 @@ void TstMaps::coverageDialogOfTheStudy() {
   auto *which = child<QComboBox>(dialog, "coverageWhich");
   QVERIFY(which);
   QCOMPARE(which->currentIndex(), 1);
+  QCOMPARE(which->count(), 2);
+  // The stations are drawn at once; the catalog is read on a worker thread
+  // and counted when it is in.
   QCOMPARE(dialog.coverage()->map()->content().coverage.size(), 4);
-  QVERIFY(dialog.coverage()->summary().contains(
-      QStringLiteral("the study's catalog")));
+  QTRY_VERIFY_WITH_TIMEOUT(!dialog.loading(), 20000);
+  QVERIFY2(dialog.coverage()->summary().contains(
+               QStringLiteral("the study's catalog")),
+           qPrintable(dialog.coverage()->summary()));
   QVERIFY(dialog.coverage()->result().considered() > 0);
   QVERIFY(!dialog.coverage()->result().covered.empty());
   // Every listed earthquake is one or the other.
@@ -699,11 +707,66 @@ void TstMaps::coverageDialogOfTheStudy() {
   dialog.show();
   QVERIFY(QTest::qWaitForWindowExposed(&dialog));
   shot(dialog, QStringLiteral("coverage_dialog"));
-  // Without a catalog the bundled list of larger earthquakes is counted.
+  // A set of stations given by the caller (the rows selected in the
+  // Waveforms dialog) is a third choice, and the one it starts on. None of
+  // these has waveforms in the study, so none can be placed: that is said.
+  CoverageDialog preset(ctx_, nullptr, {QStringLiteral("STA1")});
+  auto *which2 = child<QComboBox>(preset, "coverageWhich");
+  QCOMPARE(which2->count(), 3);
+  QCOMPARE(which2->currentIndex(), 2);
+  bool said = false;
+  for (const QLabel *l : preset.findChildren<QLabel *>())
+    said = said || l->text().contains(QStringLiteral("STA1"));
+  QVERIFY(said);
+  QTRY_VERIFY_WITH_TIMEOUT(!preset.loading(), 20000);
+  // Without a catalog the built-in list of larger earthquakes is counted.
   QVERIFY(store_->update([](Study &s) { s.catalog.clear(); }));
   QString source;
   QVERIFY(coverageEvents(store_->study(), &source).size() > 100);
   QVERIFY(source.contains(QStringLiteral("USGS")));
+  CoverageDialog builtIn(ctx_);
+  QTRY_VERIFY_WITH_TIMEOUT(!builtIn.loading(), 20000);
+  QVERIFY(builtIn.coverage()->summary().contains(QStringLiteral("USGS")));
+  QVERIFY(builtIn.coverage()->result().considered() > 100);
+}
+
+void TstMaps::overviewFlagsAStationOutsideTheZone() {
+  QVERIFY(makeStudy());
+  // STA2 is about 69 km from case a: inside the 100 km zone, outside 50 km.
+  CasesPage page(ctx_);
+  page.resize(1360, 900);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  auto *map = child<GeoMap>(page, "caseGeoMap");
+  QVERIFY(map);
+  const auto stateOf = [map](const QString &code) {
+    const int i = indexOf(*map, QStringLiteral("station:") + code);
+    return i < 0 ? GeoMarker::State::Candidate : map->content().markers[i].state;
+  };
+  QVERIFY(stateOf(QStringLiteral("STA2")) != GeoMarker::State::Outside);
+  QVERIFY(store_->update([](Study &s) { s.cases[0].zone.radiusKm = 50.0; }));
+  QCOMPARE(stateOf(QStringLiteral("STA2")), GeoMarker::State::Outside);
+  QVERIFY(stateOf(QStringLiteral("STA1")) != GeoMarker::State::Outside);
+  const GeoMarker &m =
+      map->content().markers[indexOf(*map, QStringLiteral("station:STA2"))];
+  QVERIFY(m.label.contains(QStringLiteral("outside the zone")));
+  QVERIFY(m.tip.contains(QStringLiteral("50 km")));
+  child<QPushButton>(page, "mapFitCase")->click();
+  shot(page, QStringLiteral("cases_outside_zone"));
+  // Another case selected: the flag is the selected case's, not this one's.
+  child<QTableWidget>(page, "caseTable")->selectRow(1);
+  QVERIFY(stateOf(QStringLiteral("STA2")) != GeoMarker::State::Outside);
+}
+
+void TstMaps::planDialogNamesItsStation() {
+  const tdvms::Campaign camp =
+      tdvms::newCampaign(dir_->filePath("dl"), QStringLiteral("c1"), QString());
+  PlanDialog dialog(camp.ledgerPath);
+  QSignalSpy picked(&dialog, &PlanDialog::stationPicked);
+  const QString code = tdvms::loadStations()[5].code;
+  dialog.prefill(code, QDate(2020, 1, 1), QDate(2020, 2, 1));
+  QVERIFY(!picked.isEmpty());
+  QCOMPARE(picked.last().at(0).toString(), code);
 }
 
 void TstMaps::dataPageMapChoosesStations() {

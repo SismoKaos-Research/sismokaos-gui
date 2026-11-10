@@ -1,21 +1,21 @@
 #include "modules/study/coveragedialog.h"
 
 #include <QComboBox>
-#include <QDateTime>
 #include <QDialogButtonBox>
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QTimeZone>
+#include <QThread>
 #include <QVBoxLayout>
 
 #include <exception>
+#include <memory>
 
 #include "core/theme.h"
 #include "core/ui.h"
 #include "study/store.h"
 #include "study/waveindex.h"
-#include "tdvms/catalog.h"
+#include "study/catalogs.h"
 
 namespace skg {
 
@@ -68,27 +68,14 @@ std::vector<analysis::Event> coverageEvents(const study::Study &s,
       // Fall through to the bundled list.
     }
   }
-  std::vector<analysis::Event> out;
-  for (const tdvms::CatalogEvent &c : tdvms::loadEvents()) {
-    analysis::Event e;
-    e.id = c.id;
-    QDateTime t = QDateTime::fromString(c.time, Qt::ISODate);
-    t.setTimeZone(QTimeZone::UTC);
-    e.epoch = t.isValid() ? double(t.toSecsSinceEpoch()) : 0.0;
-    e.lat = c.latitude;
-    e.lon = c.longitude;
-    e.depthKm = c.depthKm;
-    e.mag = c.magnitude;
-    e.place = c.place;
-    out.push_back(e);
-  }
   if (source)
-    *source = CoverageDialog::tr("the bundled list of M 5+ earthquakes, USGS");
-  return out;
+    *source = CoverageDialog::tr("the built-in list of M 5+ earthquakes, USGS");
+  return study::builtInEvents();
 }
 
-CoverageDialog::CoverageDialog(AppContext ctx, QWidget *parent)
-    : QDialog(parent), ctx_(ctx) {
+CoverageDialog::CoverageDialog(AppContext ctx, QWidget *parent,
+                               const QStringList &chosen)
+    : QDialog(parent), ctx_(ctx), chosen_(chosen) {
   setWindowTitle(tr("What the stations cover"));
   whichLabel_ = new QLabel(tr("Stations"), this);
   whichLabel_->setObjectName(QStringLiteral("fieldLabel"));
@@ -96,6 +83,9 @@ CoverageDialog::CoverageDialog(AppContext ctx, QWidget *parent)
   which_->setObjectName(QStringLiteral("coverageWhich"));
   which_->addItem(tr("With waveforms in the study's folders"));
   which_->addItem(tr("Ticked in the cases"));
+  if (!chosen_.isEmpty())
+    which_->addItem(tr("Selected in the Waveforms dialog (%n)", nullptr,
+                       int(chosen_.size())));
   whichLabel_->setBuddy(which_);
   ui::setHelp(which_,
               tr("Which stations the area is drawn around: the ones the "
@@ -119,13 +109,33 @@ CoverageDialog::CoverageDialog(AppContext ctx, QWidget *parent)
   ui::polishPage(this);
 
   if (ctx_.study && ctx_.study->isOpen()) {
-    const study::Study &s = ctx_.study->study();
-    events_ = coverageEvents(s, &source_);
-    // Start on the stations there is data of; before any, on the cases'.
-    if (stationsWithWaveforms(s).isEmpty() && !stationsOfCases(s).isEmpty())
+    const study::Study s = ctx_.study->study();
+    // Start on the stations asked for; else on those there is data of;
+    // before any, on the cases'.
+    if (!chosen_.isEmpty())
+      which_->setCurrentIndex(2);
+    else if (stationsWithWaveforms(s).isEmpty() && !stationsOfCases(s).isEmpty())
       which_->setCurrentIndex(1);
+    // The catalog can be large: read it on a worker thread and count when
+    // it is in. The map shows the stations and their area meanwhile.
+    loading_ = true;
+    coverage_->setEvents({}, tr("reading the catalog…"));
+    struct Loaded {
+      std::vector<analysis::Event> events;
+      QString source;
+    };
+    auto loaded = std::make_shared<Loaded>();
+    QThread *worker = QThread::create(
+        [s, loaded] { loaded->events = coverageEvents(s, &loaded->source); });
+    connect(worker, &QThread::finished, this, [this, loaded] {
+      events_ = std::move(loaded->events);
+      source_ = loaded->source;
+      loading_ = false;
+      coverage_->setEvents(events_, source_);
+    });
+    connect(worker, &QThread::finished, worker, &QObject::deleteLater);
+    worker->start();
   }
-  coverage_->setEvents(events_, source_);
   connect(which_, &QComboBox::currentIndexChanged, this, &CoverageDialog::fill);
   fill();
 }
@@ -139,12 +149,31 @@ void CoverageDialog::fill() {
   const study::Study &s = ctx_.study->study();
   QStringList without;
   const bool indexed = which_->currentIndex() == 0;
-  const QList<CoverageStation> stations =
-      indexed ? stationsWithWaveforms(s, &without) : stationsOfCases(s);
+  QList<CoverageStation> stations;
+  if (which_->currentIndex() == 2) {
+    // The rows selected in the Waveforms dialog, where they have
+    // coordinates.
+    QStringList none;
+    const QList<CoverageStation> all = stationsWithWaveforms(s, &none);
+    for (const QString &code : chosen_) {
+      bool found = false;
+      for (const CoverageStation &st : all)
+        if (st.code.compare(code, Qt::CaseInsensitive) == 0) {
+          stations << st;
+          found = true;
+        }
+      if (!found)
+        without << code;
+    }
+  } else {
+    stations = indexed ? stationsWithWaveforms(s, &without) : stationsOfCases(s);
+  }
   coverage_->setStations(stations);
   QStringList notes;
   if (stations.isEmpty())
-    notes << (indexed
+    notes << (which_->currentIndex() == 2
+                  ? tr("None of the selected stations has known coordinates.")
+              : indexed
                   ? tr("The study's waveform folders hold no station with "
                        "known coordinates yet. Add a folder under Waveforms…, "
                        "or look at the stations ticked in the cases.")

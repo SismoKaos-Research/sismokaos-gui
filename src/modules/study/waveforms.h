@@ -83,6 +83,7 @@ private:
   QPushButton *add_, *repoint_, *remove_, *rescan_, *stop_;
   QTableWidget *table_;
   QPushButton *coords_, *xml_, *skipped_, *near_;
+  QPushButton *coverage_; // what the selected stations cover, on a map
   QStringList findNear_;
 };
 

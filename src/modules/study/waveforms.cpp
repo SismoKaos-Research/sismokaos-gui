@@ -1,4 +1,5 @@
 #include "modules/study/waveforms.h"
+#include "modules/study/coveragedialog.h"
 
 #include <QDateTime>
 #include <QDialogButtonBox>
@@ -220,6 +221,13 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
   below->addWidget(coords_);
   below->addWidget(xml_);
   below->addWidget(near_);
+  coverage_ = new QPushButton(tr("Station coverage…"), this);
+  coverage_->setObjectName(QStringLiteral("waveCoverage"));
+  coverage_->setToolTip(ui::helpText(
+      tr("A map of what the selected stations cover (all of them when none "
+         "is selected): the area within a distance of them and the "
+         "earthquakes of the catalog that fall inside it.")));
+  below->addWidget(coverage_);
   below->addStretch(1);
   below->addWidget(skipped_);
 
@@ -286,6 +294,17 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
     findNear_ = codes;
     if (!codes.isEmpty())
       accept();
+  });
+  connect(coverage_, &QPushButton::clicked, this, [this] {
+    QStringList codes;
+    const bool any = !table_->selectedItems().isEmpty();
+    for (int row = 0; row < table_->rowCount(); ++row) {
+      const QTableWidgetItem *it = table_->item(row, 0);
+      if (it && (!any || it->isSelected()) && !codes.contains(it->text()))
+        codes << it->text();
+    }
+    CoverageDialog dialog(ctx_, this, codes);
+    dialog.exec();
   });
   connect(repoint_, &QPushButton::clicked, this, &WaveformsDialog::repoint);
   connect(remove_, &QPushButton::clicked, this, &WaveformsDialog::removeFolder);

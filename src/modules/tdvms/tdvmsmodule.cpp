@@ -426,6 +426,9 @@ void TdvmsWidget::updateStationMap() {
   const QString typed = fdsn_->station();
   if (!typed.isEmpty() && !chosen.contains(typed, Qt::CaseInsensitive))
     chosen << typed;
+  if (!planStation_.isEmpty() &&
+      !chosen.contains(planStation_, Qt::CaseInsensitive))
+    chosen << planStation_;
   stationMap_->setSelected(chosen, wantedStations_.isEmpty()
                                        ? typed
                                        : wantedStation_->currentText());
@@ -489,9 +492,17 @@ void TdvmsWidget::plan() {
   if (c.ledgerPath.isEmpty())
     return;
   PlanDialog dlg(c.ledgerPath, this);
+  // The station being planned shows on the map while the dialog is open.
+  connect(&dlg, &PlanDialog::stationPicked, this, [this](const QString &code) {
+    planStation_ = code;
+    updateStationMap();
+  });
   if (!wantedStations_.isEmpty())
     dlg.prefill(wantedStation_->currentText(), wantedStart_, wantedEnd_);
-  if (dlg.exec() != QDialog::Accepted)
+  const int answer = dlg.exec();
+  planStation_.clear();
+  updateStationMap();
+  if (answer != QDialog::Accepted)
     return;
   const PlanRequest req = dlg.request();
   if (req.station.isEmpty())

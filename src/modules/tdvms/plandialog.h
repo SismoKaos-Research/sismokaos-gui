@@ -32,6 +32,10 @@ public:
   // Why Plan cannot be pressed now, or nothing.
   QString blockedReason() const;
 
+signals:
+  // The station in the dialog changed (its code, or empty).
+  void stationPicked(const QString &code);
+
 private:
   void updateHint();
 

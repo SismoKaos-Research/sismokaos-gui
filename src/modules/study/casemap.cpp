@@ -122,15 +122,31 @@ GeoContent caseMapContent(const study::Study &s, const Theme &theme,
       GeoMarker sm;
       sm.kind = GeoMarker::Kind::Station;
       const bool has = !spec.hasData || spec.hasData(st);
-      sm.state = has ? GeoMarker::State::Used : GeoMarker::State::NoData;
+      // Beyond the catalog zone of the selected case: flagged, as in the
+      // add-case dialog.
+      const bool outside = selected &&
+                           c.zone.kind == study::Zone::Kind::Circle &&
+                           st.distanceKm > c.zone.radiusKm;
+      sm.state = outside ? GeoMarker::State::Outside
+                 : has   ? GeoMarker::State::Used
+                         : GeoMarker::State::NoData;
       sm.id = QStringLiteral("station:") + st.code;
       sm.lat = st.lat;
       sm.lon = st.lon;
       sm.dim = !selected;
       sm.strong = selected;
       if (selected)
-        sm.label = st.code;
-      sm.tip = selected
+        sm.label = outside ? CaseMap::tr("%1 · outside the zone").arg(st.code)
+                           : st.code;
+      sm.tip = outside
+                   ? CaseMap::tr("%1 · %2 km from the epicentre, outside the "
+                                 "%3 km catalog zone: the earthquakes counted "
+                                 "for this case are those of the zone, not "
+                                 "those around this station")
+                         .arg(st.code)
+                         .arg(st.distanceKm, 0, 'f', 0)
+                         .arg(c.zone.radiusKm, 0, 'f', 0)
+               : selected
                    ? QStringLiteral("%1 · %2 km%3")
                          .arg(st.code)
                          .arg(st.distanceKm, 0, 'f', 0)
@@ -247,6 +263,9 @@ void CaseMap::updateLegend() {
   if (hasData_)
     key << markerEntry(GeoMarker::Kind::Station, GeoMarker::State::NoData,
                        tr("In use, no waveforms"));
+  if (hasOutside_)
+    key << markerEntry(GeoMarker::Kind::Station, GeoMarker::State::Outside,
+                       tr("In use, outside the zone"));
   if (hasCandidates_) {
     key << markerEntry(GeoMarker::Kind::Station, GeoMarker::State::Candidate,
                        tr("Candidate"));
@@ -281,6 +300,10 @@ void CaseMap::setStudy(const study::Study &s, const CaseMapSpec &spec) {
                               [](const study::Case &c) { return c.reference; });
   hasData_ = bool(spec.hasData);
   hasCandidates_ = !spec.candidates.isEmpty();
+  hasOutside_ = false;
+  for (const GeoMarker &m : content.markers)
+    hasOutside_ = hasOutside_ || (m.kind == GeoMarker::Kind::Station &&
+                                  m.state == GeoMarker::State::Outside);
   fitCase_->setEnabled(hasSelection_);
   fitAll_->setEnabled(!s.cases.isEmpty());
   note_->setText(problems.isEmpty()

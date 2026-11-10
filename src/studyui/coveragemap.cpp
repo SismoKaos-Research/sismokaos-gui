@@ -194,8 +194,13 @@ void CoverageMap::rebuild(bool refit) {
       stations_.isEmpty()
           ? tr("No station is selected.")
           : events_.empty()
-                ? tr("%n station(s). No earthquake catalog to count from.",
-                     nullptr, int(stations_.size()))
+                ? (source_.isEmpty()
+                       ? tr("%n station(s). No earthquake catalog to count "
+                            "from.",
+                            nullptr, int(stations_.size()))
+                       : tr("%n station(s); %1", nullptr,
+                            int(stations_.size()))
+                             .arg(source_))
                 : tr("%1 of %2 earthquakes of M ≥ %3 lie within %4 km of a "
                      "selected station (%5).")
                       .arg(result_.covered.size())

@@ -123,6 +123,7 @@ private:
   CoveragePane *coverage_;
   FdsnPane *fdsn_;
   StationPickMap *stationMap_;
+  QString planStation_; // the station in the open plan dialog
   QSystemTrayIcon *tray_ = nullptr;
 
   QWidget *wantedBar_;

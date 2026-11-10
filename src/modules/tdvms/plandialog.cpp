@@ -34,6 +34,8 @@ PlanDialog::PlanDialog(const QString &ledgerPath, QWidget *parent)
   station_->completer()->setCompletionMode(QCompleter::PopupCompletion);
   station_->completer()->setFilterMode(Qt::MatchContains);
   station_->setCurrentIndex(-1);
+  connect(station_, &QComboBox::currentTextChanged, this,
+          [this] { emit stationPicked(request().station); });
 
   start_ = new QDateEdit(QDate::currentDate().addYears(-1), this);
   end_ = new QDateEdit(QDate::currentDate(), this);

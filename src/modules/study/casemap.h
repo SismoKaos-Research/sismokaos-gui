@@ -73,7 +73,7 @@ private:
   QLabel *title_, *hint_, *note_;
   QPushButton *fitAll_, *fitCase_;
   bool hasSelection_ = false, hasReference_ = false, hasData_ = false,
-       hasCandidates_ = false;
+       hasCandidates_ = false, hasOutside_ = false;
   QString lastSelected_;
 };
 

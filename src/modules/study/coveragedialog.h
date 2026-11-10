@@ -27,16 +27,22 @@ QList<CoverageStation> stationsWithWaveforms(const study::Study &s,
                                              QStringList *without = nullptr);
 // The stations ticked in any case.
 QList<CoverageStation> stationsOfCases(const study::Study &s);
-// The study's catalog, or the bundled list of larger earthquakes when the
+// The study's catalog, or the built-in list of larger earthquakes when the
 // study names none or it cannot be read. `source` says which, for the user.
+// Reads the file: call it off the GUI thread for a large catalog.
 std::vector<analysis::Event> coverageEvents(const study::Study &s,
                                             QString *source);
 
 class CoverageDialog : public QDialog {
   Q_OBJECT
 public:
-  explicit CoverageDialog(AppContext ctx, QWidget *parent = nullptr);
+  // `chosen`: a set of stations to start on (the rows selected in the
+  // Waveforms dialog); it is offered as a third choice.
+  explicit CoverageDialog(AppContext ctx, QWidget *parent = nullptr,
+                          const QStringList &chosen = {});
   CoverageMap *coverage() const { return coverage_; }
+  // The catalog is read on a worker thread; true until it is in.
+  bool loading() const { return loading_; }
 
 private:
   void fill();
@@ -47,6 +53,8 @@ private:
   CoverageMap *coverage_;
   std::vector<analysis::Event> events_;
   QString source_;
+  QStringList chosen_;
+  bool loading_ = false;
 };
 
 } // namespace skg
