@@ -174,4 +174,43 @@ QString repairPlace(const QString &place, double lat, double lon) {
   return changed ? parts.join(QLatin1Char(',')) : place;
 }
 
+QString fold(const QString &text) {
+  // Decomposed, so that an accented letter is its base letter followed by
+  // combining marks, which are then dropped: İ is I + dot above, ğ is
+  // g + breve, ş is s + cedilla. The dotless ı has no decomposition and is
+  // named.
+  const QString d = text.normalized(QString::NormalizationForm_KD);
+  QString out;
+  out.reserve(d.size());
+  for (const QChar ch : d) {
+    const QChar::Category cat = ch.category();
+    if (cat == QChar::Mark_NonSpacing || cat == QChar::Mark_SpacingCombining ||
+        cat == QChar::Mark_Enclosing)
+      continue;
+    const char16_t u = ch.unicode();
+    if (u == u'I' || u == 0x0131) { // I, ı
+      out += QLatin1Char('i');
+    } else if (u < 0x80) {
+      // ASCII by hand: QChar::toLower is locale-free, and this says so.
+      out += (u >= u'A' && u <= u'Z') ? QChar(char16_t(u + 32)) : ch;
+    } else if (u == 0x00DF) { // ß
+      out += QStringLiteral("ss");
+    } else if (u == 0x00D8 || u == 0x00F8) { // Ø ø
+      out += QLatin1Char('o');
+    } else if (u == 0x0141 || u == 0x0142) { // Ł ł
+      out += QLatin1Char('l');
+    } else if (u == 0x0110 || u == 0x0111) { // Đ đ
+      out += QLatin1Char('d');
+    } else {
+      out += ch.toLower();
+    }
+  }
+  return out;
+}
+
+bool foldedContains(const QString &haystack, const QString &needle) {
+  const QString n = fold(needle.trimmed());
+  return n.isEmpty() || fold(haystack).contains(n);
+}
+
 } // namespace skg::text

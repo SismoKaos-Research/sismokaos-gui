@@ -13,6 +13,9 @@
 //                (GeoNames, data/PROVENANCE.md): the one place near the
 //                earthquake whose name fits the pattern. A name that fits no
 //                place, or more than one, is left as it is.
+//
+//   fold         a search key: "İzmir", "IZMIR", "ızmır" and "izmir" all
+//                become "izmir".
 #pragma once
 
 #include <QByteArray>
@@ -30,5 +33,14 @@ QString repairPlace(const QString &place, double lat, double lon);
 // Whether `place` holds a "?" that stands for a lost letter (one inside or
 // at the edge of a word).
 bool placeLooksDamaged(const QString &place);
+
+// A key for searching and comparing names the way people type them: lower
+// case, with the Turkish letters and other accents reduced to plain Latin
+// ones (ğ→g, ş→s, ç→c, ö→o, ü→u, â→a), and all four of I, İ, ı, i becoming
+// "i". The same on every machine: no locale is consulted, so "izmir" finds
+// "İzmir" and "sirnak" finds "Şırnak" whatever language the system is in.
+QString fold(const QString &text);
+// Whether `haystack` contains `needle`, both folded. An empty needle fits.
+bool foldedContains(const QString &haystack, const QString &needle);
 
 } // namespace skg::text
