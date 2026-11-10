@@ -2,6 +2,8 @@
 // earthquakes and a reference date from the synthetic catalog, and a
 // classification on fabricated feature tables (no waveforms are processed).
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QRandomGenerator>
 #include <QTemporaryDir>
 #include <QTimeZone>
@@ -9,6 +11,7 @@
 
 #include <cmath>
 
+#include "fx/config.h"
 #include "fx/npy.h"
 #include "study/compare.h"
 #include "study/runs.h"
@@ -92,6 +95,7 @@ private slots:
   void aChangedOrMissingCatalog();
   void recipeOrderIsExplained();
   void rerunFeaturesMakeTheClassificationStale();
+  void featuresOnASmallStation();
 
 private:
   QTemporaryDir dir_;
@@ -654,6 +658,132 @@ void TstStudyRuns::rerunFeaturesMakeTheClassificationStale() {
   const Cell cell = cellOf(s_, c, st, classification_);
   QCOMPARE(cell.state, CellState::Stale);
   QVERIFY2(cell.why.contains(QStringLiteral("features were run again")),
+           qPrintable(cell.why));
+}
+
+// A features recipe run for real, on the two hours of synthetic waveforms
+// of the fx tests: with the study's catalog as it is, with a catalog that
+// is not in UTC, and with a configuration that names a catalog of its own.
+void TstStudyRuns::featuresOnASmallStation() {
+  const QString data = QStringLiteral(SKG_TEST_DATA "/fx/enz");
+  Study s;
+  s.dir = dir_.filePath("waves-study");
+  s.name = QStringLiteral("Waves");
+  const QString station = QStringLiteral("SYN1");
+  QVERIFY(QDir().mkpath(QDir(s.dir).filePath("waves/" + station)));
+  for (const QString &name : QDir(data).entryList(
+           {QStringLiteral("*.mseed"), QStringLiteral("*.zip")}, QDir::Files))
+    QVERIFY(QFile::copy(QDir(data).filePath(name),
+                        QDir(s.dir).filePath("waves/" + station + "/" + name)));
+  QVERIFY(QFile::copy(QDir(data).filePath("catalog.csv"),
+                      QDir(s.dir).filePath("catalog.csv")));
+  s.catalog = QStringLiteral("catalog.csv");
+  s.dataRoot = QStringLiteral("waves");
+  // A reference date just after the data (2024-03-05).
+  Case c = referenceCase(QStringLiteral("After the data"),
+                         QDateTime(QDate(2024, 3, 6), QTime(0, 0), QTimeZone::UTC),
+                         38.60, 39.30);
+  c.id = s.freeCaseId(c.name);
+  c.spanDays = 30;
+  StationRef st;
+  st.code = station;
+  st.lat = 38.60;
+  st.lon = 39.20;
+  c.stations << st;
+  s.cases << c;
+
+  // The configuration of the fx tests: 5 Hz, 200 s windows side by side.
+  fx::Config cfg;
+  cfg.fs = 5.0;
+  cfg.winSec = 200;
+  cfg.stepSec = 200;
+  cfg.freqmin = 0.1;
+  cfg.freqmax = 2.0;
+  cfg.calibration.minMag = 2.0;
+  Recipe features = defaultRecipe(kToolFeatures);
+  features.id = QStringLiteral("features");
+  features.settings.insert(
+      QStringLiteral("config_json"),
+      QString::fromUtf8(QJsonDocument(cfg.toJson()).toJson()));
+  s.recipes << features;
+  QVERIFY(calibrationOverride(features).isEmpty());
+
+  QCOMPARE(cellOf(s, c, station, features).state, CellState::Missing);
+  QStringList log;
+  RunHooks hooks;
+  hooks.log = [&log](const QString &l) { log << l; };
+  QVERIFY(runCell(s, c, station, features, QStringLiteral("test"), hooks));
+  Cell cell = cellOf(s, c, station, features);
+  QCOMPARE(cell.state, CellState::Done);
+  QVERIFY(cell.record->fitted.value("windows").toInt() > 10);
+  QCOMPARE(cell.record->catalogSha, sha256Of(s.catalogPath()));
+  const QString table =
+      QDir(cell.dir).filePath(cell.record->outputs.value("features").toString());
+  QVERIFY2(QFileInfo::exists(table), qPrintable(table));
+  QVERIFY(QFileInfo::exists(cell.log));
+  QVERIFY(!QFileInfo::exists(QDir(cell.dir).filePath("catalog_utc.csv")));
+  // The zone is none of its business; the span is.
+  Study changed = s;
+  changed.cases[0].zone.radiusKm = 55;
+  QCOMPARE(cellOf(changed, changed.cases[0], station, features).state,
+           CellState::Done);
+  changed.cases[0].spanDays = 60;
+  QCOMPARE(cellOf(changed, changed.cases[0], station, features).state,
+           CellState::Stale);
+
+  // The same catalog said to be three hours ahead of UTC: the run is stale,
+  // and the new one calibrates on a copy moved to UTC.
+  Study ahead = s;
+  ahead.catalogUtcOffsetHours = 3;
+  QCOMPARE(cellOf(ahead, c, station, features).state, CellState::Stale);
+  log.clear();
+  QVERIFY(runCell(ahead, c, station, features, QStringLiteral("test"), hooks));
+  cell = cellOf(ahead, c, station, features);
+  QCOMPARE(cell.state, CellState::Done);
+  QVERIFY2(log.join('\n').contains(QStringLiteral("moved to UTC")),
+           qPrintable(log.join('\n')));
+  QFile utc(QDir(cell.dir).filePath("catalog_utc.csv"));
+  QVERIFY(utc.open(QIODevice::ReadOnly));
+  const QByteArray moved = utc.readAll();
+  // 05/03/2024 00:45:00 at UTC+3 is 04/03/2024 21:45:00 UTC.
+  QVERIFY2(moved.contains("04/03/2024 21:45:00"), moved.constData());
+  QVERIFY(!moved.contains("05/03/2024 00:45:00"));
+
+  // A configuration with a catalog of its own: used, said, and not passed
+  // off as the study's.
+  fx::Config own = cfg;
+  own.calibration.catalog = QDir(data).filePath("catalog.csv");
+  Recipe overriding = features;
+  overriding.id = QStringLiteral("features-own");
+  overriding.settings.insert(
+      QStringLiteral("config_json"),
+      QString::fromUtf8(QJsonDocument(own.toJson()).toJson()));
+  QCOMPARE(calibrationOverride(overriding), own.calibration.catalog);
+  log.clear();
+  QVERIFY(runCell(s, c, station, overriding, QStringLiteral("test"), hooks));
+  cell = cellOf(s, c, station, overriding);
+  QCOMPARE(cell.state, CellState::Done);
+  QVERIFY(cell.record->catalogSha.isEmpty());
+  QVERIFY(cell.record->inputs.contains(own.calibration.catalog));
+  QVERIFY2(log.join('\n').contains(QStringLiteral("the recipe's own")),
+           qPrintable(log.join('\n')));
+  // With an override the study's catalog is not needed, and replacing it
+  // does not make the run stale.
+  Study without = s;
+  without.catalog.clear();
+  QCOMPARE(cellOf(without, c, station, overriding).state, CellState::Done);
+  // An override that is not there fails with its path.
+  own.calibration.catalog = dir_.filePath("no-such-catalog.csv");
+  overriding.id = QStringLiteral("features-lost");
+  overriding.settings.insert(
+      QStringLiteral("config_json"),
+      QString::fromUtf8(QJsonDocument(own.toJson()).toJson()));
+  QVERIFY_THROWS_EXCEPTION(std::runtime_error,
+                           runCell(s, c, station, overriding,
+                                   QStringLiteral("test"), {}));
+  cell = cellOf(s, c, station, overriding);
+  QCOMPARE(cell.state, CellState::Failed);
+  QVERIFY2(cell.why.contains(QStringLiteral("no-such-catalog.csv")),
            qPrintable(cell.why));
 }
 

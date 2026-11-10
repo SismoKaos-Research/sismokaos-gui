@@ -133,7 +133,15 @@ QIcon Theme::navIcon(const QString &id) const {
   return ic;
 }
 
-QList<QColor> Theme::seriesColors() const {
+QColor Theme::lightColor(const QString &token) {
+  return QColor(lightTokens().value(token, QStringLiteral("#FF00FF")));
+}
+
+QList<QColor> Theme::lightSeriesColors() { return seriesPalette(false); }
+
+QList<QColor> Theme::seriesColors() const { return seriesPalette(dark()); }
+
+QList<QColor> Theme::seriesPalette(bool dark) {
   // Validated per mode against the chart surface (lightness band, chroma,
   // colour-vision separation); fixed order, never cycled.
   static const char *const light[] = {"#2a78d6", "#eb6834", "#1baf7a",
@@ -143,7 +151,7 @@ QList<QColor> Theme::seriesColors() const {
                                       "#c98500", "#d55181", "#008300",
                                       "#9085e9", "#e66767"};
   QList<QColor> out;
-  for (const char *c : dark() ? darkc : light)
+  for (const char *c : dark ? darkc : light)
     out << QColor(QLatin1String(c));
   return out;
 }

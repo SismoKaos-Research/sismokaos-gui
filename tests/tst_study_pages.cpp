@@ -131,6 +131,8 @@ private slots:
   void runsPageFromNothing();
   void recipeDialog();
   void comparePage();
+  void compareExportsAndKeys();
+  void compareManySeriesAndEmptyStates();
   void waveformsOnCases();
   void catalogOffsetRereadsCaseTimes();
   void cleanupTestCase();
@@ -1041,6 +1043,9 @@ void TstStudyPages::comparePage() {
   auto *series = page.findChild<QComboBox *>(QStringLiteral("seriesRecipe"));
   auto *fitted = page.findChild<QTableWidget *>(QStringLiteral("fittedTable"));
   QVERIFY(scores && plot && column && series && fitted);
+  // The runs are read on a worker thread: the page is there at once, the
+  // numbers a moment later.
+  QTRY_VERIFY_WITH_TIMEOUT(!page.loading(), 30000);
   QCOMPARE(scores->rows().size(), 3);
   for (const ScoreRow &r : scores->rows()) {
     QCOMPARE(r.state, CellState::Done);
@@ -1056,6 +1061,8 @@ void TstStudyPages::comparePage() {
   // The features recipe: a column per day, and its fitted values.
   series->setCurrentIndex(1);
   emit series->activated(1);
+  QVERIFY(page.loading());
+  QTRY_VERIFY_WITH_TIMEOUT(!page.loading(), 30000);
   QCOMPARE(column->count(), 2);
   QVERIFY(!plot->isEmpty());
   QCOMPARE(fitted->columnCount(), 4); // Case, Station, m, tau
@@ -1069,6 +1076,200 @@ void TstStudyPages::comparePage() {
     plot->paintPlot(p, QRectF(0, 0, 960, 540));
   }
   QVERIFY(QFileInfo(dir_.filePath("plot.svg")).size() > 2000);
+}
+
+void TstStudyPages::compareExportsAndKeys() {
+  ComparePage page(ctx_);
+  page.resize(1100, 800);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  QTRY_VERIFY_WITH_TIMEOUT(!page.loading(), 30000);
+  auto *scores = page.findChild<ScoreTable *>();
+  auto *plot = page.findChild<SeriesPlot *>();
+  QVERIFY(scores && plot && !plot->isEmpty());
+
+  // Exports go to the study's exports folder by default.
+  const QString exports = page.exportDir();
+  QCOMPARE(exports, QDir(store_->study().dir).filePath("exports"));
+  QVERIFY(QDir(exports).exists());
+  QString error;
+  const QString csv = QDir(exports).filePath("scores.csv");
+  QVERIFY2(page.writeTable(csv, &error), qPrintable(error));
+  QFile table(csv);
+  QVERIFY(table.open(QIODevice::ReadOnly));
+  QCOMPARE(table.readAll().split('\n').size(), 5); // heading, 3 rows, end
+
+  // The figure is light whatever the theme, as a PNG and as an SVG.
+  theme_->setMode(Theme::Mode::Dark);
+  const QString png = QDir(exports).filePath("series.png");
+  QVERIFY2(page.writeFigure(png, &error), qPrintable(error));
+  const QImage img(png);
+  QCOMPARE(img.size(), QSize(1920, 1080));
+  QCOMPARE(img.pixelColor(2, 2), QColor(Qt::white));
+  QVERIFY(img.pixelColor(300, 300).lightness() > 230); // the plot's ground
+  const QString svgPath = QDir(exports).filePath("series.svg");
+  QVERIFY2(page.writeFigure(svgPath, &error), qPrintable(error));
+  QFile svg(svgPath);
+  QVERIFY(svg.open(QIODevice::ReadOnly));
+  const QByteArray svgText = svg.readAll();
+  QVERIFY(svgText.size() > 2000);
+  QVERIFY(svgText.contains("#ffffff") || svgText.contains("#FFFFFF"));
+  QVERIFY(!svgText.contains("#1a2029") && !svgText.contains("#1A2029"));
+  theme_->setMode(Theme::Mode::Light);
+  // A file that cannot be written is an error with the path, for both.
+  error.clear();
+  QVERIFY(!page.writeFigure(dir_.filePath("no/such/folder/x.svg"), &error));
+  QVERIFY2(error.contains(QStringLiteral("x.svg")), qPrintable(error));
+  error.clear();
+  QVERIFY(!page.writeFigure(dir_.filePath("no/such/folder/x.png"), &error));
+  QVERIFY(!error.isEmpty());
+  QVERIFY(!page.writeTable(dir_.filePath("no/such/folder/x.csv"), &error));
+
+  // The score table by keyboard: Right chooses the sort column, Space
+  // turns the order, Down chooses a row, Enter opens it.
+  QSignalSpy opened(scores, &ScoreTable::rowActivated);
+  scores->setFocus();
+  QCOMPARE(scores->sortColumn(), -1);
+  QTest::keyClick(scores, Qt::Key_Right);
+  QCOMPARE(scores->sortColumn(), 0);
+  QCOMPARE(scores->rows()[0].caseName, QStringLiteral("Reference 2021"));
+  QTest::keyClick(scores, Qt::Key_Space);
+  QCOMPARE(scores->rows()[0].caseName, QStringLiteral("Synthetic B 2019"));
+  QTest::keyClick(scores, Qt::Key_Right);
+  QCOMPARE(scores->sortColumn(), 2); // magnitude, largest first
+  QCOMPARE(scores->rows()[0].magnitude, 6.1);
+  QCOMPARE(scores->currentRow(), -1);
+  QTest::keyClick(scores, Qt::Key_Return);
+  QCOMPARE(opened.size(), 0);
+  QTest::keyClick(scores, Qt::Key_Down);
+  QTest::keyClick(scores, Qt::Key_Down);
+  QCOMPARE(scores->currentRow(), 1);
+  QTest::qWait(100); // the layout settles after the two changes of theme
+  shot(page, QStringLiteral("compare_keys"));
+}
+
+// More series than colours, a run that cannot be read, and the pages a
+// user sees before there is anything to compare.
+void TstStudyPages::compareManySeriesAndEmptyStates() {
+  QSettings settings(dir_.filePath("s3.ini"), QSettings::IniFormat);
+  StudyStore store(&settings);
+  Navigator nav;
+  AppContext ctx = ctx_;
+  ctx.study = &store;
+  ctx.nav = &nav;
+  QSignalSpy went(&nav, &Navigator::requested);
+  ComparePage page(ctx);
+  page.resize(1100, 800);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  auto *newStudy = page.findChild<QPushButton *>(QStringLiteral("newStudy"));
+  QVERIFY(newStudy && newStudy->isVisible());
+  QVERIFY(page.findChild<QPushButton *>(QStringLiteral("openStudy")));
+
+  // A study with nothing to score yet: the page says what is missing and
+  // has a button to the page where it is done.
+  const QString folder = dir_.filePath("many");
+  QVERIFY(store.create(folder, QStringLiteral("Many")));
+  QTRY_VERIFY_WITH_TIMEOUT(!page.loading(), 30000);
+  auto *hint = page.findChild<QLabel *>(QStringLiteral("scoresHint"));
+  auto *go = page.findChild<QPushButton *>(QStringLiteral("scoresGo"));
+  QVERIFY(hint && go);
+  QVERIFY(hint->text().contains(QStringLiteral("No classification recipe")));
+  QVERIFY(go->isVisible());
+  go->click();
+  QCOMPARE(went.size(), 1);
+  QCOMPARE(went[0][0].toString(), QStringLiteral("runs"));
+
+  // Ten cases with an indicators run each, copied from the first study's
+  // first case (the same earthquake under ten names); one run's table is
+  // then taken away.
+  const Study &from = store_->study();
+  const Recipe ind = from.recipes[0];
+  const QString source = runDir(from, from.cases[0], QString(), ind);
+  QVERIFY(QFile::copy(from.catalogPath(), QDir(folder).filePath("catalog.csv")));
+  QVERIFY(store.update([&](Study &st) {
+    st.catalog = QStringLiteral("catalog.csv");
+    st.recipes << ind;
+    for (int i = 0; i < 10; ++i) {
+      Case c = from.cases[0];
+      c.name = QStringLiteral("Copy %1").arg(i);
+      c.id = st.freeCaseId(c.name);
+      st.cases << c;
+    }
+  }));
+  const Study &s = store.study();
+  QString brokenTable;
+  for (const Case &c : s.cases) {
+    const QString dir = runDir(s, c, QString(), ind);
+    QDirIterator it(source, QDir::Files, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+      const QString file = it.next();
+      const QString target =
+          QDir(dir).filePath(QDir(source).relativeFilePath(file));
+      QVERIFY(QDir().mkpath(QFileInfo(target).path()));
+      QVERIFY(QFile::copy(file, target));
+    }
+    RunRecord rec = *RunRecord::read(dir);
+    rec.caseId = c.id;
+    rec.caseSignature = runSignature(s, c, QString(), kToolIndicators);
+    QVERIFY(rec.write(dir));
+    QCOMPARE(cellOf(s, c, QString(), ind).state, CellState::Done);
+    brokenTable = QDir(dir).filePath(rec.outputs.value("table").toString());
+  }
+  QVERIFY(QFile::remove(brokenTable)); // the last case's
+  QVERIFY(store.update([](Study &) {}));
+  QTRY_VERIFY_WITH_TIMEOUT(!page.loading(), 30000);
+
+  // Nine series can be read; eight are drawn, and which is the user's
+  // choice. The tenth is named with the reason, not dropped silently.
+  auto *plot = page.findChild<SeriesPlot *>();
+  auto *pick = page.findChild<QToolButton *>(QStringLiteral("seriesPick"));
+  auto *note = page.findChild<QLabel *>(QStringLiteral("seriesNote"));
+  QVERIFY(plot && pick && note);
+  QCOMPARE(plot->seriesCount(), 8);
+  QVERIFY(pick->isVisible());
+  QVERIFY2(pick->text().contains(QStringLiteral("8 of 9")),
+           qPrintable(pick->text()));
+  QVERIFY(note->isVisible());
+  QVERIFY2(note->text().contains(QStringLiteral("Copy 9")),
+           qPrintable(note->text()));
+  shot(page, QStringLiteral("compare_many"));
+  emit pick->menu()->aboutToShow();
+  QList<QAction *> actions = pick->menu()->actions();
+  QCOMPARE(actions.size(), 9);
+  QVERIFY(actions[0]->isChecked());
+  QVERIFY(!actions[8]->isChecked());
+  QVERIFY(!actions[8]->isEnabled()); // eight are drawn already
+  actions[0]->setChecked(false);
+  QCOMPARE(plot->seriesCount(), 7);
+  emit pick->menu()->aboutToShow();
+  actions = pick->menu()->actions();
+  QVERIFY(actions[8]->isEnabled());
+  actions[8]->setChecked(true);
+  QCOMPARE(plot->seriesCount(), 8);
+  QVERIFY(pick->text().contains(QStringLiteral("8 of 9")));
+  // The choice survives a new read of the runs.
+  QVERIFY(store.update([](Study &) {}));
+  QTRY_VERIFY_WITH_TIMEOUT(!page.loading(), 30000);
+  emit pick->menu()->aboutToShow();
+  QVERIFY(!pick->menu()->actions()[0]->isChecked());
+  QVERIFY(pick->menu()->actions()[8]->isChecked());
+
+  // The plot itself never draws more than its eight colours.
+  QList<Series> twelve;
+  for (int i = 0; i < 12; ++i) {
+    Series one;
+    one.caseId = QString::number(i);
+    one.caseName = one.caseId;
+    one.daysBefore = {-2, -1};
+    one.values = {1, 2};
+    twelve << one;
+  }
+  SeriesPlot bare(theme_.get());
+  bare.setSeries(twelve, QStringLiteral("x"), 10, {});
+  QCOMPARE(bare.seriesCount(), 8);
+  store.close();
+  QVERIFY(newStudy->isVisible());
 }
 
 void TstStudyPages::cleanupTestCase() {

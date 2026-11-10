@@ -1168,6 +1168,9 @@ void RunsPage::showSelection() {
                       : tr("⚠  %1 (no longer in the study)")
                             .arg(it.value().toString());
     }
+    if (r->tool == study::kToolFeatures && it.key() == kConfigKey &&
+        it.value().toString().trimmed().isEmpty())
+      value = tr("the defaults");
     lines << QStringList{it.key(), value,
                          fittedPerCase(*r, it.key()) ? tr("fitted per case")
                                                      : tr("fixed")};
@@ -1256,33 +1259,45 @@ void RunsPage::editRecipe() {
   const int col = matrix_->selectedColumn();
   if (col < 0 || col >= s.recipes.size())
     return;
-  RecipeDialog dialog(s, s.recipes[col], this);
-  if (dialog.exec() != QDialog::Accepted)
-    return;
-  const Recipe edited = dialog.recipe();
-  const auto apply = [&edited](Study &st) {
-    for (Recipe &r : st.recipes)
-      if (r.id == edited.id)
-        r = edited;
-  };
-  // A changed setting makes finished runs stale: say how many, and ask.
-  if (edited.revision != s.recipes[col].revision) {
-    Study after = s;
-    apply(after);
-    const int stale = study::runsMadeStale(s, after);
-    if (stale > 0 &&
-        !confirm(tr("Edit recipe"),
-                 tr("Changing a setting of \"%1\" makes %n finished run(s) "
-                    "stale (its own, and those that build on them). They "
-                    "stay on disk until they are run again.\n\nSave the "
-                    "change?",
-                    nullptr, stale)
-                     .arg(edited.name)))
+  const Recipe original = s.recipes[col];
+  Recipe shown = original;
+  for (;;) {
+    RecipeDialog dialog(s, shown, this);
+    if (dialog.exec() != QDialog::Accepted)
       return;
+    Recipe edited = dialog.recipe();
+    edited.revision = edited.settings != original.settings
+                          ? original.revision + 1
+                          : original.revision;
+    const auto apply = [&edited](Study &st) {
+      for (Recipe &r : st.recipes)
+        if (r.id == edited.id)
+          r = edited;
+    };
+    // A changed setting makes finished runs stale: say how many, and ask.
+    // A no goes back to the dialog with what was typed.
+    if (edited.revision != original.revision) {
+      Study after = s;
+      apply(after);
+      const int stale = study::runsMadeStale(s, after);
+      if (stale > 0 &&
+          !confirm(tr("Edit recipe"),
+                   tr("Changing a setting of \"%1\" makes %n finished "
+                      "run(s) stale (its own, and those that build on "
+                      "them). They stay on disk until they are run "
+                      "again.\n\nSave the change?",
+                      nullptr, stale)
+                       .arg(edited.name))) {
+        shown = edited;
+        shown.revision = original.revision;
+        continue;
+      }
+    }
+    QString error;
+    if (!ctx_.study->update(apply, &error))
+      QMessageBox::warning(this, tr("Recipe"), error);
+    return;
   }
-  QString error;
-  if (!ctx_.study->update(apply, &error))
-    QMessageBox::warning(this, tr("Recipe"), error);
 }
 
 void RunsPage::removeRecipe() {

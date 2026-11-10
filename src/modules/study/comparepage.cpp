@@ -1,34 +1,47 @@
 #include "modules/study/comparepage.h"
 
+#include <QApplication>
 #include <QComboBox>
+#include <QDesktopServices>
+#include <QDir>
 #include <QEvent>
 #include <QFile>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QImage>
+#include <QKeyEvent>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPointer>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QStackedWidget>
 #include <QSvgGenerator>
 #include <QTableWidget>
+#include <QThreadPool>
+#include <QToolButton>
+#include <QUrl>
 #include <QVBoxLayout>
 
 #include <algorithm>
 #include <cmath>
+#include <exception>
 #include <limits>
 
 #include "core/theme.h"
 #include "core/ui.h"
+#include "jobs/job.h"
 #include "jobs/jobmodel.h"
 #include "modules/study/runspage.h"
+#include "modules/study/studyswitcher.h"
 #include "study/store.h"
 
 namespace skg {
@@ -42,12 +55,16 @@ namespace {
 
 constexpr double kHead = 40, kRow = 42;
 
-QColor caseColor(const Theme *theme, const QStringList &order,
-                 const QString &caseId) {
-  const QList<QColor> colors = theme->seriesColors();
+constexpr int kMostSeries = 8; // the eight colours
+
+// The columns the score table can be sorted by.
+const int kSortable[] = {0, 2, 3, 5, 6};
+
+QColor caseColor(const QList<QColor> &colors, const QColor &muted,
+                 const QStringList &order, const QString &caseId) {
   const qsizetype i = order.indexOf(caseId);
   if (i < 0 || i >= colors.size())
-    return theme->color(QStringLiteral("muted"));
+    return muted;
   return colors[i];
 }
 
@@ -75,16 +92,26 @@ QString seriesLabel(const Series &s) {
 ScoreTable::ScoreTable(Theme *theme, QWidget *parent)
     : QWidget(parent), theme_(theme) {
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  setFocusPolicy(Qt::StrongFocus);
   connect(theme_, &Theme::changed, this, qOverload<>(&QWidget::update));
 }
 
 void ScoreTable::setRows(const QList<ScoreRow> &rows) {
+  // The row the keys act on stays on its case and station.
+  const QString keep = current_ >= 0 && current_ < rows_.size()
+                           ? rows_[current_].caseId + QLatin1Char('|') +
+                                 rows_[current_].station
+                           : QString();
   rows_ = rows;
   order_.clear();
   for (const ScoreRow &r : rows)
     if (!order_.contains(r.caseId))
       order_ << r.caseId;
   sortRows();
+  current_ = -1;
+  for (int i = 0; i < int(rows_.size()) && !keep.isEmpty(); ++i)
+    if (rows_[i].caseId + QLatin1Char('|') + rows_[i].station == keep)
+      current_ = i;
   updateGeometry();
   update();
 }
@@ -129,19 +156,98 @@ void ScoreTable::sortRows() {
                    });
 }
 
+int ScoreTable::rowAt(const QPointF &pos) const {
+  if (pos.y() <= kHead)
+    return -1;
+  const int row = int((pos.y() - kHead) / kRow);
+  return row < rows_.size() ? row : -1;
+}
+
+void ScoreTable::sortBy(int column) {
+  if (std::find(std::begin(kSortable), std::end(kSortable), column) ==
+      std::end(kSortable))
+    return; // station and model are not sort keys
+  const QString keep = current_ >= 0 && current_ < rows_.size()
+                           ? rows_[current_].caseId + QLatin1Char('|') +
+                                 rows_[current_].station
+                           : QString();
+  descending_ = column == sortColumn_ ? !descending_ : column != 0;
+  sortColumn_ = column;
+  sortRows();
+  current_ = -1;
+  for (int i = 0; i < int(rows_.size()) && !keep.isEmpty(); ++i)
+    if (rows_[i].caseId + QLatin1Char('|') + rows_[i].station == keep)
+      current_ = i;
+  update();
+}
+
 void ScoreTable::mousePressEvent(QMouseEvent *e) {
-  if (e->position().y() > kHead)
+  if (e->position().y() > kHead) {
+    current_ = rowAt(e->position());
+    update();
     return;
+  }
   const QList<double> x = columnX();
   int column = -1;
   for (int i = 0; i < 7; ++i)
     if (e->position().x() >= x[i] && e->position().x() < x[i + 1])
       column = i;
-  if (column == 1 || column == 4 || column < 0)
-    return; // station and model are not sort keys
-  descending_ = column == sortColumn_ ? !descending_ : column != 0;
-  sortColumn_ = column;
-  sortRows();
+  sortBy(column);
+}
+
+void ScoreTable::mouseDoubleClickEvent(QMouseEvent *e) {
+  const int row = rowAt(e->position());
+  if (row >= 0) {
+    current_ = row;
+    update();
+    emit rowActivated(rows_[row]);
+  }
+}
+
+void ScoreTable::keyPressEvent(QKeyEvent *e) {
+  const int n = int(std::size(kSortable));
+  int at = -1;
+  for (int i = 0; i < n; ++i)
+    if (kSortable[i] == sortColumn_)
+      at = i;
+  switch (e->key()) {
+  case Qt::Key_Left:
+    if (at > 0)
+      sortBy(kSortable[at - 1]);
+    return;
+  case Qt::Key_Right:
+    if (at < n - 1)
+      sortBy(kSortable[at + 1]);
+    return;
+  case Qt::Key_Space:
+    if (sortColumn_ >= 0)
+      sortBy(sortColumn_); // the other way round
+    return;
+  case Qt::Key_Up:
+    current_ = std::max(rows_.isEmpty() ? -1 : 0, current_ - 1);
+    update();
+    return;
+  case Qt::Key_Down:
+    current_ = std::min(int(rows_.size()) - 1, current_ + 1);
+    update();
+    return;
+  case Qt::Key_Return:
+  case Qt::Key_Enter:
+    if (current_ >= 0 && current_ < rows_.size())
+      emit rowActivated(rows_[current_]);
+    return;
+  default:
+    QWidget::keyPressEvent(e);
+  }
+}
+
+void ScoreTable::focusInEvent(QFocusEvent *e) {
+  QWidget::focusInEvent(e);
+  update();
+}
+
+void ScoreTable::focusOutEvent(QFocusEvent *e) {
+  QWidget::focusOutEvent(e);
   update();
 }
 
@@ -189,10 +295,17 @@ void ScoreTable::paintEvent(QPaintEvent *) {
   for (int i = 0; i < int(rows_.size()); ++i) {
     const ScoreRow &row = rows_[i];
     const double y = kHead + i * kRow;
+    if (i == current_) {
+      // The row the keys act on; dotted while the table has the focus.
+      p.setPen(hasFocus() ? QPen(col("text"), 1, Qt::DotLine) : QPen(Qt::NoPen));
+      p.setBrush(col("surface2"));
+      p.drawRoundedRect(QRectF(8, y + 2, width() - 16, kRow - 4), 6, 6);
+    }
     p.setPen(col("border"));
     p.drawLine(QPointF(12, y), QPointF(width() - 12, y));
     p.setPen(QPen(col("surface"), 2));
-    p.setBrush(caseColor(theme_, order_, row.caseId));
+    p.setBrush(caseColor(theme_->seriesColors(), col("muted"), order_,
+                         row.caseId));
     if (row.reference) {
       // A reference date: a ring, so it is not told by colour alone.
       p.drawEllipse(QPointF(x[0] + 6, y + kRow / 2), 5.5, 5.5);
@@ -271,10 +384,11 @@ SeriesPlot::SeriesPlot(Theme *theme, QWidget *parent)
 }
 
 void SeriesPlot::setSeries(const QList<Series> &series, const QString &column,
-                           double spanDays, const QStringList &order) {
+                           double spanDays, const QStringList &order,
+                           int notDrawn) {
   // Eight colours, in a fixed order; further series are not drawn.
-  series_ = series.mid(0, 8);
-  hidden_ = int(series.size() - series_.size());
+  series_ = series.mid(0, kMostSeries);
+  hidden_ = notDrawn + int(series.size() - series_.size());
   column_ = column;
   span_ = std::max(1.0, spanDays);
   order_ = order;
@@ -286,11 +400,16 @@ void SeriesPlot::paintEvent(QPaintEvent *) {
   paintPlot(p, QRectF(rect()));
 }
 
-void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect) const {
+void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect,
+                           bool forFile) const {
   p.setRenderHint(QPainter::Antialiasing);
-  const auto col = [this](const char *t) {
-    return theme_->color(QLatin1String(t));
+  // A figure for a file is light whatever the theme.
+  const auto col = [this, forFile](const char *t) {
+    return forFile ? Theme::lightColor(QLatin1String(t))
+                   : theme_->color(QLatin1String(t));
   };
+  if (forFile)
+    p.fillRect(rect, Qt::white);
   const QRectF r = rect.adjusted(1, 1, -1, -1);
   QPainterPath card;
   card.addRoundedRect(r, 8, 8);
@@ -314,14 +433,16 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect) const {
   // Each series keeps its colour: by case, and by position when a case has
   // several stations.
   QList<QColor> colors;
-  const QList<QColor> palette = theme_->seriesColors();
+  const QList<QColor> palette =
+      forFile ? Theme::lightSeriesColors() : theme_->seriesColors();
   bool sameCaseTwice = false;
   for (int i = 0; i < int(series_.size()); ++i)
     for (int j = 0; j < i; ++j)
       sameCaseTwice = sameCaseTwice || series_[i].caseId == series_[j].caseId;
   for (int i = 0; i < int(series_.size()); ++i)
     colors << (sameCaseTwice ? palette[i % palette.size()]
-                             : caseColor(theme_, order_, series_[i].caseId));
+                             : caseColor(palette, col("muted"), order_,
+                                         series_[i].caseId));
 
   // Legend, wrapping to further lines when it is long.
   p.setFont(small);
@@ -342,7 +463,8 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect) const {
   }
   if (hidden_ > 0) {
     p.setPen(col("muted"));
-    p.drawText(QPointF(lx, ly + 4), tr("+%1 more not drawn").arg(hidden_));
+    p.drawText(QPointF(lx, ly + 4),
+               tr("+%1 more not drawn (choose with Series)").arg(hidden_));
   }
 
   const bool direct = series_.size() <= 4;
@@ -463,11 +585,29 @@ void SeriesPlot::paintPlot(QPainter &p, const QRectF &rect) const {
 ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
     : QWidget(parent), ctx_(ctx) {
   stack_ = new QStackedWidget(this);
-  noStudy_ = new QLabel(this);
+
+  // No study open: say so, and offer the two ways on.
+  auto *none = new QWidget(this);
+  noStudy_ = new QLabel(none);
   noStudy_->setObjectName(QStringLiteral("bigHint"));
   noStudy_->setAlignment(Qt::AlignCenter);
   noStudy_->setWordWrap(true);
-  stack_->addWidget(noStudy_);
+  newStudy_ = new QPushButton(none);
+  newStudy_->setObjectName(QStringLiteral("newStudy"));
+  ui::setPrimary(newStudy_);
+  openStudy_ = new QPushButton(none);
+  openStudy_->setObjectName(QStringLiteral("openStudy"));
+  auto *noneButtons = new QHBoxLayout;
+  noneButtons->addStretch(1);
+  noneButtons->addWidget(newStudy_);
+  noneButtons->addWidget(openStudy_);
+  noneButtons->addStretch(1);
+  auto *noneLayout = new QVBoxLayout(none);
+  noneLayout->addStretch(1);
+  noneLayout->addWidget(noStudy_);
+  noneLayout->addLayout(noneButtons);
+  noneLayout->addStretch(1);
+  stack_->addWidget(none);
 
   auto *main = new QWidget(this);
   recipeLabel_ = new QLabel(main);
@@ -495,8 +635,13 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   scroll->setObjectName(QStringLiteral("scoreScroll"));
   scroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   scoresHint_ = new QLabel(main);
-  scoresHint_->setObjectName(QStringLiteral("fieldLabel"));
+  scoresHint_->setObjectName(QStringLiteral("scoresHint"));
   scoresHint_->setWordWrap(true);
+  scoresGo_ = new QPushButton(main);
+  scoresGo_->setObjectName(QStringLiteral("scoresGo"));
+  auto *hintRow = new QHBoxLayout;
+  hintRow->addWidget(scoresHint_, 1);
+  hintRow->addWidget(scoresGo_);
 
   seriesLabel_ = new QLabel(main);
   seriesLabel_->setObjectName(QStringLiteral("fieldLabel"));
@@ -508,6 +653,11 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   column_ = new QComboBox(main);
   column_->setObjectName(QStringLiteral("seriesColumn"));
   column_->setMinimumWidth(200);
+  pick_ = new QToolButton(main);
+  pick_->setObjectName(QStringLiteral("seriesPick"));
+  pick_->setPopupMode(QToolButton::InstantPopup);
+  auto *pickMenu = new QMenu(pick_);
+  pick_->setMenu(pickMenu);
   aligned_ = new QLabel(main);
   aligned_->setObjectName(QStringLiteral("fieldLabel"));
   exportFigure_ = new QPushButton(main);
@@ -517,6 +667,7 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   mid->addWidget(seriesRecipe_);
   mid->addWidget(columnLabel_);
   mid->addWidget(column_);
+  mid->addWidget(pick_);
   mid->addStretch(1);
   mid->addWidget(aligned_);
   mid->addWidget(exportFigure_);
@@ -547,32 +698,79 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   bottom->setSpacing(14);
   bottom->addWidget(plot_, 7);
   bottom->addWidget(card, 4);
+  seriesNote_ = new QLabel(main);
+  seriesNote_->setObjectName(QStringLiteral("seriesNote"));
+  seriesNote_->setWordWrap(true);
+  seriesNote_->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  seriesNote_->hide();
 
   auto *mainLayout = new QVBoxLayout(main);
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(10);
   mainLayout->addLayout(top);
   mainLayout->addWidget(scroll);
-  mainLayout->addWidget(scoresHint_);
+  mainLayout->addLayout(hintRow);
   mainLayout->addLayout(mid);
   mainLayout->addLayout(bottom, 1);
+  mainLayout->addWidget(seriesNote_);
   stack_->addWidget(main);
   auto *layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(stack_);
 
-  connect(recipe_, &QComboBox::activated, this, &ComparePage::refreshScores);
+  connect(newStudy_, &QPushButton::clicked, this,
+          [this] { StudySwitcher::newStudy(this, ctx_.study); });
+  connect(openStudy_, &QPushButton::clicked, this,
+          [this] { StudySwitcher::openStudy(this, ctx_.study); });
+  connect(recipe_, &QComboBox::activated, this, &ComparePage::load);
   connect(seriesRecipe_, &QComboBox::activated, this, [this] {
-    column_->clear();
-    refreshSeries();
+    column_->clear(); // the other recipe has other columns
+    load();
   });
-  connect(column_, &QComboBox::activated, this, &ComparePage::refreshSeries);
+  connect(column_, &QComboBox::activated, this, &ComparePage::load);
   connect(exportTable_, &QPushButton::clicked, this, &ComparePage::exportTable);
   connect(exportFigure_, &QPushButton::clicked, this,
           &ComparePage::exportFigure);
+  connect(scoresGo_, &QPushButton::clicked, this, [this] {
+    const QString page = scoresGo_->property("page").toString();
+    if (ctx_.nav && !page.isEmpty())
+      ctx_.nav->show(page);
+  });
+  // The series to draw, when there are more than the eight colours.
+  connect(pickMenu, &QMenu::aboutToShow, this, [this, pickMenu] {
+    pickMenu->clear();
+    for (const Series &series : data_.series) {
+      const QString k = seriesKey(series);
+      QAction *a = pickMenu->addAction(seriesLabel(series));
+      a->setCheckable(true);
+      a->setChecked(chosen_.contains(k));
+      a->setEnabled(a->isChecked() || chosen_.size() < kMostSeries);
+      connect(a, &QAction::toggled, this, [this, k](bool on) {
+        if (on)
+          chosen_.insert(k);
+        else
+          chosen_.remove(k);
+        showSeries();
+      });
+    }
+  });
+  // A row's run folder, by double click or Enter.
+  connect(scores_, &ScoreTable::rowActivated, this, [this](const ScoreRow &row) {
+    if (!ctx_.study->isOpen())
+      return;
+    const Study &s = ctx_.study->study();
+    const Recipe *r = s.findRecipe(recipe_->currentData().toString());
+    const study::Case *c = s.findCase(row.caseId);
+    if (!r || !c)
+      return;
+    const QString dir = study::runDir(s, *c, row.station, *r);
+    if (QDir(dir).exists())
+      QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
+  });
   connect(ctx_.study, &study::StudyStore::changed, this, &ComparePage::refresh);
-  connect(ctx_.jobs, &JobModel::jobFinished, this, [this] {
-    if (isVisible())
+  // Only a run of the study changes what is shown here.
+  connect(ctx_.jobs, &JobModel::jobFinished, this, [this](Job *job) {
+    if (isVisible() && job && study::recipeTools().contains(job->tool()))
       refresh();
   });
   retranslate();
@@ -593,8 +791,10 @@ void ComparePage::showEvent(QShowEvent *e) {
 }
 
 void ComparePage::retranslate() {
-  noStudy_->setText(tr("No study is open.\nOpen or start one on the Cases "
-                       "page, or from the study selector above."));
+  noStudy_->setText(tr("No study is open.\nA study is a folder that holds "
+                       "the cases, the recipes and every result."));
+  newStudy_->setText(tr("New study…"));
+  openStudy_->setText(tr("Open study…"));
   recipeLabel_->setText(tr("Scores of"));
   headline_->setText(
       tr("Test days. The model is the one that did best on the validation "
@@ -608,12 +808,24 @@ void ComparePage::retranslate() {
   fittedTitle_->setText(tr("FITTED PER CASE"));
   fittedNote_->setText(tr("What each case fitted for itself in this recipe; "
                           "everything else in the recipe is identical."));
+  newStudy_->setToolTip(ui::helpText(
+      tr("Starts a study in a folder you choose; its results are written "
+         "there.")));
+  openStudy_->setToolTip(ui::helpText(
+      tr("Opens a study folder (the one that holds study.toml).")));
   ui::setHelp({recipeLabel_, recipe_},
               tr("The classification recipe whose scores are listed: one "
                  "row per case and station, with the baseline beside the "
                  "best model."));
-  exportTable_->setToolTip(
-      ui::helpText(tr("Writes the score rows as shown to a CSV file.")));
+  exportTable_->setToolTip(ui::helpText(
+      tr("Writes the score rows as shown to a CSV file, by default in the "
+         "study's exports folder.")));
+  scores_->setToolTip(ui::helpText(
+      tr("Click a heading to sort; double-click a row to open its run "
+         "folder. With the keyboard: Left and Right choose the sort column, "
+         "Space turns the order, Up and Down choose a row, Enter opens it.")));
+  scoresGo_->setToolTip(
+      ui::helpText(tr("Opens the page where what is missing is done.")));
   ui::setHelp({seriesLabel_, seriesRecipe_},
               tr("The indicators or features recipe whose values are drawn "
                  "below, one line per case."));
@@ -621,15 +833,28 @@ void ComparePage::retranslate() {
               tr("The column that is drawn: an indicator such as the "
                  "b-value, or a feature (the median of each day). Every "
                  "case is placed on days before its own event."));
+  pick_->setToolTip(ui::helpText(
+      tr("Which series are drawn when there are more than eight (the "
+         "figure has eight colours). Untick one to tick another.")));
   exportFigure_->setToolTip(ui::helpText(
-      tr("Writes the series figure as shown to a PNG or an SVG file.")));
+      tr("Writes the series figure to a PNG or an SVG file, by default in "
+         "the study's exports folder. The file is always on a white "
+         "background, whatever the theme.")));
+}
+
+QString ComparePage::seriesKey(const Series &s) {
+  return s.caseId + QLatin1Char('|') + s.station;
 }
 
 void ComparePage::refresh() {
   const bool open = ctx_.study->isOpen();
   stack_->setCurrentIndex(open ? 1 : 0);
-  if (!open)
+  if (!open) {
+    ++generation_; // a read under way is for a study that is closed now
+    loading_ = false;
+    data_ = {};
     return;
+  }
   const Study &s = ctx_.study->study();
   const auto fill = [&s](QComboBox *box, const QStringList &tools) {
     const QString keep = box->currentData().toString();
@@ -644,94 +869,126 @@ void ComparePage::refresh() {
   };
   fill(recipe_, {study::kToolClassification});
   fill(seriesRecipe_, {study::kToolIndicators, study::kToolFeatures});
-  refreshScores();
-  refreshSeries();
+  load();
 }
 
-void ComparePage::refreshScores() {
+void ComparePage::load() {
+  if (!ctx_.study->isOpen())
+    return;
+  // Read on a worker thread; only the answer to the latest question is
+  // shown. Until it is back the page keeps what it showed.
+  const int generation = ++generation_;
+  loading_ = true;
+  study::CompareRequest q;
+  q.scoreRecipe = recipe_->currentData().toString();
+  q.seriesRecipe = seriesRecipe_->currentData().toString();
+  q.column = column_->currentText();
+  const Study snapshot = ctx_.study->study();
+  const QPointer<ComparePage> self(this);
+  QThreadPool::globalInstance()->start([self, generation, snapshot, q] {
+    study::CompareData d;
+    try {
+      d = study::loadCompare(snapshot, q);
+    } catch (const std::exception &e) {
+      d.skipped << QString::fromUtf8(e.what());
+    }
+    QMetaObject::invokeMethod(
+        qApp,
+        [self, generation, d] {
+          if (self && self->generation_ == generation)
+            self->apply(d);
+        },
+        Qt::QueuedConnection);
+  });
+}
+
+void ComparePage::apply(const study::CompareData &d) {
+  loading_ = false;
+  data_ = d;
   if (!ctx_.study->isOpen())
     return;
   const Study &s = ctx_.study->study();
-  const Recipe *r = s.findRecipe(recipe_->currentData().toString());
-  QList<ScoreRow> rows;
-  if (r)
-    rows = study::scoreRows(s, *r);
-  scores_->setRows(rows);
+
+  scores_->setRows(d.scores);
   // As tall as its rows, up to about six of them; then it scrolls.
   if (auto *scroll = findChild<QScrollArea *>(QStringLiteral("scoreScroll")))
     scroll->setFixedHeight(std::min(scores_->minimumSizeHint().height(), 300) +
                            2);
-  exportTable_->setEnabled(!rows.isEmpty());
+  exportTable_->setEnabled(!d.scores.isEmpty());
   int done = 0;
-  for (const ScoreRow &row : rows)
+  for (const ScoreRow &row : d.scores)
     done += row.state == study::CellState::Done ? 1 : 0;
-  scoresHint_->setText(
-      !r ? tr("No classification recipe yet. Add one on the Runs page; it "
-              "needs a features recipe to take its table from.")
-      : rows.isEmpty() ? tr("The study has no case with a station yet.")
-                       : tr("%1 of %2 rows have a finished run. Click a column "
-                            "heading to sort.")
-                             .arg(done)
-                             .arg(rows.size()));
-}
+  // What the table shows, or what is missing and the page that is done on.
+  QString hint, page, go;
+  if (!d.hasScoreRecipe) {
+    hint = tr("No classification recipe yet. Add one on the Runs page; it "
+              "needs a features recipe to take its table from.");
+    page = QStringLiteral("runs");
+    go = tr("Go to Runs");
+  } else if (d.scores.isEmpty()) {
+    hint = tr("The study has no case with a station yet. Stations are "
+              "ticked on the Cases page.");
+    page = QStringLiteral("cases");
+    go = tr("Go to Cases");
+  } else if (done == 0) {
+    hint = tr("None of the %1 rows has a finished run yet. Run the recipe "
+              "on the Runs page.")
+               .arg(d.scores.size());
+    page = QStringLiteral("runs");
+    go = tr("Go to Runs");
+  } else {
+    hint = tr("%1 of %2 rows have a finished run. Click a column heading to "
+              "sort; double-click a row to open its folder.")
+               .arg(done)
+               .arg(d.scores.size());
+    if (done < d.scores.size()) {
+      page = QStringLiteral("runs");
+      go = tr("Go to Runs");
+    }
+  }
+  scoresHint_->setText(hint);
+  scoresGo_->setText(go);
+  scoresGo_->setProperty("page", page);
+  scoresGo_->setVisible(!go.isEmpty() && ctx_.nav != nullptr);
 
-void ComparePage::refreshSeries() {
-  if (!ctx_.study->isOpen())
-    return;
-  const Study &s = ctx_.study->study();
-  const Recipe *r = s.findRecipe(seriesRecipe_->currentData().toString());
-  QStringList order;
-  double span = 1;
-  for (const study::Case &c : s.cases) {
-    order << c.id;
-    span = std::max(span, double(c.spanDays));
-  }
-  if (!r) {
-    plot_->setSeries({}, QString(), span, order);
-    fitted_->setRowCount(0);
-    fitted_->setColumnCount(0);
-    exportFigure_->setEnabled(false);
-    return;
-  }
-  const QStringList columns = study::seriesColumns(s, *r);
   {
-    const QString keep = column_->currentText();
     const QSignalBlocker block(column_);
     column_->clear();
-    column_->addItems(columns);
-    int i = column_->findText(keep);
-    if (i < 0)
-      i = column_->findText(QStringLiteral("b_value"));
-    column_->setCurrentIndex(std::max(0, i));
+    column_->addItems(d.columns);
+    column_->setCurrentIndex(std::max(0, int(d.columns.indexOf(d.column))));
   }
-  const QString column = column_->currentText();
-  const QList<Series> series =
-      column.isEmpty() ? QList<Series>() : study::seriesOf(s, *r, column);
-  plot_->setSeries(series, column, span, order);
-  exportFigure_->setEnabled(!series.isEmpty());
+  const QString seriesId = seriesRecipe_->currentData().toString();
+  if (chosenFor_ != seriesId) {
+    chosenFor_ = seriesId;
+    chosen_.clear();
+  }
+  showSeries();
 
   // The fitted values: one column per name any case recorded.
-  const QList<study::FittedRow> rows = study::fittedRows(s, *r);
+  const Recipe *r = s.findRecipe(seriesId);
   QStringList keys;
-  for (const study::FittedRow &row : rows)
+  for (const study::FittedRow &row : d.fitted)
     for (auto it = row.fitted.begin(); it != row.fitted.end(); ++it)
       if (!keys.contains(it.key()))
         keys << it.key();
-  const bool stations = study::perStation(r->tool);
-  QStringList heads{tr("Case")};
-  if (stations)
-    heads << tr("Station");
-  heads << keys;
+  const bool stations = r && study::perStation(r->tool);
+  QStringList heads;
+  if (r) {
+    heads << tr("Case");
+    if (stations)
+      heads << tr("Station");
+    heads << keys;
+  }
   fitted_->setColumnCount(int(heads.size()));
   fitted_->setHorizontalHeaderLabels(heads);
-  fitted_->setRowCount(int(rows.size()));
-  for (int i = 0; i < int(rows.size()); ++i) {
+  fitted_->setRowCount(r ? int(d.fitted.size()) : 0);
+  for (int i = 0; r && i < int(d.fitted.size()); ++i) {
     int c = 0;
-    fitted_->setItem(i, c++, new QTableWidgetItem(rows[i].caseName));
+    fitted_->setItem(i, c++, new QTableWidgetItem(d.fitted[i].caseName));
     if (stations)
-      fitted_->setItem(i, c++, new QTableWidgetItem(rows[i].station));
+      fitted_->setItem(i, c++, new QTableWidgetItem(d.fitted[i].station));
     for (const QString &k : keys) {
-      const QVariant v = rows[i].fitted.value(k);
+      const QVariant v = d.fitted[i].fitted.value(k);
       QString text = QStringLiteral("–");
       if (v.isValid())
         text = v.metaType().id() == QMetaType::Double
@@ -742,46 +999,146 @@ void ComparePage::refreshSeries() {
   }
   fitted_->resizeColumnsToContents();
   fitted_->horizontalHeader()->setStretchLastSection(true);
+
+  // Runs that are finished but could not be drawn are named, with why.
+  seriesNote_->setText(
+      d.skipped.isEmpty()
+          ? QString()
+          : tr("⚠  Not drawn (%n run(s)): %1", nullptr, int(d.skipped.size()))
+                .arg(d.skipped.join(QStringLiteral("; "))));
+  seriesNote_->setVisible(!d.skipped.isEmpty());
 }
 
-void ComparePage::exportTable() {
-  const QString path = QFileDialog::getSaveFileName(
-      this, tr("Export the score table"), QStringLiteral("scores.csv"),
-      tr("CSV (*.csv)"));
-  if (path.isEmpty())
-    return;
+void ComparePage::showSeries() {
+  QStringList order;
+  double span = 1;
+  if (ctx_.study->isOpen())
+    for (const study::Case &c : ctx_.study->study().cases) {
+      order << c.id;
+      span = std::max(span, double(c.spanDays));
+    }
+  const QList<Series> &all = data_.series;
+  QList<Series> drawn = all;
+  if (all.size() > kMostSeries) {
+    // More than the eight colours: the first eight, until the user chooses.
+    QSet<QString> present;
+    for (const Series &series : all)
+      present.insert(seriesKey(series));
+    chosen_.intersect(present);
+    if (chosen_.isEmpty())
+      for (int i = 0; i < kMostSeries; ++i)
+        chosen_.insert(seriesKey(all[i]));
+    drawn.clear();
+    for (const Series &series : all)
+      if (chosen_.contains(seriesKey(series)))
+        drawn << series;
+  }
+  pick_->setVisible(all.size() > kMostSeries);
+  pick_->setText(
+      tr("Series: %1 of %2").arg(drawn.size()).arg(all.size()));
+  plot_->setSeries(drawn, data_.column, span, order,
+                   int(all.size() - drawn.size()));
+  exportFigure_->setEnabled(!drawn.isEmpty());
+}
+
+QString ComparePage::exportDir() const {
+  if (!ctx_.study->isOpen())
+    return {};
+  const QString dir =
+      QDir(ctx_.study->study().dir).filePath(QStringLiteral("exports"));
+  QDir().mkpath(dir);
+  return dir;
+}
+
+bool ComparePage::writeTable(const QString &path, QString *error) const {
   QFile f(path);
   if (!f.open(QIODevice::WriteOnly) ||
-      f.write(study::scoresCsv(scores_->rows()).toUtf8()) < 0)
-    QMessageBox::warning(this, tr("Export"), f.errorString());
+      f.write(study::scoresCsv(scores_->rows()).toUtf8()) < 0) {
+    if (error)
+      *error = QStringLiteral("%1: %2").arg(QDir::toNativeSeparators(path),
+                                            f.errorString());
+    return false;
+  }
+  return true;
 }
 
-void ComparePage::exportFigure() {
-  const QString path = QFileDialog::getSaveFileName(
-      this, tr("Export the figure"), QStringLiteral("series.png"),
-      tr("PNG image (*.png);;SVG drawing (*.svg)"));
-  if (path.isEmpty())
-    return;
+bool ComparePage::writeFigure(const QString &path, QString *error) const {
+  const auto fail = [&](const QString &why) {
+    if (error)
+      *error = QStringLiteral("%1: %2").arg(QDir::toNativeSeparators(path), why);
+    return false;
+  };
+  if (plot_->isEmpty())
+    return fail(tr("there is no series to draw"));
   const QSizeF size(960, 540);
   if (path.endsWith(QLatin1String(".svg"), Qt::CaseInsensitive)) {
+    // QSvgGenerator does not say when it cannot write: ask the file first,
+    // and look at what is there afterwards.
+    QFile probe(path);
+    if (!probe.open(QIODevice::WriteOnly))
+      return fail(probe.errorString());
+    probe.close();
     QSvgGenerator svg;
     svg.setFileName(path);
     svg.setSize(size.toSize());
     svg.setViewBox(QRectF(QPointF(0, 0), size));
-    QPainter p(&svg);
+    QPainter p;
+    if (!p.begin(&svg))
+      return fail(tr("the SVG could not be started"));
     p.setFont(font());
-    plot_->paintPlot(p, QRectF(QPointF(0, 0), size));
-    return;
+    plot_->paintPlot(p, QRectF(QPointF(0, 0), size), true);
+    p.end();
+    if (QFileInfo(path).size() <= 0)
+      return fail(tr("nothing was written"));
+    return true;
   }
   QImage img((size * 2).toSize(), QImage::Format_ARGB32_Premultiplied);
-  img.fill(ctx_.theme->color(QStringLiteral("surface")));
+  img.fill(Qt::white);
   QPainter p(&img);
   p.scale(2, 2);
   p.setFont(font());
-  plot_->paintPlot(p, QRectF(QPointF(0, 0), size));
+  plot_->paintPlot(p, QRectF(QPointF(0, 0), size), true);
   p.end();
   if (!img.save(path))
-    QMessageBox::warning(this, tr("Export"), tr("Cannot write %1.").arg(path));
+    return fail(tr("the image could not be written"));
+  return true;
+}
+
+void ComparePage::exportTable() {
+  const QString name =
+      QStringLiteral("scores_%1.csv").arg(recipe_->currentData().toString());
+  const QString path = QFileDialog::getSaveFileName(
+      this, tr("Export the score table"), QDir(exportDir()).filePath(name),
+      tr("CSV (*.csv)"));
+  if (path.isEmpty())
+    return;
+  QString error;
+  if (!writeTable(path, &error)) {
+    QMessageBox::warning(this, tr("Export"), error);
+    return;
+  }
+  seriesNote_->setText(tr("Written: %1").arg(QDir::toNativeSeparators(path)));
+  seriesNote_->show();
+}
+
+void ComparePage::exportFigure() {
+  const QString name = QStringLiteral("%1_%2.png")
+                           .arg(seriesRecipe_->currentData().toString(),
+                                column_->currentText());
+  QString path = QFileDialog::getSaveFileName(
+      this, tr("Export the figure"), QDir(exportDir()).filePath(name),
+      tr("PNG image (*.png);;SVG drawing (*.svg)"));
+  if (path.isEmpty())
+    return;
+  if (QFileInfo(path).suffix().isEmpty())
+    path += QStringLiteral(".png");
+  QString error;
+  if (!writeFigure(path, &error)) {
+    QMessageBox::warning(this, tr("Export"), error);
+    return;
+  }
+  seriesNote_->setText(tr("Written: %1").arg(QDir::toNativeSeparators(path)));
+  seriesNote_->show();
 }
 
 } // namespace skg

@@ -39,6 +39,10 @@ public:
   QIcon navIcon(const QString &id) const;
   // The fixed categorical order for series (never cycled); 8 slots.
   QList<QColor> seriesColors() const;
+  // The light scheme whatever the mode: a figure written to a file stays
+  // white on any theme.
+  static QColor lightColor(const QString &token);
+  static QList<QColor> lightSeriesColors();
   // Status colours used with a glyph and a label: good, warning, serious.
   QColor statusColor(const QString &name) const;
 
@@ -49,6 +53,7 @@ signals:
 
 private:
   const QHash<QString, QString> &tokens() const;
+  static QList<QColor> seriesPalette(bool dark);
 
   QSettings *settings_;
   Mode mode_ = Mode::System;
