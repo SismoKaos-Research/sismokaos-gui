@@ -16,15 +16,16 @@ For building from source, the code layout and how to add a tab, see
 
 1. [Install and update](#install-and-update)
 2. [The window](#the-window)
-3. [Data tab: TDVMS campaigns and FDSN pulls](#data-tab-tdvms-campaigns-and-fdsn-pulls)
-4. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
-5. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
-6. [Analysis tab: earthquakes, faults, labels, figures and regions](#analysis-tab-earthquakes-faults-labels-figures-and-regions)
-7. [Indicators tab: catalog-based seismicity indicators](#indicators-tab-catalog-based-seismicity-indicators)
-8. [Early warning tab: ayzek](#early-warning-tab-ayzek)
-9. [Settings tab](#settings-tab)
-10. [Where files live](#where-files-live)
-11. [Troubleshooting](#troubleshooting)
+3. [Studies: the same analysis on several earthquakes](#studies-the-same-analysis-on-several-earthquakes)
+4. [Data tab: TDVMS campaigns and FDSN pulls](#data-tab-tdvms-campaigns-and-fdsn-pulls)
+5. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
+6. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
+7. [Analysis tab: earthquakes, faults, labels, figures and regions](#analysis-tab-earthquakes-faults-labels-figures-and-regions)
+8. [Indicators tab: catalog-based seismicity indicators](#indicators-tab-catalog-based-seismicity-indicators)
+9. [Early warning tab: ayzek](#early-warning-tab-ayzek)
+10. [Settings tab](#settings-tab)
+11. [Where files live](#where-files-live)
+12. [Troubleshooting](#troubleshooting)
 
 ## Install and update
 
@@ -78,7 +79,8 @@ has the AppImage, the Windows zip (unpack anywhere, run
 
 ## The window
 
-The **sidebar** on the left lists the pages. Under *Tools* are **Data**,
+The **sidebar** on the left lists the pages. Under *Study* are **Cases**,
+**Runs** and **Compare** (the next section). Under *Tools* are **Data**,
 **Features**, **Classification**, **Analysis**, **Indicators** and **Early
 warning**; **Settings** is at the bottom. Alt+1 … Alt+9 jump to a page. The
 header above each page gives its name and one line on what it is for. The
@@ -102,6 +104,126 @@ changes the language immediately; the choice is remembered.
 look, or follows the system. Figures stay on a white background in both.
 
 Closing the window while jobs run asks first; confirming cancels them.
+
+## Studies: the same analysis on several earthquakes
+
+A **study** runs the same analyses on several earthquakes and puts the
+results side by side. It is a folder: one file, `study.toml`, says what the
+study is, and every result is written under the folder in a fixed place.
+The study selector in the header starts a new study in a folder you choose,
+opens an existing one, and lists the recent ones. The tools pages keep
+working on their own, with or without a study.
+
+### Cases
+
+A **case** is one earthquake and the place it is studied from, or a
+**reference date**: a date with no earthquake, studied the same way so it
+can be read beside the earthquakes.
+
+1. Under *Study inputs* choose the **earthquake catalog** (an AFAD export,
+   CSV or .gz, and whether its times are UTC or Turkey time) and, for the
+   waveform tools, the **waveform folder**: a folder with one sub-folder of
+   miniSEED per station, named by the station code.
+2. *Add from catalog…* lists the catalog's earthquakes, largest first, with
+   a magnitude threshold and a place filter. Pick one; the stations of the
+   built-in AFAD list within the distance you set appear below with their
+   distance and azimuth. Tick the ones to use, set the **span** (how many
+   days before the event are studied) and *Add case*.
+3. *Add reference date…* takes a name, a date, and either the place and
+   stations of an existing case or coordinates of its own.
+
+The selected case shows on the right: a map (epicentre, the stations in use
+and the other candidates, distance rings, the shipped East Anatolian fault
+traces), the station list to tick, the **catalog zone** the catalog tools
+use (a circle around the epicentre, or a buffer around the fault zone) and
+the span. Every change is saved at once. *Remove* takes a case out of the
+study; its result folders stay on disk.
+
+### Runs
+
+A **recipe** is one tool's saved settings under a name. The same recipe on
+every case is the same analysis. *New recipe* makes one for:
+
+- **Indicators** (one run per case): the catalog events of the case's zone,
+  from one window before the span up to, but not including, the event;
+  then the indicator table and figures of the Indicators tab. With
+  `estimate_mc` the completeness magnitude is estimated for each case
+  (maximum curvature) and recorded.
+- **Features** (one run per station): the feature extraction of the
+  Features tab on the station's waveform folder, with the chaos parameters
+  calibrated for that station. `config_json` takes a `config.json` saved on
+  the Features tab; empty uses the defaults. The whole folder is processed,
+  so keep in it the days the span needs.
+- **Classification** (one run per station): the models of the
+  Classification tab on the feature table of a features recipe
+  (`features_recipe`). `classes` are ranges of days before the event, such
+  as `1-30, 31-90`; each case's class table is made from them and its own
+  event time, so one recipe fits every case, reference dates included.
+  `models` lists what to train (`logistic`, `svm_linear`, `svm_poly`,
+  `svm_rbf`, `ann`, `random_forest`, `gradient_boosting`, `xgboost`);
+  `quick` uses one small setting per model for a first look; `sfc_toml`
+  takes anything else in the Classification tab's own settings layout.
+
+The table of settings under the matrix says for each setting whether it is
+**fixed** across cases or **fitted per case**. *Edit recipe…* changes them;
+a changed setting raises the recipe's revision.
+
+The **matrix** has a row per case and station and a column per recipe. Each
+cell is one of:
+
+| cell | meaning |
+|---|---|
+| ✓ Done | run, for the recipe and the case as they are now |
+| ○ Missing | not run yet |
+| ↻ Stale | run, but the recipe or the case has changed since |
+| ✕ Failed | the last run ended with an error (click the cell to read it) |
+| ⏸ Waiting | cannot run yet: no catalog, no waveform folder for the station, or the features it needs are not done |
+| ◔ Running | a job is on it; the percentage is the job's progress |
+
+*Run missing and stale* queues those cells as jobs, two at a time, and goes
+on to the cells they unblock (a classification after its features). *Run
+the selected cell* runs one. Click a cell to see why it waits and *Open
+folder* to see its files.
+
+### Compare
+
+**Scores** (top): for a classification recipe, one row per case and
+station with the magnitude, the station's distance, the **best model** (the
+one with the highest F1 on the validation days), and its **F1 and AUC on
+the test days**. Beside each is the same number for the **baseline**: the
+best of the Classification tab's baseline step (logistic regression and the
+SVMs), chosen on the validation days the same way; and the difference. The
+upper bar is the model, the lower the baseline. Click a column heading to
+sort. A row whose run is missing, stale or failed says so and shows no
+number. *Export table…* writes the rows as CSV.
+
+**Series** (bottom left): choose an indicators or a features recipe and a
+column. Every case is drawn on one axis of **days before its event**, the
+event at zero on the right; reference dates are dashed. An indicator window
+is placed at its end; a feature column is the median of each day. The
+legend is always there; with four series or fewer the names also stand at
+the line ends. More than eight series are not drawn (the legend says how
+many). *Export figure…* writes a PNG or an SVG.
+
+**Fitted per case** (bottom right): what each case fitted for itself in the
+chosen series recipe (the estimated completeness magnitude, the number of
+events in the zone, the calibrated chaos parameters), so differences in
+setup are in view next to the results.
+
+### What a study writes
+
+```
+<study>/study.toml
+<study>/<case>/_case/indicators/<recipe>/        catalog.csv, Deprem_Analiz_Grafikleri_*/, run.json
+<study>/<case>/<STATION>/features/<recipe>/      the Features tab's outputs, run.json
+<study>/<case>/<STATION>/classification/<recipe>/ results/…/models/experiments.csv, run.json
+```
+
+The tools' own files are unchanged. `run.json` records the recipe revision
+and settings, the case as it was, the inputs with their SHA-256, the
+application version, start and end times, how the run ended, and the values
+the case fitted. `study.toml` can be edited by hand; its layout is described
+at the top of `src/study/study.h`.
 
 ## Data tab: TDVMS campaigns and FDSN pulls
 
@@ -667,6 +789,7 @@ Early warning tab runs it.
 |---|---|---|---|
 | application settings (window layout, language, last folders) | `~/.config/sismokaos/sismokaos-gui.conf` | `~/Library/Preferences/com.sismokaos.sismokaos-gui.plist` | registry, `HKCU\Software\sismokaos\sismokaos-gui` |
 | mailbox and defaults (`mailbox.env`, `settings.env`) | `~/.config/tdvms/` | `~/.config/tdvms/` | `%APPDATA%\tdvms\` |
+| a study (`study.toml`, every run's results and `run.json`) | the study folder you chose | | |
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
 | feature extraction results, labelled tables | the output directory you chose | | |
 | classification projects (`project.toml`, `results/`) | the project folder you chose | | |

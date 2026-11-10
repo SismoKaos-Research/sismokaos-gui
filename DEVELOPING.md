@@ -41,6 +41,8 @@ src/cbi/       the catalog-based indicators port, after indicators-forecast: zon
                homogenisation, Gardner-Knopoff, windows, indicators, table, figures, run
                (library; data/ holds the EAFZ GeoJSON and the AFAD magnitude map)
 src/ayzek/     the launcher logic for the bundled ayzek: command line, output parsing (not a port)
+src/study/     studies: study.toml, cases, recipes, the open study; running a recipe on a
+               case (runs.h: layout, run.json, cell states); what Compare reads (compare.h)
 src/core/      Module interface, AppContext, ModuleRegistry, I18n, Theme, ui helpers
 src/modules/   one directory per page, each its own static library target
 src/app/       MainWindow, UpdateCheck, main()
@@ -53,6 +55,20 @@ translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
                install.sh / install.ps1 live at the root
 .github/       CI on every push; the release workflow on tags
 ```
+
+## Studies
+
+`src/study` is the library, `src/modules/study` the three pages (Cases, Runs,
+Compare) and the header's study selector; `AppContext::study` is the open
+study. To let a study run another tool, add it in `src/study/runs.cpp`:
+a tool name in `recipeTools()`, its defaults in `defaultRecipe()`, whether
+it runs per station in `perStation()`, a `run<Tool>()` that writes into the
+run folder and fills the `RunRecord` (inputs, outputs, fitted values), and
+what blocks it in `cellOf()`. If Compare should draw it, add its table to
+`seriesColumns()` and `seriesOf()` in `compare.cpp`. `tests/tst_study_runs`
+runs recipes on the synthetic catalog and fabricated feature tables;
+`tests/tst_study_pages` drives the pages (set `SKG_SHOTS=<dir>`, and
+`SKG_SHOTS_THEME=dark`, to save a picture of each).
 
 ## Adding a page (module)
 
