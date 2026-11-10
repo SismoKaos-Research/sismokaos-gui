@@ -11,6 +11,10 @@
 #include <QTimeZone>
 #include <QtTest>
 
+#include <atomic>
+#include <thread>
+#include <vector>
+
 #include "miniz.h"
 #include "study/runs.h"
 #include "study/study.h"
@@ -101,8 +105,16 @@ private slots:
   void unchangedFilesAreNotReadAgain();
   void indexSurvivesAMovedFolder();
   void filesForTheSpan();
+  void longFilesAreNotDroppedBeforeTheExactPass();
+  void earliestMemberStartCounts();
+  void emptyFolderKeepsItsEntries();
+  void coarseFileTimesStillMatch();
+  void indexSavesWhileItIsRead();
   void namesAreTheFallback();
   void studyKeepsFoldersAndStations();
+  void oneFolderInSeveralSpellings();
+  void rootIdsAreNeverReused();
+  void relocateIgnoresCaseWhereTheSystemDoes();
   void stationXml();
   void stampTellsWhenAScanIsDue();
   void scanSpeed();
@@ -278,12 +290,214 @@ void TstStudyWaveIndex::filesForTheSpan() {
   QCOMPARE(files, QStringList{root_ + "/odd/mixed.dat"});
   // No data in the span: nothing, although the station is known.
   QVERIFY(waveFilesFor(s, index, a, utc(2022, 1, 1), utc(2022, 2, 1)).isEmpty());
-  // Before the coverage is read, a file is taken when it starts in the span
-  // or up to five weeks before it.
+  // Before the coverage is read, and with no period in the names, nothing
+  // says how far a file reaches: every file of the station that starts
+  // before the span ends is taken, however long before, and marked as taken
+  // on a guess. The file from 2019 used to be dropped here (more than five
+  // weeks before the span), which lost the data of long files.
   WaveIndex first;
   scanRoot(first, id, root_, ScanPass::Identity);
-  files = waveFilesFor(s, first, a, utc(2021, 1, 20), utc(2021, 1, 25));
-  QCOMPARE(files, QStringList{root_ + "/AAA/AAA_2020-11-01.zip"});
+  const WaveChoice early =
+      chooseWaveFiles(s, first, a, utc(2021, 1, 20), utc(2021, 1, 25));
+  QCOMPARE(early.files, (QStringList{root_ + "/AAA/AAA_2020-11-01.zip",
+                                     root_ + "/AAA/AAA_2021-01-11.zip"}));
+  QCOMPARE(early.uncertain, early.files);
+  // A file that starts after the span is not taken.
+  QVERIFY(!early.files.contains(root_ + "/odd/mixed.dat"));
+}
+
+// A plain file of a whole year, read by the quick pass only: a span late in
+// the year must get it, and it must be marked as an estimate.
+void TstStudyWaveIndex::longFilesAreNotDroppedBeforeTheExactPass() {
+  QTemporaryDir studyDir, data;
+  write(data.filePath("LLL/year.mseed"),
+        record(utc(2021, 1, 1), "LLL") + record(utc(2021, 11, 20), "LLL"));
+  Study s;
+  s.dir = studyDir.path();
+  const QString id = s.addWaveRoot(data.path());
+  WaveIndex index;
+  scanRoot(index, id, data.path(), ScanPass::Identity);
+  StationRef l;
+  l.code = "LLL";
+  const WaveChoice c =
+      chooseWaveFiles(s, index, l, utc(2021, 11, 1), utc(2021, 12, 1));
+  QCOMPARE(c.files, QStringList{data.filePath("LLL/year.mseed")});
+  QCOMPARE(c.uncertain, c.files);
+  QVERIFY(c.how.contains("estimate"));
+  // Read through, the same span takes it for certain.
+  scanRoot(index, id, data.path(), ScanPass::Coverage);
+  const WaveChoice exact =
+      chooseWaveFiles(s, index, l, utc(2021, 11, 1), utc(2021, 12, 1));
+  QCOMPARE(exact.files, c.files);
+  QVERIFY(exact.uncertain.isEmpty());
+}
+
+// The members of an archive are not in the order of time: the earliest start
+// is the file's.
+void TstStudyWaveIndex::earliestMemberStartCounts() {
+  QTemporaryDir data;
+  // The directory lists "a_late" before "b_early".
+  zipWith(data.filePath("MMM/m.zip"),
+          {{"a_late.mseed", record(utc(2021, 6, 1), "MMM")},
+           {"b_early.mseed", record(utc(2021, 3, 1), "MMM")}});
+  WaveIndex index;
+  scanRoot(index, "w1", data.path(), ScanPass::Identity);
+  const WaveFile f = index.roots["w1"]["MMM/m.zip"];
+  QCOMPARE(f.channels.size(), 1);
+  QCOMPARE(f.channels.first().firstStart,
+           double(utc(2021, 3, 1).toSecsSinceEpoch()));
+  const auto refs = index.filesFor("MMM", utc(2021, 4, 1), utc(2021, 5, 1));
+  QCOMPARE(refs.size(), 1); // starts before the span ends
+}
+
+// A folder that is there but lists nothing: the mount point of a drive that
+// is not connected. What the index knows of it is kept, and said; only when
+// asked are the entries dropped. Files gone from a folder that still holds
+// others are dropped as before.
+void TstStudyWaveIndex::emptyFolderKeepsItsEntries() {
+  QTemporaryDir studyDir, data;
+  write(data.filePath("AAA/a1.mseed"), days("AAA", utc(2021, 1, 1), 1));
+  write(data.filePath("AAA/a2.mseed"), days("AAA", utc(2021, 1, 2), 1));
+  write(data.filePath("BBB/b1.mseed"), days("BBB", utc(2021, 1, 1), 1));
+  Study s;
+  s.dir = studyDir.path();
+  const QString id = s.addWaveRoot(data.path());
+  WaveIndex index;
+  scanRoot(index, id, data.path(), ScanPass::Coverage);
+  QCOMPARE(index.fileCount(), 3);
+  QVERIFY(unavailableWaveRoots(s, index).isEmpty());
+
+  // One file of a folder that still holds another: it is gone.
+  QVERIFY(QFile::remove(data.filePath("AAA/a2.mseed")));
+  ScanStats st = scanRoot(index, id, data.path(), ScanPass::Coverage);
+  QCOMPARE(st.dropped, 1);
+  QVERIFY(st.unavailable.isEmpty());
+  QCOMPARE(index.fileCount(), 2);
+
+  // A sub-folder that lists nothing: its entry stays.
+  QVERIFY(QFile::remove(data.filePath("BBB/b1.mseed")));
+  st = scanRoot(index, id, data.path(), ScanPass::Coverage);
+  QCOMPARE(st.dropped, 0);
+  QCOMPARE(st.unavailable, QStringList{data.filePath("BBB")});
+  QVERIFY(index.hasStation("BBB"));
+
+  // The whole folder empty, as when the drive is not mounted.
+  QVERIFY(QDir(data.filePath("AAA")).removeRecursively());
+  QVERIFY(QDir(data.filePath("BBB")).removeRecursively());
+  QVERIFY(QDir(data.path()).isEmpty());
+  st = scanRoot(index, id, data.path(), ScanPass::Coverage);
+  QCOMPARE(st.dropped, 0);
+  QCOMPARE(st.unavailable, QStringList{QDir(data.path()).path()});
+  QCOMPARE(index.fileCount(), 2);
+  QVERIFY(index.hasStation("AAA") && index.hasStation("BBB"));
+  QCOMPARE(unavailableWaveRoots(s, index), QStringList{QDir(data.path()).path()});
+  // The files Features would read are still named (they are just not there
+  // to open now), so a run says "cannot open", not "no data in the span".
+  StationRef a;
+  a.code = "AAA";
+  QCOMPARE(waveFilesFor(s, index, a, utc(2021, 1, 1), utc(2021, 1, 2)).size(),
+           1);
+
+  // The drive is back: nothing is read again, nothing was lost.
+  write(data.filePath("AAA/a1.mseed"), days("AAA", utc(2021, 1, 1), 1));
+  // (a new file on disk has a new time, so this one is read; the point is
+  // that the entries survived the empty folder)
+  st = scanRoot(index, id, data.path(), ScanPass::Coverage);
+  QVERIFY(unavailableWaveRoots(s, index).isEmpty());
+  QVERIFY(index.hasStation("AAA"));
+
+  // Asked to forget: an empty folder's entries go like any other.
+  QVERIFY(QDir(data.filePath("AAA")).removeRecursively());
+  ScanOptions forget;
+  forget.forgetEmptyFolders = true;
+  st = scanRoot(index, id, data.path(), ScanPass::Coverage, {}, forget);
+  QVERIFY(st.unavailable.isEmpty());
+  QCOMPARE(index.fileCount(), 0);
+}
+
+// A file copied to a drive that keeps coarser times (FAT two seconds, HFS+
+// one, exFAT a hundredth) is still the file the index knows; a file whose
+// time really changed is not.
+void TstStudyWaveIndex::coarseFileTimesStillMatch() {
+  QVERIFY(sameFileTime(1700000000.123, 1700000000.123));
+  QVERIFY(sameFileTime(1700000000.123, 1700000000.12));  // exFAT
+  QVERIFY(sameFileTime(1700000000.123, 1700000000.0));   // HFS+
+  QVERIFY(sameFileTime(1700000001.900, 1700000002.0));   // FAT, rounded up
+  QVERIFY(sameFileTime(1700000001.900, 1700000000.0));   // FAT, cut off
+  QVERIFY(sameFileTime(1700000002.0, 1700000001.900));   // and back again
+  QVERIFY(!sameFileTime(1700000000.123, 1700000000.523)); // rewritten
+  QVERIFY(!sameFileTime(1700000000.123, 1700000003.0));
+  QVERIFY(!sameFileTime(1700000000.0, 1700000010.0));
+
+  // The index of a folder survives the move to such a drive: the files come
+  // back with rounded times and are not read again.
+  QTemporaryDir fine, coarse;
+  write(fine.filePath("AAA/a.mseed"), days("AAA", utc(2021, 1, 1), 1));
+  write(fine.filePath("BBB/b.mseed"), days("BBB", utc(2021, 1, 1), 1));
+  const QDateTime odd = QDateTime::fromMSecsSinceEpoch(1700000001900LL);
+  for (const char *rel : {"AAA/a.mseed", "BBB/b.mseed"}) {
+    QFile f(fine.filePath(rel));
+    QVERIFY(f.open(QIODevice::ReadWrite));
+    QVERIFY(f.setFileTime(odd, QFileDevice::FileModificationTime));
+  }
+  WaveIndex index;
+  ScanStats st = scanRoot(index, "w1", fine.path(), ScanPass::Coverage);
+  QCOMPARE(st.read, 2);
+  for (const char *rel : {"AAA/a.mseed", "BBB/b.mseed"}) {
+    QDir().mkpath(QFileInfo(coarse.filePath(rel)).absolutePath());
+    QVERIFY(QFile::copy(fine.filePath(rel), coarse.filePath(rel)));
+    QFile f(coarse.filePath(rel));
+    QVERIFY(f.open(QIODevice::ReadWrite));
+    // What FAT would keep: the next even second.
+    QVERIFY(f.setFileTime(QDateTime::fromMSecsSinceEpoch(1700000002000LL),
+                          QFileDevice::FileModificationTime));
+  }
+  st = scanRoot(index, "w1", coarse.path(), ScanPass::Coverage);
+  QCOMPARE(st.read, 0);
+  QCOMPARE(st.cached, 0);
+  QCOMPARE(index.fileCount(), 2);
+}
+
+// The index file: a save that meets a busy file is tried again, a reader
+// never keeps it open, and many readers and a writer at once lose nothing.
+void TstStudyWaveIndex::indexSavesWhileItIsRead() {
+  QTemporaryDir studyDir;
+  WaveIndex index;
+  scanRoot(index, "w1", root_, ScanPass::Identity);
+  QVERIFY(index.save(studyDir.path()));
+  std::atomic<bool> stop{false};
+  std::atomic<int> bad{0}, reads{0};
+  std::vector<std::thread> readers;
+  for (int i = 0; i < 4; ++i)
+    readers.emplace_back([&] {
+      while (!stop.load()) {
+        const WaveIndex got = WaveIndex::load(studyDir.path());
+        // Never a half-written file: all of it or (never) nothing.
+        if (got.fileCount() != index.fileCount())
+          ++bad;
+        ++reads;
+        // As the application reads it: now and then, not without a pause
+        // (a file that is open the whole time cannot be replaced at all on
+        // Windows, whatever the writer does).
+        QThread::msleep(3);
+      }
+    });
+  int failed = 0;
+  for (int i = 0; i < 200; ++i) {
+    QString why;
+    if (!index.save(studyDir.path(), &why))
+      ++failed;
+  }
+  stop.store(true);
+  for (std::thread &t : readers)
+    t.join();
+  QCOMPARE(failed, 0);
+  QCOMPARE(bad.load(), 0);
+  QVERIFY(reads.load() > 0);
+  // A folder that cannot take the file says so instead of pretending.
+  QString why;
+  QVERIFY(!index.save(studyDir.filePath("no/such/folder"), &why, 2));
+  QVERIFY(!why.isEmpty());
 }
 
 void TstStudyWaveIndex::namesAreTheFallback() {
@@ -364,6 +578,151 @@ void TstStudyWaveIndex::studyKeepsFoldersAndStations() {
   StationRef st;
   st.code = "STA1";
   QCOMPARE(two.dataDirFor(st), dir.filePath("second/STA1"));
+}
+
+// The same folder in another spelling is the same folder: a trailing slash,
+// "..", a symbolic link, and other letter case where the volume ignores it.
+void TstStudyWaveIndex::oneFolderInSeveralSpellings() {
+  QTemporaryDir dir;
+  const QString data = dir.filePath("Data");
+  QVERIFY(QDir().mkpath(data + "/AAA"));
+  QVERIFY(QDir().mkpath(dir.filePath("other")));
+  QVERIFY(sameFolder(data, data + "/"));
+  QVERIFY(sameFolder(data, dir.filePath("other/../Data")));
+  QVERIFY(!sameFolder(data, dir.filePath("other")));
+  QVERIFY(!sameFolder(data, data + "/AAA"));
+  QVERIFY(folderInside(data + "/AAA", data));
+  QVERIFY(folderInside(data, data));
+  QVERIFY(!folderInside(data, data + "/AAA"));
+  QVERIFY(!folderInside(dir.filePath("Data2"), data)); // not by prefix of text
+  // Folders that do not exist are compared by their text.
+  QVERIFY(sameFolder("/no/such/place", "/no/such/place/"));
+  QVERIFY(folderInside("/no/such/place/sub", "/no/such/place"));
+  QVERIFY(!folderInside("/no/such/placement", "/no/such/place"));
+
+  // Letter case: the same folder exactly when the volume says so.
+  const bool ignoresCase = QFileInfo::exists(dir.filePath("data"));
+  QCOMPARE(sameFolder(data, dir.filePath("data")), ignoresCase);
+  QCOMPARE(sameFolder(data, dir.filePath("DATA")), ignoresCase);
+  QCOMPARE(folderInside(dir.filePath("DATA/AAA"), data), ignoresCase);
+
+  Study s;
+  s.dir = dir.filePath("study");
+  QVERIFY(s.addWaveformRoot(data));
+  QVERIFY(!s.addWaveformRoot(data + "/"));
+  QVERIFY(!s.addWaveformRoot(dir.filePath("other/../Data")));
+  QCOMPARE(s.addWaveformRoot(dir.filePath("DATA")), !ignoresCase);
+  if (ignoresCase)
+    QCOMPARE(s.waveRoots.size(), 1);
+  // Adding it again in other spellings, or a folder inside it: covered.
+  Study t;
+  t.dir = dir.filePath("study");
+  QCOMPARE(t.addWaveRoots({data}).added.size(), 1);
+  Study::RootsAdded r =
+      t.addWaveRoots({data + "/", dir.filePath("other/../Data/AAA")});
+  QVERIFY(r.added.isEmpty());
+  QCOMPARE(r.covered.size(), 2);
+  QCOMPARE(t.waveRoots.size(), 1);
+  if (ignoresCase) {
+    r = t.addWaveRoots({dir.filePath("DATA"), dir.filePath("data/aaa")});
+    QVERIFY(r.added.isEmpty());
+    QCOMPARE(t.waveRoots.size(), 1);
+  }
+#ifndef Q_OS_WIN
+  // Through a symbolic link.
+  const QString link = dir.filePath("link");
+  QVERIFY(QFile::link(data, link));
+  QVERIFY(sameFolder(link, data));
+  QVERIFY(folderInside(link + "/AAA", data));
+  r = t.addWaveRoots({link, link + "/AAA"});
+  QVERIFY(r.added.isEmpty());
+  QCOMPARE(r.covered.size(), 2);
+  QCOMPARE(t.waveRoots.size(), 1);
+  // A parent given through the link takes the place of what it holds.
+  Study u;
+  u.dir = dir.filePath("study");
+  QCOMPARE(u.addWaveRoots({data + "/AAA"}).added.size(), 1);
+  r = u.addWaveRoots({link});
+  QCOMPARE(r.added.size(), 1);
+  QCOMPARE(r.replaced.size(), 1);
+  QCOMPARE(u.waveRoots.size(), 1);
+#endif
+}
+
+// The id of a folder that left the study is not given to a later one: the
+// index, and a scan that is still running, hold its files under that id.
+void TstStudyWaveIndex::rootIdsAreNeverReused() {
+  QTemporaryDir dir;
+  Study s;
+  s.dir = dir.path();
+  QCOMPARE(s.addWaveRoot("/data/a"), QStringLiteral("w1"));
+  QCOMPARE(s.addWaveRoot("/data/b"), QStringLiteral("w2"));
+  s.waveRoots.removeLast(); // w2 goes
+  QCOMPARE(s.addWaveRoot("/data/c"), QStringLiteral("w3"));
+  s.waveRoots.clear();
+  QCOMPARE(s.addWaveRoots({"/data/d"}).added.size(), 1);
+  QCOMPARE(s.waveRoots.first().id, QStringLiteral("w4"));
+  // It is kept in the study file, also with no folder left.
+  QVERIFY(s.toToml().contains("waveforms_last_id = 4"));
+  s.waveRoots.clear();
+  Study back = Study::fromToml(s.toToml(), dir.path());
+  QVERIFY(back.waveRoots.isEmpty());
+  QCOMPARE(back.addWaveRoot("/data/e"), QStringLiteral("w5"));
+  // A file from before the key: the highest id in use counts.
+  Study old = Study::fromToml("schema = 1\nname = \"o\"\n\n[[waveforms]]\n"
+                              "id = \"w7\"\npath = \"/data/x\"\n",
+                              dir.path());
+  QCOMPARE(old.addWaveRoot("/data/y"), QStringLiteral("w8"));
+  // A study with no folder ever writes no such line.
+  QVERIFY(!Study().toToml().contains("waveforms_last_id"));
+
+  // The stale entries of a removed folder never become a new folder's: the
+  // survey's case was remove w2, add another, and find it named w2 with the
+  // old files under it.
+  QTemporaryDir data1, data2, data3;
+  write(data1.filePath("AAA/a.mseed"), days("AAA", utc(2021, 1, 1), 1));
+  write(data2.filePath("BBB/b.mseed"), days("BBB", utc(2021, 1, 1), 1));
+  write(data3.filePath("CCC/c.mseed"), days("CCC", utc(2021, 1, 1), 1));
+  Study t;
+  t.dir = dir.path();
+  const QString one = t.addWaveRoot(data1.path());
+  const QString two = t.addWaveRoot(data2.path());
+  WaveIndex index;
+  scanRoot(index, one, data1.path(), ScanPass::Identity);
+  scanRoot(index, two, data2.path(), ScanPass::Identity);
+  t.waveRoots.removeLast();
+  const QString three = t.addWaveRoot(data3.path());
+  QVERIFY(three != two);
+  StationRef b;
+  b.code = "BBB";
+  // What is left under the old id resolves to no folder, so no file.
+  QVERIFY(waveFilesFor(t, index, b, utc(2021, 1, 1), utc(2021, 1, 2)).isEmpty());
+}
+
+// "Moved…": the old place is gone, so only its text can be compared, and
+// without regard to letter case where file names have none.
+void TstStudyWaveIndex::relocateIgnoresCaseWhereTheSystemDoes() {
+  QTemporaryDir dir;
+  QVERIFY(QDir().mkpath(dir.filePath("new/stations")));
+  Study s;
+  s.dir = dir.filePath("study");
+  s.waveRoots << WaveRoot{"w1", dir.filePath("OldDisk/stations")};
+  const int changed =
+      s.relocate(dir.filePath("olddisk/stations"), dir.filePath("new/stations"));
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+  QCOMPARE(changed, 1);
+  QVERIFY(sameFolder(s.waveRootPath("w1"), dir.filePath("new/stations")));
+#else
+  QCOMPARE(changed, 0);
+#endif
+  // The spelling as stored always works.
+  Study t;
+  t.dir = dir.filePath("study");
+  t.waveRoots << WaveRoot{"w1", dir.filePath("OldDisk/stations")};
+  QCOMPARE(t.relocate(dir.filePath("OldDisk/stations"),
+                      dir.filePath("new/stations")),
+           1);
+  QCOMPARE(t.waveRoots.first().id, QStringLiteral("w1"));
 }
 
 void TstStudyWaveIndex::stationXml() {

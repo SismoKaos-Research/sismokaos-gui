@@ -186,7 +186,12 @@ RecordHeader parseHeader(const QByteArray &d, int off) {
     if (kind == 1000) {
       h.encoding = uchar(d[off + b + 4]);
       h.bigEndianData = uchar(d[off + b + 5]) != 0;
-      h.recordLength = 1 << uchar(d[off + b + 6]);
+      // 2^8 .. 2^20 bytes; anything else is damage, and shifting by it
+      // would give a length the reader then walks off the buffer with.
+      const int exponent = uchar(d[off + b + 6]);
+      if (exponent < 8 || exponent > 20)
+        return RecordHeader{};
+      h.recordLength = 1 << exponent;
     }
     if (next == 0 || next <= b)
       break;

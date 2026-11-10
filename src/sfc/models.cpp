@@ -13,6 +13,7 @@
 #include <limits>
 #include <stdexcept>
 
+#include "core/nativepath.h"
 #include "svm.h"
 #include "xgboost/c_api.h"
 
@@ -386,7 +387,9 @@ QByteArray SvmModel::serialize() const {
   if (!tmp.open())
     return {};
   tmp.close();
-  if (svm_save_model(tmp.fileName().toLocal8Bit().constData(), impl_->model) !=
+  // libsvm opens the file with fopen(): see core/nativepath.h for what that
+  // needs on Windows when the temporary folder has letters outside ASCII.
+  if (svm_save_model(cLibraryPath(tmp.fileName()).constData(), impl_->model) !=
       0)
     return {};
   QFile f(tmp.fileName());
@@ -402,7 +405,7 @@ void SvmModel::deserialize(const QByteArray &data) {
   tmp.write(data);
   tmp.close();
   impl_ = std::make_unique<Impl>();
-  impl_->model = svm_load_model(tmp.fileName().toLocal8Bit().constData());
+  impl_->model = svm_load_model(cLibraryPath(tmp.fileName()).constData());
   if (!impl_->model)
     throw std::runtime_error("libsvm: cannot read the model");
 }

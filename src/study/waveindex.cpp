@@ -34,6 +34,7 @@
 #include "fx/mseed.h"
 #include "miniz.h"
 #include "study/scancache.h"
+#include "core/nativepath.h"
 
 namespace skg::study {
 
@@ -64,13 +65,20 @@ bool sameCode(const QString &a, const QString &b) {
 }
 
 // Relative paths of every file under `dir`, not entering "_x" or ".x".
+// `hollow` gets the folders (relative; "" is the root) that are there but
+// list nothing at all or cannot be read: whether the files the index knows
+// under them are gone cannot be told from that.
 void listFiles(const QDir &root, const QString &rel, int depth,
-               const std::function<bool()> &stop, QStringList &out) {
+               const std::function<bool()> &stop, QStringList &out,
+               QStringList &hollow) {
   if (depth > kMaxDepth || (stop && stop()))
     return;
   const QDir dir(rel.isEmpty() ? root.path() : root.filePath(rel));
   const QFileInfoList entries = dir.entryInfoList(
-      QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+      QDir::Files | QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot,
+      QDir::Name);
+  if (entries.isEmpty() || !dir.isReadable())
+    hollow << rel;
   for (const QFileInfo &fi : entries) {
     const QString name = fi.fileName();
     if (name.startsWith(QLatin1Char('.')))
@@ -78,7 +86,7 @@ void listFiles(const QDir &root, const QString &rel, int depth,
     const QString child = rel.isEmpty() ? name : rel + QLatin1Char('/') + name;
     if (fi.isDir()) {
       if (!name.startsWith(QLatin1Char('_')))
-        listFiles(root, child, depth + 1, stop, out);
+        listFiles(root, child, depth + 1, stop, out, hollow);
     } else if (name != WaveIndex::kFileName) {
       out << child;
     }
@@ -98,6 +106,10 @@ void noteHeader(WaveFile &f, const fx::RecordHeader &h, const QString &name) {
     c.rate = h.sampleRate;
     c.firstStart = h.startEpoch;
     it = f.channels.insert(cid, c);
+  } else if (h.startEpoch < it->firstStart) {
+    // The members of an archive come in the order of its directory, which
+    // need not be the order of time: the earliest start counts.
+    it->firstStart = h.startEpoch;
   }
   double from = 0, to = 0;
   if (periodInFileName(name, &from, &to) && h.startEpoch < to &&
@@ -170,7 +182,7 @@ bool inflateMember(mz_zip_archive &zip, mz_uint i, Feed &&feed,
 // every member through the header scanner, a chunk at a time.
 void readZip(const QString &path, ScanPass pass, WaveFile &f, ReadCtx &rc) {
   mz_zip_archive zip{};
-  if (!mz_zip_reader_init_file(&zip, path.toLocal8Bit().constData(), 0)) {
+  if (!mz_zip_reader_init_file(&zip, minizPath(path).constData(), 0)) {
     f.skipped = QStringLiteral("not a readable zip archive");
     return;
   }
@@ -385,10 +397,29 @@ WaveFile waveFileFromJson(const QJsonObject &o) {
 // their names (it costs one record each).
 WaveIndex WaveIndex::load(const QString &studyDir) {
   WaveIndex idx;
-  QFile f(QDir(studyDir).filePath(kFileName));
-  if (!f.open(QIODevice::ReadOnly))
+  const QString path = QDir(studyDir).filePath(kFileName);
+  // Read whole and closed before anything else is done: a reader that keeps
+  // the file open stops a writer from replacing it on Windows. A file that
+  // is there but will not open is being replaced this moment: tried again.
+  QByteArray bytes;
+  bool opened = false;
+  for (int attempt = 0; attempt < 5 && !opened; ++attempt) {
+    {
+      QFile f(path);
+      if (f.open(QIODevice::ReadOnly)) {
+        bytes = f.readAll();
+        opened = true;
+      }
+    }
+    if (!opened) {
+      if (!QFileInfo::exists(path))
+        return idx;
+      QThread::msleep(10 * (attempt + 1));
+    }
+  }
+  if (!opened)
     return idx;
-  const QJsonObject top = QJsonDocument::fromJson(f.readAll()).object();
+  const QJsonObject top = QJsonDocument::fromJson(bytes).object();
   const int version = top.value("version").toInt();
   if (version != 1 && version != 2)
     return idx;
@@ -406,7 +437,8 @@ WaveIndex WaveIndex::load(const QString &studyDir) {
   return idx;
 }
 
-bool WaveIndex::save(const QString &studyDir, QString *error) const {
+bool WaveIndex::save(const QString &studyDir, QString *error,
+                     int attempts) const {
   QJsonObject rootsJson;
   for (auto r = roots.begin(); r != roots.end(); ++r) {
     QJsonObject files;
@@ -415,15 +447,24 @@ bool WaveIndex::save(const QString &studyDir, QString *error) const {
     rootsJson.insert(r.key(), QJsonObject{{"files", files}});
   }
   const QJsonObject top{{"version", 2}, {"roots", rootsJson}};
-  QSaveFile f(QDir(studyDir).filePath(kFileName));
-  if (!f.open(QIODevice::WriteOnly) ||
-      f.write(QJsonDocument(top).toJson(QJsonDocument::Compact)) < 0 ||
-      !f.commit()) {
-    if (error)
-      *error = QStringLiteral("%1: %2").arg(f.fileName(), f.errorString());
-    return false;
+  const QByteArray bytes = QJsonDocument(top).toJson(QJsonDocument::Compact);
+  const QString path = QDir(studyDir).filePath(kFileName);
+  // The rename into place fails for a moment when something has the old
+  // file open (a reader in another thread, a virus scanner): tried again,
+  // with a growing pause.
+  QString why;
+  for (int attempt = 0; attempt < std::max(1, attempts); ++attempt) {
+    if (attempt > 0)
+      QThread::msleep(20 * attempt);
+    QSaveFile f(path);
+    if (f.open(QIODevice::WriteOnly) && f.write(bytes) == bytes.size() &&
+        f.commit())
+      return true;
+    why = QStringLiteral("%1: %2").arg(path, f.errorString());
   }
-  return true;
+  if (error)
+    *error = why;
+  return false;
 }
 
 std::shared_ptr<const WaveIndex> WaveIndex::shared(const QString &studyDir) {
@@ -614,6 +655,7 @@ QList<WaveIndex::Ref> WaveIndex::filesFor(const QString &code,
                                           const QDateTime &from,
                                           const QDateTime &to,
                                           int slackDays) const {
+  Q_UNUSED(slackDays);
   const double lo = double(from.toSecsSinceEpoch());
   const double hi = double(to.toSecsSinceEpoch());
   QList<Ref> out;
@@ -631,7 +673,9 @@ QList<WaveIndex::Ref> WaveIndex::filesFor(const QString &code,
           // An estimate may be off at its ends: a day of margin both ways.
           take = !tdvms::clipSpans(c->estimate, lo - kDay, hi + kDay).isEmpty();
         else
-          take = c->firstStart < hi && c->firstStart >= lo - slackDays * kDay;
+          // Nothing says how far the file reaches: any file that starts
+          // before the period ends may hold some of it.
+          take = c->firstStart < hi;
       }
       if (take)
         out << Ref{r.key(), f.key(), f->pass >= 2};
@@ -744,8 +788,8 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
       stats.missing << folder.path;
       continue;
     }
-    QStringList listed;
-    listFiles(root, QString(), 0, hooks.shouldStop, listed);
+    QStringList listed, hollow;
+    listFiles(root, QString(), 0, hooks.shouldStop, listed, hollow);
     if (stopAsked()) {
       stats.stopped = true;
       return stats;
@@ -753,14 +797,34 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
     stats.listed += int(listed.size());
     QMap<QString, WaveFile> &files = index.roots[folder.id];
     const QSet<QString> present(listed.begin(), listed.end());
+    // A folder that is there but lists nothing says nothing about the files
+    // the index knows under it: the mount point of a drive that is not
+    // connected looks like that, and so does a share that dropped out.
+    // Their entries stay until the user says the files are gone.
+    const auto underHollow = [&hollow](const QString &rel) -> const QString * {
+      for (const QString &h : hollow)
+        if (h.isEmpty() || rel.startsWith(h + QLatin1Char('/')))
+          return &h;
+      return nullptr;
+    };
+    QSet<QString> kept;
     for (auto it = files.begin(); it != files.end();) {
-      if (!present.contains(it.key())) {
+      if (present.contains(it.key())) {
+        ++it;
+        continue;
+      }
+      const QString *h =
+          options.forgetEmptyFolders ? nullptr : underHollow(it.key());
+      if (h) {
+        kept.insert(*h);
+        ++it;
+      } else {
         it = files.erase(it);
         ++stats.dropped;
-      } else {
-        ++it;
       }
     }
+    for (const QString &h : std::as_const(kept))
+      stats.unavailable << (h.isEmpty() ? root.path() : root.filePath(h));
     for (const QString &rel : std::as_const(listed)) {
       const QFileInfo fi(root.filePath(rel));
       ScanJob job;
@@ -771,7 +835,7 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
       job.mtime = fi.lastModified().toMSecsSinceEpoch() / 1000.0;
       const auto known = files.constFind(rel);
       if (known != files.constEnd() && known->size == job.size &&
-          std::abs(known->mtime - job.mtime) < 1e-3) {
+          sameFileTime(known->mtime, job.mtime)) {
         if (known->pass >= int(pass) || !known->skipped.isEmpty())
           continue;
         job.known = *known;
@@ -924,6 +988,32 @@ ScanStats scanRoot(WaveIndex &index, const QString &rootId,
                                  .arg(rootPath)
                                  .toStdString());
   return scanRoots(index, {ScanFolder{rootId, rootPath}}, pass, hooks, options);
+}
+
+bool sameFileTime(double stored, double onDisk) {
+  const double d = std::abs(stored - onDisk);
+  if (d <= 0.0105)
+    return true;
+  const auto whole = [](double t) {
+    return std::abs(t - std::round(t)) < 1e-3;
+  };
+  return d <= 2.0 + 1e-3 && (whole(stored) || whole(onDisk));
+}
+
+QStringList unavailableWaveRoots(const Study &study, const WaveIndex &index) {
+  QStringList out;
+  for (const WaveRoot &r : study.waveRoots) {
+    const auto known = index.roots.constFind(r.id);
+    if (known == index.roots.constEnd() || known->isEmpty())
+      continue;
+    const QDir dir(study.resolved(r.path));
+    if (dir.exists() &&
+        (!dir.isReadable() ||
+         dir.entryList(QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot)
+             .isEmpty()))
+      out << dir.path();
+  }
+  return out;
 }
 
 namespace {

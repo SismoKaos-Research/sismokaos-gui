@@ -16,7 +16,10 @@
 // the folder's id and the file's path relative to that folder, with the
 // file's size and modification time; a file that has not changed is not read
 // again, and a folder that moved (another drive) only needs its path changed
-// in the study. Exact results are also kept in a cache shared by all studies
+// in the study. A folder that is there but lists nothing (the mount point of
+// a drive that is not connected looks like that) keeps its entries: they
+// leave the index only when the files are gone from a folder that still
+// holds something, or when the user asks for it. Exact results are also kept in a cache shared by all studies
 // of this user (scancache.h), so the same files are never read twice.
 //
 // Accepted: miniSEED 2, plain files or zip archives of them, in any layout.
@@ -86,8 +89,14 @@ public:
   static const QString kFileName; // "waveforms.index.json"
 
   // The index of a study folder; empty when there is none or it is broken.
+  // The file is read in one go and closed at once, so a save from another
+  // thread is never blocked by a reader (Windows will not replace a file
+  // that is open).
   static WaveIndex load(const QString &studyDir);
-  bool save(const QString &studyDir, QString *error = nullptr) const;
+  // Written beside its place and renamed into it; tried `attempts` times,
+  // since something else may have the file open for a moment.
+  bool save(const QString &studyDir, QString *error = nullptr,
+            int attempts = 5) const;
   // The same, kept in memory and re-read only when the file changes. Safe to
   // call from any thread; what it returns never changes.
   static std::shared_ptr<const WaveIndex> shared(const QString &studyDir);
@@ -116,9 +125,13 @@ public:
   // The files (root id, relative path) holding data of the station in
   // [from, to). A file not yet through the coverage pass is taken when its
   // estimate, widened by a day at both ends, overlaps the period; one with
-  // no estimate when its first record starts in the period or up to
-  // `slackDays` before it. Such a choice is marked `exact == false`: it errs
-  // on the side of taking a file that is not needed, never of dropping one.
+  // no estimate whenever its first record starts before the end of the
+  // period, however long before: how far such a file reaches is not known
+  // until it has been read. Such a choice is marked `exact == false`: it
+  // errs on the side of taking a file that is not needed, never of dropping
+  // one. (`slackDays` is no longer used: it limited how long before the
+  // period a file without an estimate could start, which dropped long
+  // files.)
   struct Ref {
     QString rootId, rel;
     bool exact = true;
@@ -160,6 +173,10 @@ struct ScanOptions {
   // milliseconds: a stop request reaches a worker inside a file within this
   // and one chunk of the file.
   int pollMs = 200;
+  // A folder (or sub-folder) that exists but lists nothing keeps its index
+  // entries unless this is set: then they are dropped like those of any
+  // other file that is gone. Set only when the user asked for it.
+  bool forgetEmptyFolders = false;
 };
 
 struct ScanStats {
@@ -171,6 +188,10 @@ struct ScanStats {
   int dropped = 0;     // index entries whose file is gone
   qint64 bytes = 0;    // sizes on disk of the files this call had to read
   QStringList missing; // folders that do not exist (scanRoots only)
+  // Folders and sub-folders (absolute paths) that are there but list
+  // nothing, or cannot be read, while the index holds files of them: their
+  // entries were kept.
+  QStringList unavailable;
   bool stopped = false;
 };
 
@@ -191,7 +212,8 @@ struct ScanFolder {
 // pass, are left alone. The files are read in one order over all folders:
 // those of `firstStations` first, then station by station. A file a stop
 // request interrupts keeps its earlier entry. A missing folder is named in
-// `missing` and its entries are kept.
+// `missing` and its entries are kept; so are those of a folder that is there
+// but lists nothing (`unavailable`), see ScanOptions::forgetEmptyFolders.
 ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
                     ScanPass pass, const ScanHooks &hooks = {},
                     const ScanOptions &options = {});
@@ -218,6 +240,19 @@ WaveChoice chooseWaveFiles(const Study &study, const WaveIndex &index,
 QStringList waveFilesFor(const Study &study, const WaveIndex &index,
                          const StationRef &station, const QDateTime &from,
                          const QDateTime &to, QString *how = nullptr);
+
+// Whether a file's entry (size and time as stored) still describes the file
+// as it is on disk. The times need not be equal to the last digit: FAT keeps
+// two seconds, HFS+ one, exFAT a hundredth, so a file copied to such a drive
+// comes back with its time rounded. A difference of up to two seconds is
+// accepted when one of the two times is a whole second (that is what a
+// coarse file system hands out), up to a hundredth otherwise.
+bool sameFileTime(double stored, double onDisk);
+
+// The waveform folders of the study (absolute paths) that are on disk but
+// hold nothing now, while the index knows files of them: a drive that is
+// not connected, most likely. What the index knows about them is kept.
+QStringList unavailableWaveRoots(const Study &study, const WaveIndex &index);
 
 // A short text that changes when files are added to or removed from the
 // folder or the sub-folders a scan enters (their names and modification

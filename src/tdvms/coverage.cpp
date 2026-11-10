@@ -15,6 +15,7 @@
 
 #include "miniz.h"
 #include "tdvms/fetch.h"
+#include "core/nativepath.h"
 #include <cmath>
 #include <cstring>
 #include <utility>
@@ -228,7 +229,7 @@ ScanResult scanBytes(const QByteArray &bytes) {
 ScanResult scanArchive(const QString &zipPath) {
   ScanResult out;
   mz_zip_archive zip{};
-  if (!mz_zip_reader_init_file(&zip, zipPath.toLocal8Bit().constData(), 0))
+  if (!mz_zip_reader_init_file(&zip, minizPath(zipPath).constData(), 0))
     throw std::runtime_error(("not a zip: " + zipPath).toStdString());
   const mz_uint n = mz_zip_reader_get_num_files(&zip);
   for (mz_uint i = 0; i < n; ++i) {

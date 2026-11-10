@@ -14,6 +14,7 @@
 #include "fx/dsp.h"
 #include "fx/mseed.h"
 #include "miniz.h"
+#include "core/nativepath.h"
 #include <QSet>
 #include <utility>
 
@@ -126,7 +127,7 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot,
   unpack.stop = &shouldStop;
   for (const QString &zipPath : zips) {
     mz_zip_archive zip{};
-    if (!mz_zip_reader_init_file(&zip, zipPath.toLocal8Bit().constData(), 0))
+    if (!mz_zip_reader_init_file(&zip, minizPath(zipPath).constData(), 0))
       throw std::runtime_error(("failed to read zip " + zipPath).toStdString());
     const mz_uint count = mz_zip_reader_get_num_files(&zip);
     for (mz_uint i = 0; i < count; ++i) {
@@ -141,7 +142,7 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot,
     unpacking(0, unpack.total);
   for (const QString &zipPath : zips) {
     mz_zip_archive zip{};
-    if (!mz_zip_reader_init_file(&zip, zipPath.toLocal8Bit().constData(), 0))
+    if (!mz_zip_reader_init_file(&zip, minizPath(zipPath).constData(), 0))
       throw std::runtime_error(("failed to read zip " + zipPath).toStdString());
     const QString stem = QFileInfo(zipPath).completeBaseName();
     const mz_uint count = mz_zip_reader_get_num_files(&zip);

@@ -8,6 +8,7 @@
 #include <QTimeZone>
 
 #include "miniz.h"
+#include "core/nativepath.h"
 #include <algorithm>
 
 namespace skg::tdvms {
@@ -99,7 +100,7 @@ Inspection inspectArchive(const QString &path) {
   Inspection out;
   out.size = QFileInfo(path).size();
   mz_zip_archive zip{};
-  if (!mz_zip_reader_init_file(&zip, path.toLocal8Bit().constData(), 0)) {
+  if (!mz_zip_reader_init_file(&zip, minizPath(path).constData(), 0)) {
     out.problem = Inspection::Problem::Expired;
     out.detail = QStringLiteral("%1 bytes and not a valid zip").arg(out.size);
     return out;
@@ -123,7 +124,7 @@ Inspection inspectArchive(const QString &path) {
 QByteArray readMember(const QString &zipPath, const QString &member,
                       qint64 maxBytes) {
   mz_zip_archive zip{};
-  if (!mz_zip_reader_init_file(&zip, zipPath.toLocal8Bit().constData(), 0))
+  if (!mz_zip_reader_init_file(&zip, minizPath(zipPath).constData(), 0))
     return {};
   QByteArray out;
   size_t size = 0;
