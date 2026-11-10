@@ -63,17 +63,20 @@ int main(int argc, char *argv[]) {
   Theme theme(&settings);
   theme.apply();
   study::StudyStore studies(&settings);
-  studies.reopenLast();
+  QString reopenError;
+  studies.reopenLast(&reopenError);
   Navigator nav;
   AppContext ctx{&jobs, &tools, &settings, &theme, &studies, &nav};
 
   // The pages, in order within their sidebar section. A new module is one
   // more line here.
   ModuleRegistry modules;
+  // The study workflow reads top to bottom: choose the earthquakes, get
+  // their waveforms, run, compare.
   modules.emplace<CasesModule>();
+  modules.emplace<TdvmsModule>();
   modules.emplace<RunsModule>();
   modules.emplace<CompareModule>();
-  modules.emplace<TdvmsModule>();
   modules.emplace<FeaturesModule>();
   modules.emplace<ClassificationModule>();
   modules.emplace<AnalysisModule>();
@@ -82,12 +85,14 @@ int main(int argc, char *argv[]) {
   modules.emplace<SettingsModule>(&i18n, &theme);
 
   MainWindow w(ctx, modules, &i18n);
-  QObject::connect(&nav, &Navigator::requested, &w,
-                   [&w](const QString &id, const QVariantMap &) {
-                     w.showModule(id);
-                   });
   w.addHeaderWidget(new StudySwitcher(&studies, &w));
+  QObject::connect(&w, &MainWindow::newStudyRequested, &w,
+                   [&] { StudySwitcher::newStudy(&w, &studies); });
+  QObject::connect(&w, &MainWindow::openStudyRequested, &w,
+                   [&] { StudySwitcher::openStudy(&w, &studies); });
   w.show();
+  if (!reopenError.isEmpty() && !cli.isSet(QStringLiteral("screenshots")))
+    QTimer::singleShot(0, &w, [&] { w.showNotice(reopenError); });
   if (cli.isSet(QStringLiteral("screenshots"))) {
     const QString dir = cli.value(QStringLiteral("screenshots"));
     QTimer::singleShot(0, &w, [&] {

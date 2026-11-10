@@ -6,6 +6,7 @@
 
 #include <QList>
 #include <QMainWindow>
+#include <QPointer>
 
 #include "core/module.h"
 #include "core/moduleregistry.h"
@@ -40,6 +41,15 @@ public:
   // A widget placed in the page header, left of the language switch (the
   // study selector).
   void addHeaderWidget(QWidget *w);
+  // Opens the jobs panel, with `job` selected when given.
+  void showJobs(Job *job = nullptr);
+  // A line under the header the user closes (a study that would not reopen).
+  void showNotice(const QString &text);
+
+signals:
+  // The "no study open" bar on the study pages.
+  void newStudyRequested();
+  void openStudyRequested();
 
 protected:
   void changeEvent(QEvent *e) override;
@@ -53,6 +63,7 @@ private:
   void setCurrent(int index);
   void setJobsVisible(bool on);
   void updateStrip();
+  void updateStudyBar();
 
   AppContext ctx_;
   ModuleRegistry &modules_;
@@ -77,6 +88,14 @@ private:
   QLabel *stripDot_;
   QLabel *stripText_;
   QPushButton *jobsToggle_;
+  QPointer<Job> lastFailed_; // the strip links to it
+  QWidget *studyBar_;        // "no study open" with New / Open
+  QLabel *studyBarText_;
+  QPushButton *studyBarNew_;
+  QPushButton *studyBarOpen_;
+  QWidget *notice_;
+  QLabel *noticeText_;
+  QPushButton *noticeClose_;
 
   QMenu *fileMenu_;
   QMenu *viewMenu_;

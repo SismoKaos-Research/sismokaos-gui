@@ -1,5 +1,6 @@
 qt_add_library(skg_core STATIC
   module.h
+  defaults.h
   moduleregistry.h
   i18n.cpp i18n.h
   theme.cpp theme.h

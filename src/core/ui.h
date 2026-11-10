@@ -11,6 +11,8 @@
 
 class QAbstractButton;
 class QAbstractItemView;
+class QSettings;
+class QSplitter;
 class QWidget;
 
 namespace skg::ui {
@@ -58,6 +60,11 @@ QLabel *helpLabel(const QWidget *field);
 // The tooltip form of a help text (wrapped rich text), for item views and
 // other places that take a string.
 QString helpText(const QString &text);
+
+// Keeps a splitter where the user left it, between sessions, under `key`
+// (e.g. "features/split"). Call after the splitter has its widgets.
+void persistSplitter(QSplitter *splitter, QSettings *settings,
+                     const QString &key);
 
 // Applied once to each page by the main window: "..." buttons become
 // compact, spin boxes get a text margin, tables lose their grid and get

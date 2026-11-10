@@ -28,6 +28,7 @@
 #include "core/ui.h"
 #include "jobs/jobmodel.h"
 #include "jobs/jobspanel.h"
+#include "study/store.h"
 
 namespace skg {
 
@@ -116,6 +117,42 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
   }
   contentLayout->addWidget(header);
 
+  // Two bars under the header, shown when they have something to say: the
+  // study pages with no study open, and a notice the user closes.
+  const auto makeBar = [&](const char *name) {
+    auto *bar = new QFrame(content);
+    bar->setObjectName(QLatin1String(name));
+    auto *l = new QHBoxLayout(bar);
+    l->setContentsMargins(20, 8, 20, 8);
+    l->setSpacing(8);
+    contentLayout->addWidget(bar);
+    bar->hide();
+    return bar;
+  };
+  studyBar_ = makeBar("studyBar");
+  studyBarText_ = new QLabel(studyBar_);
+  studyBarNew_ = new QPushButton(studyBar_);
+  studyBarNew_->setObjectName(QStringLiteral("studyBarNew"));
+  ui::setPrimary(studyBarNew_);
+  studyBarOpen_ = new QPushButton(studyBar_);
+  studyBarOpen_->setObjectName(QStringLiteral("studyBarOpen"));
+  studyBar_->layout()->addWidget(studyBarText_);
+  static_cast<QHBoxLayout *>(studyBar_->layout())->addStretch(1);
+  studyBar_->layout()->addWidget(studyBarNew_);
+  studyBar_->layout()->addWidget(studyBarOpen_);
+  connect(studyBarNew_, &QPushButton::clicked, this,
+          &MainWindow::newStudyRequested);
+  connect(studyBarOpen_, &QPushButton::clicked, this,
+          &MainWindow::openStudyRequested);
+  notice_ = makeBar("noticeBar");
+  noticeText_ = new QLabel(notice_);
+  noticeText_->setWordWrap(true);
+  noticeText_->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  noticeClose_ = new QPushButton(notice_);
+  static_cast<QHBoxLayout *>(notice_->layout())->addWidget(noticeText_, 1);
+  notice_->layout()->addWidget(noticeClose_);
+  connect(noticeClose_, &QPushButton::clicked, notice_, &QWidget::hide);
+
   jobsPanel_ = new JobsPanel(ctx_.jobs, content);
   auto *jobsArea = new QWidget(content);
   jobsArea->setObjectName(QStringLiteral("jobsArea"));
@@ -139,6 +176,9 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
   stripDot_->setObjectName(QStringLiteral("statusDot"));
   stripText_ = new QLabel(strip);
   stripText_->setObjectName(QStringLiteral("statusText"));
+  stripText_->setTextFormat(Qt::RichText);
+  connect(stripText_, &QLabel::linkActivated, this,
+          [this] { showJobs(lastFailed_); });
   jobsToggle_ = new QPushButton(strip);
   jobsToggle_->setObjectName(QStringLiteral("jobsToggle"));
   jobsToggle_->setCursor(Qt::PointingHandCursor);
@@ -164,8 +204,25 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
   connect(ctx_.jobs, &JobModel::jobFinished, this, [this](Job *job) {
     stripText_->setProperty(
         "last", tr("%1: %2").arg(job->name(), stateName(job->state())));
+    // A failure must not pass unseen: the strip becomes a link to its log.
+    lastFailed_ = job->state() == Job::State::Failed ? job : nullptr;
     updateStrip();
   });
+  if (ctx_.nav)
+    connect(ctx_.nav, &Navigator::requested, this,
+            [this](const QString &id, const QVariantMap &args) {
+              if (id == kNavJobsPanel) {
+                const int row = args.value(QStringLiteral("job"), -1).toInt();
+                showJobs(row >= 0 && row < ctx_.jobs->rowCount()
+                             ? ctx_.jobs->jobAt(row)
+                             : nullptr);
+              } else {
+                showModule(id);
+              }
+            });
+  if (ctx_.study)
+    connect(ctx_.study, &study::StudyStore::changed, this,
+            &MainWindow::updateStudyBar);
   connect(i18n_, &I18n::languageChanged, this, [this](const QString &code) {
     for (QPushButton *b : langButtons_)
       b->setChecked(b->property("code").toString() == code);
@@ -322,6 +379,25 @@ void MainWindow::addHeaderWidget(QWidget *w) {
   headerExtras_->addWidget(w, 0, Qt::AlignVCenter);
 }
 
+void MainWindow::showJobs(Job *job) {
+  setJobsVisible(true);
+  if (job && ctx_.jobs->rowOf(job) >= 0)
+    jobsPanel_->showJob(job);
+}
+
+void MainWindow::showNotice(const QString &text) {
+  noticeText_->setText(text);
+  notice_->setVisible(!text.isEmpty());
+}
+
+void MainWindow::updateStudyBar() {
+  const auto &mods = modules_.modules();
+  const bool studyPage =
+      current_ >= 0 && current_ < int(mods.size()) &&
+      mods[static_cast<size_t>(current_)]->section() == Module::Section::Study;
+  studyBar_->setVisible(studyPage && ctx_.study && !ctx_.study->isOpen());
+}
+
 void MainWindow::setCurrent(int index) {
   const auto &mods = modules_.modules();
   if (index < 0 || index >= int(mods.size()))
@@ -336,6 +412,7 @@ void MainWindow::setCurrent(int index) {
   pageTitle_->setText(m->title());
   pageDesc_->setText(m->description());
   pageDesc_->setVisible(!m->description().isEmpty());
+  updateStudyBar();
 }
 
 void MainWindow::setJobsVisible(bool on) {
@@ -365,6 +442,11 @@ void MainWindow::updateStrip() {
     const QString last = stripText_->property("last").toString();
     text = last.isEmpty() ? tr("No jobs running") : last;
   }
+  text = text.toHtmlEscaped();
+  if (running == 0 && lastFailed_)
+    text = QStringLiteral("<a href=\"job\">%1</a>")
+               .arg(text + QStringLiteral(" · ") +
+                    tr("show what went wrong").toHtmlEscaped());
   stripText_->setText(text);
   const bool idle = running == 0;
   if (stripDot_->property("idle").toBool() != idle) {
@@ -427,7 +509,15 @@ void MainWindow::retranslate() {
     if (!navButtons_[i])
       continue;
     const Module *m = mods[static_cast<size_t>(i)].get();
-    navButtons_[i]->setText(QStringLiteral("  ") + m->title());
+    // The study pages are steps, in order.
+    QString step;
+    if (m->section() == Module::Section::Study) {
+      int n = 0;
+      for (int k = 0; k <= i; ++k)
+        n += mods[static_cast<size_t>(k)]->section() == Module::Section::Study;
+      step = QStringLiteral("%1 · ").arg(n);
+    }
+    navButtons_[i]->setText(QStringLiteral("  ") + step + m->title());
     navButtons_[i]->setToolTip(m->description());
   }
   if (studySection_)
@@ -435,6 +525,18 @@ void MainWindow::retranslate() {
   if (toolsSection_)
     toolsSection_->setText(tr("TOOLS"));
   brandSub_->setText(tr("Seismology toolkit"));
+  studyBarText_->setText(
+      tr("No study is open. A study is a folder that keeps the earthquakes "
+         "you compare, their settings and their results."));
+  studyBarNew_->setText(tr("New study…"));
+  studyBarNew_->setToolTip(ui::helpText(
+      tr("Starts a study in a folder you choose; its results are written "
+         "there.")));
+  studyBarOpen_->setText(tr("Open study…"));
+  studyBarOpen_->setToolTip(
+      ui::helpText(tr("Opens an existing study folder (the one holding "
+                      "study.toml).")));
+  noticeClose_->setText(tr("Dismiss"));
   sideFoot_->setText(QStringLiteral("v%1 · GPL-3.0-or-later")
                          .arg(QCoreApplication::applicationVersion()));
   if (current_ >= 0)

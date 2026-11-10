@@ -38,6 +38,10 @@ signals:
   void requested(const QString &moduleId, const QVariantMap &args);
 };
 
+// Navigator::show() with this id opens the jobs panel instead of a page;
+// args "job" may hold the job's row in the JobModel to select it.
+inline const QString kNavJobsPanel = QStringLiteral("@jobs");
+
 struct AppContext {
   JobModel *jobs = nullptr;
   ToolRegistry *tools = nullptr;

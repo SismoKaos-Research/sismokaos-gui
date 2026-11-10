@@ -1,5 +1,7 @@
 #include "core/ui.h"
 
+#include <QSplitter>
+#include <QSettings>
 #include <QAbstractButton>
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -176,6 +178,19 @@ void setEmptyHint(QAbstractItemView *view, const QString &text) {
     hint->setHint(text);
   else
     new EmptyHint(view, text);
+}
+
+void persistSplitter(QSplitter *splitter, QSettings *settings,
+                     const QString &key) {
+  if (!splitter || !settings)
+    return;
+  const QByteArray state = settings->value(key).toByteArray();
+  if (!state.isEmpty())
+    splitter->restoreState(state);
+  QObject::connect(splitter, &QSplitter::splitterMoved, splitter,
+                   [splitter, settings, key] {
+                     settings->setValue(key, splitter->saveState());
+                   });
 }
 
 void polishPage(QWidget *page) {
