@@ -1,20 +1,23 @@
 #include "cbi/zones.h"
 
+#include <QCoreApplication>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QSet>
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <optional>
 #include <stdexcept>
 
 #include "cbi/decluster.h"
-
-// The embedded data lives in a static library: register it on first use.
-static void initCbiResources() { Q_INIT_RESOURCE(cbi); }
 
 namespace skg::cbi {
 
@@ -110,13 +113,78 @@ FaultZone loadFaultZone(const QString &path, const QStringList &strands) {
   return z;
 }
 
-QString eafzResource() {
-  initCbiResources();
-  return QStringLiteral(":/cbi/eafz.geojson");
+QStringList dataDirs() {
+  QStringList dirs;
+  const QString env = qEnvironmentVariable("SKG_DATA_DIR");
+  if (!env.isEmpty())
+    dirs << env;
+  // applicationDirPath() needs the application object; the libraries are
+  // also used without one (tests, tools).
+  if (QCoreApplication::instance()) {
+    const QString app = QCoreApplication::applicationDirPath();
+    if (!app.isEmpty())
+      dirs << app + QStringLiteral("/data")
+           << app + QStringLiteral("/../share/sismokaos-gui/data")
+           << app + QStringLiteral("/../Resources/data");
+  }
+#ifdef SKG_SOURCE_DATA_DIR
+  dirs << QStringLiteral(SKG_SOURCE_DATA_DIR);
+#endif
+  for (QString &d : dirs)
+    d = QDir::cleanPath(d);
+  dirs.removeDuplicates();
+  return dirs;
 }
 
+QString dataFile(const QString &name) {
+  const QStringList dirs = dataDirs();
+  for (const QString &d : dirs) {
+    const QString path = QDir(d).filePath(name);
+    if (QFileInfo(path).isFile())
+      return path;
+  }
+  throw std::runtime_error(
+      QStringLiteral("the data file %1 was not found; it is shipped beside "
+                     "the program and was looked for in: %2")
+          .arg(name, dirs.join(QStringLiteral("; ")))
+          .toStdString());
+}
+
+QString eafzPath() { return dataFile(QStringLiteral("eafz.geojson")); }
+
 FaultZone eafz(const QStringList &strands) {
-  return loadFaultZone(eafzResource(), strands);
+  return loadFaultZone(eafzPath(), strands);
+}
+
+QString shippedFaultsPath() {
+  return dataFile(QStringLiteral("faults_tr.geojson"));
+}
+
+const FaultZone &shippedFaults() {
+  // Read once, and only once it has been found: a failed lookup is retried
+  // on the next call instead of being remembered.
+  static QMutex mutex;
+  static std::optional<FaultZone> zone;
+  const QMutexLocker lock(&mutex);
+  if (!zone)
+    zone = loadFaultZone(shippedFaultsPath());
+  return *zone;
+}
+
+QString shippedFaultsLabel(const QString &lang) {
+  return lang == QLatin1String("tr")
+             ? QString::fromUtf8(
+                   "Sismojenik fay kaynakları, EFSM20 (tehlike modeli)")
+             : QStringLiteral(
+                   "Seismogenic fault sources, EFSM20 (hazard model)");
+}
+
+QString shippedFaultsCredit(const QString &lang) {
+  return lang == QLatin1String("tr")
+             ? QString::fromUtf8("Fay kaynakları: EFSM20, Basili vd. (2022), "
+                                 "INGV, CC BY 4.0")
+             : QStringLiteral("Fault sources: EFSM20, Basili et al. (2022), "
+                              "INGV, CC BY 4.0");
 }
 
 Catalog selectNearFault(const Catalog &catalog, const FaultZone &zone,

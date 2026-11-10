@@ -17,5 +17,8 @@ qt_add_library(skg_cbi STATIC
 )
 target_include_directories(skg_cbi PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_cbi PUBLIC Qt6::Core Qt6::Gui skg_fx skg_analysis skg_sfc PRIVATE skg_warnings)
+# Where the fault data files are in the source tree: the last place
+# cbi::dataDirs() looks, so a build tree and the tests work uninstalled.
+target_compile_definitions(skg_cbi PRIVATE SKG_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/data/faults")
 list(APPEND SKG_TRANSLATED_TARGETS skg_cbi)
 set(SKG_TRANSLATED_TARGETS ${SKG_TRANSLATED_TARGETS} PARENT_SCOPE)

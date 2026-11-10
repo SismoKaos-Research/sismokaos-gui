@@ -1,0 +1,30 @@
+Licences of the data files in this folder
+=========================================
+
+These files are data distributed alongside sismokaos-gui. They are not part
+of the program and are not covered by its GPL-3.0-or-later licence.
+
+faults_tr.geojson
+  Seismogenic fault sources of Turkey and its neighbours: top traces of the
+  crustal fault sources of the European Fault-Source Model 2020 (EFSM20).
+  Basili R., Danciu L., Beauval C., et al. (2022), Istituto Nazionale di
+  Geofisica e Vulcanologia (INGV), https://doi.org/10.13127/efsm20
+  Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+           https://creativecommons.org/licenses/by/4.0/legalcode
+  Changes: clipped to longitude 24-48 E, latitude 32-44 N (whole traces
+           kept), simplified, coordinates rounded, attributes reduced,
+           converted to GeoJSON.
+
+eafz.geojson
+  East Anatolian Fault Zone strands: fault sections of the GEM Global Active
+  Faults Database. Styron R., Pagani M. (2020), Earthquake Spectra
+  36(1_suppl), 160-180, https://doi.org/10.1177/8755293020944182;
+  https://github.com/GEMScienceTools/gem-global-active-faults
+  Licence: Creative Commons Attribution-ShareAlike 4.0 International
+           (CC BY-SA 4.0)
+           https://creativecommons.org/licenses/by-sa/4.0/legalcode
+  Changes: sections of two strands selected and tagged with a "strand"
+           property. This file remains under CC BY-SA 4.0.
+
+No warranty is given by the licensors; see the licence texts. The full
+record of sources and changes is PROVENANCE.md in this folder.

@@ -5,6 +5,8 @@
 // the shipped conversion and fault zone, event markers and risk labels,
 // smoothing, the CSV round trip, and the regression against the tables the
 // ORIGINAL tool wrote for the synthetic catalog (tests/data/cbi).
+#include <QCryptographicHash>
+#include <QTemporaryDir>
 #include <QtTest>
 
 #include <cmath>
@@ -86,6 +88,9 @@ private slots:
   void knownEafzEarthquakesLieOnTraces();
   void farAwayEventExcluded();
   void unknownStrandRejected();
+  void eafzFileIsTheGemClipAndSelectsAsBefore();
+  void shippedFaultLayerLoads();
+  void dataFileLookup();
   void eachLargeEventMarkedOnceInFirstWindow();
   void newEventMarkedWhileLargerOldOneInView();
   void riskLabelAnchoredOnWindowEnd();
@@ -323,7 +328,7 @@ void TstCbiCore::knownEafzEarthquakesLieOnTraces() {
     const FaultZone z = eafz({QLatin1String(c.strand)});
     QVERIFY2(z.distanceKm(c.lon, c.lat) < c.maxKm, c.name);
   }
-  QCOMPARE(zoneStrands(eafzResource()),
+  QCOMPARE(zoneStrands(eafzPath()),
            (QStringList{QStringLiteral("main"), QStringLiteral("northern")}));
   QCOMPARE(eafz().name, QStringLiteral("East Anatolian Fault Zone"));
 }
@@ -579,6 +584,100 @@ void TstCbiCore::legacyRegression() {
   // ...and the 2019-09-15 M5.3, which repeats an earlier magnitude, is now
   // marked too.
   QVERIFY(repeats >= 1);
+}
+
+// The EAFZ zone file left the binary (it is CC BY-SA data shipped beside the
+// program); the zone it defines must be the one it always was.
+void TstCbiCore::eafzFileIsTheGemClipAndSelectsAsBefore() {
+  const QString path = eafzPath();
+  QVERIFY2(!path.startsWith(QLatin1Char(':')), qPrintable(path));
+  QFile f(path);
+  QVERIFY(f.open(QIODevice::ReadOnly));
+  QCOMPARE(
+      QCryptographicHash::hash(f.readAll(), QCryptographicHash::Sha256).toHex(),
+      QByteArray("94f6262d0b5cbf2df8a57d425dd3320d8a460bc56c2655d1f69cd979ee25"
+                 "d9d3"));
+  QCOMPARE(int(eafz().segments.size()), 158);
+  // 2108 of the synthetic catalog's 2506 events lie within 30 km of the
+  // traces (counted independently from the GeoJSON with the same
+  // projection; the nearest event to the limit is 33 m from it).
+  const Catalog c =
+      loadCatalog(QStringLiteral(SKG_TEST_DATA "/cbi/synthetic_catalog.csv"));
+  QCOMPARE(int(c.size()), 2506);
+  QCOMPARE(int(selectNearFault(c, eafz(), 30).size()), 2108);
+  CatalogSelection sel; // the default: EAFZ, 30 km
+  sel.homogenize = sel.decluster = false;
+  QCOMPARE(int(sel.apply(c).size()), 2108);
+}
+
+// The layer drawn on maps: EFSM20's fault sources, whole Turkey, no strands.
+void TstCbiCore::shippedFaultLayerLoads() {
+  const FaultZone &z = shippedFaults();
+  QCOMPARE(int(z.segments.size()), 2845); // 422 traces, 3267 vertices
+  QCOMPARE(z.name, QStringLiteral("Seismogenic fault sources, EFSM20"));
+  QVERIFY(z.strands.isEmpty());
+  QVERIFY(zoneStrands(shippedFaultsPath()).isEmpty());
+  QCOMPARE(&shippedFaults(), &z); // read once
+  // On the North Anatolian Fault (Izmit 1999, Duzce 1999, Erzincan 1992),
+  // and nothing near the middle of the Black Sea.
+  QVERIFY(z.distanceKm(29.97, 40.70) < 5);
+  QVERIFY(z.distanceKm(31.15, 40.77) < 5);
+  QVERIFY(z.distanceKm(39.63, 39.71) < 5);
+  QVERIFY(z.distanceKm(34.0, 43.3) > 50);
+  // It is not the zone file, and asking it for a strand is an error that
+  // names the problem (the maps must load it without strands).
+  QVERIFY(shippedFaultsPath() != eafzPath());
+  try {
+    loadFaultZone(shippedFaultsPath(), {QStringLiteral("main")});
+    QFAIL("a strand of a file without strands was accepted");
+  } catch (const std::runtime_error &e) {
+    QVERIFY(QString::fromUtf8(e.what()).contains(QLatin1String("unknown strand")));
+  }
+  QVERIFY(shippedFaultsLabel(QStringLiteral("en"))
+              .contains(QLatin1String("hazard model")));
+  QVERIFY(!shippedFaultsLabel(QStringLiteral("en"))
+               .contains(QLatin1String("active"), Qt::CaseInsensitive));
+  QVERIFY(shippedFaultsLabel(QStringLiteral("tr"))
+              .contains(QString::fromUtf8("tehlike modeli")));
+  QVERIFY(shippedFaultsCredit(QStringLiteral("en"))
+              .contains(QLatin1String("CC BY 4.0")));
+}
+
+void TstCbiCore::dataFileLookup() {
+  // Uninstalled, the files come from the source tree.
+  const QStringList dirs = dataDirs();
+  QVERIFY(!dirs.isEmpty());
+  QVERIFY(QFileInfo(dataFile(QStringLiteral("eafz.geojson"))).isFile());
+  QVERIFY(QFileInfo(dataFile(QStringLiteral("faults_tr.geojson"))).isFile());
+  // Beside a program: <dir>/data, share/sismokaos-gui/data, Resources/data.
+  const QString app = QCoreApplication::applicationDirPath();
+  QVERIFY(dirs.contains(QDir::cleanPath(app + QStringLiteral("/data"))));
+  QVERIFY(dirs.contains(
+      QDir::cleanPath(app + QStringLiteral("/../share/sismokaos-gui/data"))));
+  QVERIFY(
+      dirs.contains(QDir::cleanPath(app + QStringLiteral("/../Resources/data"))));
+  // A missing file names itself and every place searched.
+  try {
+    dataFile(QStringLiteral("no_such_file.geojson"));
+    QFAIL("a missing data file was found");
+  } catch (const std::runtime_error &e) {
+    const QString what = QString::fromUtf8(e.what());
+    QVERIFY(what.contains(QLatin1String("no_such_file.geojson")));
+    for (const QString &d : dirs)
+      QVERIFY2(what.contains(d), qPrintable(what));
+  }
+  // $SKG_DATA_DIR comes first.
+  QTemporaryDir tmp;
+  QVERIFY(tmp.isValid());
+  QVERIFY(QFile::copy(eafzPath(), tmp.filePath(QStringLiteral("eafz.geojson"))));
+  qputenv("SKG_DATA_DIR", tmp.path().toUtf8());
+  QCOMPARE(dataDirs().first(), QDir::cleanPath(tmp.path()));
+  QCOMPARE(QFileInfo(eafzPath()).canonicalFilePath(),
+           QFileInfo(tmp.filePath(QStringLiteral("eafz.geojson")))
+               .canonicalFilePath());
+  // ...and a file it lacks is still found further down the list.
+  QVERIFY(QFileInfo(shippedFaultsPath()).isFile());
+  qunsetenv("SKG_DATA_DIR");
 }
 
 QTEST_GUILESS_MAIN(TstCbiCore)

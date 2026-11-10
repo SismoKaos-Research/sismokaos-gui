@@ -1,0 +1,41 @@
+{
+ "argv": [
+  "clip_efsm20.py",
+  "../dl/efsm20_cf_top.json",
+  "faults_tr.geojson"
+ ],
+ "python": "3.13.16",
+ "date_utc": "2026-11-10T17:29:00Z",
+ "parameters": {
+  "box": [
+   24.0,
+   32.0,
+   48.0,
+   44.0
+  ],
+  "tolerance_deg": 0.002,
+  "decimals": 4
+ },
+ "input": {
+  "path": "../dl/efsm20_cf_top.json",
+  "bytes": 1435143,
+  "sha256": "c4923f226f15f556b6121309943cec29a5a4ceb09776b6ef909b48e5b23d7fe2",
+  "features": 1248,
+  "wfs_timestamp": "2026-11-10T17:20:56.785Z"
+ },
+ "output": {
+  "path": "faults_tr.geojson",
+  "bytes": 131950,
+  "sha256": "a1a3ed8d0fc7076c78fba09f0b5c33624ff1cbd806844e61683ff88f0f2cfdef",
+  "features": 422,
+  "by_fault_type": {
+   "RL": 108,
+   "R": 87,
+   "N": 164,
+   "LL": 63
+  },
+  "vertices_before": 6714,
+  "vertices_after": 3267,
+  "vertices_outside_box": 138
+ }
+}
