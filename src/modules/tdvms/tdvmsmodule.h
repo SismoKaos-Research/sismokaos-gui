@@ -1,6 +1,10 @@
-// The tdvms tab: campaigns under a root folder, the chunk table, the run
-// controls, and the Coverage and FDSN panes. Everything runs in-process
-// through the skg_tdvms library; nothing shells out.
+// The Data page. With a study open it starts from what a case needs: the
+// guided panel (casedownloads.h) lists the case's stations, what the study
+// has and what is missing, and downloads the rest in one step. Below it,
+// under "All downloads", is the expert view: campaigns under a root folder,
+// the chunk table, the run controls, and the Coverage, FDSN and Map panes.
+// Everything runs in-process through the skg_tdvms library; nothing shells
+// out.
 #pragma once
 
 #include <QDate>
@@ -46,6 +50,7 @@ public:
 };
 
 class StationPickMap;
+class CaseDownloads;
 
 class TdvmsWidget : public QWidget {
   Q_OBJECT
@@ -61,14 +66,25 @@ public:
   // study's waveform folders, so the Cases and Runs pages find them. True
   // when the study did not know it yet.
   bool registerDownloadFolder(const QString &dir);
+  // The guided panel (for tests, which replace what it reaches outside
+  // with).
+  CaseDownloads *guide() const { return guide_; }
+  // The address requests are made with, in full; the field shows it masked
+  // unless it is being edited.
+  QString address() const;
 
 protected:
   void changeEvent(QEvent *e) override;
+  bool eventFilter(QObject *o, QEvent *e) override;
 
 private:
   void retranslate();
   void chooseRoot();
-  void setRoot(const QString &root);
+  void setRoot(const QString &root, bool remember = true);
+  // Guided or expert: which parts of the page show.
+  void updateMode();
+  void showDownload(const tdvms::Campaign &download);
+  void setAddress(const QString &address);
   void refreshCampaigns();
   void selectCampaign(int index);
   void reloadLedger();
@@ -137,6 +153,13 @@ private:
   QString wantedNetwork_, wantedCase_;
   QPushButton *showJobs_;
   QString registered_; // the folder last added to the study, for the note
+
+  CaseDownloads *guide_;
+  QPushButton *advanced_; // "All downloads": shows the expert view
+  QWidget *topBar_;
+  QWidget *left_;
+  QLabel *why_;          // why buttons of the expert view are off
+  QString addressValue_; // what address_ stands for while it shows a mask
 };
 
 } // namespace skg

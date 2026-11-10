@@ -31,6 +31,9 @@ public:
                const QDate &firstDay, const QDate &dayAfterLast);
   // The station code in the form, as typed.
   QString station() const;
+  // The service address and the channel pattern in the form.
+  QString service() const;
+  QString channels() const;
   // Why Fetch cannot be pressed now, or nothing.
   QString blockedReason() const;
 
@@ -39,6 +42,8 @@ signals:
   void fetchStarted(const QString &outDir);
   // The station code in the form changed.
   void stationChanged(const QString &code);
+  // The service or the channel pattern changed.
+  void defaultsChanged();
 
 protected:
   void changeEvent(QEvent *e) override;

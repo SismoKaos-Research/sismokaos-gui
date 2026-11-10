@@ -35,6 +35,7 @@
 
 #include "jobs/jobmodel.h"
 #include "jobs/taskjob.h"
+#include "modules/tdvms/casedownloads.h"
 #include "modules/tdvms/coveragepane.h"
 #include "modules/tdvms/fdsnpane.h"
 #include "modules/tdvms/ledgermodel.h"
@@ -45,6 +46,7 @@
 #include "study/store.h"
 #include "tdvms/catalog.h"
 #include "tdvms/fetch.h"
+#include "tdvms/guide.h"
 #include "tdvms/plan.h"
 #include "tdvms/portal.h"
 #include "tdvms/report.h"
@@ -68,12 +70,16 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   rootBrowse_ = new QPushButton(this);
   campaign_ = new QComboBox(this);
   campaign_->setMinimumWidth(180);
+  campaign_->setObjectName(QStringLiteral("dataCampaign"));
   newCampaign_ = new QPushButton(this);
   plan_ = new QPushButton(this);
+  plan_->setObjectName(QStringLiteral("dataPlan"));
   ingest_ = new QPushButton(this);
   refresh_ = new QPushButton(this);
   catalogs_ = new QPushButton(this);
-  auto *top = new QHBoxLayout;
+  topBar_ = new QWidget(this);
+  auto *top = new QHBoxLayout(topBar_);
+  top->setContentsMargins(0, 0, 0, 0);
   top->addWidget(root_, 1);
   top->addWidget(rootBrowse_);
   top->addSpacing(12);
@@ -104,6 +110,15 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   wantedLayout->addWidget(wantedFdsn_);
   wantedLayout->addWidget(wantedClose_);
   wantedBar_->hide();
+  // --- the guided way: what a case needs, in one step ----------------------
+  guide_ = new CaseDownloads(ctx_, this);
+  advanced_ = new QPushButton(this);
+  advanced_->setObjectName(QStringLiteral("dataAdvanced"));
+  advanced_->setCheckable(true);
+  advanced_->setFlat(true);
+  why_ = new QLabel(this);
+  why_->setObjectName(QStringLiteral("dataWhy"));
+  why_->setWordWrap(true);
   showJobs_ = new QPushButton(this);
   showJobs_->setObjectName(QStringLiteral("showJobs"));
 
@@ -120,6 +135,7 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   once_ = new QCheckBox(this);
   mailbox_ = new QPushButton(this);
   start_ = new QPushButton(this);
+  start_->setObjectName(QStringLiteral("dataFetch"));
   stop_ = new QPushButton(this);
   runNote_ = new QLabel(this);
   runNote_->setWordWrap(true);
@@ -147,6 +163,7 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   status_->setReadOnly(true);
   status_->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
   auto *left = new QWidget(this);
+  left_ = left;
   auto *leftLayout = new QVBoxLayout(left);
   leftLayout->setContentsMargins(0, 0, 0, 0);
   leftLayout->addWidget(runBox);
@@ -197,10 +214,23 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   split->setStretchFactor(0, 1);
   split->setStretchFactor(1, 3);
   ui::persistSplitter(split, ctx_.settings, QStringLiteral("tdvms/split"));
+  auto *advancedRow = new QHBoxLayout;
+  advancedRow->addWidget(advanced_);
+  advancedRow->addStretch(1);
   auto *layout = new QVBoxLayout(this);
+  layout->addWidget(guide_);
+  layout->addLayout(advancedRow);
   layout->addWidget(wantedBar_);
-  layout->addLayout(top);
+  layout->addWidget(topBar_);
+  layout->addWidget(why_);
   layout->addWidget(split, 1);
+  address_->installEventFilter(this);
+  try {
+    guide_->setPortalStations(tdvms::loadStations());
+  } catch (const std::exception &) {
+    // No list: every station is then asked for at the FDSN service unless
+    // the user says otherwise.
+  }
 
   // --- behaviour ----------------------------------------------------------
   connect(rootBrowse_, &QPushButton::clicked, this, &TdvmsWidget::chooseRoot);
@@ -224,6 +254,36 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
     wantedBar_->hide();
     stationMap_->clearCase();
     updateStationMap();
+  });
+  connect(guide_, &CaseDownloads::dismissed, this, [this] {
+    wantedStations_.clear();
+    {
+      const QSignalBlocker block(wantedStation_);
+      wantedStation_->clear();
+    }
+    // The forms let go of the case too.
+    fdsn_->prefill(QString(), QString(), QDate(), QDate());
+    stationMap_->clearCase();
+    updateStationMap();
+    updateMode();
+  });
+  connect(guide_, &CaseDownloads::modeChanged, this, &TdvmsWidget::updateMode);
+  connect(guide_, &CaseDownloads::runningChanged, this, [this] {
+    if (guide_->running())
+      ticker_->start();
+    else if (!running_)
+      ticker_->stop();
+    reloadLedger();
+    fdsn_->reload();
+    updateControls();
+  });
+  connect(guide_, &CaseDownloads::mailboxRequested, this,
+          &TdvmsWidget::mailbox);
+  connect(guide_, &CaseDownloads::downloadChanged, this,
+          &TdvmsWidget::showDownload);
+  connect(advanced_, &QPushButton::toggled, this, &TdvmsWidget::updateMode);
+  connect(fdsn_, &FdsnPane::defaultsChanged, this, [this] {
+    guide_->setFdsnDefaults(fdsn_->service(), fdsn_->channels());
   });
   connect(stationMap_, &StationPickMap::toggled, this,
           &TdvmsWidget::toggleStation);
@@ -274,7 +334,21 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   const QString saved =
       ctx_.settings->value(QStringLiteral("tdvms/root")).toString();
   setRoot(saved.isEmpty() ? QDir::homePath() : saved);
-  address_->setText(baseAddress());
+  setAddress(baseAddress());
+  guide_->setFdsnDefaults(fdsn_->service(), fdsn_->channels());
+  {
+    QPointer<TdvmsWidget> self(this);
+    guide_->setNotify([self](const QString &t, const QString &b, bool u) {
+      QMetaObject::invokeMethod(
+          self.data(),
+          [self, t, b, u] {
+            if (self)
+              self->notifyDesktop(t, b, u);
+          },
+          Qt::QueuedConnection);
+    });
+  }
+  updateMode();
   int n = kDefaultSlots;
   try {
     n = slotCount();
@@ -293,10 +367,71 @@ void TdvmsWidget::chooseRoot() {
     setRoot(dir);
 }
 
-void TdvmsWidget::setRoot(const QString &root) {
+void TdvmsWidget::setRoot(const QString &root, bool remember) {
   root_->setText(root);
-  ctx_.settings->setValue(QStringLiteral("tdvms/root"), root);
+  if (remember)
+    ctx_.settings->setValue(QStringLiteral("tdvms/root"), root);
   refreshCampaigns();
+}
+
+// The study's own download in the expert view: its folder becomes the root
+// shown (not the one remembered) and it is the campaign selected.
+void TdvmsWidget::showDownload(const Campaign &download) {
+  if (download.ledgerPath.isEmpty())
+    return;
+  const QString root = studyDownloadsRoot(ctx_.study->study().dir);
+  if (QDir::cleanPath(root_->text()) != QDir::cleanPath(root))
+    setRoot(root, false);
+  else
+    refreshCampaigns();
+  const int i = campaign_->findData(download.ledgerPath);
+  if (i >= 0 && i != campaign_->currentIndex())
+    campaign_->setCurrentIndex(i);
+  reloadLedger();
+  fdsn_->reload();
+  updateControls();
+}
+
+QString TdvmsWidget::address() const {
+  return address_->hasFocus() ? address_->text().trimmed() : addressValue_;
+}
+
+void TdvmsWidget::setAddress(const QString &address) {
+  addressValue_ = address.trimmed();
+  address_->setText(address_->hasFocus() ? addressValue_
+                                         : maskAddress(addressValue_));
+}
+
+// The address field shows a mask (this page ends up in screenshots) and
+// the address itself only while it is being edited.
+bool TdvmsWidget::eventFilter(QObject *o, QEvent *e) {
+  if (o == address_) {
+    if (e->type() == QEvent::FocusIn)
+      address_->setText(addressValue_);
+    else if (e->type() == QEvent::FocusOut) {
+      addressValue_ = address_->text().trimmed();
+      address_->setText(maskAddress(addressValue_));
+    }
+  }
+  return QWidget::eventFilter(o, e);
+}
+
+// With a case in hand (or an unfinished download of the study) the page is
+// the guided panel and the map; the expert view is one click away.
+void TdvmsWidget::updateMode() {
+  const bool guided = guide_->guiding();
+  const bool expert = !guided || advanced_->isChecked();
+  advanced_->setVisible(guided);
+  topBar_->setVisible(expert);
+  left_->setVisible(expert);
+  why_->setVisible(expert && !why_->text().isEmpty());
+  for (int i = 0; i < tabs_->count(); ++i)
+    tabs_->setTabVisible(i, expert || tabs_->widget(i) == stationMap_);
+  if (!expert)
+    tabs_->setCurrentWidget(stationMap_);
+  wantedBar_->setVisible(!guided && !wantedStations_.isEmpty());
+  advanced_->setText(advanced_->isChecked() ? tr("▾ All downloads (advanced)")
+                                            : tr("▸ All downloads (advanced)"));
 }
 
 void TdvmsWidget::refreshCampaigns() {
@@ -342,19 +477,20 @@ void TdvmsWidget::reloadLedger() {
   }
   QStringList lines;
   try {
-    Pool pool(address_->text().trimmed(), slots_->value());
+    Pool pool(address(), slots_->value());
     lines = summarise(ledger, &pool);
   } catch (const std::exception &) {
     lines = summarise(ledger, nullptr);
   }
-  const QJsonObject who = PoolLock::holder(address_->text().trimmed());
+  const QJsonObject who = PoolLock::holder(address());
   if (!who.isEmpty())
     lines.prepend(tr("A run holds %1: pid %2, ledger %3")
-                      .arg(address_->text().trimmed(),
+                      .arg(maskAddress(address()),
                            who.value("pid").toVariant().toString(),
                            who.value("ledger").toString()) +
                   '\n');
-  status_->setPlainText(lines.join('\n'));
+  // The report names the slot addresses; on screen they are masked.
+  status_->setPlainText(maskAddresses(lines.join('\n')));
 }
 
 void TdvmsWidget::newCampaign() {
@@ -405,7 +541,12 @@ void TdvmsWidget::setWanted(const QVariantMap &args) {
     wantedStation_->clear();
     wantedStation_->addItems(wantedStations_);
   }
-  wantedBar_->setVisible(!wantedStations_.isEmpty());
+  // With a study open the guided panel takes the case; without one the bar
+  // offers the two forms, as before.
+  if (ctx_.study && ctx_.study->isOpen())
+    guide_->setCase(wantedCase_, wantedStations_, wantedStart_, wantedEnd_,
+                    wantedNetwork_);
+  wantedBar_->setVisible(!wantedStations_.isEmpty() && !guide_->guiding());
   retranslate();
   applyWanted();
   // Where the case is, when the sender said so.
@@ -455,7 +596,10 @@ void TdvmsWidget::toggleStation(const QString &code) {
     if (i < 0 && !typedOnly)
       wantedStation_->setCurrentIndex(int(wantedStations_.size()) - 1);
   }
-  wantedBar_->setVisible(!wantedStations_.isEmpty());
+  // The guided list follows the map.
+  if (guide_->mode() == CaseDownloads::Mode::Case)
+    guide_->setStations(wantedStations_);
+  wantedBar_->setVisible(!wantedStations_.isEmpty() && !guide_->guiding());
   retranslate();
   // The forms follow: on the station just chosen, or off the one taken out.
   if (wantedStations_.isEmpty() || typedOnly)
@@ -629,7 +773,7 @@ void TdvmsWidget::startRun() {
   if (c.ledgerPath.isEmpty() || running_)
     return;
   RunOptions opt;
-  opt.address = address_->text().trimmed();
+  opt.address = address();
   opt.slotCount = slots_->value();
   opt.intervalSeconds = interval_->value();
   opt.once = once_->isChecked();
@@ -672,7 +816,8 @@ void TdvmsWidget::startRun() {
                                         QStringLiteral("tdvms"),
                                         tr("%1 slot(s) from %2 on %3")
                                             .arg(opt.slotCount)
-                                            .arg(opt.address, c.name),
+                                            .arg(maskAddress(opt.address),
+                                                 c.name),
                                         campaignWork(c, opt, desktop)));
   connect(running_, &Job::stateChanged, this, [this] {
     if (running_ && running_->state() != Job::State::Running) {
@@ -694,8 +839,8 @@ void TdvmsWidget::stopRun() {
 void TdvmsWidget::mailbox() {
   MailboxDialog dlg(ctx_.jobs, this);
   if (dlg.exec() == QDialog::Accepted) {
-    if (address_->text().trimmed().isEmpty())
-      address_->setText(baseAddress());
+    if (address().isEmpty())
+      setAddress(baseAddress());
     try {
       slots_->setValue(slotCount());
     } catch (const std::exception &) {
@@ -743,7 +888,8 @@ void TdvmsWidget::updateControls() {
   const bool have = !current().ledgerPath.isEmpty();
   for (QWidget *w : std::initializer_list<QWidget *>{plan_, ingest_, reset_})
     w->setEnabled(have);
-  start_->setEnabled(have && !running_);
+  const bool guidedRun = guide_->portalRunning();
+  start_->setEnabled(have && !running_ && !guidedRun);
   stop_->setEnabled(running_ != nullptr);
   for (QWidget *w : std::initializer_list<QWidget *>{
            address_, slots_, interval_, exitWhenDone_, once_, dryRun_})
@@ -751,7 +897,7 @@ void TdvmsWidget::updateControls() {
   QString note =
       running_ ? tr("Running. Progress and output are in the Jobs panel.")
                : (credentials().complete()
-                      ? tr("Mailbox: %1").arg(credentials().user)
+                      ? tr("Mailbox: %1").arg(maskAddress(credentials().user))
                       : tr("No mailbox credentials set (Mailbox…)."));
   if (!registered_.isEmpty())
     note += QLatin1Char('\n') +
@@ -760,6 +906,26 @@ void TdvmsWidget::updateControls() {
   runNote_->setText(note);
   showJobs_->setEnabled(ctx_.nav != nullptr);
   wantedPlan_->setEnabled(have);
+  // Why buttons are off, said on the page and not left to be guessed.
+  QStringList why;
+  if (!have)
+    why << tr("Plan station, Ingest archive, Reset and Fetch need a "
+              "campaign: choose one in the list above, or make one with "
+              "New campaign…. For a case of the open study, the panel at "
+              "the top does all of this in one step.");
+  else if (running_)
+    why << tr("A run is in progress: Fetch and the run settings are off "
+              "until it ends or you press Stop.");
+  else if (guidedRun)
+    why << tr("The study's download is asking AFAD with this mailbox "
+              "address: Fetch is off until it ends.");
+  if (!running_ && have)
+    why << tr("Stop is off because nothing is running.");
+  why_->setText(why.join(QLatin1Char(' ')));
+  why_->setVisible(!why_->text().isEmpty() && topBar_->isVisibleTo(this));
+  if (!wantedStations_.isEmpty() && !have && !guide_->guiding())
+    wantedPlan_->setToolTip(ui::helpText(
+        tr("Plan from AFAD needs a campaign: open or create one below.")));
 }
 
 void TdvmsWidget::changeEvent(QEvent *e) {
@@ -801,6 +967,13 @@ void TdvmsWidget::retranslate() {
                  int(wantedStations_.size()))
                   .arg(wantedCase_, period));
   }
+  if (!wantedStations_.isEmpty() && current().ledgerPath.isEmpty())
+    wantedText_->setText(
+        wantedText_->text() + QLatin1Char(' ') +
+        tr("Plan from AFAD needs a campaign: open or create one below."));
+  advanced_->setToolTip(ui::helpText(
+      tr("Shows every download with its requests, the run settings, the "
+         "coverage view and the FDSN form: the expert view of this page.")));
   wantedPlan_->setText(tr("Plan from AFAD…"));
   wantedFdsn_->setText(tr("Fill the FDSN form"));
   wantedClose_->setText(tr("Dismiss"));
@@ -813,6 +986,8 @@ void TdvmsWidget::retranslate() {
   wantedFdsn_->setToolTip(ui::helpText(
       tr("Puts this station and the case's span into the FDSN tab, to pull "
          "the days from an FDSN service.")));
+  advanced_->setText(advanced_->isChecked() ? tr("▾ All downloads (advanced)")
+                                            : tr("▸ All downloads (advanced)"));
   refresh_->setText(tr("Refresh"));
   catalogs_->setText(tr("Refresh catalogs"));
   findChild<QGroupBox *>(QStringLiteral("runBox"))->setTitle(tr("Run"));

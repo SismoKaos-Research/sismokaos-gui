@@ -148,8 +148,9 @@ bool TstGuided::makeStudy(const QString &name, const QString &station) {
 }
 
 void TstGuided::dataPageTakesWhatACaseNeeds() {
+  // With no study open: the bar that offers the two forms. (With a study the
+  // guided panel takes the case; tst_data_guided covers that.)
   campaignIn(dir_->filePath("dl"));
-  QVERIFY(makeStudy(QStringLiteral("one"), QStringLiteral("AAA")));
   TdvmsWidget page(ctx_);
   auto *bar = child<QWidget>(page, "wantedBar");
   auto *station = child<QLineEdit>(page, "fdsnStation");

@@ -6,6 +6,7 @@ qt_add_library(skg_mod_tdvms STATIC
   coveragepane.cpp  coveragepane.h
   fdsnpane.cpp      fdsnpane.h
   stationmap.cpp    stationmap.h
+  casedownloads.cpp casedownloads.h
 )
 target_link_libraries(skg_mod_tdvms PUBLIC skg_core skg_tdvms skg_study skg_studyui PRIVATE skg_warnings)
 list(APPEND SKG_MODULE_TARGETS skg_mod_tdvms)

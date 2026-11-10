@@ -1,5 +1,7 @@
 #include "modules/tdvms/ledgermodel.h"
 
+#include "tdvms/settings.h"
+
 #include <QBrush>
 #include <QColor>
 #include <QVariant>
@@ -48,7 +50,8 @@ QVariant LedgerModel::data(const QModelIndex &index, int role) const {
     case State:
       return str(r, "state");
     case Email:
-      return str(r, "email");
+      // Which slot holds the request; the person's address stays off screen.
+      return maskAddress(str(r, "email"));
     case Attempts:
       return intOf(r, "attempts");
     case Bytes: {

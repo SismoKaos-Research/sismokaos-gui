@@ -59,6 +59,8 @@ target_link_libraries(tst_study_scan PRIVATE skg_core skg_mod_study skg_mod_sett
 skg_test(tst_study_fixes tst_study_fixes.cpp)
 skg_test(tst_study_setup tst_study_setup.cpp)
 target_link_libraries(tst_study_setup PRIVATE skg_core skg_mod_study Qt6::Widgets)
+skg_test(tst_data_guided tst_data_guided.cpp)
+target_link_libraries(tst_data_guided PRIVATE skg_core skg_studyui skg_mod_tdvms Qt6::Widgets)
 skg_test(tst_maps tst_maps.cpp)
 target_link_libraries(tst_maps PRIVATE skg_core skg_studyui skg_mod_study skg_mod_tdvms Qt6::Widgets)
 skg_test(tst_help tst_help.cpp)

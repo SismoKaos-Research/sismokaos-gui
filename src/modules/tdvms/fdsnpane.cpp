@@ -97,6 +97,10 @@ FdsnPane::FdsnPane(JobModel *jobs, QWidget *parent)
   connect(station_, &QLineEdit::textChanged, this, &FdsnPane::updateButtons);
   connect(station_, &QLineEdit::textChanged, this,
           [this] { emit stationChanged(station()); });
+  connect(service_, &QLineEdit::editingFinished, this,
+          &FdsnPane::defaultsChanged);
+  connect(channels_, &QLineEdit::editingFinished, this,
+          &FdsnPane::defaultsChanged);
   connect(start_, &QDateEdit::dateChanged, this, &FdsnPane::updateButtons);
   connect(end_, &QDateEdit::dateChanged, this, &FdsnPane::updateButtons);
   connect(stop_, &QPushButton::clicked, this, [this] {
@@ -133,6 +137,8 @@ void FdsnPane::prefill(const QString &station, const QString &network,
 }
 
 QString FdsnPane::station() const { return station_->text().trimmed(); }
+QString FdsnPane::service() const { return service_->text().trimmed(); }
+QString FdsnPane::channels() const { return channels_->text().trimmed(); }
 
 QString FdsnPane::blockedReason() const {
   if (campaign_.ledgerPath.isEmpty())
