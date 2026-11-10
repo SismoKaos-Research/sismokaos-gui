@@ -34,6 +34,8 @@ class GridPane;
 class RegionsPane;
 
 // What the panes share. Loaded by the top bar; panes read it on refresh().
+class StudyInputsBar;
+
 struct AnalysisState {
   QString tablePath;
   fx::NpyTable table;
@@ -78,8 +80,23 @@ public:
 
 protected:
   void changeEvent(QEvent *e) override;
+  void showEvent(QShowEvent *e) override;
 
 private:
+  // What a background job read ahead of loadCatalog(), loadFaults() and
+  // loadTable(), which then take it instead of reading the file themselves.
+  struct Preloaded {
+    QString catalogPath, faultsPath, tablePath;
+    double catalogOffsetHours = 0;
+    std::optional<std::vector<analysis::Event>> events;
+    std::optional<analysis::FaultIndex> faults;
+    std::optional<fx::NpyTable> table;
+  };
+  // Reads the catalog, the faults and the table named in the fields as a
+  // job, then shows them: the files are large and the interface must not
+  // stand still meanwhile.
+  void reloadInBackground();
+  void applyStudyInputs();
   void retranslate();
   void loadTable();
   void loadCatalog();
@@ -90,6 +107,9 @@ private:
   void refreshPanes();
 
   AppContext ctx_;
+  StudyInputsBar *studyBar_;
+  bool shownOnce_ = false;
+  std::shared_ptr<Preloaded> pre_;
   std::shared_ptr<AnalysisState> state_;
 
   QLineEdit *table_, *catalog_, *stations_, *faults_, *stationCode_;

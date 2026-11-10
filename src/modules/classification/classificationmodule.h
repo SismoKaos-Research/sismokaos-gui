@@ -9,6 +9,8 @@
 #include <memory>
 #include <optional>
 
+#include <QVariantMap>
+
 #include "core/module.h"
 #include "fx/npy.h"
 #include "sfc/dataset.h"
@@ -31,6 +33,8 @@ class SettingsPane;
 class ExperimentsPane;
 
 // What the panes share.
+class StudyInputsBar;
+
 struct ClassificationState {
   QString projectDir;
   QString projectFile; // <project>/project.toml
@@ -62,8 +66,13 @@ class ClassificationWidget : public QWidget {
 public:
   ClassificationWidget(AppContext ctx, QWidget *parent = nullptr);
 
+  // The page's settings as a study recipe's (study/runs.h lists the keys).
+  // The station and the event are the case's, so they are left out.
+  QVariantMap recipeSettings() const;
+
 protected:
   void changeEvent(QEvent *e) override;
+  void showEvent(QShowEvent *e) override;
 
 private:
   void retranslate();
@@ -71,6 +80,10 @@ private:
   void setProject(const QString &dir);
   void chooseSource();
   void loadSource();
+  void sourceLoaded(const QString &path,
+                    std::shared_ptr<std::optional<fx::NpyTable>> table,
+                    const QString &error);
+  void applyStudyInputs();
   void rebuildDataset();
   void saveProject();
   void startRun();
@@ -80,6 +93,8 @@ private:
 
   AppContext ctx_;
   std::shared_ptr<ClassificationState> state_;
+  StudyInputsBar *studyBar_;
+  bool shownOnce_ = false; // the last project and table load on first show
   Job *running_ = nullptr;
 
   QLineEdit *project_, *source_;

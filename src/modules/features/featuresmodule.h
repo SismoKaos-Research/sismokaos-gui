@@ -6,6 +6,8 @@
 
 #include <QWidget>
 
+#include <QVariantMap>
+
 #include "core/module.h"
 #include "fx/config.h"
 
@@ -21,6 +23,8 @@ namespace skg {
 class Job;
 class ConfigPane;
 class ResultsPane;
+
+class StudyInputsBar;
 
 class FeaturesModule : public Module {
   Q_OBJECT
@@ -42,12 +46,18 @@ class FeaturesWidget : public QWidget {
 public:
   FeaturesWidget(AppContext ctx, QWidget *parent = nullptr);
 
+  // The page's settings as a study recipe's: the config as text, without
+  // what belongs to one station (its folder and position) or to the study
+  // (the catalog); a run takes those, and the station code, from the case.
+  QVariantMap recipeSettings() const;
+
 protected:
   void changeEvent(QEvent *e) override;
 
 private:
   enum class Mode { Run, PreprocessOnly, DryRun };
   void retranslate();
+  void applyStudyInputs();
   void chooseDir(QLineEdit *target);
   void loadConfig();
   void saveConfig();
@@ -59,6 +69,7 @@ private:
 
   AppContext ctx_;
   Job *running_ = nullptr;
+  StudyInputsBar *studyBar_;
 
   QLineEdit *dataDir_, *outDir_, *configPath_;
   QPushButton *dataBrowse_, *outBrowse_, *configLoad_, *configSave_;

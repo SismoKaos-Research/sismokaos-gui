@@ -111,8 +111,8 @@ protected:
 private:
   void retranslate() {
     setTitle(id_ + QStringLiteral("  -  ") + reg_->desc(id_)->displayName);
-    exeBrowse_->setText(tr("Browse..."));
-    dirBrowse_->setText(tr("Browse..."));
+    exeBrowse_->setText(QStringLiteral("…"));
+    dirBrowse_->setText(QStringLiteral("…"));
     probe_->setText(tr("Check"));
     exe_->setPlaceholderText(tr("executable (optional; found on PATH or in "
                                 "the project's .venv otherwise)"));

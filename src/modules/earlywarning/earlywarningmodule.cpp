@@ -401,11 +401,11 @@ void EarlyWarningWidget::retranslate() {
   fromLabel_->setText(tr("Detect from (UTC)"));
   ui::setHelp(from_, tr("No triggers before this time; earlier data still "
                        "warms up the filters. Empty: from the start."));
-  catalogLabel_->setText(tr("AFAD catalog"));
-  ui::setHelp(catalog_, tr("An AFAD catalogue export (CSV). Each alarm is "
+  catalogLabel_->setText(tr("Earthquake catalog"));
+  ui::setHelp(catalog_, tr("An AFAD catalog export (CSV). Each alarm is "
                           "compared with it; without one, alarms are "
                           "reported but not scored."));
-  catalogBrowse_->setText(tr("Browse..."));
+  catalogBrowse_->setText(QStringLiteral("…"));
   liveBox_->setTitle(tr("Live"));
   serverLabel_->setText(tr("SeedLink server"));
   streamsLabel_->setText(tr("Streams"));
@@ -414,7 +414,7 @@ void EarlyWarningWidget::retranslate() {
   archiveLabel_->setText(tr("Archive to"));
   ui::setHelp(archive_, tr("Every record received is appended to "
                           "DIR/STATION.mseed, which replays like any file"));
-  archiveBrowse_->setText(tr("Browse..."));
+  archiveBrowse_->setText(QStringLiteral("…"));
   durationLabel_->setText(tr("Duration (s)"));
   duration_->setSpecialValueText(tr("until stopped"));
   commonBox_->setTitle(tr("Detection"));
@@ -449,7 +449,7 @@ void EarlyWarningWidget::retranslate() {
   outputLabel_->setText(tr("Output folder"));
   ui::setHelp(output_, tr("Working directory of the run; the assessment "
                          "table and the scores go here"));
-  outputBrowse_->setText(tr("Browse..."));
+  outputBrowse_->setText(QStringLiteral("…"));
   sitesLabel_->setText(tr("Warning sites"));
   ui::setHelp(sites_, tr("One place per line as NAME,LAT,LON; the S-wave "
                         "warning time at each is reported"));
@@ -457,10 +457,10 @@ void EarlyWarningWidget::retranslate() {
   ui::setHelp(stations_, tr("code,lat,lon[,...] in place of the shipped "
                            "table (TU and KO stations), for another "
                            "network"));
-  stationsBrowse_->setText(tr("Browse..."));
+  stationsBrowse_->setText(QStringLiteral("…"));
   modelsLabel_->setText(tr("Models folder"));
   ui::setHelp(models_, tr("Weights directory; empty uses the shipped models"));
-  modelsBrowse_->setText(tr("Browse..."));
+  modelsBrowse_->setText(QStringLiteral("…"));
   extraLabel_->setText(tr("Extra options"));
   ui::setHelp(extra_, tr("Any other ayzek option, as on the command line"));
   run_->setText(tr("Run"));
@@ -792,11 +792,11 @@ void EarlyWarningWidget::finished() {
   if (s.alarms >= 0)
     parts << tr("%n alarm(s)", nullptr, s.alarms);
   if (s.correct >= 0)
-    parts << tr("%1 matching a catalogue event, %2 without one")
+    parts << tr("%1 matching a catalog event, %2 without one")
                  .arg(s.correct)
                  .arg(s.falseAlarms);
   if (s.events >= 0)
-    parts << tr("%1 catalogue events: %2 detected (%3 before S), %4 missed")
+    parts << tr("%1 catalog events: %2 detected (%3 before S), %4 missed")
                  .arg(s.events)
                  .arg(s.detected)
                  .arg(s.detectedBeforeS)

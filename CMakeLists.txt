@@ -45,6 +45,7 @@ add_subdirectory(src/ayzek)
 add_subdirectory(src/cbi)
 add_subdirectory(src/study)
 add_subdirectory(src/core)
+add_subdirectory(src/studyui)
 add_subdirectory(src/modules)
 add_subdirectory(src/app)
 

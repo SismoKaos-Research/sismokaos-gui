@@ -1,3 +1,7 @@
+#include "studyui/studyinputs.h"
+#include "study/store.h"
+#include "study/runs.h"
+#include "core/defaults.h"
 #include "modules/indicators/indicatorsmodule.h"
 
 #include "core/ui.h"
@@ -205,11 +209,18 @@ IndicatorsWidget::IndicatorsWidget(AppContext ctx, QWidget *parent)
   runTab->addWidget(log_);
   runTab->setStretchFactor(0, 3);
   runTab->setStretchFactor(1, 2);
+  ui::persistSplitter(runTab, ctx_.settings,
+                      QStringLiteral("indicators/split"));
   results_ = new IndicatorsResultsPane(state_, this);
   tabs_ = new QTabWidget(this);
   tabs_->addTab(runTab, QString());
   tabs_->addTab(results_, QString());
+  studyBar_ = new StudyInputsBar(ctx_.study, ctx_.settings,
+                                 QStringLiteral("indicators/useStudy"),
+                                 StudyInputsBar::Needs::Case,
+                                 study::kToolIndicators, this);
   auto *layout = new QVBoxLayout(this);
+  layout->addWidget(studyBar_);
   layout->addWidget(tabs_);
 
   connect(catalogBrowse_, &QPushButton::clicked, this, [this] {
@@ -242,7 +253,78 @@ IndicatorsWidget::IndicatorsWidget(AppContext ctx, QWidget *parent)
 
   loadSettings();
   retranslate();
+  connect(studyBar_, &StudyInputsBar::inputsChanged, this,
+          &IndicatorsWidget::applyStudyInputs);
+  connect(studyBar_, &StudyInputsBar::recipeRequested, this, [this] {
+    QString error;
+    const QVariantMap settings = recipeSettings(&error);
+    if (settings.isEmpty())
+      say(error, true);
+    else
+      studyBar_->saveRecipe(settings);
+  });
+  applyStudyInputs();
   updateControls();
+}
+
+void IndicatorsWidget::applyStudyInputs() {
+  const study::Study *s = studyBar_->study();
+  // Held to the study: its catalog is the one read.
+  catalog_->setReadOnly(s != nullptr);
+  catalogBrowse_->setEnabled(s == nullptr);
+  if (!s)
+    return;
+  catalog_->setText(s->catalogPath());
+  if (const study::Case *c = studyBar_->currentCase()) {
+    // The case's zone: its circle, or its fault traces.
+    if (c->zone.kind == study::Zone::Kind::Fault) {
+      zone_->setCurrentIndex(c->zone.faultGeoJson.isEmpty() ? 1 : 2);
+      zoneFile_->setText(s->resolved(c->zone.faultGeoJson));
+      strands_->setText(c->zone.strands.join(QStringLiteral(", ")));
+      buffer_->setValue(c->zone.bufferKm);
+    } else {
+      zone_->setCurrentIndex(3);
+      lat_->setValue(c->lat);
+      lon_->setValue(c->lon);
+      radius_->setValue(c->zone.radiusKm);
+    }
+  }
+  updateControls();
+}
+
+QVariantMap IndicatorsWidget::recipeSettings(QString *error) const {
+  // A recipe counts its window and step in months.
+  if (unitAt(windowUnit_) != QLatin1Char('M') ||
+      unitAt(stepUnit_) != QLatin1Char('M')) {
+    if (error)
+      *error = tr("A study recipe takes the window and the step in months. "
+                  "Set both units to months first.");
+    return {};
+  }
+  QVariantList ma;
+  for (const QString &w : ma_->text().split(QLatin1Char(','))) {
+    bool ok = false;
+    const int n = w.trimmed().toInt(&ok);
+    if (ok && n > 0)
+      ma << n;
+  }
+  return {{QStringLiteral("mc"), mc_->value()},
+          {QStringLiteral("mag_bin"), magBin_->value()},
+          {QStringLiteral("window_months"), window_->value()},
+          {QStringLiteral("step_months"), step_->value()},
+          {QStringLiteral("half_gauss_sigma"), sigma_->value()},
+          {QStringLiteral("ma_windows"), ma},
+          {QStringLiteral("bollinger"), bollinger_->isChecked()},
+          {QStringLiteral("bb_window"), bbWindow_->value()},
+          {QStringLiteral("bb_k"), bbK_->value()},
+          {QStringLiteral("homogenize"), homogenize_->isChecked()},
+          {QStringLiteral("decluster"), decluster_->isChecked()},
+          {QStringLiteral("figures"), plots_->isChecked()},
+          {QStringLiteral("figure_dpi"), dpi_->value()},
+          {QStringLiteral("figure_language"),
+           defaults::figureLanguage(ctx_.settings)},
+          {QStringLiteral("label_mag"), labelMag_->value()},
+          {QStringLiteral("label_days"), labelDays_->value()}};
 }
 
 void IndicatorsWidget::changeEvent(QEvent *e) {
@@ -252,7 +334,7 @@ void IndicatorsWidget::changeEvent(QEvent *e) {
 }
 
 void IndicatorsWidget::retranslate() {
-  catalogLabel_->setText(tr("Catalog"));
+  catalogLabel_->setText(tr("Earthquake catalog"));
   catalog_->setPlaceholderText(
       tr("AFAD export CSV: Date, Latitude, Longitude, Magnitude…"));
   describe_->setText(tr("Describe"));
@@ -422,10 +504,12 @@ void IndicatorsWidget::loadSettings() {
   zone_->setCurrentIndex(s->value(key("zone"), 1).toInt());
   zoneFile_->setText(s->value(key("zoneFile")).toString());
   strands_->setText(s->value(key("strands")).toString());
-  buffer_->setValue(s->value(key("bufferKm"), 30.0).toDouble());
-  lat_->setValue(s->value(key("lat"), 38.0).toDouble());
-  lon_->setValue(s->value(key("lon"), 38.0).toDouble());
-  radius_->setValue(s->value(key("radiusKm"), 100.0).toDouble());
+  buffer_->setValue(
+      s->value(key("bufferKm"), defaults::kFaultBufferKm).toDouble());
+  lat_->setValue(s->value(key("lat"), defaults::kCentreLat).toDouble());
+  lon_->setValue(s->value(key("lon"), defaults::kCentreLon).toDouble());
+  radius_->setValue(
+      s->value(key("radiusKm"), defaults::kZoneRadiusKm).toDouble());
   useStart_->setChecked(s->value(key("useStart"), false).toBool());
   start_->setDate(s->value(key("start"), QDate(2014, 1, 1)).toDate());
   homogenize_->setChecked(s->value(key("homogenize"), false).toBool());
@@ -443,13 +527,15 @@ void IndicatorsWidget::loadSettings() {
   bollinger_->setChecked(s->value(key("bollinger"), false).toBool());
   bbWindow_->setValue(s->value(key("bbWindow"), 20).toInt());
   bbK_->setValue(s->value(key("bbK"), 2.0).toDouble());
-  labelMag_->setValue(s->value(key("labelMag"), 6.0).toDouble());
-  labelDays_->setValue(s->value(key("labelDays"), 90).toInt());
+  labelMag_->setValue(
+      s->value(key("labelMag"), defaults::kRiskLabelMag).toDouble());
+  labelDays_->setValue(
+      s->value(key("labelDays"), defaults::kRiskLabelDays).toInt());
   outRoot_->setText(
       s->value(key("outRoot"), QDir::homePath() + QStringLiteral("/indicators"))
           .toString());
   plots_->setChecked(s->value(key("plots"), true).toBool());
-  dpi_->setValue(s->value(key("dpi"), 100).toInt());
+  dpi_->setValue(s->value(key("dpi"), defaults::kFigureDpi).toInt());
 }
 
 void IndicatorsWidget::saveSettings() {
@@ -547,9 +633,7 @@ bool IndicatorsWidget::options(cbi::RunOptions *o, QString *err) const {
   }
   o->plots = plots_->isChecked();
   o->dpi = dpi_->value();
-  o->lang =
-      ctx_.settings->value(QStringLiteral("ui/language"), QStringLiteral("tr"))
-          .toString();
+  o->lang = defaults::figureLanguage(ctx_.settings);
   return true;
 }
 
@@ -575,17 +659,41 @@ void IndicatorsWidget::describeCatalog() {
     return;
   }
   saveSettings();
-  try {
-    QStringList log;
-    const cbi::Catalog all = cbi::loadCatalog(o.catalogPath);
-    const cbi::Catalog sel = o.selection.apply(all, &log);
-    log_->appendPlainText(tr("Catalog: %n event(s)", nullptr, int(all.size())));
-    for (const QString &l : log + cbi::describeCatalog(sel, o.lang))
-      log_->appendPlainText(l);
-    say(tr("%n event(s) selected.", nullptr, int(sel.size())));
-  } catch (const std::exception &e) {
-    say(QString::fromUtf8(e.what()), true);
-  }
+  // Reading a national catalog takes seconds: not on the interface's thread.
+  say(tr("Reading the catalog…"));
+  QPointer<IndicatorsWidget> self(this);
+  ctx_.jobs->add(new TaskJob(
+      tr("Describe the catalog"), QStringLiteral("cbi"),
+      QFileInfo(o.catalogPath).fileName(), [self, o](TaskContext &ctx) -> int {
+        QStringList lines;
+        QString summary;
+        bool failed = false;
+        try {
+          QStringList log;
+          const cbi::Catalog all = cbi::loadCatalog(o.catalogPath);
+          const cbi::Catalog sel = o.selection.apply(all, &log);
+          lines << tr("Catalog: %n event(s)", nullptr, int(all.size()));
+          lines << log << cbi::describeCatalog(sel, o.lang);
+          summary = tr("%n event(s) selected.", nullptr, int(sel.size()));
+        } catch (const std::exception &e) {
+          summary = QString::fromUtf8(e.what());
+          failed = true;
+        }
+        for (const QString &l : lines)
+          ctx.log(l);
+        ctx.log(summary);
+        QMetaObject::invokeMethod(
+            self.data(),
+            [self, lines, summary, failed] {
+              if (!self)
+                return;
+              for (const QString &l : lines)
+                self->log_->appendPlainText(l);
+              self->say(summary, failed);
+            },
+            Qt::QueuedConnection);
+        return failed ? 1 : 0;
+      }));
 }
 
 void IndicatorsWidget::estimateMc() {
@@ -595,21 +703,45 @@ void IndicatorsWidget::estimateMc() {
     say(err, true);
     return;
   }
-  try {
-    const cbi::Catalog sel = o.selection.apply(cbi::loadCatalog(o.catalogPath));
-    if (sel.empty()) {
-      say(tr("No event matches the selection."), true);
-      return;
-    }
-    const double mc = cbi::maxCurvatureMc(sel.magnitudes(), o.config.magBin);
-    mc_->setValue(mc);
-    saveSettings();
-    say(tr("Mc by maximum curvature + 0.2: %1 (%n event(s))", nullptr,
-           int(sel.size()))
-            .arg(QString::number(mc, 'f', 2)));
-  } catch (const std::exception &e) {
-    say(QString::fromUtf8(e.what()), true);
-  }
+  say(tr("Reading the catalog…"));
+  QPointer<IndicatorsWidget> self(this);
+  ctx_.jobs->add(new TaskJob(
+      tr("Estimate Mc"), QStringLiteral("cbi"),
+      QFileInfo(o.catalogPath).fileName(), [self, o](TaskContext &ctx) -> int {
+        QString summary;
+        bool failed = false;
+        double mc = 0;
+        try {
+          const cbi::Catalog sel =
+              o.selection.apply(cbi::loadCatalog(o.catalogPath));
+          if (sel.empty()) {
+            summary = tr("No event matches the selection.");
+            failed = true;
+          } else {
+            mc = cbi::maxCurvatureMc(sel.magnitudes(), o.config.magBin);
+            summary = tr("Mc by maximum curvature + 0.2: %1 (%n event(s))",
+                         nullptr, int(sel.size()))
+                          .arg(QString::number(mc, 'f', 2));
+          }
+        } catch (const std::exception &e) {
+          summary = QString::fromUtf8(e.what());
+          failed = true;
+        }
+        ctx.log(summary);
+        QMetaObject::invokeMethod(
+            self.data(),
+            [self, summary, failed, mc] {
+              if (!self)
+                return;
+              if (!failed) {
+                self->mc_->setValue(mc);
+                self->saveSettings();
+              }
+              self->say(summary, failed);
+            },
+            Qt::QueuedConnection);
+        return failed ? 1 : 0;
+      }));
 }
 
 void IndicatorsWidget::fitConversion() {

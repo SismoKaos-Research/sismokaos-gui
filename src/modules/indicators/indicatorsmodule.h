@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include <QVariantMap>
+
 #include "cbi/run.h"
 #include "core/module.h"
 
@@ -33,6 +35,8 @@ struct IndicatorsState {
   bool hasResult = false;
 };
 
+class StudyInputsBar;
+
 class IndicatorsModule : public Module {
   Q_OBJECT
 public:
@@ -52,11 +56,18 @@ class IndicatorsWidget : public QWidget {
 public:
   IndicatorsWidget(AppContext ctx, QWidget *parent = nullptr);
 
+  // The page's settings as a study recipe's (study/runs.h lists the keys).
+  // The catalog, the zone and the dates are the case's, so they are left
+  // out. Empty with `error` set when a setting has no recipe form (a window
+  // that is not in months).
+  QVariantMap recipeSettings(QString *error) const;
+
 protected:
   void changeEvent(QEvent *e) override;
 
 private:
   void retranslate();
+  void applyStudyInputs();
   void loadSettings();
   void saveSettings();
   bool options(cbi::RunOptions *o, QString *err) const;
@@ -70,6 +81,7 @@ private:
   void say(const QString &message, bool warning = false);
 
   AppContext ctx_;
+  StudyInputsBar *studyBar_;
   std::shared_ptr<IndicatorsState> state_;
   Job *running_ = nullptr;
 

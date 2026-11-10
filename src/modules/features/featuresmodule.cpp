@@ -1,3 +1,6 @@
+#include "studyui/studyinputs.h"
+#include "study/store.h"
+#include "study/runs.h"
 #include "modules/features/featuresmodule.h"
 
 #include "core/ui.h"
@@ -127,7 +130,13 @@ FeaturesWidget::FeaturesWidget(AppContext ctx, QWidget *parent)
   split->addWidget(right);
   split->setStretchFactor(0, 2);
   split->setStretchFactor(1, 3);
+  ui::persistSplitter(split, ctx_.settings, QStringLiteral("features/split"));
+  studyBar_ = new StudyInputsBar(ctx_.study, ctx_.settings,
+                                 QStringLiteral("features/useStudy"),
+                                 StudyInputsBar::Needs::CaseAndStation,
+                                 study::kToolFeatures, this);
   auto *layout = new QVBoxLayout(this);
+  layout->addWidget(studyBar_);
   layout->addLayout(top);
   layout->addWidget(split, 1);
 
@@ -182,6 +191,11 @@ FeaturesWidget::FeaturesWidget(AppContext ctx, QWidget *parent)
   if (!configPath_->text().isEmpty() && QFileInfo::exists(configPath_->text()))
     config_->setConfig(fx::Config::load(configPath_->text()));
   results_->setDirectory(outDir_->text());
+  connect(studyBar_, &StudyInputsBar::inputsChanged, this,
+          &FeaturesWidget::applyStudyInputs);
+  connect(studyBar_, &StudyInputsBar::recipeRequested, this,
+          [this] { studyBar_->saveRecipe(recipeSettings()); });
+  applyStudyInputs();
   updateControls();
 }
 
@@ -241,6 +255,44 @@ void FeaturesWidget::saveConfig() {
   configPath_->setText(path);
   ctx_.settings->setValue(kSettingsConfig, path);
   say(tr("Saved %1").arg(path));
+}
+
+void FeaturesWidget::applyStudyInputs() {
+  const study::Study *s = studyBar_->study();
+  const study::StationRef *st = studyBar_->currentStation();
+  // Held to the study: the station's folder is not edited here.
+  const bool held = s && st;
+  dataDir_->setReadOnly(held);
+  dataBrowse_->setEnabled(!held);
+  if (!s)
+    return;
+  fx::Config cfg = config_->config();
+  cfg.calibration.catalog = s->catalogPath();
+  if (st) {
+    cfg.station = st->code;
+    cfg.calibration.stationLat = st->lat;
+    cfg.calibration.stationLon = st->lon;
+    const QString dir = s->dataDirFor(*st);
+    if (dataDir_->text() != dir) {
+      dataDir_->setText(dir);
+      ctx_.settings->setValue(kSettingsData, dir);
+    }
+  }
+  config_->setConfig(cfg);
+}
+
+QVariantMap FeaturesWidget::recipeSettings() const {
+  fx::Config cfg = config_->config();
+  cfg.dataDir.clear();
+  cfg.outputRoot.clear();
+  cfg.calibrationFile.clear();
+  cfg.calibration.catalog.clear(); // a run uses the study's
+  cfg.calibration.stationCoords.clear();
+  cfg.calibration.stationLat.reset();
+  cfg.calibration.stationLon.reset();
+  return {{QStringLiteral("config_json"),
+           QString::fromUtf8(
+               QJsonDocument(cfg.toJson()).toJson(QJsonDocument::Indented))}};
 }
 
 fx::Config FeaturesWidget::assemble() const {
@@ -429,7 +481,7 @@ void FeaturesWidget::changeEvent(QEvent *e) {
 }
 
 void FeaturesWidget::retranslate() {
-  dataLabel_->setText(tr("Data directory"));
+  dataLabel_->setText(tr("Waveform folder"));
   outLabel_->setText(tr("Output directory"));
   configLabel_->setText(tr("Config"));
   configLoad_->setText(tr("Load…"));

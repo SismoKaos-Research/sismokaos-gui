@@ -1,7 +1,16 @@
+#include "studyui/studyinputs.h"
+#include "study/store.h"
+#include "jobs/taskjob.h"
+#include "jobs/jobmodel.h"
+#include "core/defaults.h"
 #include "modules/analysis/analysismodule.h"
 
 #include "core/ui.h"
 
+#include <QTimer>
+#include <QSignalBlocker>
+#include <QShowEvent>
+#include <QPointer>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
@@ -117,7 +126,12 @@ AnalysisWidget::AnalysisWidget(AppContext ctx, QWidget *parent)
   tabs_->addTab(figuresPane_, QString());
   tabs_->addTab(gridPane_, QString());
   tabs_->addTab(regionsPane_, QString());
+  studyBar_ = new StudyInputsBar(ctx_.study, ctx_.settings,
+                                 QStringLiteral("analysis/useStudy"),
+                                 StudyInputsBar::Needs::CaseAndStation,
+                                 QString(), this);
   auto *layout = new QVBoxLayout(this);
+  layout->addWidget(studyBar_);
   layout->addLayout(form);
   layout->addWidget(tabs_, 1);
 
@@ -194,21 +208,113 @@ AnalysisWidget::AnalysisWidget(AppContext ctx, QWidget *parent)
   retranslate();
   lat_->setEnabled(false);
   lon_->setEnabled(false);
-  state_->lang =
-      ctx_.settings->value(QStringLiteral("ui/language"), QStringLiteral("tr"))
-          .toString();
+  state_->lang = defaults::figureLanguage(ctx_.settings);
   catalogTz_->setCurrentIndex(
       catalogTz_->findData(ctx_.settings->value(kCatalogTz, 0.0).toDouble()));
   stations_->setText(ctx_.settings->value(kStations).toString());
   catalog_->setText(ctx_.settings->value(kCatalog).toString());
   faults_->setText(ctx_.settings->value(kFaults).toString());
   table_->setText(ctx_.settings->value(kTable).toString());
-  if (!catalog_->text().isEmpty())
-    loadCatalog();
-  if (!faults_->text().isEmpty())
-    loadFaults();
-  if (!table_->text().isEmpty())
-    loadTable();
+  // The files named above are read when the page is first shown, as a job
+  // (showEvent), not while the application starts.
+  connect(studyBar_, &StudyInputsBar::inputsChanged, this,
+          &AnalysisWidget::applyStudyInputs);
+  applyStudyInputs();
+}
+
+void AnalysisWidget::showEvent(QShowEvent *e) {
+  QWidget::showEvent(e);
+  if (shownOnce_)
+    return;
+  shownOnce_ = true;
+  QTimer::singleShot(0, this, &AnalysisWidget::reloadInBackground);
+}
+
+void AnalysisWidget::reloadInBackground() {
+  auto pre = std::make_shared<Preloaded>();
+  pre->catalogPath = catalog_->text().trimmed();
+  pre->faultsPath = faults_->text().trimmed();
+  pre->tablePath = table_->text().trimmed();
+  pre->catalogOffsetHours = catalogTz_->currentData().toDouble();
+  if (pre->catalogPath.isEmpty() && pre->faultsPath.isEmpty() &&
+      pre->tablePath.isEmpty())
+    return;
+  say(tr("Reading the inputs…"));
+  QPointer<AnalysisWidget> self(this);
+  ctx_.jobs->add(new TaskJob(
+      tr("Read the analysis inputs"), QStringLiteral("analysis"),
+      QFileInfo(pre->catalogPath.isEmpty() ? pre->tablePath : pre->catalogPath)
+          .fileName(),
+      [self, pre](TaskContext &ctx) -> int {
+        // A file that cannot be read here is read again by the page, which
+        // then says why in its own words.
+        const auto attempt = [&](const QString &path, auto &&read) {
+          if (path.isEmpty() || !QFileInfo::exists(path))
+            return;
+          try {
+            read();
+            ctx.log(QFileInfo(path).fileName());
+          } catch (const std::exception &e) {
+            ctx.log(QStringLiteral("%1: %2").arg(path, e.what()));
+          }
+        };
+        attempt(pre->catalogPath, [&] {
+          pre->events =
+              analysis::loadEvents(pre->catalogPath, pre->catalogOffsetHours);
+        });
+        attempt(pre->faultsPath,
+                [&] { pre->faults = analysis::loadFaults(pre->faultsPath); });
+        attempt(pre->tablePath,
+                [&] { pre->table = analysis::loadTable(pre->tablePath); });
+        QMetaObject::invokeMethod(
+            self.data(),
+            [self, pre] {
+              if (!self)
+                return;
+              self->pre_ = pre;
+              self->loadCatalog();
+              self->loadFaults();
+              self->loadTable();
+              self->pre_.reset();
+            },
+            Qt::QueuedConnection);
+        return 0;
+      }));
+}
+
+void AnalysisWidget::applyStudyInputs() {
+  const study::Study *s = studyBar_->study();
+  // Held to the study: its catalog and time offset are the ones read.
+  catalog_->setReadOnly(s != nullptr);
+  catalogBrowse_->setEnabled(s == nullptr);
+  catalogTz_->setEnabled(s == nullptr);
+  if (!s)
+    return;
+  bool changed = false;
+  if (catalog_->text() != s->catalogPath()) {
+    catalog_->setText(s->catalogPath());
+    changed = true;
+  }
+  const int tz = catalogTz_->findData(s->catalogUtcOffsetHours);
+  if (tz >= 0 && tz != catalogTz_->currentIndex()) {
+    const QSignalBlocker block(catalogTz_);
+    catalogTz_->setCurrentIndex(tz);
+    changed = true;
+  }
+  if (const study::StationRef *st = studyBar_->currentStation()) {
+    if (stationCode_->text() != st->code) {
+      stationCode_->setText(st->code);
+      if (shownOnce_ && !changed)
+        resolveStation();
+    }
+    const QString table = studyBar_->featureTable();
+    if (!table.isEmpty() && table_->text() != table) {
+      table_->setText(table);
+      changed = true;
+    }
+  }
+  if (changed && shownOnce_)
+    reloadInBackground();
 }
 
 void AnalysisWidget::say(const QString &message, bool warning) {
@@ -226,7 +332,10 @@ void AnalysisWidget::loadTable() {
   }
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
   try {
-    state_->table = analysis::loadTable(path);
+    if (pre_ && pre_->tablePath == path && pre_->table)
+      state_->table = std::move(*pre_->table);
+    else
+      state_->table = analysis::loadTable(path);
     state_->tablePath = path;
     ctx_.settings->setValue(kTable, path);
     // The fx run metadata beside the table carries the station and window.
@@ -276,7 +385,11 @@ void AnalysisWidget::loadCatalog() {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     try {
       state_->catalogOffsetHours = catalogTz_->currentData().toDouble();
-      state_->events = analysis::loadEvents(path, state_->catalogOffsetHours);
+      if (pre_ && pre_->catalogPath == path && pre_->events &&
+          pre_->catalogOffsetHours == state_->catalogOffsetHours)
+        state_->events = std::move(*pre_->events);
+      else
+        state_->events = analysis::loadEvents(path, state_->catalogOffsetHours);
       state_->catalogPath = path;
       ctx_.settings->setValue(kCatalog, path);
       say(tr("Catalog: %n event(s)", nullptr, int(state_->events.size())));
@@ -308,7 +421,10 @@ void AnalysisWidget::loadFaults() {
   if (!path.isEmpty() && QFileInfo::exists(path)) {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     try {
-      state_->faults = analysis::loadFaults(path);
+      if (pre_ && pre_->faultsPath == path && pre_->faults)
+        state_->faults = std::move(*pre_->faults);
+      else
+        state_->faults = analysis::loadFaults(path);
       state_->faultsPath = path;
       ctx_.settings->setValue(kFaults, path);
       say(tr("Faults: %n segment(s)", nullptr,

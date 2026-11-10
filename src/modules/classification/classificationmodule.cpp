@@ -1,7 +1,12 @@
+#include "studyui/studyinputs.h"
+#include "study/store.h"
+#include "study/runs.h"
 #include "modules/classification/classificationmodule.h"
 
 #include "core/ui.h"
 
+#include <QTimer>
+#include <QShowEvent>
 #include <QDir>
 #include <QEvent>
 #include <QFileDialog>
@@ -103,12 +108,19 @@ ClassificationWidget::ClassificationWidget(AppContext ctx, QWidget *parent)
   split->addWidget(log_);
   split->setStretchFactor(0, 1);
   split->setStretchFactor(1, 2);
+  ui::persistSplitter(split, ctx_.settings,
+                      QStringLiteral("classification/split"));
   rtl->addWidget(split);
   tabs_ = new QTabWidget(this);
   tabs_->addTab(settingsPane_, QString());
   tabs_->addTab(runTab, QString());
   tabs_->addTab(experimentsPane_, QString());
+  studyBar_ = new StudyInputsBar(ctx_.study, ctx_.settings,
+                                 QStringLiteral("classification/useStudy"),
+                                 StudyInputsBar::Needs::CaseAndStation,
+                                 study::kToolClassification, this);
   auto *layout = new QVBoxLayout(this);
+  layout->addWidget(studyBar_);
   layout->addLayout(form);
   layout->addWidget(tabs_, 1);
 
@@ -131,15 +143,14 @@ ClassificationWidget::ClassificationWidget(AppContext ctx, QWidget *parent)
           &ClassificationWidget::saveProject);
   connect(run_, &QPushButton::clicked, this, &ClassificationWidget::startRun);
   connect(stop_, &QPushButton::clicked, this, &ClassificationWidget::stop);
+  connect(studyBar_, &StudyInputsBar::inputsChanged, this,
+          &ClassificationWidget::applyStudyInputs);
+  connect(studyBar_, &StudyInputsBar::recipeRequested, this,
+          [this] { studyBar_->saveRecipe(recipeSettings()); });
   retranslate();
-  const QString saved = ctx_.settings->value(kProject).toString();
-  if (!saved.isEmpty()) {
-    project_->setText(saved);
-    setProject(saved);
-  }
+  // The last project and table are read on first show (showEvent).
+  project_->setText(ctx_.settings->value(kProject).toString());
   source_->setText(ctx_.settings->value(kSource).toString());
-  if (!source_->text().isEmpty())
-    loadSource();
   updateControls();
 }
 
@@ -220,36 +231,143 @@ void ClassificationWidget::loadSource() {
     return;
   }
   ctx_.settings->setValue(kSource, path);
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  try {
-    state_->sourceIsSfcCsv =
-        path.endsWith(QLatin1String("_features_labeled.csv"));
-    if (!state_->sourceIsSfcCsv) {
-      state_->table = analysis::loadTable(path);
-      for (const fx::NpyField &f : state_->table->fields)
-        if (!f.dtype.contains('U') && f.name != QLatin1String("Zaman_Dk"))
-          state_->tableColumns << f.name;
-      // Default features for an fx table: the N component's own features.
-      bool anyKnown = false;
-      for (const QString &f : state_->settings.featureColumns)
-        anyKnown = anyKnown || state_->tableColumns.contains(f);
-      if (!anyKnown) {
-        QStringList defaults;
-        for (const QString &c : state_->tableColumns)
-          if (c.startsWith(QLatin1String("N_")) &&
-              !c.endsWith(QLatin1String("_DEV")) &&
-              !c.endsWith(QLatin1String("_INTERP_FRAC")))
-            defaults << c;
-        if (!defaults.isEmpty())
-          state_->settings.featureColumns = defaults;
-      }
-    }
-  } catch (const std::exception &e) {
-    say(tr("Cannot read %1: %2").arg(path, QString::fromUtf8(e.what())), true);
+  state_->sourceIsSfcCsv = path.endsWith(QLatin1String("_features_labeled.csv"));
+  if (state_->sourceIsSfcCsv) {
+    settingsPane_->refresh();
+    rebuildDataset();
+    return;
   }
-  QGuiApplication::restoreOverrideCursor();
+  // A feature table can be hundreds of megabytes: read it as a job, not on
+  // the interface's thread.
+  dataInfo_->setText(tr("Reading %1…").arg(QFileInfo(path).fileName()));
+  updateControls();
+  QPointer<ClassificationWidget> self(this);
+  auto table = std::make_shared<std::optional<fx::NpyTable>>();
+  ctx_.jobs->add(new TaskJob(
+      tr("Read the feature table"), QStringLiteral("sfc"),
+      QFileInfo(path).fileName(), [self, path, table](TaskContext &ctx) -> int {
+        QString error;
+        try {
+          *table = analysis::loadTable(path);
+        } catch (const std::exception &e) {
+          error = QString::fromUtf8(e.what());
+          ctx.log(error);
+        }
+        QMetaObject::invokeMethod(
+            self.data(),
+            [self, path, table, error] {
+              if (self)
+                self->sourceLoaded(path, table, error);
+            },
+            Qt::QueuedConnection);
+        return error.isEmpty() ? 0 : 1;
+      }));
+}
+
+void ClassificationWidget::sourceLoaded(
+    const QString &path, std::shared_ptr<std::optional<fx::NpyTable>> table,
+    const QString &error) {
+  if (state_->sourcePath != path)
+    return; // another source was chosen meanwhile
+  if (!error.isEmpty() || !table->has_value()) {
+    say(tr("Cannot read %1: %2").arg(path, error), true);
+  } else {
+    state_->table = std::move(*table);
+    for (const fx::NpyField &f : state_->table->fields)
+      if (!f.dtype.contains('U') && f.name != QLatin1String("Zaman_Dk"))
+        state_->tableColumns << f.name;
+    // Default features for an fx table: the N component's own features.
+    bool anyKnown = false;
+    for (const QString &f : state_->settings.featureColumns)
+      anyKnown = anyKnown || state_->tableColumns.contains(f);
+    if (!anyKnown) {
+      QStringList defaults;
+      for (const QString &c : state_->tableColumns)
+        if (c.startsWith(QLatin1String("N_")) &&
+            !c.endsWith(QLatin1String("_DEV")) &&
+            !c.endsWith(QLatin1String("_INTERP_FRAC")))
+          defaults << c;
+      if (!defaults.isEmpty())
+        state_->settings.featureColumns = defaults;
+    }
+  }
   settingsPane_->refresh();
   rebuildDataset();
+}
+
+void ClassificationWidget::showEvent(QShowEvent *e) {
+  QWidget::showEvent(e);
+  if (shownOnce_)
+    return;
+  shownOnce_ = true;
+  // What was open last is read when the page is first looked at, not while
+  // the application starts.
+  QTimer::singleShot(0, this, [this] {
+    const QString saved = ctx_.settings->value(kProject).toString();
+    if (!saved.isEmpty()) {
+      project_->setText(saved);
+      setProject(saved);
+    }
+    if (source_->text().isEmpty())
+      source_->setText(ctx_.settings->value(kSource).toString());
+    applyStudyInputs();
+    if (!source_->text().isEmpty() && state_->sourcePath != source_->text())
+      loadSource();
+    updateControls();
+  });
+}
+
+void ClassificationWidget::applyStudyInputs() {
+  const study::Study *s = studyBar_->study();
+  const study::Case *c = studyBar_->currentCase();
+  const study::StationRef *st = studyBar_->currentStation();
+  if (!s || !c || !st)
+    return;
+  // The event and the station are the case's.
+  state_->settings.station = st->code;
+  state_->settings.earthquakeName = c->id;
+  state_->settings.eqDate = c->time.date();
+  state_->settings.eqCutoffHour = c->time.time().hour();
+  settingsPane_->refresh();
+  const QString table = studyBar_->featureTable();
+  if (!table.isEmpty() && source_->text() != table) {
+    source_->setText(table);
+    if (shownOnce_)
+      loadSource();
+  } else if (shownOnce_) {
+    rebuildDataset();
+  }
+}
+
+QVariantMap ClassificationWidget::recipeSettings() const {
+  const sfc::Settings &st = state_->settings;
+  QVariantList classes, models, columns;
+  int perClass = 0;
+  for (const sfc::ClassRow &row : st.classTable) {
+    classes << QStringLiteral("%1-%2").arg(row.firstDay).arg(row.lastDay);
+    perClass = std::max(perClass, row.count);
+  }
+  for (const QString &m : st.modelsToRun)
+    models << m;
+  for (const QString &c : st.featureColumns)
+    columns << c;
+  QVariantMap out{{QStringLiteral("classes"), classes},
+                  {QStringLiteral("days_per_class"), std::max(1, perClass)},
+                  {QStringLiteral("models"), models},
+                  {QStringLiteral("feature_columns"), columns},
+                  {QStringLiteral("train_size"), st.trainSize},
+                  {QStringLiteral("val_size"), st.valSize},
+                  {QStringLiteral("scaler"), st.scaler},
+                  {QStringLiteral("random_seed"), st.randomSeed},
+                  {QStringLiteral("cv_folds"), st.cvFolds.value_or(0)}};
+  // It builds on the study's features recipe, when there is one already.
+  if (const study::Study *s = studyBar_->study())
+    for (const study::Recipe &r : s->recipes)
+      if (r.tool == study::kToolFeatures) {
+        out.insert(QStringLiteral("features_recipe"), r.id);
+        break;
+      }
+  return out;
 }
 
 void ClassificationWidget::rebuildDataset() {
