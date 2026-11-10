@@ -5,8 +5,9 @@ qt_add_library(skg_mod_analysis STATIC
   labelspane.cpp     labelspane.h
   figurespane.cpp    figurespane.h
   gridpane.cpp       gridpane.h
+  regionspane.cpp    regionspane.h
 )
-target_link_libraries(skg_mod_analysis PUBLIC skg_core skg_analysis skg_mod_features PRIVATE skg_warnings)
+target_link_libraries(skg_mod_analysis PUBLIC skg_core skg_analysis skg_cbi skg_mod_features PRIVATE skg_warnings)
 list(APPEND SKG_MODULE_TARGETS skg_mod_analysis)
 list(APPEND SKG_TRANSLATED_TARGETS skg_mod_analysis)
 set(SKG_MODULE_TARGETS ${SKG_MODULE_TARGETS} PARENT_SCOPE)

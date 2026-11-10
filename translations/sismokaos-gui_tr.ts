@@ -82,12 +82,12 @@
 <context>
     <name>skg::AnalysisModule</name>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.h" line="60"/>
+        <location filename="../src/modules/analysis/analysismodule.h" line="65"/>
         <source>Analysis</source>
         <translation>Analiz</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.h" line="62"/>
+        <location filename="../src/modules/analysis/analysismodule.h" line="67"/>
         <source>Earthquakes and faults around a station, labelled feature tables, metric figures and station comparison grids</source>
         <translation>Bir istasyon çevresindeki depremler ve faylar, etiketli öznitelik tabloları, metrik grafikleri ve istasyon karşılaştırma ızgaraları</translation>
     </message>
@@ -95,175 +95,187 @@
 <context>
     <name>skg::AnalysisWidget</name>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="124"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="128"/>
         <source>Choose a feature table</source>
         <translation>Öznitelik tablosu seç</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="125"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="129"/>
         <source>Feature tables (*.npy *.csv);;All files (*)</source>
         <translation>Öznitelik tabloları (*.npy *.csv);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="138"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="142"/>
         <source>Choose the earthquake catalog</source>
         <translation>Deprem kataloğunu seç</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="139"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="143"/>
         <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
         <translation>Kataloglar (*.csv *.csv.gz);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="153"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="157"/>
         <source>Choose a station list</source>
         <translation>İstasyon listesi seç</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="154"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="158"/>
         <source>Station lists (*.csv);;All files (*)</source>
         <translation>İstasyon listeleri (*.csv);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="178"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="182"/>
         <source>Choose the fault shapefile</source>
         <translation>Fay shapefile’ını seç</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="179"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="183"/>
         <source>Shapefiles (*.shp);;All files (*)</source>
         <translation>Shapefile (*.shp);;Tüm dosyalar (*)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="251"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="255"/>
         <source>%1: %n window(s), %2 columns</source>
         <translation>
             <numerusform>%1: %n pencere, %2 sütun</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="257"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="261"/>
         <source>Cannot read the table: %1</source>
         <translation>Tablo okunamıyor: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="274"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="280"/>
         <source>Catalog: %n event(s)</source>
         <translation>
             <numerusform>Katalog: %n deprem</numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="286"/>
+        <source>%1 has no Date and Magnitude columns: its %n epicentre(s) can be split into regions, the other panes need those columns.</source>
+        <translation>
+            <numerusform>%1 dosyasında Tarih ve Büyüklük sütunları yok: %n dış merkezi bölgelere ayrılabilir, diğer bölmeler bu sütunları gerektirir.</numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="276"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="293"/>
         <source>Cannot read the catalog: %1</source>
         <translation>Katalog okunamıyor: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="294"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="312"/>
         <source>Faults: %n segment(s)</source>
         <translation>
             <numerusform>Faylar: %n parça</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="297"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="315"/>
         <source>Cannot read the shapefile: %1</source>
         <translation>Shapefile okunamıyor: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="326"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="344"/>
         <source>Station %1 is not in %2; set its position by hand.</source>
         <translation>%1 istasyonu %2 içinde yok; konumunu elle girin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="330"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="348"/>
         <source>Cannot read the station list: %1</source>
         <translation>İstasyon listesi okunamıyor: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="392"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="411"/>
         <source>Feature table</source>
         <translation>Öznitelik tablosu</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="393"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="412"/>
         <source>Earthquake catalog</source>
         <translation>Deprem kataloğu</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="394"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="413"/>
         <source>Station list</source>
         <translation>İstasyon listesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="395"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="414"/>
         <source>Station</source>
         <translation>İstasyon</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="396"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="415"/>
         <source>Fault lines</source>
         <translation>Fay hatları</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="398"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="417"/>
         <source>&lt;name&gt;_features.npy or .csv from the Features tab (or a SCAP CSV)</source>
         <translation>Öznitelikler sekmesinden &lt;ad&gt;_features.npy ya da .csv (ya da bir SCAP CSV’si)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="399"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="418"/>
         <source>AFAD catalog export, CSV or .gz</source>
         <translation>AFAD katalog dışa aktarımı, CSV ya da .gz</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="400"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="419"/>
         <source>empty: the built-in AFAD station list</source>
         <translation>boş: gömülü AFAD istasyon listesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="402"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="421"/>
         <source>MTA active fault shapefile (.shp), optional</source>
         <translation>MTA diri fay shapefile’ı (.shp), isteğe bağlı</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="403"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="422"/>
         <source>code</source>
         <translation>kod</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="404"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="423"/>
         <source>position:</source>
         <translation>konum:</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="405"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="424"/>
         <source>times in UTC</source>
         <translation>zamanlar UTC</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="406"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="425"/>
         <source>times in Turkey time (UTC+3)</source>
         <translation>zamanlar Türkiye saati (UTC+3)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="407"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="426"/>
         <source>Catalog</source>
         <translation>Katalog</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="408"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="427"/>
         <source>Labels</source>
         <translation>Etiketler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="409"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="428"/>
         <source>Figures</source>
         <translation>Grafikler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="410"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="429"/>
         <source>Grid</source>
         <translation>Izgara</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="430"/>
+        <source>Regions</source>
+        <translation>Bölgeler</translation>
     </message>
 </context>
 <context>
@@ -2892,7 +2904,7 @@
     <message>
         <location filename="../src/app/mainwindow.cpp" line="82"/>
         <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
-        <translation>&lt;br&gt;&lt;br&gt;Telif hakkı (C) 2026 H. Oğuz Bolat.&lt;br&gt;Bu program HİÇBİR GARANTİ verilmeden sunulur. Özgür bir yazılımdır; GNU Genel Kamu Lisansı'nın 3. sürümü veya (tercihinize bağlı olarak) sonraki bir sürümünün koşulları altında yeniden dağıtabilirsiniz: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Kaynak kod: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</translation>
+        <translation>&lt;br&gt;&lt;br&gt;Telif hakkı (C) 2026 H. Oğuz Bolat.&lt;br&gt;Bu program HİÇBİR GARANTİ verilmeden sunulur. Özgür bir yazılımdır; GNU Genel Kamu Lisansı&apos;nın 3. sürümü veya (tercihinize bağlı olarak) sonraki bir sürümünün koşulları altında yeniden dağıtabilirsiniz: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Kaynak kod: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="96"/>
@@ -3042,6 +3054,329 @@
         <location filename="../src/jobs/processjob.cpp" line="87"/>
         <source>could not start %1: %2</source>
         <translation>%1 başlatılamadı: %2</translation>
+    </message>
+</context>
+<context>
+    <name>skg::RegionsPane</name>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="109"/>
+        <source>Methods</source>
+        <translation>Yöntemler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="110"/>
+        <source>Regions (SOM)</source>
+        <translation>Bölge sayısı (SOM)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="112"/>
+        <source>Map before Mean Shift</source>
+        <translation>Mean Shift öncesi harita</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="114"/>
+        <source>Mean Shift quantile</source>
+        <translation>Mean Shift kantili</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="115"/>
+        <source>Training iterations</source>
+        <translation>Eğitim yinelemesi</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="116"/>
+        <source>Random seed</source>
+        <translation>Rastgele tohum</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="147"/>
+        <source>Area name</source>
+        <translation>Alan adı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="149"/>
+        <source>Provinces</source>
+        <translation>İller</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="151"/>
+        <source>Cities</source>
+        <translation>Şehirler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="153"/>
+        <source>Layers</source>
+        <translation>Katmanlar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="167"/>
+        <source>Output folder</source>
+        <translation>Çıktı klasörü</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="234"/>
+        <source>Choose the province boundaries</source>
+        <translation>İl sınırlarını seçin</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="235"/>
+        <source>Shapefiles (*.shp);;All files (*)</source>
+        <translation>Shapefile (*.shp);;Tüm dosyalar (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="241"/>
+        <source>Choose a city list</source>
+        <translation>Şehir listesi seçin</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="242"/>
+        <source>City lists (*.csv);;All files (*)</source>
+        <translation>Şehir listeleri (*.csv);;Tüm dosyalar (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="248"/>
+        <source>Choose the output folder</source>
+        <translation>Çıktı klasörünü seçin</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="331"/>
+        <source>Load an earthquake catalog at the top; its epicentres are what is split into regions.</source>
+        <translation>Yukarıdan bir deprem kataloğu yükleyin; bölgelere ayrılan, katalogdaki dış merkezlerdir.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="333"/>
+        <source>Catalog: %1</source>
+        <translation>Katalog: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="361"/>
+        <source>Load an earthquake catalog at the top first.</source>
+        <translation>Önce yukarıdan bir deprem kataloğu yükleyin.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="367"/>
+        <source>Choose an output folder.</source>
+        <translation>Bir çıktı klasörü seçin.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="450"/>
+        <source>Regions %1</source>
+        <translation>Bölgeler %1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="452"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="583"/>
+        <source>SOM and SOM + Mean Shift</source>
+        <translation>SOM ve SOM + Mean Shift</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/analysis/regionspane.cpp" line="453"/>
+        <source>SOM, %n region(s)</source>
+        <translation>
+            <numerusform>SOM, %n bölge</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="454"/>
+        <source>SOM + Mean Shift</source>
+        <translation>SOM + Mean Shift</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="485"/>
+        <source>Running…</source>
+        <translation>Çalışıyor…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="492"/>
+        <source>Done: %1</source>
+        <translation>Bitti: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="493"/>
+        <source>The run did not finish; see the log.</source>
+        <translation>Çalıştırma tamamlanmadı; günlüğe bakın.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="542"/>
+        <source>Regions: SOM</source>
+        <translation>Bölgeler: SOM</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="543"/>
+        <source>Regions: SOM + Mean Shift</source>
+        <translation>Bölgeler: SOM + Mean Shift</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="545"/>
+        <source>Study area with faults and boundaries</source>
+        <translation>Çalışma alanı, faylar ve sınırlarla</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="546"/>
+        <source>Study area, events only</source>
+        <translation>Çalışma alanı, yalnızca depremler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="581"/>
+        <source>Regionalisation</source>
+        <translation>Bölgeleme</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="582"/>
+        <source>Maps</source>
+        <translation>Haritalar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="584"/>
+        <source>SOM (a fixed number of regions)</source>
+        <translation>SOM (sabit sayıda bölge)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="585"/>
+        <source>SOM + Mean Shift (finds the number)</source>
+        <translation>SOM + Mean Shift (sayıyı kendisi bulur)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="586"/>
+        <source>Units of the linear map; each becomes a region if events fall to it</source>
+        <translation>Doğrusal haritanın birimleri; deprem düşen her birim bir bölge olur</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="589"/>
+        <source>The map that compresses the catalog before Mean Shift groups its units</source>
+        <translation>Mean Shift birimleri gruplamadan önce kataloğu özetleyen harita</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="593"/>
+        <source>Share of the map&apos;s units used as neighbours for the bandwidth; larger gives fewer regions</source>
+        <translation>Bant genişliği için komşu sayılan harita birimlerinin oranı; büyüdükçe bölge sayısı azalır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="595"/>
+        <source>The same seed gives the same regions</source>
+        <translation>Aynı tohum aynı bölgeleri verir</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="597"/>
+        <source>first line of the map titles, e.g. East Anatolian Fault Zone</source>
+        <translation>harita başlıklarının ilk satırı, örn. Doğu Anadolu Fay Zonu</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="598"/>
+        <source>Marker</source>
+        <translation>İşaret</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="599"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <source>Latitude</source>
+        <translation>Enlem</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="600"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <source>Longitude</source>
+        <translation>Boylam</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="601"/>
+        <source>label</source>
+        <translation>etiket</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="602"/>
+        <source>province polygons (.shp), optional</source>
+        <translation>il poligonları (.shp), isteğe bağlı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="604"/>
+        <source>CSV of lat, lon, name; empty: 16 cities around the East Anatolian Fault</source>
+        <translation>enlem, boylam, ad içeren CSV; boşsa: Doğu Anadolu Fayı çevresindeki 16 şehir</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="606"/>
+        <source>countries</source>
+        <translation>ülkeler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="607"/>
+        <source>faults</source>
+        <translation>faylar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="609"/>
+        <source>The fault shapefile loaded at the top, or the shipped East Anatolian traces when none is loaded</source>
+        <translation>Yukarıda yüklenen fay shapefile&apos;ı; yüklenmemişse uygulamayla gelen Doğu Anadolu fay izleri</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="611"/>
+        <source>cities</source>
+        <translation>şehirler</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="612"/>
+        <source>Write PNG maps</source>
+        <translation>PNG haritaları yaz</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="613"/>
+        <source> dpi</source>
+        <translation> dpi</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="614"/>
+        <source>and SVG</source>
+        <translation>ve SVG</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="615"/>
+        <source>An SVG beside every PNG; large for big catalogs</source>
+        <translation>Her PNG&apos;nin yanına bir SVG; büyük kataloglarda dosya büyür</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="616"/>
+        <source>Run</source>
+        <translation>Çalıştır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="617"/>
+        <source>Stop</source>
+        <translation>Durdur</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="618"/>
+        <source>Open output folder</source>
+        <translation>Çıktı klasörünü aç</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <source>Method</source>
+        <translation>Yöntem</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <source>Region</source>
+        <translation>Bölge</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <source>Centre</source>
+        <translation>Merkez</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <source>Events</source>
+        <translation>Deprem</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <source>File</source>
+        <translation>Dosya</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="622"/>
+        <source>The run log appears here.</source>
+        <translation>Çalıştırma günlüğü burada görünür.</translation>
     </message>
 </context>
 <context>

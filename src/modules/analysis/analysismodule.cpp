@@ -21,10 +21,12 @@
 #include <algorithm>
 
 #include "analysis/label.h"
+#include "analysis/regions.h"
 #include "modules/analysis/catalogpane.h"
 #include "modules/analysis/figurespane.h"
 #include "modules/analysis/gridpane.h"
 #include "modules/analysis/labelspane.h"
+#include "modules/analysis/regionspane.h"
 
 namespace skg {
 
@@ -106,11 +108,13 @@ AnalysisWidget::AnalysisWidget(AppContext ctx, QWidget *parent)
   labelsPane_ = new LabelsPane(ctx_, state_, this);
   figuresPane_ = new FiguresPane(ctx_, state_, this);
   gridPane_ = new GridPane(ctx_, state_, this);
+  regionsPane_ = new RegionsPane(ctx_, state_, this);
   tabs_ = new QTabWidget(this);
   tabs_->addTab(catalogPane_, QString());
   tabs_->addTab(labelsPane_, QString());
   tabs_->addTab(figuresPane_, QString());
   tabs_->addTab(gridPane_, QString());
+  tabs_->addTab(regionsPane_, QString());
   auto *layout = new QVBoxLayout(this);
   layout->addLayout(form);
   layout->addWidget(tabs_, 1);
@@ -264,7 +268,9 @@ void AnalysisWidget::loadCatalog() {
   const QString path = catalog_->text().trimmed();
   state_->events.clear();
   state_->catalogPath.clear();
+  state_->catalogFile.clear();
   if (!path.isEmpty() && QFileInfo::exists(path)) {
+    state_->catalogFile = path;
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     try {
       state_->catalogOffsetHours = catalogTz_->currentData().toDouble();
@@ -273,8 +279,20 @@ void AnalysisWidget::loadCatalog() {
       ctx_.settings->setValue(kCatalog, path);
       say(tr("Catalog: %n event(s)", nullptr, int(state_->events.size())));
     } catch (const std::exception &e) {
-      say(tr("Cannot read the catalog: %1").arg(QString::fromUtf8(e.what())),
-          true);
+      // A table of coordinates alone is still a catalog for Regions.
+      try {
+        const int n = analysis::loadPointTable(path).size();
+        ctx_.settings->setValue(kCatalog, path);
+        say(tr("%1 has no Date and Magnitude columns: its %n epicentre(s) "
+               "can be split into regions, the other panes need those "
+               "columns.",
+               nullptr, n)
+                .arg(QFileInfo(path).fileName()));
+      } catch (const std::exception &) {
+        state_->catalogFile.clear();
+        say(tr("Cannot read the catalog: %1").arg(QString::fromUtf8(e.what())),
+            true);
+      }
     }
     QGuiApplication::restoreOverrideCursor();
   }
@@ -374,6 +392,7 @@ void AnalysisWidget::refreshPanes() {
   labelsPane_->refresh();
   figuresPane_->refresh();
   gridPane_->refresh();
+  regionsPane_->refresh();
 }
 
 void AnalysisWidget::changeEvent(QEvent *e) {
@@ -408,6 +427,7 @@ void AnalysisWidget::retranslate() {
   tabs_->setTabText(1, tr("Labels"));
   tabs_->setTabText(2, tr("Figures"));
   tabs_->setTabText(3, tr("Grid"));
+  tabs_->setTabText(4, tr("Regions"));
 }
 
 } // namespace skg

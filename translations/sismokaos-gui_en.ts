@@ -47,12 +47,12 @@
 <context>
     <name>skg::AnalysisModule</name>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.h" line="60"/>
+        <location filename="../src/modules/analysis/analysismodule.h" line="65"/>
         <source>Analysis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.h" line="62"/>
+        <location filename="../src/modules/analysis/analysismodule.h" line="67"/>
         <source>Earthquakes and faults around a station, labelled feature tables, metric figures and station comparison grids</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60,47 +60,47 @@
 <context>
     <name>skg::AnalysisWidget</name>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="124"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="128"/>
         <source>Choose a feature table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="125"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="129"/>
         <source>Feature tables (*.npy *.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="138"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="142"/>
         <source>Choose the earthquake catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="139"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="143"/>
         <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="153"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="157"/>
         <source>Choose a station list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="154"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="158"/>
         <source>Station lists (*.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="178"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="182"/>
         <source>Choose the fault shapefile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="179"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="183"/>
         <source>Shapefiles (*.shp);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="251"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="255"/>
         <source>%1: %n window(s), %2 columns</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -108,25 +108,33 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="257"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="261"/>
         <source>Cannot read the table: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="274"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="280"/>
         <source>Catalog: %n event(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="286"/>
+        <source>%1 has no Date and Magnitude columns: its %n epicentre(s) can be split into regions, the other panes need those columns.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="276"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="293"/>
         <source>Cannot read the catalog: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="294"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="312"/>
         <source>Faults: %n segment(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -134,103 +142,108 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="297"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="315"/>
         <source>Cannot read the shapefile: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="326"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="344"/>
         <source>Station %1 is not in %2; set its position by hand.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="330"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="348"/>
         <source>Cannot read the station list: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="392"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="411"/>
         <source>Feature table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="393"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="412"/>
         <source>Earthquake catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="394"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="413"/>
         <source>Station list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="395"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="414"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="396"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="415"/>
         <source>Fault lines</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="398"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="417"/>
         <source>&lt;name&gt;_features.npy or .csv from the Features tab (or a SCAP CSV)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="399"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="418"/>
         <source>AFAD catalog export, CSV or .gz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="400"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="419"/>
         <source>empty: the built-in AFAD station list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="402"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="421"/>
         <source>MTA active fault shapefile (.shp), optional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="403"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="422"/>
         <source>code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="404"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="423"/>
         <source>position:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="405"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="424"/>
         <source>times in UTC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="406"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="425"/>
         <source>times in Turkey time (UTC+3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="407"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="426"/>
         <source>Catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="408"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="427"/>
         <source>Labels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="409"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="428"/>
         <source>Figures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/analysismodule.cpp" line="410"/>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="429"/>
         <source>Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/analysismodule.cpp" line="430"/>
+        <source>Regions</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3032,6 +3045,330 @@
     <message>
         <location filename="../src/jobs/processjob.cpp" line="87"/>
         <source>could not start %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::RegionsPane</name>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="109"/>
+        <source>Methods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="110"/>
+        <source>Regions (SOM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="112"/>
+        <source>Map before Mean Shift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="114"/>
+        <source>Mean Shift quantile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="115"/>
+        <source>Training iterations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="116"/>
+        <source>Random seed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="147"/>
+        <source>Area name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="149"/>
+        <source>Provinces</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="151"/>
+        <source>Cities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="153"/>
+        <source>Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="167"/>
+        <source>Output folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="234"/>
+        <source>Choose the province boundaries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="235"/>
+        <source>Shapefiles (*.shp);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="241"/>
+        <source>Choose a city list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="242"/>
+        <source>City lists (*.csv);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="248"/>
+        <source>Choose the output folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="331"/>
+        <source>Load an earthquake catalog at the top; its epicentres are what is split into regions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="333"/>
+        <source>Catalog: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="361"/>
+        <source>Load an earthquake catalog at the top first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="367"/>
+        <source>Choose an output folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="450"/>
+        <source>Regions %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="452"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="583"/>
+        <source>SOM and SOM + Mean Shift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/analysis/regionspane.cpp" line="453"/>
+        <source>SOM, %n region(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="454"/>
+        <source>SOM + Mean Shift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="485"/>
+        <source>Running…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="492"/>
+        <source>Done: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="493"/>
+        <source>The run did not finish; see the log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="542"/>
+        <source>Regions: SOM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="543"/>
+        <source>Regions: SOM + Mean Shift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="545"/>
+        <source>Study area with faults and boundaries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="546"/>
+        <source>Study area, events only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="581"/>
+        <source>Regionalisation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="582"/>
+        <source>Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="584"/>
+        <source>SOM (a fixed number of regions)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="585"/>
+        <source>SOM + Mean Shift (finds the number)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="586"/>
+        <source>Units of the linear map; each becomes a region if events fall to it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="589"/>
+        <source>The map that compresses the catalog before Mean Shift groups its units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="593"/>
+        <source>Share of the map&apos;s units used as neighbours for the bandwidth; larger gives fewer regions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="595"/>
+        <source>The same seed gives the same regions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="597"/>
+        <source>first line of the map titles, e.g. East Anatolian Fault Zone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="598"/>
+        <source>Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="599"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <source>Latitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="600"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <source>Longitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="601"/>
+        <source>label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="602"/>
+        <source>province polygons (.shp), optional</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="604"/>
+        <source>CSV of lat, lon, name; empty: 16 cities around the East Anatolian Fault</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="606"/>
+        <source>countries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="607"/>
+        <source>faults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="609"/>
+        <source>The fault shapefile loaded at the top, or the shipped East Anatolian traces when none is loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="611"/>
+        <source>cities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="612"/>
+        <source>Write PNG maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="613"/>
+        <source> dpi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="614"/>
+        <source>and SVG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="615"/>
+        <source>An SVG beside every PNG; large for big catalogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="616"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="617"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="618"/>
+        <source>Open output folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <source>Method</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <source>Region</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <source>Centre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <source>Events</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="622"/>
+        <source>The run log appears here.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

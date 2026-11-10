@@ -2,7 +2,8 @@
 // and the station's position are loaded once at the top; the panes below
 // answer SCAP's questions on them: which events and faults are near the
 // station (Catalog, with the map), label the windows (Labels), draw the
-// metric figures (Figures), compare stations (Grid).
+// metric figures (Figures), compare stations (Grid), split the catalog into
+// seismic regions (Regions).
 #pragma once
 
 #include <QWidget>
@@ -30,6 +31,7 @@ class CatalogPane;
 class LabelsPane;
 class FiguresPane;
 class GridPane;
+class RegionsPane;
 
 // What the panes share. Loaded by the top bar; panes read it on refresh().
 struct AnalysisState {
@@ -39,6 +41,9 @@ struct AnalysisState {
   QString station; // code, from the run metadata or typed
   std::optional<analysis::Station> position;
   QString catalogPath;
+  // The catalog file as chosen, also when it holds only coordinates (no
+  // Date or Magnitude) and so gives no events; the Regions pane reads it.
+  QString catalogFile;
   double catalogOffsetHours = 0;
   std::vector<analysis::Event> events;
   QString faultsPath;
@@ -99,6 +104,7 @@ private:
   LabelsPane *labelsPane_;
   FiguresPane *figuresPane_;
   GridPane *gridPane_;
+  RegionsPane *regionsPane_;
 };
 
 } // namespace skg
