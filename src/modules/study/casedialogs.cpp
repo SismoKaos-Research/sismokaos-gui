@@ -1,4 +1,5 @@
 #include "modules/study/casedialogs.h"
+#include "modules/study/casemap.h"
 
 #include <QAbstractItemView>
 #include <QComboBox>
@@ -350,7 +351,12 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   warning_->setObjectName(QStringLiteral("caseWarning"));
   warning_->setWordWrap(true);
 
-  auto *layout = new QVBoxLayout(this);
+  // The map beside the tables: the list, then the chosen earthquake.
+  preview_ = new CasePreview(this);
+  auto *outer = new QHBoxLayout(this);
+  auto *layout = new QVBoxLayout;
+  outer->addLayout(layout, 5);
+  outer->addWidget(preview_, 4);
   layout->addLayout(filter);
   layout->addLayout(nearRow);
   layout->addWidget(nearNote_);
@@ -361,7 +367,7 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   layout->addWidget(stationNote_);
   layout->addWidget(warning_);
   layout->addWidget(buttons);
-  resize(760, 720);
+  resize(1240, 760);
   ui::polishPage(this);
 
   ui::setHelp(minMag_, tr("Lists only earthquakes of at least this "
@@ -418,6 +424,22 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
           &AddFromCatalogDialog::updateNotes);
   if (!nearStations.isEmpty())
     nearCodes_->setText(nearStations.join(QStringLiteral(", ")));
+  connect(preview_, &CasePreview::eventClicked, this, [this](int row) {
+    if (row >= 0 && row < table_->rowCount()) {
+      table_->selectRow(row);
+      table_->scrollToItem(table_->item(row, 0));
+    }
+  });
+  connect(preview_, &CasePreview::stationClicked, this,
+          [this](const QString &code) {
+            for (int i = 0; i < stationTable_->rowCount(); ++i) {
+              QTableWidgetItem *use = stationTable_->item(i, 0);
+              if (use && use->data(Qt::UserRole).toString() == code)
+                use->setCheckState(use->checkState() == Qt::Checked
+                                       ? Qt::Unchecked
+                                       : Qt::Checked);
+            }
+          });
   refill();
 }
 
@@ -625,6 +647,48 @@ void AddFromCatalogDialog::updateNotes() {
   }
   warning_->setText(notes.join(QLatin1Char('\n')));
   warning_->setVisible(!notes.isEmpty());
+  updatePreview();
+}
+
+void AddFromCatalogDialog::updatePreview() {
+  if (!preview_)
+    return;
+  QList<PreviewEvent> list;
+  for (int i = 0; i < int(shown_.size()); ++i) {
+    const analysis::Event &e =
+        events_[static_cast<size_t>(shown_[static_cast<size_t>(i)])];
+    PreviewEvent p;
+    p.row = i;
+    p.lat = e.lat;
+    p.lon = e.lon;
+    p.magnitude = e.mag;
+    p.tip = QStringLiteral("M %1 · %2 · %3")
+                .arg(e.mag, 0, 'f', 1)
+                .arg(QDateTime::fromSecsSinceEpoch(qint64(std::floor(e.epoch)),
+                                                   QTimeZone::UTC)
+                         .toString(QStringLiteral("yyyy-MM-dd")),
+                     e.place);
+    list << p;
+  }
+  const int row = table_->currentRow();
+  const bool has = row >= 0 && row < int(shown_.size()) &&
+                   !table_->selectedItems().isEmpty();
+  if (!has) {
+    QList<CoverageStation> filter;
+    for (const analysis::Station &s : filterStations_)
+      filter << CoverageStation{s.code, s.lat, s.lon};
+    preview_->setList(list, filter, nearKm_->value());
+    return;
+  }
+  const study::Case c = study::caseFromEvent(
+      events_[static_cast<size_t>(shown_[static_cast<size_t>(row)])]);
+  QStringList ticked;
+  for (const study::StationRef &s : tickedStations(stationTable_, near_))
+    ticked << s.code;
+  preview_->setCase(
+      c, near_, ticked,
+      [this](const study::StationRef &s) { return hasWaveformsOf(study_, s); },
+      list);
 }
 
 void AddFromCatalogDialog::accept() {

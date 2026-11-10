@@ -24,6 +24,7 @@ class QToolButton;
 namespace skg {
 
 class Theme;
+class GeoMap;
 
 // Mouse: a click on a heading sorts, a double click on a row opens its run.
 // Keyboard, when the table has the focus: Left and Right choose the sort
@@ -120,6 +121,7 @@ private:
   void load();    // reads the runs on a worker thread, then apply()
   void apply(const study::CompareData &d);
   void showSeries(); // the chosen series of data_ into the plot
+  void updateWhere(); // the cases on the map of the "Where" panel
   void exportTable();
   void exportFigure();
   static QString seriesKey(const study::Series &s);
@@ -145,6 +147,10 @@ private:
   QLabel *seriesNote_; // series that could not be read; the last export
   QLabel *fittedTitle_, *fittedNote_;
   QTableWidget *fitted_;
+  // "Where": the cases on a map, in their series colours; it folds away.
+  QToolButton *whereToggle_;
+  QLabel *whereHint_;
+  GeoMap *whereMap_;
 };
 
 } // namespace skg

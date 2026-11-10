@@ -93,7 +93,7 @@ private:
   QPushButton *catalogBrowse_, *waveButton_;
   QPushButton *catalogGet_, *catalogUpdate_, *setup_;
   QComboBox *catalogTime_;
-  QPushButton *add_, *addRef_, *remove_;
+  QPushButton *add_, *addRef_, *remove_, *coverageButton_;
   QLabel *summary_;
   QTableWidget *table_;
   QWidget *detail_;

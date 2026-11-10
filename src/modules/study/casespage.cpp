@@ -34,6 +34,7 @@
 #include "core/ui.h"
 #include "modules/study/casedialogs.h"
 #include "modules/study/casemap.h"
+#include "modules/study/coveragedialog.h"
 #include "modules/study/studysetup.h"
 #include "modules/study/studyswitcher.h"
 #include "modules/study/waveforms.h"
@@ -171,6 +172,9 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   bar->addWidget(add_);
   bar->addWidget(addRef_);
   bar->addWidget(remove_);
+  coverageButton_ = new QPushButton(main);
+  coverageButton_->setObjectName(QStringLiteral("stationCoverage"));
+  bar->addWidget(coverageButton_);
   bar->addStretch(1);
   bar->addWidget(summary_);
 
@@ -195,7 +199,6 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   facts_ = new QLabel(card);
   facts_->setObjectName(QStringLiteral("fieldLabel"));
   facts_->setWordWrap(true);
-  map_ = new CaseMap(ctx_.theme, card);
   stationsTitle_ = new QLabel(card);
   stationsTitle_->setObjectName(QStringLiteral("cardTitle"));
   stationTable_ = new QTableWidget(card);
@@ -209,8 +212,7 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   stationTable_->horizontalHeader()->setStretchLastSection(true);
   stationTable_->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft |
                                                          Qt::AlignVCenter);
-  stationTable_->setMinimumHeight(150);
-  stationTable_->setMaximumHeight(210);
+  stationTable_->setMinimumHeight(120);
   stationHint_ = new QLabel(card);
   stationHint_->setObjectName(QStringLiteral("stationHint"));
   stationHint_->setWordWrap(true);
@@ -241,33 +243,57 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   span_ = new QSpinBox(card);
   span_->setObjectName(QStringLiteral("caseSpan"));
   span_->setRange(1, 3650);
+  // The detail of the selected case: what it is on the left, its stations on
+  // the right.
+  auto *about = new QVBoxLayout;
+  about->setSpacing(8);
+  about->addWidget(name_);
+  about->addWidget(facts_);
   auto *zoneRow = new QHBoxLayout;
   zoneRow->addWidget(zoneLabel_);
   zoneRow->addWidget(zone_, 1);
   zoneRow->addWidget(radius_);
-  zoneRow->addSpacing(12);
-  zoneRow->addWidget(spanLabel_);
-  zoneRow->addWidget(span_);
-  auto *cardLayout = new QVBoxLayout(card);
+  about->addLayout(zoneRow);
+  auto *spanRow = new QHBoxLayout;
+  spanRow->addWidget(spanLabel_);
+  spanRow->addWidget(span_, 1);
+  about->addLayout(spanRow);
+  about->addStretch(1);
+  auto *stationsCol = new QVBoxLayout;
+  stationsCol->setSpacing(8);
+  stationsCol->addWidget(stationsTitle_);
+  stationsCol->addWidget(stationTable_, 1);
+  stationsCol->addWidget(stationHint_);
+  stationsCol->addLayout(stationButtons);
+  auto *cardLayout = new QHBoxLayout(card);
   cardLayout->setContentsMargins(16, 14, 16, 14);
-  cardLayout->setSpacing(8);
-  cardLayout->addWidget(name_);
-  cardLayout->addWidget(facts_);
-  cardLayout->addWidget(map_, 1);
-  cardLayout->addWidget(stationsTitle_);
-  cardLayout->addWidget(stationTable_);
-  cardLayout->addWidget(stationHint_);
-  cardLayout->addLayout(stationButtons);
-  cardLayout->addLayout(zoneRow);
+  cardLayout->setSpacing(20);
+  cardLayout->addLayout(about, 2);
+  cardLayout->addLayout(stationsCol, 3);
 
-  auto *split = new QSplitter(Qt::Horizontal, main);
-  split->addWidget(table_);
+  // The overview: every case on one map, beside the table.
+  auto *mapCard = new QFrame(main);
+  mapCard->setObjectName(QStringLiteral("card"));
+  map_ = new CaseMap(ctx_.theme, mapCard);
+  auto *mapLayout = new QVBoxLayout(mapCard);
+  mapLayout->setContentsMargins(16, 12, 16, 12);
+  mapLayout->addWidget(map_);
+
+  auto *top = new QSplitter(Qt::Horizontal, main);
+  top->addWidget(table_);
+  top->addWidget(mapCard);
+  top->setStretchFactor(0, 1);
+  top->setStretchFactor(1, 1);
+  top->setChildrenCollapsible(false);
+  table_->setMinimumWidth(380);
+  top->setSizes({520, 560});
+  auto *split = new QSplitter(Qt::Vertical, main);
+  split->addWidget(top);
   split->addWidget(card);
   split->setStretchFactor(0, 1);
   split->setStretchFactor(1, 1);
   split->setChildrenCollapsible(false);
-  table_->setMinimumWidth(420);
-  split->setSizes({560, 520});
+  split->setSizes({390, 350});
 
   auto *mainLayout = new QVBoxLayout(main);
   mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -313,6 +339,26 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   connect(remove_, &QPushButton::clicked, this, &CasesPage::removeCase);
   connect(table_, &QTableWidget::itemSelectionChanged, this,
           &CasesPage::showCase);
+  connect(coverageButton_, &QPushButton::clicked, this, [this] {
+    CoverageDialog dialog(ctx_, this);
+    dialog.exec();
+  });
+  // The map and the tables select each other.
+  connect(map_, &CaseMap::caseClicked, this, [this](const QString &id) {
+    for (int i = 0; i < table_->rowCount(); ++i)
+      if (table_->item(i, 0)->data(Qt::UserRole).toString() == id) {
+        table_->selectRow(i);
+        table_->scrollToItem(table_->item(i, 0));
+      }
+  });
+  connect(map_, &CaseMap::stationClicked, this, [this](const QString &code) {
+    for (int i = 0; i < stationTable_->rowCount(); ++i)
+      if (stationTable_->item(i, 1) &&
+          stationTable_->item(i, 1)->text() == code) {
+        stationTable_->selectRow(i);
+        stationTable_->scrollToItem(stationTable_->item(i, 1));
+      }
+  });
   connect(name_, &QLineEdit::editingFinished, this, &CasesPage::saveCase);
   connect(stationTable_, &QTableWidget::itemChanged, this,
           &CasesPage::saveCase);
@@ -359,6 +405,12 @@ void CasesPage::retranslate() {
   add_->setText(tr("Add from catalog…"));
   addRef_->setText(tr("Add reference date…"));
   remove_->setText(tr("Remove"));
+  coverageButton_->setText(tr("Station coverage…"));
+  coverageButton_->setToolTip(ui::helpText(
+      tr("A map of what your stations cover: the area within a distance of "
+         "the stations you have waveforms of (or of the stations ticked in "
+         "the cases), and which earthquakes of the catalog fall inside "
+         "it.")));
   table_->setHorizontalHeaderLabels({tr("Case"), tr("Type"),
                                      tr("Origin time (UTC)"), tr("M"),
                                      tr("Depth"), tr("Stations"), tr("Span")});
@@ -588,7 +640,7 @@ void CasesPage::showCase() {
     updating_ = true;
     name_->clear();
     facts_->clear();
-    map_->clear();
+    map_->setStudy(s, {}); // every case, none selected
     stationTable_->setRowCount(0);
     stationHint_->clear();
     updating_ = false;
@@ -658,7 +710,15 @@ void CasesPage::showCase() {
   for (int i = 0; i < int(s.cases.size()); ++i)
     if (s.cases[i].id == c->id)
       index = i;
-  map_->setCase(*c, candidates_, colors[index % colors.size()]);
+  Q_UNUSED(colors);
+  Q_UNUSED(index);
+  CaseMapSpec spec;
+  spec.selectedId = c->id;
+  spec.candidates = candidates_;
+  spec.hasData = [&s](const study::StationRef &st) {
+    return hasWaveformsOf(s, st);
+  };
+  map_->setStudy(s, spec);
   updating_ = false;
   updateStationButtons();
 }
@@ -1086,6 +1146,12 @@ void CasesPage::getWaveforms() {
               c->spanStart().toUTC().toString(Qt::ISODate));
   args.insert(QStringLiteral("end"), c->time.toUTC().toString(Qt::ISODate));
   args.insert(QStringLiteral("case"), c->name);
+  // Where the case is, for the Data page's map.
+  args.insert(QStringLiteral("lat"), c->lat);
+  args.insert(QStringLiteral("lon"), c->lon);
+  args.insert(QStringLiteral("zone_km"),
+              c->zone.kind == study::Zone::Kind::Circle ? c->zone.radiusKm
+                                                        : 0.0);
   // The network, where the waveform folders already show it.
   for (const study::WaveStation &w :
        study::WaveIndex::shared(ctx_.study->study().dir)->stations())

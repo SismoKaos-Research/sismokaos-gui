@@ -1,4 +1,5 @@
 #include "modules/study/comparepage.h"
+#include "modules/study/casemap.h"
 
 #include <QApplication>
 #include <QComboBox>
@@ -677,10 +678,56 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   cardLayout->addWidget(fittedTitle_);
   cardLayout->addWidget(fitted_, 1);
   cardLayout->addWidget(fittedNote_);
+  // "Where": the same cases on a map, above the fitted values. The scores
+  // stay the first thing on the page; the panel folds away.
+  auto *whereCard = new QFrame(main);
+  whereCard->setObjectName(QStringLiteral("card"));
+  whereToggle_ = new QToolButton(whereCard);
+  whereToggle_->setObjectName(QStringLiteral("whereToggle"));
+  whereToggle_->setAutoRaise(true);
+  whereToggle_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  whereHint_ = new QLabel(whereCard);
+  whereHint_->setObjectName(QStringLiteral("fieldLabel"));
+  whereHint_->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  whereMap_ = new GeoMap(ctx_.theme, whereCard);
+  whereMap_->setObjectName(QStringLiteral("whereMap"));
+  whereMap_->setMinimumHeight(190);
+  auto *whereHead = new QHBoxLayout;
+  whereHead->addWidget(whereToggle_);
+  whereHead->addWidget(whereHint_, 1);
+  auto *whereLayout = new QVBoxLayout(whereCard);
+  whereLayout->setContentsMargins(12, 8, 12, 10);
+  whereLayout->setSpacing(6);
+  whereLayout->addLayout(whereHead);
+  whereLayout->addWidget(whereMap_, 1);
+  const bool whereOpen =
+      ctx_.settings
+          ? ctx_.settings->value(QStringLiteral("compare/whereOpen"), true)
+                .toBool()
+          : true;
+  whereToggle_->setProperty("open", whereOpen);
+  whereToggle_->setArrowType(whereOpen ? Qt::DownArrow : Qt::RightArrow);
+  whereMap_->setVisible(whereOpen);
+  whereHint_->setVisible(whereOpen);
+  auto *side = new QVBoxLayout;
+  side->setSpacing(12);
+  side->addWidget(whereCard, whereOpen ? 5 : 0);
+  side->addWidget(card, 4);
+  connect(whereToggle_, &QToolButton::clicked, this, [this, side, whereCard] {
+    const bool open = !whereToggle_->property("open").toBool();
+    whereToggle_->setProperty("open", open);
+    whereToggle_->setArrowType(open ? Qt::DownArrow : Qt::RightArrow);
+    whereMap_->setVisible(open);
+    whereHint_->setVisible(open);
+    side->setStretchFactor(whereCard, open ? 5 : 0);
+    if (ctx_.settings)
+      ctx_.settings->setValue(QStringLiteral("compare/whereOpen"), open);
+  });
+  connect(ctx_.theme, &Theme::changed, this, &ComparePage::updateWhere);
   auto *bottom = new QHBoxLayout;
   bottom->setSpacing(14);
   bottom->addWidget(plot_, 7);
-  bottom->addWidget(card, 4);
+  bottom->addLayout(side, 4);
   seriesNote_ = new QLabel(main);
   seriesNote_->setObjectName(QStringLiteral("seriesNote"));
   seriesNote_->setWordWrap(true);
@@ -784,6 +831,12 @@ void ComparePage::retranslate() {
   aligned_->setText(tr("Aligned by days before each case's event"));
   exportFigure_->setText(tr("Export figure…"));
   fittedTitle_->setText(tr("FITTED PER CASE"));
+  whereToggle_->setText(tr("WHERE"));
+  whereToggle_->setToolTip(ui::helpText(
+      tr("Shows or hides the map of the cases. Each case has the colour of "
+         "its curve and its row; a reference date is a hollow diamond.")));
+  whereHint_->setText(tr("marker size: magnitude · ◇ reference date"));
+  whereMap_->setPlaceholder(tr("The cases of the study appear here."));
   fittedNote_->setText(tr("What each case fitted for itself in this recipe; "
                           "everything else in the recipe is identical."));
   ui::setHelp({recipeLabel_, recipe_},
@@ -883,6 +936,7 @@ void ComparePage::apply(const study::CompareData &d) {
   const Study &s = ctx_.study->study();
 
   scores_->setRows(d.scores);
+  updateWhere();
   // As tall as its rows, up to about six of them; then it scrolls.
   if (auto *scroll = findChild<QScrollArea *>(QStringLiteral("scoreScroll")))
     scroll->setFixedHeight(std::min(scores_->minimumSizeHint().height(), 300) +
@@ -980,6 +1034,19 @@ void ComparePage::apply(const study::CompareData &d) {
           : tr("⚠  Not drawn (%n run(s)): %1", nullptr, int(d.skipped.size()))
                 .arg(d.skipped.join(QStringLiteral("; "))));
   seriesNote_->setVisible(!d.skipped.isEmpty());
+}
+
+void ComparePage::updateWhere() {
+  if (!ctx_.study || !ctx_.study->isOpen()) {
+    whereMap_->setContent({}, true);
+    return;
+  }
+  // Every case in its series colour (the order of the study's cases, as in
+  // the plot), named beside its marker; no stations, the panel is small.
+  CaseMapSpec spec;
+  spec.stations = false;
+  whereMap_->setContent(
+      caseMapContent(ctx_.study->study(), *ctx_.theme, spec), false);
 }
 
 void ComparePage::showSeries() {

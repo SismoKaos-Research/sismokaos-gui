@@ -41,6 +41,8 @@ QStringList stationsWithWaveforms(const study::Study &study);
 QList<study::StationRef> tickedStations(const QTableWidget *table,
                                         const QList<study::StationRef> &all);
 
+class CasePreview;
+
 class AddFromCatalogDialog : public QDialog {
   Q_OBJECT
 public:
@@ -57,6 +59,7 @@ private:
   void refill();
   void eventChosen();
   void updateNotes(); // warnings under the tables, and the Add button
+  void updatePreview(); // the map beside the tables
 
   const study::Study &study_;
   bool builtIn_; // the events are the built-in list, not the study's catalog
@@ -82,6 +85,7 @@ private:
   QSpinBox *span_;
   QDoubleSpinBox *maxKm_;
   QTableWidget *stationTable_;
+  CasePreview *preview_ = nullptr;
 };
 
 class ReferenceDateDialog : public QDialog {
