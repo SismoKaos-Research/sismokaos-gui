@@ -4,25 +4,41 @@
 #include <QActionGroup>
 #include <QApplication>
 #include <QButtonGroup>
+#include <QClipboard>
 #include <QCloseEvent>
+#include <QCryptographicHash>
+#include <QDesktopServices>
+#include <QDir>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QEvent>
+#include <QFileInfo>
+#include <QFontMetrics>
 #include <QFrame>
+#include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLocale>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QPushButton>
+#include <QScreen>
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QStyle>
 #include <QTimer>
 #include <QToolButton>
+#include <QUrl>
 #include <QVBoxLayout>
 
+#include "app/diagnostics.h"
+#include "core/keepawake.h"
+#include "app/notifier.h"
 #include "app/updatecheck.h"
 
+#include "core/appsettings.h"
 #include "core/i18n.h"
 #include "core/theme.h"
 #include "core/ui.h"
@@ -144,6 +160,23 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
           &MainWindow::newStudyRequested);
   connect(studyBarOpen_, &QPushButton::clicked, this,
           &MainWindow::openStudyRequested);
+  // What to do first, under the "no study" bar until the user closes it.
+  firstRun_ = makeBar("firstRunCard");
+  firstRunText_ = new QLabel(firstRun_);
+  firstRunText_->setObjectName(QStringLiteral("firstRunText"));
+  firstRunText_->setWordWrap(true);
+  firstRunText_->setTextFormat(Qt::RichText);
+  firstRunText_->setOpenExternalLinks(true);
+  firstRunClose_ = new QPushButton(firstRun_);
+  firstRunClose_->setObjectName(QStringLiteral("firstRunClose"));
+  static_cast<QHBoxLayout *>(firstRun_->layout())->addWidget(firstRunText_, 1);
+  static_cast<QHBoxLayout *>(firstRun_->layout())
+      ->addWidget(firstRunClose_, 0, Qt::AlignTop);
+  connect(firstRunClose_, &QPushButton::clicked, this, [this] {
+    ctx_.settings->setValue(QLatin1String(appsettings::kFirstRunDismissedKey),
+                            true);
+    updateStudyBar();
+  });
   notice_ = makeBar("noticeBar");
   noticeText_ = new QLabel(notice_);
   noticeText_->setWordWrap(true);
@@ -200,6 +233,7 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
     connect(job, &Job::stateChanged, this, &MainWindow::updateStrip);
     stripText_->setProperty("last", tr("Started: %1").arg(job->name()));
     updateStrip();
+    updateKeepAwake();
   });
   connect(ctx_.jobs, &JobModel::jobFinished, this, [this](Job *job) {
     stripText_->setProperty(
@@ -207,7 +241,19 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
     // A failure must not pass unseen: the strip becomes a link to its log.
     lastFailed_ = job->state() == Job::State::Failed ? job : nullptr;
     updateStrip();
+    updateKeepAwake();
   });
+  // Long work that ends while the user is elsewhere is announced; a click on
+  // the announcement brings the window back, on the job.
+  notifier_ = new JobNotifier(ctx_.jobs, ctx_.settings, this, this);
+  connect(notifier_, &JobNotifier::activated, this, [this](Job *job) {
+    showNormal();
+    raise();
+    activateWindow();
+    showJobs(job);
+  });
+  keepAwake_ = new KeepAwake(this);
+  setAcceptDrops(true);
   if (ctx_.nav)
     connect(ctx_.nav, &Navigator::requested, this,
             [this](const QString &id, const QVariantMap &args) {
@@ -222,7 +268,7 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
             });
   if (ctx_.study)
     connect(ctx_.study, &study::StudyStore::changed, this,
-            &MainWindow::updateStudyBar);
+            &MainWindow::updateStudyState);
   connect(i18n_, &I18n::languageChanged, this, [this](const QString &code) {
     for (QPushButton *b : langButtons_)
       b->setChecked(b->property("code").toString() == code);
@@ -232,9 +278,7 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
 
   restyle();
   retranslate();
-  restoreGeometry(ctx_.settings->value("ui/geometry").toByteArray());
-  if (size().isEmpty() || width() < 400)
-    resize(1280, 820);
+  restoreWindowGeometry();
   setJobsVisible(ctx_.settings->value("ui/jobsVisible", false).toBool());
   const QByteArray splitState = ctx_.settings->value("ui/split").toByteArray();
   if (!splitState.isEmpty())
@@ -294,10 +338,53 @@ void MainWindow::buildSidebar() {
 }
 
 void MainWindow::buildMenus() {
+  // File: the study.
   fileMenu_ = menuBar()->addMenu(QString());
+  fileMenu_->setToolTipsVisible(true);
+  newStudyAction_ = fileMenu_->addAction(QString(), QKeySequence::New, this,
+                                         &MainWindow::newStudyRequested);
+  openStudyAction_ = fileMenu_->addAction(QString(), QKeySequence::Open, this,
+                                          &MainWindow::openStudyRequested);
+  recentMenu_ = fileMenu_->addMenu(QString());
+  recentMenu_->setToolTipsVisible(true);
+  connect(recentMenu_, &QMenu::aboutToShow, this, &MainWindow::fillRecentMenu);
+  fileMenu_->addSeparator();
+  studyInputsAction_ = fileMenu_->addAction(
+      QString(), this, &MainWindow::studyInputsRequested);
+  studyFolderAction_ = fileMenu_->addAction(QString(), this, [this] {
+    if (ctx_.study && ctx_.study->isOpen())
+      QDesktopServices::openUrl(
+          QUrl::fromLocalFile(ctx_.study->study().dir));
+  });
+  studyFolderAction_->setShortcut(
+      QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_O));
+  reloadStudyAction_ = fileMenu_->addAction(QString(), this, [this] {
+    QString error;
+    if (ctx_.study && !ctx_.study->reload(&error))
+      showNotice(error);
+  });
+  closeStudyAction_ = fileMenu_->addAction(QString(), this, [this] {
+    if (ctx_.study)
+      ctx_.study->close();
+  });
+  closeStudyAction_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
+  fileMenu_->addSeparator();
   quitAction_ = fileMenu_->addAction(QString(), QKeySequence::Quit, this,
                                      &QWidget::close);
+
+  // View: the pages (Ctrl+1 …), the jobs panel, language and theme.
   viewMenu_ = menuBar()->addMenu(QString());
+  {
+    const auto &mods = modules_.modules();
+    for (int i = 0; i < int(mods.size()); ++i) {
+      QAction *a = viewMenu_->addAction(QString());
+      if (i < 9)
+        a->setShortcut(QKeySequence(Qt::CTRL | (Qt::Key_1 + i)));
+      connect(a, &QAction::triggered, this, [this, i] { setCurrent(i); });
+      pageActions_ << a;
+    }
+    viewMenu_->addSeparator();
+  }
   jobsAction_ = viewMenu_->addAction(QString());
   jobsAction_->setCheckable(true);
   jobsAction_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_J));
@@ -334,7 +421,25 @@ void MainWindow::buildMenus() {
     });
   }
   helpMenu_ = menuBar()->addMenu(QString());
+  helpMenu_->setToolTipsVisible(true);
+  manualAction_ = helpMenu_->addAction(QString(), this, [] {
+    QDesktopServices::openUrl(QUrl(manualUrl()));
+  });
+  manualAction_->setShortcut(QKeySequence::HelpContents);
+  reportAction_ = helpMenu_->addAction(QString(), this, [this] {
+    // The report asks for the diagnostics: have them on the clipboard.
+    QGuiApplication::clipboard()->setText(diagnostics());
+    QDesktopServices::openUrl(QUrl(reportUrl()));
+  });
+  diagnosticsAction_ = helpMenu_->addAction(QString(), this, [this] {
+    QGuiApplication::clipboard()->setText(diagnostics());
+    stripText_->setProperty("last", tr("Diagnostics copied to the clipboard"));
+    updateStrip();
+  });
+  helpMenu_->addSeparator();
   updates_ = new UpdateCheck(ctx_.settings, this, this);
+  updates_->runningJobs = [this] { return ctx_.jobs->runningCount(); };
+  updates_->closeForUpdate = [this] { return closeForUpdate(); };
   checkUpdatesAction_ =
       helpMenu_->addAction(QString(), this, [this] { updates_->check(false); });
   updatesOnStartAction_ = helpMenu_->addAction(QString());
@@ -395,7 +500,196 @@ void MainWindow::updateStudyBar() {
   const bool studyPage =
       current_ >= 0 && current_ < int(mods.size()) &&
       mods[static_cast<size_t>(current_)]->section() == Module::Section::Study;
-  studyBar_->setVisible(studyPage && ctx_.study && !ctx_.study->isOpen());
+  const bool noStudy = studyPage && ctx_.study && !ctx_.study->isOpen();
+  studyBar_->setVisible(noStudy);
+  firstRun_->setVisible(
+      noStudy &&
+      !ctx_.settings->value(QLatin1String(appsettings::kFirstRunDismissedKey))
+           .toBool());
+}
+
+QString MainWindow::titleFor(const QString &studyName) {
+  return studyName.isEmpty()
+             ? QStringLiteral("sismokaos-gui")
+             : studyName + QStringLiteral(" — sismokaos-gui");
+}
+
+void MainWindow::updateStudyState() {
+  const bool open = ctx_.study && ctx_.study->isOpen();
+  setWindowTitle(titleFor(open ? ctx_.study->study().name : QString()));
+  for (QAction *a : {closeStudyAction_, reloadStudyAction_, studyFolderAction_,
+                     studyInputsAction_})
+    a->setEnabled(open);
+  updateStudyBar();
+}
+
+void MainWindow::fillRecentMenu() {
+  recentMenu_->clear();
+  const QStringList dirs =
+      ctx_.study ? ctx_.study->recent() : QStringList();
+  const QFontMetrics fm(recentMenu_->font());
+  for (const QString &dir : dirs) {
+    // The study's own name, and where it is, shortened in the middle.
+    const QString where = fm.elidedText(
+        QDir::toNativeSeparators(QFileInfo(dir).absolutePath()),
+        Qt::ElideMiddle, 320);
+    QAction *a = recentMenu_->addAction(
+        QStringLiteral("%1   —   %2")
+            .arg(study::StudyStore::nameOf(dir).replace(
+                     QLatin1Char('&'), QStringLiteral("&&")),
+                 QString(where).replace(QLatin1Char('&'),
+                                        QStringLiteral("&&"))));
+    a->setToolTip(QDir::toNativeSeparators(dir));
+    a->setCheckable(true);
+    a->setChecked(ctx_.study->isOpen() && ctx_.study->study().dir == dir);
+    connect(a, &QAction::triggered, this,
+            [this, dir] { emit openStudyPathRequested(dir); });
+  }
+  if (dirs.isEmpty()) {
+    QAction *none = recentMenu_->addAction(tr("No study has been opened yet"));
+    none->setEnabled(false);
+  }
+}
+
+QString MainWindow::studyFolderOf(const QMimeData *mime) {
+  if (!mime || !mime->hasUrls() || mime->urls().size() != 1)
+    return {};
+  const QUrl url = mime->urls().first();
+  if (!url.isLocalFile())
+    return {};
+  const QFileInfo fi(url.toLocalFile());
+  const QString file = study::Study::kFileName;
+  if (fi.isDir() && QFileInfo::exists(QDir(fi.filePath()).filePath(file)))
+    return fi.absoluteFilePath();
+  if (fi.isFile() && fi.fileName() == file)
+    return fi.absolutePath();
+  return {};
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *e) {
+  if (!studyFolderOf(e->mimeData()).isEmpty())
+    e->acceptProposedAction();
+  else
+    QMainWindow::dragEnterEvent(e);
+}
+
+bool MainWindow::openDropped(const QMimeData *mime) {
+  const QString dir = studyFolderOf(mime);
+  if (dir.isEmpty())
+    return false;
+  // After the drop has returned to the file manager it came from.
+  QTimer::singleShot(0, this,
+                     [this, dir] { emit openStudyPathRequested(dir); });
+  return true;
+}
+
+void MainWindow::dropEvent(QDropEvent *e) {
+  if (openDropped(e->mimeData()))
+    e->acceptProposedAction();
+  else
+    QMainWindow::dropEvent(e);
+}
+
+void MainWindow::updateKeepAwake() {
+  const bool wanted =
+      ctx_.settings
+          ->value(QLatin1String(appsettings::kKeepAwakeKey),
+                  appsettings::kKeepAwakeDefault)
+          .toBool() &&
+      ctx_.jobs->runningCount() > 0;
+  keepAwake_->setActive(wanted);
+}
+
+QString MainWindow::diagnostics() const {
+  DiagnosticsInput in;
+  in.jobs = ctx_.jobs;
+  in.study = ctx_.study;
+  in.language = i18n_->current();
+  in.theme = !ctx_.theme                               ? QStringLiteral("none")
+             : ctx_.theme->mode() == Theme::Mode::Dark ? QStringLiteral("dark")
+             : ctx_.theme->mode() == Theme::Mode::Light
+                 ? QStringLiteral("light")
+                 : QStringLiteral("system");
+  return diagnosticsText(in);
+}
+
+// The window is put back where it was on the same arrangement of screens;
+// on another one (a laptop without its monitor) it starts at a default size
+// on the primary screen rather than where a screen used to be.
+QString MainWindow::geometryKey() const {
+  QByteArray layout;
+  for (const QScreen *s : QGuiApplication::screens()) {
+    const QRect g = s->geometry();
+    layout += QByteArray::number(g.x()) + ',' + QByteArray::number(g.y()) +
+              ',' + QByteArray::number(g.width()) + ',' +
+              QByteArray::number(g.height()) + ';';
+  }
+  return QStringLiteral("ui/geometry-") +
+         QString::fromLatin1(
+             QCryptographicHash::hash(layout, QCryptographicHash::Sha1)
+                 .toHex()
+                 .left(10));
+}
+
+void MainWindow::restoreWindowGeometry() {
+  QByteArray saved = ctx_.settings->value(geometryKey()).toByteArray();
+  bool restored = !saved.isEmpty() && restoreGeometry(saved);
+  if (restored) {
+    // Enough of the title bar on some screen to take hold of.
+    bool reachable = false;
+    const QRect top(frameGeometry().topLeft(), QSize(width(), 40));
+    for (const QScreen *s : QGuiApplication::screens()) {
+      const QRect hit = s->availableGeometry().intersected(top);
+      reachable = reachable || (hit.width() >= 120 && hit.height() >= 20);
+    }
+    restored = reachable && width() >= 400 && height() >= 300;
+  }
+  if (!restored) {
+    setWindowState(windowState() & ~(Qt::WindowMaximized | Qt::WindowFullScreen));
+    QSize size(1280, 820);
+    if (const QScreen *s = QGuiApplication::primaryScreen()) {
+      const QRect avail = s->availableGeometry();
+      size = size.boundedTo(avail.size() - QSize(40, 60));
+      resize(size);
+      move(avail.center() - QPoint(size.width() / 2, size.height() / 2));
+    } else {
+      resize(size);
+    }
+  }
+}
+
+void MainWindow::saveWindowGeometry() {
+  ctx_.settings->setValue(geometryKey(), saveGeometry());
+}
+
+QString MainWindow::quitQuestion() const {
+  QStringList lines;
+  for (int i = 0; i < ctx_.jobs->rowCount(); ++i) {
+    const Job *job = ctx_.jobs->jobAt(i);
+    if (job->state() != Job::State::Running)
+      continue;
+    lines << tr("• %1, running for %2")
+                 .arg(job->name(), JobModel::elapsedText(job->elapsedMs()));
+  }
+  // A long list says the same with its first lines.
+  const int more = int(lines.size()) - 8;
+  if (more > 0) {
+    lines = lines.mid(0, 8);
+    lines << tr("… and %n more", nullptr, more);
+  }
+  return tr("%n job(s) are still running:", nullptr,
+            ctx_.jobs->runningCount()) +
+         QLatin1Char('\n') + lines.join(QLatin1Char('\n')) +
+         QStringLiteral("\n\n") +
+         tr("Quitting stops them. What a run has not finished is lost and "
+            "starts again next time; finished runs are kept.");
+}
+
+bool MainWindow::closeForUpdate() {
+  closingForUpdate_ = true;
+  const bool closed = close();
+  closingForUpdate_ = false;
+  return closed;
 }
 
 void MainWindow::setCurrent(int index) {
@@ -426,6 +720,9 @@ void MainWindow::updateStrip() {
   QString text;
   if (running > 0) {
     text = tr("%n job(s) running", nullptr, running);
+    // Jobs that wait for their turn (Job::State::Queued) are counted too.
+    if (const int queued = ctx_.jobs->queuedCount())
+      text += QStringLiteral(", ") + tr("%n queued", nullptr, queued);
     for (int i = ctx_.jobs->rowCount() - 1; i >= 0; --i) {
       const Job *job = ctx_.jobs->jobAt(i);
       if (job->state() != Job::State::Running)
@@ -480,18 +777,36 @@ void MainWindow::changeEvent(QEvent *e) {
 
 void MainWindow::closeEvent(QCloseEvent *e) {
   if (ctx_.jobs->runningCount() > 0) {
-    const auto r = QMessageBox::question(
-        this, tr("Jobs still running"),
-        tr("%n job(s) are still running. Quit and stop them?", nullptr,
-           ctx_.jobs->runningCount()));
-    if (r != QMessageBox::Yes) {
+    // An update has asked already; anything else names what would be lost.
+    bool stop = closingForUpdate_;
+    if (!stop) {
+      const QString question = quitQuestion();
+      if (confirmQuit) {
+        stop = confirmQuit(question);
+      } else {
+        QMessageBox box(this);
+        box.setIcon(QMessageBox::Warning);
+        box.setWindowTitle(tr("Jobs still running"));
+        box.setText(question);
+        QPushButton *quit =
+            box.addButton(tr("Stop them and quit"), QMessageBox::DestructiveRole);
+        QPushButton *stay =
+            box.addButton(tr("Keep running"), QMessageBox::RejectRole);
+        box.setDefaultButton(stay);
+        box.setEscapeButton(stay);
+        box.exec();
+        stop = box.clickedButton() == quit;
+      }
+    }
+    if (!stop) {
       e->ignore();
       return;
     }
     for (int i = 0; i < ctx_.jobs->rowCount(); ++i)
       ctx_.jobs->jobAt(i)->cancel();
   }
-  ctx_.settings->setValue("ui/geometry", saveGeometry());
+  keepAwake_->setActive(false);
+  saveWindowGeometry();
   ctx_.settings->setValue("ui/split", split_->saveState());
   ctx_.settings->setValue("ui/jobsVisible",
                           jobsPanel_->parentWidget()->isVisible());
@@ -503,7 +818,7 @@ void MainWindow::closeEvent(QCloseEvent *e) {
 }
 
 void MainWindow::retranslate() {
-  setWindowTitle(QStringLiteral("sismokaos-gui"));
+  updateStudyState();
   const auto &mods = modules_.modules();
   for (int i = 0; i < int(mods.size()); ++i) {
     if (!navButtons_[i])
@@ -519,6 +834,11 @@ void MainWindow::retranslate() {
     }
     navButtons_[i]->setText(QStringLiteral("  ") + step + m->title());
     navButtons_[i]->setToolTip(m->description());
+    if (i < pageActions_.size()) {
+      pageActions_[i]->setText(
+          (step + m->title()).replace(QLatin1Char('&'), QStringLiteral("&&")));
+      pageActions_[i]->setStatusTip(m->description());
+    }
   }
   if (studySection_)
     studySection_->setText(tr("STUDY"));
@@ -544,8 +864,65 @@ void MainWindow::retranslate() {
   jobsAction_->setText(tr("Jobs"));
   setJobsVisible(jobsPanel_->parentWidget()->isVisible());
   updateStrip();
+  // What to do first; the walk-through in the manual has the detail.
+  firstRunText_->setText(
+      QStringLiteral("<b>%1</b><br>1. %2<br>2. %3<br>3. %4<br>"
+                     "<a href=\"%5\">%6</a>")
+          .arg(tr("First time here?").toHtmlEscaped(),
+               tr("New study… and choose an empty folder: the study and all "
+                  "its results live there.")
+                   .toHtmlEscaped(),
+               tr("On Cases, add an earthquake from the built-in list and "
+                  "tick the stations near it; then add the folder with your "
+                  "waveforms, or get them on the Data page.")
+                   .toHtmlEscaped(),
+               tr("On Runs, create a recipe and run it; Compare shows the "
+                  "results side by side. Every option explains itself when "
+                  "the pointer rests on it.")
+                   .toHtmlEscaped(),
+               manualUrl(),
+               tr("The manual walks through a first study in ten minutes")
+                   .toHtmlEscaped()));
+  firstRunClose_->setText(tr("Got it"));
+  firstRunClose_->setToolTip(ui::helpText(
+      tr("Hides these first steps for good. The manual stays under Help.")));
   fileMenu_->setTitle(tr("&File"));
+  newStudyAction_->setText(tr("&New study…"));
+  newStudyAction_->setToolTip(
+      tr("Starts a study in a folder you choose; its results are written "
+         "there."));
+  openStudyAction_->setText(tr("&Open study…"));
+  openStudyAction_->setToolTip(
+      tr("Opens an existing study folder (the one holding study.toml). A "
+         "study folder can also be dropped on the window."));
+  recentMenu_->setTitle(tr("Open &recent"));
+  studyInputsAction_->setText(tr("Study &inputs…"));
+  studyInputsAction_->setToolTip(
+      tr("The earthquake catalog and the waveform folders of the open "
+         "study."));
+  studyFolderAction_->setText(tr("Open the study &folder"));
+  studyFolderAction_->setToolTip(
+      tr("Shows the open study's folder, with its results, in the file "
+         "manager."));
+  reloadStudyAction_->setText(tr("Re&load the study from disk"));
+  reloadStudyAction_->setToolTip(
+      tr("Reads study.toml again, after it was edited outside the "
+         "application."));
+  closeStudyAction_->setText(tr("&Close study"));
   quitAction_->setText(tr("&Quit"));
+  manualAction_->setText(tr("Open the &manual"));
+  manualAction_->setToolTip(
+      tr("The manual of this version, on the web, at the first-study "
+         "walk-through."));
+  reportAction_->setText(tr("&Report a problem…"));
+  reportAction_->setToolTip(
+      tr("Opens the report form on the web and copies the diagnostics, so "
+         "they can be pasted into it."));
+  diagnosticsAction_->setText(tr("Copy &diagnostics"));
+  diagnosticsAction_->setToolTip(
+      tr("Copies the version, the system and the size of the open study to "
+         "the clipboard, for a problem report. It holds no personal paths "
+         "and no addresses."));
   viewMenu_->setTitle(tr("&View"));
   languageMenu_->setTitle(tr("&Language"));
   themeMenu_->setTitle(tr("&Theme"));

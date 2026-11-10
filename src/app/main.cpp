@@ -12,6 +12,7 @@
 #include "core/i18n.h"
 #include "core/moduleregistry.h"
 #include "core/theme.h"
+#include "core/ui.h"
 #include "jobs/jobmodel.h"
 #include "modules/analysis/analysismodule.h"
 #include "modules/classification/classificationmodule.h"
@@ -30,6 +31,8 @@ using namespace skg;
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
+  // A decimal point everywhere, whatever the system is set to (core/ui.h).
+  ui::pinNumberFormat();
   // The station list and catalogs embedded in the tdvms library (a static
   // library's resources are only linked in when something names them).
   Q_INIT_RESOURCE(data);
@@ -100,6 +103,15 @@ int main(int argc, char *argv[]) {
                    [&] { StudySwitcher::newStudy(&w, &studies); });
   QObject::connect(&w, &MainWindow::openStudyRequested, &w,
                    [&] { StudySwitcher::openStudy(&w, &studies); });
+  // A recent study from the File menu, or a study folder dropped on the
+  // window.
+  QObject::connect(&w, &MainWindow::openStudyPathRequested, &w,
+                   [&](const QString &dir) {
+                     if (StudySwitcher::openPath(&w, &studies, dir))
+                       w.showModule(QStringLiteral("cases"));
+                   });
+  QObject::connect(&w, &MainWindow::studyInputsRequested, &w,
+                   [&] { StudySwitcher::studyInputs(&w, &studies); });
   w.show();
   if (!reopenError.isEmpty() && !cli.isSet(QStringLiteral("screenshots")))
     QTimer::singleShot(0, &w, [&] { w.showNotice(reopenError); });

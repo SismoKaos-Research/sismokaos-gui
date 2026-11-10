@@ -5,8 +5,14 @@
 
 #include "core/theme.h"
 
+#include "core/appsettings.h"
+#include "core/keepawake.h"
+
+#include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
+#include <QStandardPaths>
+#include <QToolButton>
 #include <QEvent>
 #include <QFileDialog>
 #include <QFormLayout>
@@ -274,13 +280,77 @@ public:
     runsLayout->addWidget(atOnceLabel_);
     runsLayout->addWidget(atOnce_);
     runsLayout->addStretch(1);
+    // Long jobs: being told when they end, and keeping the computer awake.
+    jobsBox_ = new QGroupBox(this);
+    notify_ = new QCheckBox(jobsBox_);
+    notify_->setObjectName(QStringLiteral("notifyJobs"));
+    notify_->setChecked(boolSetting(appsettings::kNotifyKey,
+                                    appsettings::kNotifyDefault));
+    notifyAfter_ = new QSpinBox(jobsBox_);
+    notifyAfter_->setObjectName(QStringLiteral("notifyAfter"));
+    notifyAfter_->setRange(0, 86400);
+    notifyAfter_->setSingleStep(30);
+    notifyAfter_->setValue(
+        settings_ ? settings_
+                        ->value(QLatin1String(appsettings::kNotifyAfterKey),
+                                appsettings::kNotifyAfterDefault)
+                        .toInt()
+                  : appsettings::kNotifyAfterDefault);
+    notifyAfter_->setEnabled(notify_->isChecked());
+    notifyAfterLabel_ = new QLabel(jobsBox_);
+    notifyAfterLabel_->setBuddy(notifyAfter_);
+    keepAwake_ = new QCheckBox(jobsBox_);
+    keepAwake_->setObjectName(QStringLiteral("keepAwake"));
+    keepAwake_->setChecked(boolSetting(appsettings::kKeepAwakeKey,
+                                       appsettings::kKeepAwakeDefault));
+    connect(notify_, &QCheckBox::toggled, this, [this](bool on) {
+      if (settings_)
+        settings_->setValue(QLatin1String(appsettings::kNotifyKey), on);
+      notifyAfter_->setEnabled(on);
+    });
+    connect(notifyAfter_, &QSpinBox::valueChanged, this, [this](int s) {
+      if (settings_)
+        settings_->setValue(QLatin1String(appsettings::kNotifyAfterKey), s);
+    });
+    connect(keepAwake_, &QCheckBox::toggled, this, [this](bool on) {
+      if (settings_)
+        settings_->setValue(QLatin1String(appsettings::kKeepAwakeKey), on);
+    });
+    auto *jobsLayout = new QHBoxLayout(jobsBox_);
+    jobsLayout->addWidget(notify_);
+    jobsLayout->addWidget(notifyAfterLabel_);
+    jobsLayout->addWidget(notifyAfter_);
+    jobsLayout->addSpacing(16);
+    jobsLayout->addWidget(keepAwake_);
+    jobsLayout->addStretch(1);
+
+    // Where the original command-line tools are: nothing in the other pages
+    // needs it, so it stays folded away.
+    advancedToggle_ = new QToolButton(this);
+    advancedToggle_->setObjectName(QStringLiteral("advancedToggle"));
+    advancedToggle_->setCheckable(true);
+    advancedToggle_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    advancedToggle_->setArrowType(Qt::RightArrow);
+    advancedToggle_->setAutoRaise(true);
+    advanced_ = new QWidget(this);
+    advanced_->setObjectName(QStringLiteral("advancedSettings"));
+    auto *advancedLayout = new QVBoxLayout(advanced_);
+    advancedLayout->setContentsMargins(0, 0, 0, 0);
+    for (const ToolDesc &d : ctx.tools->tools())
+      advancedLayout->addWidget(new ToolBox(ctx.tools, d, advanced_));
+    advanced_->setVisible(false);
+    connect(advancedToggle_, &QToolButton::toggled, this, [this](bool on) {
+      advanced_->setVisible(on);
+      advancedToggle_->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
+    });
 
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(langBox_);
     layout->addWidget(runsBox_);
+    layout->addWidget(jobsBox_);
     layout->addWidget(scanBox_);
-    for (const ToolDesc &d : ctx.tools->tools())
-      layout->addWidget(new ToolBox(ctx.tools, d, this));
+    layout->addWidget(advancedToggle_);
+    layout->addWidget(advanced_);
     layout->addStretch(1);
     retranslate();
   }
@@ -330,6 +400,11 @@ private:
               "deleted. The files are simply read again when needed.");
   }
 
+  bool boolSetting(const char *key, bool fallback) const {
+    return settings_ ? settings_->value(QLatin1String(key), fallback).toBool()
+                     : fallback;
+  }
+
   void retranslate() {
     runsBox_->setTitle(tr("Study runs"));
     atOnceLabel_->setText(tr("Runs at the same time"));
@@ -342,6 +417,40 @@ private:
                    "and a fast disk, lower it if the computer gets "
                    "sluggish. It takes effect when the next cell starts.")
                     .arg(defaults::kRunsAtOnce));
+    jobsBox_->setTitle(tr("Long jobs"));
+    notify_->setText(tr("Tell me when jobs end"));
+    notifyAfterLabel_->setText(tr("after at least"));
+    notifyAfter_->setSuffix(tr(" s"));
+    keepAwake_->setText(tr("Keep the computer awake while jobs run"));
+    ui::setHelp(notify_,
+                tr("Shows a desktop notification, and makes the taskbar or "
+                   "dock entry ask for attention, when a long job or the "
+                   "last of several ends or fails while this window is not "
+                   "in front. Clicking the notification brings the window "
+                   "back on that job. On a desktop without a notification "
+                   "area only the taskbar entry reacts."));
+    ui::setHelp({notifyAfterLabel_, notifyAfter_},
+                tr("Only work that took at least this long is announced, in "
+                   "seconds; shorter jobs end while you are still looking. "
+                   "Default 60. With 0 every job is announced."));
+    const QString how = KeepAwake::mechanism();
+    keepAwake_->setEnabled(!how.isEmpty());
+    ui::setHelp(keepAwake_,
+                how.isEmpty()
+                    ? tr("Not available on this system: it has no "
+                         "systemd-inhibit command, which is how the "
+                         "application would ask for it.")
+                    : tr("Stops the computer from going to sleep on its own "
+                         "while a job runs, so that a run over night is not "
+                         "suspended half way. The screen may still switch "
+                         "off, and closing a laptop's lid still suspends it. "
+                         "It takes effect with the next job. Off by "
+                         "default."));
+    advancedToggle_->setText(tr("Advanced: the original command-line tools"));
+    advancedToggle_->setToolTip(ui::helpText(
+        tr("Where the original Python tools are found, for running them "
+           "beside the application. Nothing in the other pages needs "
+           "them.")));
     scanBox_->setTitle(tr("Waveform scan"));
     workersLabel_->setText(tr("Files read at once"));
     workers_->setSpecialValueText(
@@ -389,6 +498,13 @@ private:
   QLabel *cacheLabel_;
   QPushButton *clearCache_;
   bool cacheProblem_ = false;
+  QGroupBox *jobsBox_;
+  QCheckBox *notify_;
+  QLabel *notifyAfterLabel_;
+  QSpinBox *notifyAfter_;
+  QCheckBox *keepAwake_;
+  QToolButton *advancedToggle_;
+  QWidget *advanced_;
 };
 
 } // namespace
