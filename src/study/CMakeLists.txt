@@ -7,6 +7,7 @@ qt_add_library(skg_study STATIC
   store.cpp   store.h
   runs.cpp    runs.h
   compare.cpp compare.h
+  runinfo.cpp runinfo.h
   waveindex.cpp waveindex.h
   scancache.cpp scancache.h
   catalogs.cpp catalogs.h
