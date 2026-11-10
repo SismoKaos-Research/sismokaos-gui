@@ -93,6 +93,19 @@ struct RunRecord {
   QDateTime started, finished; // UTC
   bool ok = false;
   QString error;
+  // A failure the page can offer a remedy for: "no_data", "little_data",
+  // "gappy_data" (the station has too little waveform data in the span) or
+  // "events" (the catalog's earthquakes leave no quiet windows); else empty.
+  QString errorReason;
+  // What the run was made under that the reader of its results should know
+  // (a sparse catalog, a station with little data in the span). Shown beside
+  // the cell and beside its scores on Compare.
+  QStringList warnings;
+  // Features: which calibration the run used (its key, one per band joined
+  // by commas), and whether it was one kept from an earlier run of this
+  // cell (see "Calibrations are kept" below) or computed by this run.
+  QString calibrationKey;
+  bool calibrationReused = false;
   QVariantMap settings; // the recipe's settings as run
   QVariantMap inputs;   // path -> sha256
   QVariantMap fitted;   // what this case fitted for itself
@@ -147,11 +160,37 @@ struct Cell {
   std::optional<RunRecord> record; // the finished run in `dir`, if any
   QString note; // Done: a later attempt that failed, if any
   QString log;  // the run log to show (of the last attempt), if any
+  // Not a reason to stop, but to know about: of a finished run, what it was
+  // made under (its record's warnings); of a cell still to run, what a run
+  // made now would be under. One sentence per line.
+  QStringList warnings;
 };
+// What a run of the cell made now would be under (see Cell::warnings): a
+// catalog too sparse for the tool, a station with little data in the span.
+QStringList runWarnings(const Study &s, const Case &c, const QString &station,
+                        const Recipe &r);
 // `station` empty: the case has no stations (a per-station tool then waits
 // for one).
 Cell cellOf(const Study &s, const Case &c, const QString &station,
             const Recipe &r);
+// What the waveform index knows of a station for a period [from, to): the
+// days with data in it, and the dates the station's data runs over at all.
+// `known` is false when the index has not seen the station (its data may
+// still sit in a folder of its own, Study::dataDirFor).
+class WaveIndex;
+struct SpanData {
+  bool known = false;
+  int days = 0;      // days of the period with data
+  int spanDays = 0;  // days in the period
+  bool approximate = false, atLeast = false; // as WaveIndex::daysCovered
+  QDate first, last; // the station's data anywhere (UTC dates)
+  // Too little of the period to rely on (defaults::kMinSpanCoverage), though
+  // not nothing.
+  bool thin() const;
+};
+SpanData spanData(const WaveIndex &index, const QString &station,
+                  const QDateTime &from, const QDateTime &to);
+
 // How many finished runs of `before` are no longer finished and current in
 // `after` (the same study after an edit): what a change would make stale.
 int runsMadeStale(const Study &before, const Study &after);
@@ -167,7 +206,28 @@ struct RunHooks {
   std::function<void(const QString &)> log;
   std::function<bool()> shouldStop;
   std::function<void(double fraction, const QString &what)> progress;
+  // Features: compute the calibration anew although a valid one is kept.
+  bool freshCalibration = false;
 };
+
+// Calibrations are kept. The calibration of a Features run is a pass over
+// all its data; a run that is stopped, or fails in the extraction, should
+// not have to make it again. As soon as it is computed it is copied to
+//
+//   <run folder>.calibration/<key>.json
+//
+// beside the run folder (not in it: the folder is replaced by each finished
+// run, and <folder>.tmp is cleared by each new one). The key is a hash of
+// everything the calibration depends on, which the file also lists
+// ("kept_for"): the settings that enter it (sample rate, filter band, window
+// length, sample entropy radius, the calibration settings), the catalog (its
+// SHA-256 and time offset), the station's position, the span, and the
+// waveform files read (names, sizes, times, and whether some were chosen on
+// an estimate). A later run of the same cell reuses the file only when its
+// own key is the same; otherwise it calibrates again and its log says what
+// changed. The latest two are kept. Never shared between cells: another
+// case, station or recipe has another folder.
+QString runCalibrationDir(const QString &runDir); // <runDir>.calibration
 // Runs the cell in <folder>.tmp and puts it in the folder's place when it
 // has finished (see the top of this file). Throws std::runtime_error with the
 // reason on failure; returns false when stopped.

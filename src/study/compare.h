@@ -35,6 +35,10 @@ struct ScoreRow {
   QString bestModel, baselineModel; // empty when missing
   double testF1 = 0, testAuc = 0;   // of the best model; NaN when missing
   double baseF1 = 0, baseAuc = 0;   // of the baseline; NaN when missing
+  // What the scores were made under that their reader should know (the
+  // run's warnings: a sparse catalog behind the calibration, a station with
+  // little data in the span). Shown beside the row, never left out.
+  QStringList warnings;
 };
 // Whether a model belongs to sfc's baseline step.
 bool isBaselineModel(const QString &model);

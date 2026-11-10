@@ -25,6 +25,20 @@ inline constexpr int kSpanDays = 365;
 // "label_days".
 inline constexpr double kRiskLabelMag = 6.0;
 inline constexpr int kRiskLabelDays = 90;
+// A catalog whose magnitudes start above this (its floor, catalogs.h) is
+// sparse: the quiet windows of a calibration then only avoid earthquakes of
+// that size and larger, and small local ones sit inside them unseen.
+inline constexpr double kSparseCatalogMag = 3.0;
+// The indicators need events down to the recipe's completeness magnitude.
+// A catalog whose floor is above Mc by more than this cannot give them.
+inline constexpr double kMcFloorMargin = 0.5;
+// A station with data on fewer days of the case's span than this share of
+// it is used with a warning.
+inline constexpr double kMinSpanCoverage = 0.10;
+// How many cells of the Runs page run at the same time; the rest wait in
+// the queue. Setting "runs/atOnce".
+inline constexpr int kRunsAtOnce = 2;
+inline constexpr char kRunsAtOnceSetting[] = "runs/atOnce";
 // Screen-sized figures; print needs 300.
 inline constexpr int kFigureDpi = 100;
 

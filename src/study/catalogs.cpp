@@ -6,7 +6,9 @@
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QHash>
 #include <QJsonObject>
+#include <QMutex>
 #include <QSaveFile>
 #include <QSet>
 #include <QTimeZone>
@@ -18,6 +20,7 @@
 #include <stdexcept>
 
 #include "tdvms/catalog.h"
+#include "text/text.h"
 
 namespace skg::study {
 
@@ -154,6 +157,65 @@ CatalogQuery queryForStudy(const Study &study, double padKm) {
   return q;
 }
 
+CatalogSummary summarize(const std::vector<analysis::Event> &events) {
+  CatalogSummary c;
+  if (events.empty())
+    return c;
+  std::vector<double> mags;
+  mags.reserve(events.size());
+  double lo = events.front().epoch, hi = lo;
+  for (const analysis::Event &e : events) {
+    mags.push_back(e.mag);
+    lo = std::min(lo, e.epoch);
+    hi = std::max(hi, e.epoch);
+  }
+  std::sort(mags.begin(), mags.end());
+  c.ok = true;
+  c.events = int(events.size());
+  c.smallest = mags.front();
+  c.floor = std::round(mags[size_t(double(mags.size() - 1) * 0.05)] * 10.0) /
+            10.0;
+  c.first = QDateTime::fromSecsSinceEpoch(qint64(std::floor(lo)),
+                                          QTimeZone::UTC)
+                .date();
+  c.last = QDateTime::fromSecsSinceEpoch(qint64(std::floor(hi)),
+                                         QTimeZone::UTC)
+               .date();
+  return c;
+}
+
+CatalogSummary catalogSummary(const QString &path, double utcOffsetHours) {
+  struct Entry {
+    qint64 size = -1;
+    qint64 mtime = 0;
+    double offset = 0;
+    CatalogSummary summary;
+  };
+  static QMutex mutex;
+  static QHash<QString, Entry> cache;
+  const QFileInfo fi(path);
+  if (path.isEmpty() || !fi.exists())
+    return {};
+  const qint64 size = fi.size(),
+               mtime = fi.lastModified().toMSecsSinceEpoch();
+  {
+    const QMutexLocker lock(&mutex);
+    const auto it = cache.constFind(path);
+    if (it != cache.constEnd() && it->size == size && it->mtime == mtime &&
+        it->offset == utcOffsetHours)
+      return it->summary;
+  }
+  CatalogSummary c;
+  try {
+    c = summarize(analysis::loadEvents(path, utcOffsetHours));
+  } catch (const std::exception &) {
+    c = {};
+  }
+  const QMutexLocker lock(&mutex);
+  cache.insert(path, Entry{size, mtime, utcOffsetHours, c});
+  return c;
+}
+
 std::vector<analysis::Event> parseFdsnText(const QByteArray &body, int *bad) {
   // EventID|Time|Latitude|Longitude|Depth/km|Author|Catalog|Contributor|
   // ContributorID|MagType|Magnitude|MagAuthor|EventLocationName
@@ -186,7 +248,9 @@ std::vector<analysis::Event> parseFdsnText(const QByteArray &body, int *bad) {
     e.depthKm = f[4].toDouble();
     e.mag = mag;
     e.type = f[9].trimmed();
-    e.place = f.size() > 12 ? f[12].trimmed() : QString();
+    // The service writes "?" for letters it cannot encode (text/text.h).
+    e.place = text::repairPlace(f.size() > 12 ? f[12].trimmed() : QString(),
+                                lat, lon);
     e.id = f[0].trimmed();
     out.push_back(e);
   }
@@ -392,6 +456,11 @@ FetchResult fetchCatalog(tdvms::Http &http, const CatalogQuery &query,
   p.insert(QStringLiteral("lines_not_read"), unread);
   p.insert(QStringLiteral("smallest_magnitude"), res.minMagnitudeFound);
   p.insert(QStringLiteral("times"), QStringLiteral("UTC"));
+  p.insert(QStringLiteral("encoding"), QStringLiteral("UTF-8"));
+  p.insert(QStringLiteral("place_names"),
+           QStringLiteral("letters the service replaced by \"?\" were put "
+                          "back from GeoNames (CC BY 4.0) where exactly one "
+                          "place near the earthquake fits"));
   p.insert(QStringLiteral("file"), QFileInfo(res.csvPath).fileName());
   p.insert(QStringLiteral("sha256"),
            QString::fromLatin1(

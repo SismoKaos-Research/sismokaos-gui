@@ -137,6 +137,8 @@ QList<ScoreRow> scoreRows(const Study &s, const Recipe &classification) {
     row.testF1 = row.testAuc = row.baseF1 = row.baseAuc = kNaN;
     const Cell cell = cellOf(s, *k.c, k.station, classification);
     row.state = cell.state;
+    if (cell.state == CellState::Done)
+      row.warnings = cell.warnings;
     const QString csv = outputPath(cell, QStringLiteral("experiments"));
     if (cell.state == CellState::Done && !csv.isEmpty()) {
       const Scores sc =
@@ -178,7 +180,7 @@ QString scoresCsv(const QList<ScoreRow> &rows) {
   QString out = QStringLiteral(
       "case;station;kind;magnitude;distance_km;best_model;test_f1;"
       "baseline_model;baseline_test_f1;test_f1_minus_baseline;test_auc;"
-      "baseline_test_auc;test_auc_minus_baseline\n");
+      "baseline_test_auc;test_auc_minus_baseline;warnings\n");
   for (const ScoreRow &r : rows) {
     QString name = r.caseName;
     name.replace(QLatin1Char(';'), QLatin1Char(','));
@@ -195,7 +197,9 @@ QString scoresCsv(const QList<ScoreRow> &rows) {
                        num(r.testF1 - r.baseF1, 4),
                        num(r.testAuc, 4),
                        num(r.baseAuc, 4),
-                       num(r.testAuc - r.baseAuc, 4)}
+                       num(r.testAuc - r.baseAuc, 4),
+                       QString(r.warnings.join(QStringLiteral(" | ")))
+                           .replace(QLatin1Char(';'), QLatin1Char(','))}
                .join(QLatin1Char(';')) +
            QLatin1Char('\n');
   }

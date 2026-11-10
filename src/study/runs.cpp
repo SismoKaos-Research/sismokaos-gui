@@ -26,12 +26,14 @@
 #include "cbi/magnitudes.h"
 #include "cbi/run.h"
 #include "core/defaults.h"
+#include "fx/calibrate.h"
 #include "fx/config.h"
 #include "fx/engine.h"
 #include "sfc/dataset.h"
 #include "sfc/experiments.h"
 #include "sfc/run.h"
 #include "sfc/settings.h"
+#include "study/catalogs.h"
 #include "study/waveindex.h"
 
 namespace skg::study {
@@ -136,6 +138,32 @@ QString catalogProblem(const Study &s) {
   return {};
 }
 
+QString dateText(const QDateTime &t) {
+  return t.toUTC().date().toString(Qt::ISODate);
+}
+
+// Why the indicators cannot be computed from the study's catalog although
+// it is there: its magnitudes start too far above the recipe's completeness
+// magnitude. Empty when they can.
+QString indicatorsCatalogProblem(const Study &s, const Recipe &r) {
+  if (boolOf(r, "estimate_mc", false))
+    return {};
+  const CatalogSummary cs =
+      catalogSummary(s.catalogPath(), s.catalogUtcOffsetHours);
+  const double mc = numOf(r, "mc", 1.3);
+  if (!cs.ok || cs.floor <= mc + defaults::kMcFloorMargin)
+    return {};
+  return RunText::tr("the catalog lists earthquakes from about magnitude %1 "
+                     "up (%2 events), but the recipe counts them from the "
+                     "completeness magnitude %3: the b-value needs the "
+                     "earthquakes in between. Use a full catalog (Cases "
+                     "page), or edit the recipe: raise its completeness "
+                     "magnitude or let it be estimated per case")
+      .arg(cs.floor, 0, 'f', 1)
+      .arg(cs.events)
+      .arg(mc, 0, 'f', 1);
+}
+
 // The waveform files a features run reads, as one short text: their names,
 // sizes and times, not their contents and not where the folder is. New or
 // replaced files for the span change it; a file elsewhere, or the same
@@ -193,7 +221,9 @@ QDateTime utcOf(double epoch) {
 
 void runIndicators(const Study &s, const Case &c, const Recipe &r,
                    const QString &dir, const RunHooks &hooks, RunRecord &rec) {
-  const QString problem = catalogProblem(s);
+  QString problem = catalogProblem(s);
+  if (problem.isEmpty())
+    problem = indicatorsCatalogProblem(s, r);
   if (!problem.isEmpty())
     fail(problem);
   const int windowMonths = std::max(1, intOf(r, "window_months", 12));
@@ -300,6 +330,146 @@ void runIndicators(const Study &s, const Case &c, const Recipe &r,
 
 // ---- features ----
 
+// What a calibration depends on, as the kept file lists it, and its hash.
+struct CalibrationKey {
+  QJsonObject parts;
+  QString id;
+};
+
+CalibrationKey calibrationKey(const fx::Config &run, const QString &catalogId,
+                              double utcOffsetHours, const StationRef &st,
+                              const Case &c, const QString &waveStamp,
+                              bool waveEstimated) {
+  QJsonObject settings;
+  settings.insert(QStringLiteral("band"), run.band);
+  settings.insert(QStringLiteral("fs"), run.fs);
+  settings.insert(QStringLiteral("win_sec"), run.winSec);
+  settings.insert(QStringLiteral("freqmin"), run.freqmin);
+  settings.insert(QStringLiteral("freqmax"), run.freqmax);
+  settings.insert(QStringLiteral("sampent_r"), run.chaosSampentR);
+  const fx::CalibrationConfig &k = run.calibration;
+  settings.insert(QStringLiteral("min_mag"), k.minMag);
+  settings.insert(QStringLiteral("max_dist_km"), k.maxDistKm);
+  settings.insert(QStringLiteral("pre_sec"), k.preSec);
+  settings.insert(QStringLiteral("min_post_sec"), k.minPostSec);
+  settings.insert(QStringLiteral("coda_factor"), k.codaFactor);
+  settings.insert(QStringLiteral("max_windows"), k.maxWindows);
+  settings.insert(QStringLiteral("loud_factor"), k.loudFactor);
+  settings.insert(QStringLiteral("seed"), QString::number(k.seed));
+  settings.insert(QStringLiteral("max_tau"), k.maxTau);
+  settings.insert(QStringLiteral("max_dim"), k.maxDim);
+  CalibrationKey key;
+  key.parts.insert(QStringLiteral("settings"), settings);
+  key.parts.insert(QStringLiteral("catalog"),
+                   QStringLiteral("%1 utc%2")
+                       .arg(catalogId)
+                       .arg(utcOffsetHours, 0, 'f', 2));
+  key.parts.insert(QStringLiteral("station"),
+                   QStringLiteral("%1 %2 %3")
+                       .arg(st.code)
+                       .arg(st.lat, 0, 'f', 5)
+                       .arg(st.lon, 0, 'f', 5));
+  key.parts.insert(QStringLiteral("span"),
+                   iso(c.spanStart()) + QLatin1Char('/') + iso(c.time));
+  key.parts.insert(QStringLiteral("waveforms"),
+                   waveStamp + (waveEstimated ? QStringLiteral(" (estimated)")
+                                              : QString()));
+  key.id = QString::fromLatin1(
+      QCryptographicHash::hash(
+          QJsonDocument(key.parts).toJson(QJsonDocument::Compact),
+          QCryptographicHash::Sha1)
+          .toHex()
+          .left(16));
+  return key;
+}
+
+// The kept calibrations of a cell, newest first.
+QFileInfoList keptCalibrations(const QString &store) {
+  return QDir(store).entryInfoList({QStringLiteral("*.json")}, QDir::Files,
+                                   QDir::Time);
+}
+
+// Why no kept calibration fits: what differs from the newest one kept.
+QString whyRecalibrated(const QString &store, const CalibrationKey &key) {
+  const QFileInfoList kept = keptCalibrations(store);
+  if (kept.isEmpty())
+    return RunText::tr("none is kept for this cell yet");
+  QFile f(kept.first().filePath());
+  const QJsonObject was =
+      f.open(QIODevice::ReadOnly)
+          ? QJsonDocument::fromJson(f.readAll())
+                .object()
+                .value(QStringLiteral("kept_for"))
+                .toObject()
+          : QJsonObject();
+  const auto differs = [&](const char *part) {
+    return was.value(QLatin1String(part)) != key.parts.value(QLatin1String(part));
+  };
+  if (was.isEmpty())
+    return RunText::tr("the one kept cannot be read");
+  if (differs("catalog"))
+    return RunText::tr("the catalog changed");
+  if (differs("station"))
+    return RunText::tr("the station's position changed");
+  if (differs("span"))
+    return RunText::tr("the span changed");
+  if (differs("waveforms"))
+    return RunText::tr("the waveform files changed");
+  if (differs("settings"))
+    return RunText::tr("the calibration settings changed");
+  return RunText::tr("the one kept cannot be read");
+}
+
+// Copies a calibration fx has just written into the cell's store, with what
+// it was made for; the latest two are kept. Failing to keep it is not a
+// reason to fail the run.
+bool keepCalibration(const QString &written, const QString &store,
+                     const CalibrationKey &key) {
+  QFile in(written);
+  if (!in.open(QIODevice::ReadOnly))
+    return false;
+  QJsonObject o = QJsonDocument::fromJson(in.readAll()).object();
+  if (o.isEmpty() || !QDir().mkpath(store))
+    return false;
+  o.insert(QStringLiteral("kept_key"), key.id);
+  o.insert(QStringLiteral("kept_for"), key.parts);
+  o.insert(QStringLiteral("kept_utc"), iso(QDateTime::currentDateTimeUtc()));
+  const QString target = QDir(store).filePath(key.id + QStringLiteral(".json"));
+  QSaveFile out(target);
+  const QByteArray json = QJsonDocument(o).toJson(QJsonDocument::Indented);
+  if (!out.open(QIODevice::WriteOnly) || out.write(json) != json.size() ||
+      !out.commit())
+    return false;
+  const QFileInfoList kept = keptCalibrations(store);
+  int others = 0;
+  for (const QFileInfo &fi : kept) {
+    if (fi.fileName() == key.id + QStringLiteral(".json"))
+      continue;
+    if (++others > 1)
+      QFile::remove(fi.filePath());
+  }
+  return true;
+}
+
+// The sentence for a station that has no waveform files in the case's span:
+// with the dates its data does run over when the index knows the station.
+QString noSpanData(const Study &s, const Case &c, const StationRef &st) {
+  const SpanData d =
+      spanData(*WaveIndex::shared(s.dir), st.code, c.spanStart(), c.time);
+  if (d.known && d.first.isValid())
+    return RunText::tr("%1 has waveforms from %2 to %3, none in this case's "
+                       "span (%4 to %5): untick the station on the Cases "
+                       "page, or get its waveforms for the span on the Data "
+                       "page")
+        .arg(st.code, d.first.toString(Qt::ISODate),
+             d.last.toString(Qt::ISODate), dateText(c.spanStart()),
+             dateText(c.time));
+  return RunText::tr("no waveform files for %1 in this case's span (%2 to "
+                     "%3): add or scan its waveform folder on the Cases "
+                     "page, or get the waveforms on the Data page")
+      .arg(st.code, dateText(c.spanStart()), dateText(c.time));
+}
+
 void runFeatures(const Study &s, const Case &c, const QString &station,
                  const Recipe &r, const QString &dir, const RunHooks &hooks,
                  RunRecord &rec) {
@@ -314,11 +484,8 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   const QString chosenHow = chosen.how;
   const QStringList inputFiles = chosen.files;
   if (inputFiles.isEmpty())
-    fail(RunText::tr("no waveform files for %1 in the span %2 to %3 (%4): "
-                     "add or scan its waveform folder on the Cases page, or "
-                     "get the waveforms on the Data page")
-             .arg(station, c.spanStart().toString(Qt::ISODate),
-                  c.time.toString(Qt::ISODate), chosenHow));
+    fail(noSpanData(s, c, *st) +
+         QStringLiteral(" (%1)").arg(chosenHow));
   const QString dataDir = QFileInfo(inputFiles.first()).absolutePath();
   if (hooks.log)
     hooks.log(RunText::tr(" Waveforms from %1").arg(chosenHow));
@@ -340,12 +507,16 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   cfg.inputFiles = inputFiles;
   cfg.outputRoot = dir;
   cfg.calibrationFile.clear(); // every case calibrates for itself
+  QString catalogId; // SHA-256 of the catalog the calibration reads
+  double catalogOffset = 0.0;
   if (cfg.calibration.catalog.isEmpty()) {
     const QString problem = catalogProblem(s);
     if (!problem.isEmpty())
       fail(problem);
     rec.catalogSha = sha256Cached(s.catalogPath());
     rec.inputs.insert(s.catalogPath(), rec.catalogSha);
+    catalogId = rec.catalogSha;
+    catalogOffset = s.catalogUtcOffsetHours;
     if (s.catalogUtcOffsetHours == 0.0) {
       cfg.calibration.catalog = s.catalogPath();
     } else {
@@ -374,8 +545,8 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
       hooks.log(RunText::tr("calibration catalog: the recipe's own, %1 (not "
                             "the study's)")
                     .arg(cfg.calibration.catalog));
-    rec.inputs.insert(cfg.calibration.catalog,
-                      sha256Cached(cfg.calibration.catalog));
+    catalogId = sha256Cached(cfg.calibration.catalog);
+    rec.inputs.insert(cfg.calibration.catalog, catalogId);
   }
   cfg.calibration.stationLat = st->lat;
   cfg.calibration.stationLon = st->lon;
@@ -383,19 +554,75 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   if (!problems.isEmpty())
     fail(problems.join(QStringLiteral("; ")));
   const QList<fx::Config> runs = cfg.bandRuns();
+  const QString store = runCalibrationDir(runDir(s, c, station, r));
+  QStringList keys;
+  bool allReused = !runs.isEmpty();
   for (int i = 0; i < int(runs.size()); ++i) {
-    const fx::Config &run = runs[i];
+    fx::Config run = runs[i];
+    // The calibration this cell made before, for exactly these inputs and
+    // settings, is used again (runs.h, "Calibrations are kept").
+    const CalibrationKey key = calibrationKey(
+        run, catalogId, catalogOffset, *st, c, rec.waveStamp,
+        rec.waveEstimated);
+    keys << key.id;
+    const QString kept = QDir(store).filePath(key.id + QStringLiteral(".json"));
+    bool reused = false;
+    if (!hooks.freshCalibration && QFileInfo::exists(kept)) {
+      try {
+        const fx::Calibration cal = fx::Calibration::load(kept);
+        QFile f(kept);
+        const QString made =
+            f.open(QIODevice::ReadOnly)
+                ? QJsonDocument::fromJson(f.readAll())
+                      .object()
+                      .value(QStringLiteral("kept_utc"))
+                      .toString()
+                : QString();
+        run.calibrationFile = kept;
+        reused = true;
+        if (hooks.log)
+          hooks.log(RunText::tr(" Calibration reused: the one this cell made "
+                                "on %1 for the same data, catalog and "
+                                "settings (%2)")
+                        .arg(made, key.id));
+        Q_UNUSED(cal);
+      } catch (const std::exception &) {
+        reused = false; // unreadable: made again below
+      }
+    }
+    if (!reused && hooks.log)
+      hooks.log(RunText::tr(" Calibration redone: %1")
+                    .arg(hooks.freshCalibration
+                             ? RunText::tr("asked for")
+                             : whyRecalibrated(store, key)));
+    allReused = allReused && reused;
     fx::RunHooks h;
+    h.calibrated = [&hooks, store, key](const QString &path) {
+      if (!keepCalibration(path, store, key) && hooks.log)
+        hooks.log(RunText::tr(" warning: the calibration could not be kept "
+                              "in %1")
+                      .arg(QDir::toNativeSeparators(store)));
+    };
     h.log = hooks.log;
     h.shouldStop = hooks.shouldStop;
     h.phase = [&hooks](const QString &p) {
       if (hooks.log)
         hooks.log(QStringLiteral(" %1").arg(p));
     };
-    h.progress = [&hooks, i, &runs](int done, int total) {
-      if (hooks.progress && total > 0)
-        hooks.progress((i + double(done) / total) / double(runs.size()),
-                       QStringLiteral("%1/%2").arg(done).arg(total));
+    // One bar for the whole run: the phases of each band (unpacking,
+    // calibrating, extracting) in their shares, the bands one after the
+    // other. It never starts again from zero.
+    h.overall = [&hooks, i, &runs, &run](const fx::RunProgress &p) {
+      if (!hooks.progress)
+        return;
+      const QString band =
+          runs.size() > 1
+              ? RunText::tr("band %1 of %2 (%3) · ")
+                    .arg(i + 1)
+                    .arg(runs.size())
+                    .arg(run.band)
+              : QString();
+      hooks.progress((i + p.fraction) / double(runs.size()), band + p.text);
     };
     const fx::RunResult res = fx::runPipeline(run, h);
     if (res.stopped)
@@ -420,6 +647,8 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
     }
   }
   rec.inputs.insert(dataDir, QStringLiteral("(folder)"));
+  rec.calibrationKey = keys.join(QLatin1Char(','));
+  rec.calibrationReused = allReused;
 }
 
 // ---- classification ----
@@ -722,6 +951,10 @@ QString runTmpDir(const QString &dir) {
   return dir + QStringLiteral(".tmp");
 }
 
+QString runCalibrationDir(const QString &dir) {
+  return dir + QStringLiteral(".calibration");
+}
+
 QString runFailedDir(const QString &dir) {
   return dir + QStringLiteral(".failed");
 }
@@ -796,6 +1029,14 @@ bool RunRecord::write(const QString &dir) const {
   o.insert(QStringLiteral("finished"), iso(finished));
   o.insert(QStringLiteral("ok"), ok);
   o.insert(QStringLiteral("error"), error);
+  if (!errorReason.isEmpty())
+    o.insert(QStringLiteral("error_reason"), errorReason);
+  if (!warnings.isEmpty())
+    o.insert(QStringLiteral("warnings"), QJsonArray::fromStringList(warnings));
+  if (!calibrationKey.isEmpty()) {
+    o.insert(QStringLiteral("calibration_key"), calibrationKey);
+    o.insert(QStringLiteral("calibration_reused"), calibrationReused);
+  }
   o.insert(QStringLiteral("settings"), QJsonObject::fromVariantMap(settings));
   o.insert(QStringLiteral("inputs"), QJsonObject::fromVariantMap(inputs));
   o.insert(QStringLiteral("fitted"), QJsonObject::fromVariantMap(fitted));
@@ -835,6 +1076,12 @@ std::optional<RunRecord> RunRecord::read(const QString &dir) {
       o.value(QStringLiteral("finished")).toString(), Qt::ISODate);
   r.ok = o.value(QStringLiteral("ok")).toBool();
   r.error = o.value(QStringLiteral("error")).toString();
+  r.errorReason = o.value(QStringLiteral("error_reason")).toString();
+  for (const QJsonValue v : o.value(QStringLiteral("warnings")).toArray())
+    r.warnings << v.toString();
+  r.calibrationKey = o.value(QStringLiteral("calibration_key")).toString();
+  r.calibrationReused =
+      o.value(QStringLiteral("calibration_reused")).toBool();
   r.settings = o.value(QStringLiteral("settings")).toObject().toVariantMap();
   r.inputs = o.value(QStringLiteral("inputs")).toObject().toVariantMap();
   r.fitted = o.value(QStringLiteral("fitted")).toObject().toVariantMap();
@@ -893,8 +1140,13 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
   if (r.tool == kToolIndicators) {
     studyCatalog = true;
     blocked = catalogProblem(s);
-    if (!blocked.isEmpty())
+    if (!blocked.isEmpty()) {
       fix = Fix::Cases;
+    } else {
+      blocked = indicatorsCatalogProblem(s, r);
+      if (!blocked.isEmpty())
+        fix = Fix::Recipe;
+    }
   } else if (r.tool == kToolFeatures) {
     studyCatalog = calibrationOverride(r).isEmpty();
     const StationRef *st = stationOf(c, station);
@@ -921,6 +1173,15 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
         waveChoice = chooseWaveFiles(s, *WaveIndex::shared(s.dir), *st,
                                      c.spanStart(), c.time);
         waveNow = stampOfFiles(waveChoice.files);
+        // The station has data, but none of it in this case's span (it
+        // started recording after the earthquake, say): a run would fail at
+        // once, so it is not offered. With only estimates in the index the
+        // choice above errs on the side of taking a file, so this errs on
+        // the side of letting the run start.
+        if (waveChoice.files.isEmpty()) {
+          blocked = noSpanData(s, c, *st);
+          fix = Fix::Cases;
+        }
       }
     }
   } else if (r.tool == kToolClassification) {
@@ -978,9 +1239,11 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
   }
   // The last attempt, when it failed: kept beside the folder.
   const QString failedDir = runFailedDir(cell.dir);
+  QString failedReason;
   if (const std::optional<RunRecord> failed = RunRecord::read(failedDir);
       failed && failed->revision == r.revision && failed->caseSignature == sig &&
       (!cell.record || failed->finished >= cell.record->finished)) {
+    failedReason = failed->errorReason;
     const QString log = QDir(failedDir).filePath(kRunLogName);
     if (QFileInfo::exists(log))
       cell.log = log;
@@ -992,14 +1255,123 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
       cell.why = failed->error;
     }
   }
-  if (cell.state == CellState::Done)
+  if (cell.state == CellState::Done) {
+    // What the finished run was made under, as it noted itself.
+    cell.warnings = cell.record->warnings;
     return cell;
-  if (!blocked.isEmpty() && cell.state != CellState::Failed) {
+  }
+  if (!blocked.isEmpty()) {
+    // What a run needs is not there: that is the thing to say, also of a
+    // cell whose last run failed (for that very reason, as a rule). Its log
+    // stays at hand.
     cell.state = CellState::Blocked;
     cell.why = blocked;
     cell.fix = fix;
+    return cell;
   }
+  if (cell.state == CellState::Failed) {
+    // A failure with a known remedy points to where it is applied.
+    const QString reason = cell.record && !cell.record->ok
+                               ? cell.record->errorReason
+                               : failedReason;
+    if (reason == QLatin1String("events"))
+      cell.fix = Fix::Recipe;
+    else if (!reason.isEmpty())
+      cell.fix = Fix::Cases;
+  }
+  cell.warnings = runWarnings(s, c, station, r);
   return cell;
+}
+
+bool SpanData::thin() const {
+  return known && !atLeast && spanDays > 0 && days > 0 &&
+         double(days) < defaults::kMinSpanCoverage * double(spanDays);
+}
+
+SpanData spanData(const WaveIndex &index, const QString &station,
+                  const QDateTime &from, const QDateTime &to) {
+  SpanData d;
+  d.spanDays = int(std::max<qint64>(0, from.daysTo(to)));
+  for (const WaveStation &ws : index.stations()) {
+    if (ws.code.compare(station, Qt::CaseInsensitive) != 0)
+      continue;
+    d.known = true;
+    // `last` is where the data ends: a station whose data stops at midnight
+    // has its last day the day before.
+    const QDate first = utcOf(ws.first).date(),
+                last = utcOf(std::max(ws.first, ws.last - 1.0)).date();
+    if (!d.first.isValid() || first < d.first)
+      d.first = first;
+    if (!d.last.isValid() || last > d.last)
+      d.last = last;
+  }
+  if (d.known)
+    d.days = index.daysCovered(station, from, to, &d.approximate, &d.atLeast);
+  return d;
+}
+
+QStringList runWarnings(const Study &s, const Case &c, const QString &station,
+                        const Recipe &r) {
+  QStringList out;
+  if (r.tool == kToolClassification) {
+    // The scores stand on the features: what those were made under is said
+    // of the scores too.
+    const Recipe *fr = s.findRecipe(strOf(r, "features_recipe"));
+    if (!fr)
+      return out;
+    const std::optional<RunRecord> rec =
+        RunRecord::read(runDir(s, c, station, *fr));
+    if (rec && rec->ok)
+      for (const QString &w : rec->warnings)
+        out << RunText::tr("its features: %1").arg(w);
+    return out;
+  }
+  const bool studyCatalog =
+      r.tool == kToolIndicators || calibrationOverride(r).isEmpty();
+  const CatalogSummary cs =
+      studyCatalog && !s.catalog.isEmpty()
+          ? catalogSummary(s.catalogPath(), s.catalogUtcOffsetHours)
+          : CatalogSummary();
+  if (r.tool == kToolIndicators && cs.ok) {
+    const double mc = numOf(r, "mc", 1.3);
+    if (boolOf(r, "estimate_mc", false)) {
+      if (cs.floor > defaults::kSparseCatalogMag)
+        out << RunText::tr("the catalog lists earthquakes from about "
+                           "magnitude %1 up (%2 events): the completeness "
+                           "magnitude will be estimated near that, and the "
+                           "indicators describe the large earthquakes only")
+                   .arg(cs.floor, 0, 'f', 1)
+                   .arg(cs.events);
+    } else if (cs.floor > mc) {
+      out << RunText::tr("the catalog thins out below about magnitude %1, "
+                         "above the recipe's completeness magnitude %2: the "
+                         "b-value is computed on a range the catalog does "
+                         "not fill")
+                 .arg(cs.floor, 0, 'f', 1)
+                 .arg(mc, 0, 'f', 1);
+    }
+  }
+  if (r.tool == kToolFeatures) {
+    if (cs.ok && cs.floor > defaults::kSparseCatalogMag)
+      out << RunText::tr("the catalog lists earthquakes from about magnitude "
+                         "%1 up (%2 events): the quiet windows of the "
+                         "calibration only avoid earthquakes of that size "
+                         "and larger; smaller local ones are not excluded")
+                 .arg(cs.floor, 0, 'f', 1)
+                 .arg(cs.events);
+    const SpanData d =
+        spanData(*WaveIndex::shared(s.dir), station, c.spanStart(), c.time);
+    if (d.thin())
+      out << (d.approximate
+                  ? RunText::tr("%1 has waveforms on about %2 of the %3 days "
+                                "of the span")
+                  : RunText::tr("%1 has waveforms on only %2 of the %3 days "
+                                "of the span"))
+                 .arg(station)
+                 .arg(d.days)
+                 .arg(d.spanDays);
+  }
+  return out;
 }
 
 int runsMadeStale(const Study &before, const Study &after) {
@@ -1075,6 +1447,11 @@ bool runCell(const Study &s, const Case &c, const QString &station,
                             ? QString()
                             : QLatin1Char(' ') + rec.station,
                   iso(rec.started), appVersion));
+  // What the run is made under goes into its log and its record, so it is
+  // still said when the results are read later.
+  rec.warnings = runWarnings(s, c, rec.station, r);
+  for (const QString &w : rec.warnings)
+    h.log(RunText::tr("warning: %1").arg(w));
   try {
     if (r.tool == kToolIndicators)
       runIndicators(s, c, r, tmp, h, rec);
@@ -1090,6 +1467,8 @@ bool runCell(const Study &s, const Case &c, const QString &station,
     rec.finished = QDateTime::currentDateTimeUtc();
     rec.ok = false;
     rec.error = QString::fromUtf8(e.what());
+    if (const auto *cal = dynamic_cast<const fx::CalibrationError *>(&e))
+      rec.errorReason = fx::CalibrationError::code(cal->reason());
     toFile(QStringLiteral("error: %1").arg(rec.error));
     logFile.close();
     rec.write(tmp);

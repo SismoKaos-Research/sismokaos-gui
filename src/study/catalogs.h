@@ -90,6 +90,24 @@ FetchResult fetchCatalog(tdvms::Http &http, const CatalogQuery &query,
                          const QString &outDir, const QString &serviceId,
                          const FetchHooks &hooks = {});
 
+// What a catalog file holds, at a glance: how many earthquakes, over which
+// dates, and how far down its magnitudes go. The floor is the magnitude 5% of
+// the events lie at or below, rounded to 0.1: below it the list is thin or
+// empty, whatever its single smallest event. Tools that need the small
+// earthquakes (the quiet windows of a calibration, the b-value above Mc)
+// compare it with what they need. Remembered per file until its size or time
+// changes; thread-safe. `ok` is false when the file cannot be read.
+struct CatalogSummary {
+  bool ok = false;
+  int events = 0;
+  double floor = 0;    // magnitude floor (see above)
+  double smallest = 0; // the smallest magnitude in the file
+  QDate first, last;   // UTC dates of the first and last event
+};
+CatalogSummary catalogSummary(const QString &path, double utcOffsetHours = 0);
+// The same of a list in memory.
+CatalogSummary summarize(const std::vector<analysis::Event> &events);
+
 // One answer of the service in the FDSN "text" format, public for tests.
 // Lines that cannot be read are counted in `bad`.
 std::vector<analysis::Event> parseFdsnText(const QByteArray &body,
