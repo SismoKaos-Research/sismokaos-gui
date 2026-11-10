@@ -209,6 +209,7 @@ private slots:
   void cacheIsNotFooledByALookAlike();
   void twoScansShareTheCache();
   void waveScanUsesTheCache();
+  void twoWaveScansAtOnce();
   void settingsPage();
   void scanBenchmark();
 
@@ -855,6 +856,55 @@ void TstStudyScan::waveScanUsesTheCache() {
   QVERIFY2(quickLog.contains("5 from the scan cache"), qPrintable(quickLog));
   QVERIFY2(exactLog.contains("0 read now"), qPrintable(exactLog));
   QCOMPARE(jobs.jobAt(jobsBefore + 1)->state(), Job::State::Done);
+}
+
+void TstStudyScan::twoWaveScansAtOnce() {
+  // Two studies scanned at the same time by the application's own scan,
+  // both filing into one cache.
+  QTemporaryDir dir, data;
+  manyFiles(data.path(), 30);
+  ScanCache::setSharedDir(dir.filePath("cache"));
+  QSettings settings(dir.filePath("s.ini"), QSettings::IniFormat);
+  JobModel jobs;
+  StudyStore storeA(&settings), storeB(&settings);
+  AppContext ctxA, ctxB;
+  ctxA.jobs = ctxB.jobs = &jobs;
+  ctxA.settings = ctxB.settings = &settings;
+  ctxA.study = &storeA;
+  ctxB.study = &storeB;
+  WaveScan scanA(ctxA), scanB(ctxB);
+  for (StudyStore *store : {&storeA, &storeB}) {
+    QVERIFY(store->create(
+        dir.filePath(store == &storeA ? "a" : "b"), QStringLiteral("x")));
+    QVERIFY(store->update([&data](Study &s) { s.addWaveRoot(data.path()); }));
+  }
+  scanA.start();
+  scanB.start();
+  QVERIFY(scanA.running() && scanB.running());
+  const auto finished = [](const WaveScan &scan, const StudyStore &store) {
+    const WaveIndex index = WaveIndex::load(store.study().dir);
+    return !scan.running() && index.fileCount() == 30 &&
+           index.pendingCoverage() == 0;
+  };
+  QVERIFY(QTest::qWaitFor(
+      [&] { return finished(scanA, storeA) && finished(scanB, storeB); },
+      60000));
+  WaveIndex reference;
+  scanBoth(reference, "w1", data.path());
+  QCOMPARE(contents(WaveIndex::load(storeA.study().dir)), contents(reference));
+  QCOMPARE(contents(WaveIndex::load(storeB.study().dir)), contents(reference));
+  for (int row = 0; row < jobs.rowCount(); ++row)
+    QCOMPARE(jobs.jobAt(row)->state(), Job::State::Done);
+  // The cache holds each file once, whole, and serves a third study.
+  ScanCache cache(ScanCache::sharedDir());
+  QCOMPARE(cache.usage().files, 30);
+  ScanOptions options;
+  options.cache = &cache;
+  WaveIndex third;
+  QCOMPARE(scanRoot(third, "w1", data.path(), ScanPass::Identity, {}, options)
+               .cached,
+           30);
+  QCOMPARE(contents(third), contents(reference));
 }
 
 void TstStudyScan::settingsPage() {

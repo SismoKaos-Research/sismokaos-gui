@@ -5,6 +5,7 @@
 #include "core/theme.h"
 
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QEvent>
 #include <QFileDialog>
 #include <QFormLayout>
@@ -32,6 +33,7 @@ namespace {
 
 // One group box per tool.
 class ToolBox : public QGroupBox {
+  Q_DECLARE_TR_FUNCTIONS(skg::ToolBox)
 public:
   ToolBox(ToolRegistry *reg, const ToolDesc &desc, QWidget *parent)
       : QGroupBox(parent), reg_(reg), id_(desc.id) {
@@ -176,6 +178,8 @@ private:
 };
 
 class SettingsWidget : public QWidget {
+  // Without this the texts would be looked up as QWidget's and stay English.
+  Q_DECLARE_TR_FUNCTIONS(skg::SettingsWidget)
 public:
   SettingsWidget(AppContext &ctx, I18n *i18n, Theme *theme, QWidget *parent)
       : QWidget(parent), i18n_(i18n), theme_(theme), settings_(ctx.settings) {
@@ -232,7 +236,7 @@ public:
     });
     cacheLabel_ = new QLabel(scanBox_);
     cacheLabel_->setObjectName(QStringLiteral("scanCacheUsage"));
-    cacheLabel_->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    cacheLabel_->setWordWrap(true);
     clearCache_ = new QPushButton(scanBox_);
     clearCache_->setObjectName(QStringLiteral("clearScanCache"));
     connect(clearCache_, &QPushButton::clicked, this, [this] {
@@ -282,13 +286,24 @@ private:
     QString text =
         tr("Scan results kept for %n waveform file(s)", nullptr, u.files) +
         QStringLiteral(" · ") +
-        tr("%1 MB in %2")
-            .arg(double(u.bytes) / 1048576.0, 0, 'f', 1)
-            .arg(QDir::toNativeSeparators(dir));
+        tr("%1 MB").arg(double(u.bytes) / 1048576.0, 0, 'f', 1);
     if (cacheProblem_)
       text = tr("⚠ Some of it could not be removed.") + QLatin1Char(' ') + text;
     cacheLabel_->setText(text);
+    // Where they are is for the curious: a long path would widen the page.
+    cacheLabel_->setToolTip(ui::helpText(
+        cacheHelp() + QLatin1Char(' ') +
+        tr("The results are in %1.").arg(QDir::toNativeSeparators(dir))));
     clearCache_->setEnabled(u.files > 0 || u.bytes > 0);
+  }
+
+  QString cacheHelp() const {
+    return tr("The exact coverage of every waveform file that was scanned is "
+              "kept for this user, so a second study on the same data, or the "
+              "same folder added again or moved to another drive, does not "
+              "read the files again. This removes those results; the studies' "
+              "own indexes are not touched, and nothing of your data is "
+              "deleted. The files are simply read again when needed.");
   }
 
   void retranslate() {
@@ -305,13 +320,7 @@ private:
                    "sluggish during a scan; on a slow external drive a "
                    "higher number rarely helps. It takes effect with the "
                    "next scan."));
-    clearCache_->setToolTip(ui::helpText(
-        tr("The exact coverage of every waveform file that was scanned is "
-           "kept for this user, so a second study on the same data, or the "
-           "same folder added again or moved to another drive, does not "
-           "read the files again. This removes those results; the studies' "
-           "own indexes are not touched, and nothing of your data is "
-           "deleted. The files are simply read again when needed.")));
+    clearCache_->setToolTip(ui::helpText(cacheHelp()));
     cacheLabel_->setToolTip(clearCache_->toolTip());
     showCacheUsage();
     langBox_->setTitle(tr("Interface"));

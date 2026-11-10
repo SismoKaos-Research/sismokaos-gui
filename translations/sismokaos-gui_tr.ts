@@ -52,84 +52,84 @@
         <translation> gün (olaydan önce)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="169"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="178"/>
         <source>Use</source>
         <translation>Kullan</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="170"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="179"/>
         <source>Station</source>
         <translation>İstasyon</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="171"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="180"/>
         <source>Distance</source>
         <translation>Uzaklık</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="172"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="181"/>
         <source>Azimuth</source>
         <translation>Azimut</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="191"/>
-        <location filename="../src/modules/study/casedialogs.cpp" line="521"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="200"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="530"/>
         <source>%1 km</source>
         <translation>%1 km</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="231"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="240"/>
         <source>Add a case from the catalog</source>
         <translation>Katalogdan vaka ekle</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="248"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="257"/>
         <source>place contains…</source>
         <translation>yer adı içerir…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="261"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="270"/>
         <source>only near station(s): codes separated by commas</source>
         <translation>yalnızca şu istasyon(lar)a yakın: virgülle ayrılmış kodlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="269"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="278"/>
         <source>within </source>
         <translation>en çok </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="290"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="299"/>
         <source>Origin time (UTC)</source>
         <translation>Oluş zamanı (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="290"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="299"/>
         <source>M</source>
         <translation>M</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="291"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="300"/>
         <source>Depth</source>
         <translation>Derinlik</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="291"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="300"/>
         <source>Nearest station</source>
         <translation>En yakın istasyon</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="292"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="301"/>
         <source>Place</source>
         <translation>Yer</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="304"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="313"/>
         <source>stations within </source>
         <translation>şu uzaklıktaki istasyonlar: </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="270"/>
-        <location filename="../src/modules/study/casedialogs.cpp" line="305"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="279"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="314"/>
         <source> km</source>
         <translation> km</translation>
     </message>
@@ -144,178 +144,183 @@
         <translation>⚠ klasör bulunamadı: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="148"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="152"/>
+        <source>about %1 of %2 days in span — exact scan running</source>
+        <translation>süredeki %2 günün yaklaşık %1 günü — kesin tarama sürüyor</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="157"/>
         <source>found: at least %1 of %2 days in span (coverage not read yet)</source>
         <translation>bulundu: süredeki %2 günün en az %1 günü (kapsam henüz okunmadı)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="153"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="162"/>
         <source>found: %1 of %2 days in span</source>
         <translation>bulundu: süredeki %2 günün %1 günü</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="159"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="168"/>
         <source>folder found, not scanned yet</source>
         <translation>klasör bulundu, henüz taranmadı</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="160"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="169"/>
         <source>not found</source>
         <translation>bulunamadı</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="174"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="183"/>
         <source>Waveforms</source>
         <translation>Dalga formları</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="275"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="284"/>
         <source>Stations I have data for</source>
         <translation>Verisi olan istasyonlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="312"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="321"/>
         <source>Name</source>
         <translation>Ad</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="313"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="322"/>
         <source>Span</source>
         <translation>Süre</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="314"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="323"/>
         <source>Stations</source>
         <translation>İstasyonlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="319"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="328"/>
         <source>Add case</source>
         <translation>Vaka ekle</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="338"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="347"/>
         <source>Built-in list of large earthquakes: %1 to %2, %3 events of magnitude 5 and above. Enough to pick the cases; the analyses of small earthquakes need the study&apos;s own catalog.</source>
         <translation>Yerleşik büyük deprem listesi: %1 – %2, büyüklüğü 5 ve üzeri %3 olay. Vaka seçmek için yeterlidir; küçük depremlerin analizleri için çalışmanın kendi kataloğu gerekir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="343"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="352"/>
         <source>The catalog covers %1 to %2 (%3 events).</source>
         <translation>Katalog %1 – %2 arasını kapsıyor (%3 olay).</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="373"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="382"/>
         <source>Lists only earthquakes of at least this magnitude. Lower it to see smaller events; the table shows at most the 500 largest.</source>
         <translation>Yalnızca en az bu büyüklükteki depremleri listeler. Daha küçük depremleri görmek için düşürün; tablo en büyük 500 depremi gösterir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="376"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="385"/>
         <source>Lists only earthquakes whose place name in the catalog contains this text, e.g. a province.</source>
         <translation>Yalnızca katalogdaki yer adı bu metni içeren depremleri listeler, örn. bir il adı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="380"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="389"/>
         <source>Fills the filter with the stations found in the study&apos;s waveform folders. None are known yet: add a waveform folder on the Cases page first.</source>
         <translation>Süzgeci, çalışmanın dalga formu klasörlerinde bulunan istasyonlarla doldurur. Henüz bilinen istasyon yok: önce Vakalar sayfasında bir dalga formu klasörü ekleyin.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casedialogs.cpp" line="383"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="392"/>
         <source>Fills the filter with the %n station(s) found in the study&apos;s waveform folders, so only earthquakes you can study with the data you have are listed.</source>
         <translation>
             <numerusform>Süzgeci, çalışmanın dalga formu klasörlerinde bulunan %n istasyonla doldurur; böylece yalnızca elinizdeki veriyle inceleyebileceğiniz depremler listelenir.</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="388"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="397"/>
         <source>Lists only earthquakes close to at least one of these stations, e.g. the ones you have waveforms for. Type station codes of the built-in AFAD list separated by commas; codes are completed as you type. Those stations start ticked for the earthquake you pick.</source>
         <translation>Yalnızca bu istasyonlardan en az birine yakın depremleri listeler, örn. dalga formu verisine sahip olduğunuz istasyonlar. Yerleşik AFAD listesindeki istasyon kodlarını virgülle ayırarak yazın; kodlar yazarken tamamlanır. Seçtiğiniz deprem için bu istasyonlar işaretli gelir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="393"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="402"/>
         <source>How close to one of the stations above an earthquake must be to be listed, in km.</source>
         <translation>Bir depremin listelenmesi için yukarıdaki istasyonlardan birine en çok ne kadar uzak olabileceği, km.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="396"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="405"/>
         <source>The catalog&apos;s earthquakes that pass the filters, largest first. Select the one to study.</source>
         <translation>Katalogdaki depremlerden süzgeçlerden geçenler, en büyüğü başta. İncelenecek olanı seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="398"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="407"/>
         <source>The case&apos;s name in tables and figures. Filled from the earthquake&apos;s place and year; change it freely.</source>
         <translation>Vakanın tablolardaki ve şekillerdeki adı. Depremin yerinden ve yılından doldurulur; istediğiniz gibi değiştirin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="401"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="410"/>
         <source>How many days before the earthquake are studied. It can be changed later on the Cases page.</source>
         <translation>Depremden önceki kaç günün incelendiği. Sonradan Vakalar sayfasında değiştirilebilir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="403"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="412"/>
         <source>Stations of the built-in AFAD list within this distance of the epicentre are offered in the table below.</source>
         <translation>Yerleşik AFAD listesinde dış merkeze bu uzaklık içinde olan istasyonlar aşağıdaki tabloda sunulur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="407"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="416"/>
         <source>Tick the stations the earthquake is studied from. Distance and azimuth are from the epicentre to the station.</source>
         <translation>Depremin inceleneceği istasyonları işaretleyin. Uzaklık ve azimut dış merkezden istasyona doğrudur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="472"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="481"/>
         <source>not in the station list: %1</source>
         <translation>istasyon listesinde yok: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="495"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="504"/>
         <source>%1 · %2 km</source>
         <translation>%1 · %2 km</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="530"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="539"/>
         <source>%1 earthquakes, the largest %2 shown</source>
         <translation>%1 deprem, en büyük %2 tanesi gösteriliyor</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casedialogs.cpp" line="533"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="542"/>
         <source>%n earthquake(s)</source>
         <translation>
             <numerusform>%n deprem</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="590"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="599"/>
         <source>The nearest %1 of %2 stations within %3 km are shown.</source>
         <translation>%3 km içindeki %2 istasyondan en yakın %1 tanesi gösteriliyor.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casedialogs.cpp" line="594"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="603"/>
         <source>%n station(s) within %1 km.</source>
         <translation>
             <numerusform>%1 km içinde %n istasyon.</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="605"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="614"/>
         <source>Select an earthquake in the list first.</source>
         <translation>Önce listeden bir deprem seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="615"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="624"/>
         <source>⚠ This earthquake is already a case: %1.</source>
         <translation>⚠ Bu deprem zaten bir vaka: %1.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="617"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="626"/>
         <source>⚠ No station is ticked: only the Indicators recipes will run for this case.</source>
         <translation>⚠ İşaretli istasyon yok: bu vaka için yalnızca Gösterge tarifleri çalışır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="636"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="645"/>
         <source>⚠ The span%1 starts on %2, before the catalog&apos;s first event (%3). The indicators would be computed on a shorter period.</source>
         <translation>⚠ Süre%1 %2 tarihinde başlıyor; bu, kataloğun ilk olayından (%3) önce. Göstergeler daha kısa bir dönem üzerinden hesaplanır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="639"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="648"/>
         <source> plus a %1 month window</source>
         <translation> ve %1 aylık pencere</translation>
     </message>
@@ -909,508 +914,513 @@
 <context>
     <name>skg::CasesPage</name>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="386"/>
+        <location filename="../src/modules/study/casespage.cpp" line="408"/>
         <source>A study runs the same analyses on several earthquakes and puts the results side by side.
 Start a new study in an empty folder, or open an existing one.</source>
         <translation>Bir çalışma, aynı analizleri birkaç depremde çalıştırır ve sonuçları yan yana koyar.
 Boş bir klasörde yeni bir çalışma başlatın ya da var olan birini açın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="389"/>
+        <location filename="../src/modules/study/casespage.cpp" line="411"/>
         <source>New study…</source>
         <translation>Yeni çalışma…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="390"/>
+        <location filename="../src/modules/study/casespage.cpp" line="412"/>
         <source>Open study…</source>
         <translation>Çalışma aç…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="391"/>
+        <location filename="../src/modules/study/casespage.cpp" line="413"/>
         <source>Study inputs</source>
         <translation>Çalışma girdileri</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="392"/>
-        <location filename="../src/modules/study/casespage.cpp" line="955"/>
+        <location filename="../src/modules/study/casespage.cpp" line="414"/>
+        <location filename="../src/modules/study/casespage.cpp" line="981"/>
         <source>Earthquake catalog</source>
         <translation>Deprem kataloğu</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="394"/>
+        <location filename="../src/modules/study/casespage.cpp" line="416"/>
         <source>AFAD catalog export, CSV or .gz</source>
         <translation>AFAD katalog dışa aktarımı, CSV ya da .gz</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="393"/>
+        <location filename="../src/modules/study/casespage.cpp" line="415"/>
         <source>Waveforms</source>
         <translation>Dalga formları</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="395"/>
+        <location filename="../src/modules/study/casespage.cpp" line="417"/>
         <source>Use my own file…</source>
         <translation>Kendi dosyamı kullan…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="396"/>
+        <location filename="../src/modules/study/casespage.cpp" line="418"/>
         <source>Get the catalog…</source>
         <translation>Kataloğu indir…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="397"/>
+        <location filename="../src/modules/study/casespage.cpp" line="419"/>
         <source>Update…</source>
         <translation>Güncelle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="398"/>
+        <location filename="../src/modules/study/casespage.cpp" line="420"/>
         <source>Study inputs…</source>
         <translation>Çalışma girdileri…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="399"/>
+        <location filename="../src/modules/study/casespage.cpp" line="421"/>
         <source>Waveforms…</source>
         <translation>Dalga formları…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="400"/>
+        <location filename="../src/modules/study/casespage.cpp" line="422"/>
         <source>times in UTC</source>
         <translation>zamanlar UTC</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="401"/>
+        <location filename="../src/modules/study/casespage.cpp" line="423"/>
         <source>times in Turkey time (+3)</source>
         <translation>zamanlar Türkiye saatiyle (+3)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="402"/>
+        <location filename="../src/modules/study/casespage.cpp" line="424"/>
         <source>another offset…</source>
         <translation>başka bir fark…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="403"/>
+        <location filename="../src/modules/study/casespage.cpp" line="425"/>
         <source>Choose folder…</source>
         <translation>Klasör seç…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="404"/>
+        <location filename="../src/modules/study/casespage.cpp" line="426"/>
         <source>Use the study&apos;s folders</source>
         <translation>Çalışmanın klasörlerini kullan</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="405"/>
+        <location filename="../src/modules/study/casespage.cpp" line="427"/>
         <source>Add from catalog…</source>
         <translation>Katalogdan ekle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="406"/>
+        <location filename="../src/modules/study/casespage.cpp" line="428"/>
         <source>Add reference date…</source>
         <translation>Referans tarih ekle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="407"/>
+        <location filename="../src/modules/study/casespage.cpp" line="429"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="408"/>
+        <location filename="../src/modules/study/casespage.cpp" line="430"/>
         <source>Station coverage…</source>
         <translation>İstasyon kapsamı…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="410"/>
+        <location filename="../src/modules/study/casespage.cpp" line="432"/>
         <source>A map of what your stations cover: the area within a distance of the stations you have waveforms of (or of the stations ticked in the cases), and which earthquakes of the catalog fall inside it.</source>
         <translation>İstasyonlarınızın neyi kapsadığını gösteren harita: dalga formu elinizde olan (ya da vakalarda işaretli) istasyonlara belirli uzaklıktaki alan ve katalogdaki hangi depremlerin bu alana düştüğü.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="414"/>
+        <location filename="../src/modules/study/casespage.cpp" line="436"/>
         <source>Case</source>
         <translation>Vaka</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="414"/>
+        <location filename="../src/modules/study/casespage.cpp" line="436"/>
         <source>Type</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="415"/>
+        <location filename="../src/modules/study/casespage.cpp" line="437"/>
         <source>Origin time (UTC)</source>
         <translation>Oluş zamanı (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="415"/>
+        <location filename="../src/modules/study/casespage.cpp" line="437"/>
         <source>M</source>
         <translation>M</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="416"/>
+        <location filename="../src/modules/study/casespage.cpp" line="438"/>
         <source>Depth</source>
         <translation>Derinlik</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="416"/>
+        <location filename="../src/modules/study/casespage.cpp" line="438"/>
         <source>Stations</source>
         <translation>İstasyonlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="416"/>
-        <location filename="../src/modules/study/casespage.cpp" line="426"/>
+        <location filename="../src/modules/study/casespage.cpp" line="438"/>
+        <location filename="../src/modules/study/casespage.cpp" line="448"/>
         <source>Span</source>
         <translation>Süre</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="418"/>
+        <location filename="../src/modules/study/casespage.cpp" line="440"/>
         <source>No cases yet.
 Add from catalog… picks an earthquake, from the built-in list or your own catalog.</source>
         <translation>Henüz vaka yok.
 Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem seçer.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="430"/>
+        <location filename="../src/modules/study/casespage.cpp" line="452"/>
         <source>The earthquake catalog of this study. Without a file of its own the study uses the built-in list of large earthquakes, which is enough to pick cases. The Indicators and the Features calibration count small earthquakes and need a full catalog: an AFAD export, or a download.</source>
         <translation>Bu çalışmanın deprem kataloğu. Kendi dosyası yoksa çalışma, vaka seçmek için yeterli olan yerleşik büyük deprem listesini kullanır. Göstergeler ve Öznitelik kalibrasyonu küçük depremleri sayar ve tam bir katalog ister: bir AFAD dışa aktarımı ya da bir indirme.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="436"/>
+        <location filename="../src/modules/study/casespage.cpp" line="458"/>
         <source>Chooses a catalog file of your own: an AFAD export as CSV, plain or .gz. Cases are picked from it and the analyses read their events from it.</source>
         <translation>Kendi katalog dosyanızı seçer: CSV olarak bir AFAD dışa aktarımı, düz ya da .gz. Vakalar bu dosyadan seçilir, analizler olaylarını buradan okur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="440"/>
+        <location filename="../src/modules/study/casespage.cpp" line="462"/>
         <source>Downloads the earthquakes around this study&apos;s cases from an FDSN event service into the study folder and makes that file the study&apos;s catalog.</source>
         <translation>Bu çalışmanın vakalarının çevresindeki depremleri bir FDSN olay servisinden çalışma klasörüne indirir ve o dosyayı çalışmanın kataloğu yapar.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="444"/>
+        <location filename="../src/modules/study/casespage.cpp" line="466"/>
         <source>Brings the built-in lists up to date over the network: the stations from the AFAD portal and the large earthquakes from USGS.</source>
         <translation>Yerleşik listeleri ağ üzerinden günceller: istasyonlar AFAD portalından, büyük depremler USGS&apos;ten.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="448"/>
+        <location filename="../src/modules/study/casespage.cpp" line="470"/>
         <source>The catalog and the waveform folders of the study in one dialog, as when the study was created.</source>
         <translation>Çalışmanın kataloğu ve dalga formu klasörleri, çalışma oluşturulurken olduğu gibi tek pencerede.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="455"/>
+        <location filename="../src/modules/study/casespage.cpp" line="477"/>
         <source>For the Features recipes: the folders holding the waveforms you already have, and what was found in them. The station of each file is read from its miniSEED headers, so any folder layout works. Not needed for Indicators.</source>
         <translation>Öznitelik tarifleri için: elinizdeki dalga formlarını tutan klasörler ve içlerinde bulunanlar. Her dosyanın istasyonu miniSEED başlıklarından okunur, bu yüzden her klasör düzeni çalışır. Göstergeler için gerekmez.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="461"/>
+        <location filename="../src/modules/study/casespage.cpp" line="483"/>
         <source>For the selected, ticked station: use the files of one folder you choose, whatever the study&apos;s waveform folders hold. For data whose headers carry a different station code.</source>
         <translation>Seçili ve işaretli istasyon için: çalışmanın dalga formu klasörlerinde ne olursa olsun, seçtiğiniz tek bir klasörün dosyalarını kullanır. Başlıklarında farklı bir istasyon kodu taşıyan veriler içindir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="465"/>
+        <location filename="../src/modules/study/casespage.cpp" line="487"/>
         <source>Drops the folder chosen for the selected station, so its files are looked up in the study&apos;s waveform folders again.</source>
         <translation>Seçili istasyon için seçilen klasörü bırakır; dosyaları yeniden çalışmanın dalga formu klasörlerinde aranır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="468"/>
+        <location filename="../src/modules/study/casespage.cpp" line="490"/>
         <source>Step 2: opens the Data page with this case&apos;s stations and span filled in, to download what is missing.</source>
         <translation>Adım 2: eksik olanı indirmek için Veri sayfasını bu vakanın istasyonları ve süresi doldurulmuş olarak açar.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="471"/>
+        <location filename="../src/modules/study/casespage.cpp" line="493"/>
         <source>Step 3: goes to the Runs page, where recipes are made and run on the cases. Features recipes need the waveforms first; Indicators recipes do not.</source>
         <translation>Adım 3: tariflerin oluşturulup vakalar üzerinde çalıştırıldığı Çalıştırmalar sayfasına gider. Öznitelik tarifleri önce dalga formlarını ister; Gösterge tarifleri istemez.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="487"/>
+        <location filename="../src/modules/study/casespage.cpp" line="509"/>
         <source>Tick the stations this case is studied from. Each ticked station is a row of its own on the Runs and Compare pages. Waveforms says how many days of the span the study&apos;s waveform folders hold for the station.</source>
         <translation>Bu vakanın incelendiği istasyonları işaretleyin. İşaretli her istasyon Çalıştırmalar ve Karşılaştır sayfalarında ayrı bir satırdır. Dalga formları sütunu, çalışmanın klasörlerinin istasyon için sürenin kaç gününü tuttuğunu söyler.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="694"/>
+        <location filename="../src/modules/study/casespage.cpp" line="716"/>
         <source>⚠ No station is ticked: only the Indicators recipes run for this case. Tick the stations it is studied from.</source>
         <translation>⚠ İşaretli istasyon yok: bu vaka için yalnızca Gösterge tarifleri çalışır. Vakanın incelendiği istasyonları işaretleyin.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="697"/>
+        <location filename="../src/modules/study/casespage.cpp" line="719"/>
         <source>⚠ %n ticked station(s) have no waveforms in the study&apos;s folders. Add the folder under Waveforms…, or get the data.</source>
         <translation>
             <numerusform>⚠ İşaretli %n istasyonun çalışmanın klasörlerinde dalga formu yok. Klasörü Dalga formları… altından ekleyin ya da veriyi indirin.</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="754"/>
+        <location filename="../src/modules/study/casespage.cpp" line="776"/>
         <source>Next: get waveforms →</source>
         <translation>Sonraki: dalga formlarını al →</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="755"/>
+        <location filename="../src/modules/study/casespage.cpp" line="777"/>
         <source>Get more waveforms…</source>
         <translation>Daha fazla dalga formu al…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="756"/>
+        <location filename="../src/modules/study/casespage.cpp" line="778"/>
         <source>Go on to recipes →</source>
         <translation>Tariflere geç →</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="757"/>
+        <location filename="../src/modules/study/casespage.cpp" line="779"/>
         <source>Next: recipes →</source>
         <translation>Sonraki: tarifler →</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="793"/>
+        <location filename="../src/modules/study/casespage.cpp" line="815"/>
         <source>No waveform folder yet. Add the folder that holds your miniSEED files, or download with the Data page.</source>
         <translation>Henüz dalga formu klasörü yok. miniSEED dosyalarınızı tutan klasörü ekleyin ya da Veri sayfasından indirin.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="801"/>
+        <location filename="../src/modules/study/casespage.cpp" line="823"/>
         <source>%n folder(s)</source>
         <translation>
             <numerusform>%n klasör</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="803"/>
+        <location filename="../src/modules/study/casespage.cpp" line="825"/>
         <source>%n station(s) found</source>
         <translation>
             <numerusform>%n istasyon bulundu</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="806"/>
+        <location filename="../src/modules/study/casespage.cpp" line="828"/>
         <source>⚠ %n folder(s) not found (moved?)</source>
         <translation>
             <numerusform>⚠ %n klasör bulunamadı (taşındı mı?)</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="809"/>
+        <location filename="../src/modules/study/casespage.cpp" line="831"/>
         <source>%n file(s) skipped</source>
         <translation>
             <numerusform>%n dosya atlandı</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="813"/>
+        <location filename="../src/modules/study/casespage.cpp" line="837"/>
+        <source>coverage estimated from the file names; not read exactly yet</source>
+        <translation>kapsam dosya adlarından tahmin edildi; henüz kesin olarak okunmadı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="839"/>
         <source>coverage not read yet</source>
         <translation>kapsam henüz okunmadı</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="839"/>
+        <location filename="../src/modules/study/casespage.cpp" line="865"/>
         <source>⚠ The study could not be saved, so the change was not kept: %1</source>
         <translation>⚠ Çalışma kaydedilemedi, bu yüzden değişiklik tutulmadı: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="887"/>
+        <location filename="../src/modules/study/casespage.cpp" line="913"/>
         <source>Change the case</source>
         <translation>Vakayı değiştir</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="888"/>
+        <location filename="../src/modules/study/casespage.cpp" line="914"/>
         <source>This change makes %n finished run(s) of this case stale; they would have to be run again. Change it anyway?</source>
         <translation>
             <numerusform>Bu değişiklik, bu vakanın bitmiş %n çalıştırmasını eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="916"/>
+        <location filename="../src/modules/study/casespage.cpp" line="942"/>
         <source>⚠ The earthquake catalog could not be read: %1</source>
         <translation>⚠ Deprem kataloğu okunamadı: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="968"/>
-        <location filename="../src/modules/study/casespage.cpp" line="989"/>
+        <location filename="../src/modules/study/casespage.cpp" line="994"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1015"/>
         <source>Catalog time</source>
         <translation>Katalog zamanı</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="969"/>
+        <location filename="../src/modules/study/casespage.cpp" line="995"/>
         <source>Hours the catalog&apos;s times are ahead of UTC:</source>
         <translation>Katalog zamanlarının UTC&apos;den kaç saat ileride olduğu:</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="990"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1016"/>
         <source>The times of the %n earthquake case(s) were read from the catalog with the old setting. They are read again with the new one, which moves them by %1 hours and makes their finished runs stale. Change it?</source>
         <translation>
             <numerusform>%n deprem vakasının zamanı katalogdan eski ayarla okunmuştu. Yeni ayarla yeniden okunurlar; bu, zamanları %1 saat kaydırır ve bitmiş çalıştırmalarını eskitir. Değiştirilsin mi?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="1028"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1054"/>
         <source>⚠ %n earthquake case(s) were not found in the catalog at the shifted time and keep the time they had. Check them against the catalog.</source>
         <translation>
             <numerusform>⚠ %n deprem vakası kaydırılmış zamanda katalogda bulunamadı ve eski zamanını koruyor. Bunları katalogla karşılaştırın.</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1062"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1088"/>
         <source>Downloading the catalog; progress is in the Jobs panel.</source>
         <translation>Katalog indiriliyor; ilerleme İşler panelinde.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1068"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1094"/>
         <source>catalog refresh</source>
         <translation>katalog güncelleme</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1069"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1095"/>
         <source>stations from the portal, M5+ events from USGS</source>
         <translation>istasyonlar portaldan, M5+ olaylar USGS&apos;ten</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1095"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1121"/>
         <source>⚠ The built-in lists could not be updated: %1</source>
         <translation>⚠ Yerleşik listeler güncellenemedi: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1108"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1134"/>
         <source>Folder with the waveforms of %1</source>
         <translation>%1 istasyonunun dalga formlarını tutan klasör</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="421"/>
+        <location filename="../src/modules/study/casespage.cpp" line="443"/>
         <source>STATIONS NEAR THE EPICENTRE</source>
         <translation>DIŞ MERKEZE YAKIN İSTASYONLAR</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="422"/>
+        <location filename="../src/modules/study/casespage.cpp" line="444"/>
         <source>Catalog zone</source>
         <translation>Katalog bölgesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="423"/>
+        <location filename="../src/modules/study/casespage.cpp" line="445"/>
         <source>Circle around the epicentre, radius</source>
         <translation>Dış merkez çevresinde daire, yarıçap</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="424"/>
+        <location filename="../src/modules/study/casespage.cpp" line="446"/>
         <source>Fault zone (East Anatolian), buffer</source>
         <translation>Fay zonu (Doğu Anadolu), tampon</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="425"/>
+        <location filename="../src/modules/study/casespage.cpp" line="447"/>
         <source> km</source>
         <translation> km</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="427"/>
+        <location filename="../src/modules/study/casespage.cpp" line="449"/>
         <source> days</source>
         <translation> gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="451"/>
+        <location filename="../src/modules/study/casespage.cpp" line="473"/>
         <source>Whether the times in the catalog file are UTC or Turkey time (UTC+3). AFAD exports are UTC. A wrong choice shifts every event by three hours.</source>
         <translation>Katalog dosyasındaki zamanların UTC mi yoksa Türkiye saati mi (UTC+3) olduğu. AFAD dışa aktarımları UTC&apos;dir. Yanlış seçim her depremi üç saat kaydırır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="476"/>
-        <location filename="../src/modules/study/casespage.cpp" line="573"/>
+        <location filename="../src/modules/study/casespage.cpp" line="498"/>
+        <location filename="../src/modules/study/casespage.cpp" line="595"/>
         <source>Adds a case by picking an earthquake from the study&apos;s catalog and ticking the stations near it.</source>
         <translation>Çalışmanın kataloğundan bir deprem seçip yakınındaki istasyonları işaretleyerek vaka ekler.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="479"/>
+        <location filename="../src/modules/study/casespage.cpp" line="501"/>
         <source>Adds a case with no earthquake: a date at a place, studied the same way so it can be read beside the earthquakes.</source>
         <translation>Depremsiz bir vaka ekler: bir yerdeki bir tarih; depremlerle yan yana okunabilsin diye aynı biçimde incelenir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="482"/>
+        <location filename="../src/modules/study/casespage.cpp" line="504"/>
         <source>Takes the selected case out of the study. Its result folders stay on disk.</source>
         <translation>Seçili vakayı çalışmadan çıkarır. Sonuç klasörleri diskte kalır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="484"/>
+        <location filename="../src/modules/study/casespage.cpp" line="506"/>
         <source>The case&apos;s name, as shown in the tables and the figures. Changes are saved at once.</source>
         <translation>Vakanın tablolarda ve şekillerde görünen adı. Değişiklikler hemen kaydedilir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="492"/>
+        <location filename="../src/modules/study/casespage.cpp" line="514"/>
         <source>Which catalog events count for this case in the Indicators recipes: those within a circle around the epicentre, or those within a buffer on both sides of the shipped East Anatolian fault traces.</source>
         <translation>Göstergeler tariflerinde bu vaka için hangi katalog depremlerinin sayılacağı: dış merkez çevresindeki bir dairenin içindekiler ya da uygulamayla gelen Doğu Anadolu fay izlerinin iki yanındaki bir tamponun içindekiler.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="496"/>
+        <location filename="../src/modules/study/casespage.cpp" line="518"/>
         <source>Radius of the circle, or width of the buffer on each side of the fault traces, in km. Larger takes in more events.</source>
         <translation>Dairenin yarıçapı ya da fay izlerinin her iki yanındaki tamponun genişliği, km. Büyüdükçe daha çok deprem girer.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="500"/>
+        <location filename="../src/modules/study/casespage.cpp" line="522"/>
         <source>How many days before the event are studied. The Indicators recipes use the catalog from one window before the span up to, but not including, the event. Changing it marks the case&apos;s finished runs stale.</source>
         <translation>Olaydan önceki kaç günün incelendiği. Göstergeler tarifleri, kataloğu süreden bir pencere öncesinden olaya kadar (olay hariç) kullanır. Değiştirilirse vakanın bitmiş çalıştırmaları eskimiş sayılır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="546"/>
+        <location filename="../src/modules/study/casespage.cpp" line="568"/>
         <source>Built-in list: M ≥ %1 since %2, updated %3</source>
         <translation>Yerleşik liste: %2 yılından beri M ≥ %1, güncelleme %3</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="547"/>
+        <location filename="../src/modules/study/casespage.cpp" line="569"/>
         <source>Built-in list: M ≥ %1 since %2, as shipped (to %3)</source>
         <translation>Yerleşik liste: %2 yılından beri M ≥ %1, uygulamayla gelen (%3 tarihine kadar)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="566"/>
+        <location filename="../src/modules/study/casespage.cpp" line="588"/>
         <source>The catalog file is not where the study says it is: %1. Choose it again above.</source>
         <translation>Katalog dosyası çalışmanın gösterdiği yerde değil: %1. Yukarıdan yeniden seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="570"/>
+        <location filename="../src/modules/study/casespage.cpp" line="592"/>
         <source>Adds a case by picking an earthquake from the built-in list of large earthquakes and ticking the stations near it.</source>
         <translation>Yerleşik büyük deprem listesinden bir deprem seçip yakınındaki istasyonları işaretleyerek vaka ekler.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="582"/>
+        <location filename="../src/modules/study/casespage.cpp" line="604"/>
         <source>times in UTC%1%2</source>
         <translation>zamanlar UTC%1%2</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="604"/>
+        <location filename="../src/modules/study/casespage.cpp" line="626"/>
         <source>reference</source>
         <translation>referans</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="604"/>
+        <location filename="../src/modules/study/casespage.cpp" line="626"/>
         <source>earthquake</source>
         <translation>deprem</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="609"/>
+        <location filename="../src/modules/study/casespage.cpp" line="631"/>
         <source>%1 km</source>
         <translation>%1 km</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="612"/>
+        <location filename="../src/modules/study/casespage.cpp" line="634"/>
         <source>%n day(s)</source>
         <translation>
             <numerusform>%n gün</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="627"/>
+        <location filename="../src/modules/study/casespage.cpp" line="649"/>
         <source>%1 cases · %2 station rows</source>
         <translation>%1 vaka · %2 istasyon satırı</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="654"/>
+        <location filename="../src/modules/study/casespage.cpp" line="676"/>
         <source> UTC</source>
         <translation> UTC</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="659"/>
+        <location filename="../src/modules/study/casespage.cpp" line="681"/>
         <source>Reference date · %1 · %2</source>
         <translation>Referans tarih · %1 · %2</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="660"/>
+        <location filename="../src/modules/study/casespage.cpp" line="682"/>
         <source>M %1 · %2 · depth %3 km · %4%5</source>
         <translation>M %1 · %2 · derinlik %3 km · %4%5</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="944"/>
+        <location filename="../src/modules/study/casespage.cpp" line="970"/>
         <source>Remove case</source>
         <translation>Vakayı kaldır</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="945"/>
+        <location filename="../src/modules/study/casespage.cpp" line="971"/>
         <source>Remove %1 from the study? Its result folders stay on disk.</source>
         <translation>%1 çalışmadan kaldırılsın mı? Sonuç klasörleri diskte kalır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="956"/>
+        <location filename="../src/modules/study/casespage.cpp" line="982"/>
         <source>AFAD catalog (*.csv *.gz);;All files (*)</source>
         <translation>AFAD kataloğu (*.csv *.gz);;Tüm dosyalar (*)</translation>
     </message>
@@ -5776,83 +5786,83 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
 <context>
     <name>skg::ReferenceDateDialog</name>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="711"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="720"/>
         <source>Add a reference date</source>
         <translation>Referans tarih ekle</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="713"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="722"/>
         <source>A reference date is a case with no earthquake: the same recipes run on the span before it, so it can be read beside the earthquakes.</source>
         <translation>Referans tarih, depremi olmayan bir vakadır: aynı tarifler bu tarihten önceki sürede çalıştırılır, böylece depremlerin yanında okunabilir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="718"/>
-        <location filename="../src/modules/study/casedialogs.cpp" line="784"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="727"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="793"/>
         <source>Reference</source>
         <translation>Referans</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="727"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="736"/>
         <source>the place and stations of %1</source>
         <translation>%1 vakasının yeri ve istasyonları</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="728"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="737"/>
         <source>these coordinates, no stations yet</source>
         <translation>bu koordinatlar, henüz istasyon yok</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="750"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="759"/>
         <source>Name</source>
         <translation>Ad</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="751"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="760"/>
         <source>Date (UTC)</source>
         <translation>Tarih (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="752"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="761"/>
         <source>Place</source>
         <translation>Yer</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="753"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="762"/>
         <source>Latitude, longitude</source>
         <translation>Enlem, boylam</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="754"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="763"/>
         <source>Span</source>
         <translation>Süre</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="757"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="766"/>
         <source>Add case</source>
         <translation>Vaka ekle</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="766"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="775"/>
         <source>The case&apos;s name in tables and figures.</source>
         <translation>Vakanın tablolardaki ve şekillerdeki adı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="767"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="776"/>
         <source>The date and time (UTC) that takes the place of an earthquake&apos;s origin time: days are counted back from it.</source>
         <translation>Bir depremin oluş zamanının yerini tutan tarih ve saat (UTC): günler bundan geriye doğru sayılır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="770"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="779"/>
         <source>Where the reference date is studied: the epicentre, zone and stations of an existing case, or coordinates of its own with stations ticked later on the Cases page.</source>
         <translation>Referans tarihin nerede incelendiği: var olan bir vakanın dış merkezi, bölgesi ve istasyonları ya da kendi koordinatları; istasyonlar sonra Vakalar sayfasında işaretlenir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="774"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="783"/>
         <source>Latitude and longitude in degrees (north and east positive) of the place, when it is not taken from an existing case.</source>
         <translation>Var olan bir vakadan alınmıyorsa yerin derece cinsinden enlemi ve boylamı (kuzey ve doğu pozitif).</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="777"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="786"/>
         <source>How many days before the date are studied. It can be changed later on the Cases page.</source>
         <translation>Tarihten önceki kaç günün incelendiği. Sonradan Vakalar sayfasında değiştirilebilir.</translation>
     </message>
@@ -7578,42 +7588,99 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
 <context>
     <name>skg::SettingsWidget</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="229"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="281"/>
+        <source>Scan results are not kept between studies in this session.</source>
+        <translation>Bu oturumda tarama sonuçları çalışmalar arasında saklanmıyor.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="287"/>
+        <source>Scan results kept for %n waveform file(s)</source>
+        <translation>
+            <numerusform>%n dalga formu dosyasının tarama sonucu saklanıyor</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="291"/>
+        <source>⚠ Some of it could not be removed.</source>
+        <translation>⚠ Bir kısmı silinemedi.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="310"/>
+        <source>Waveform scan</source>
+        <translation>Dalga formu taraması</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="311"/>
+        <source>Files read at once</source>
+        <translation>Aynı anda okunan dosya</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="313"/>
+        <source>Automatic (%1)</source>
+        <translation>Otomatik (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="314"/>
+        <source>Clear scan cache</source>
+        <translation>Tarama önbelleğini temizle</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="316"/>
+        <source>How many waveform files the exact coverage scan reads at the same time. Automatic leaves two processor cores free and uses at most six, since beyond that the disk is usually the limit. Lower it if the computer gets sluggish during a scan; on a slow external drive a higher number rarely helps. It takes effect with the next scan.</source>
+        <translation>Kesin kapsam taramasının aynı anda kaç dalga formu dosyası okuduğu. Otomatik seçenek iki işlemci çekirdeğini boş bırakır ve en çok altı dosya okur; bunun ötesinde genellikle disk sınırlayıcı olur. Tarama sırasında bilgisayar ağırlaşıyorsa sayıyı düşürün; yavaş bir harici diskte daha yüksek bir sayı nadiren işe yarar. Bir sonraki taramada geçerli olur.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="301"/>
+        <source>The exact coverage of every waveform file that was scanned is kept for this user, so a second study on the same data, or the same folder added again or moved to another drive, does not read the files again. This removes those results; the studies&apos; own indexes are not touched, and nothing of your data is deleted. The files are simply read again when needed.</source>
+        <translation>Taranan her dalga formu dosyasının kesin kapsamı bu kullanıcı için saklanır; böylece aynı veriyle ikinci bir çalışma, yeniden eklenen ya da başka bir diske taşınan aynı klasör, dosyaları yeniden okumaz. Bu düğme o sonuçları siler; çalışmaların kendi dizinlerine dokunulmaz ve verinizden hiçbir şey silinmez. Dosyalar gerektiğinde yeniden okunur.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="289"/>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="296"/>
+        <source>The results are in %1.</source>
+        <translation>Sonuçlar şurada: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="326"/>
         <source>Interface</source>
         <translation>Arayüz</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="230"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="327"/>
         <source>Language</source>
         <translation>Dil</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="231"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="328"/>
         <source>Theme</source>
         <translation>Tema</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="232"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="329"/>
         <source>Follow the system</source>
         <translation>Sistemi izle</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="233"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="330"/>
         <source>Light</source>
         <translation>Açık</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="234"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="331"/>
         <source>Dark</source>
         <translation>Koyu</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="236"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="333"/>
         <source>The language of the application. It changes at once.</source>
         <translation>Uygulamanın dili. Hemen değişir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="239"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="336"/>
         <source>Light or dark colours, or whichever the system is set to.</source>
         <translation>Açık ya da koyu renkler veya sistemin ayarı hangisiyse o.</translation>
     </message>
@@ -8494,67 +8561,67 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
 <context>
     <name>skg::ToolBox</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="75"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="83"/>
         <source>Executable of %1</source>
         <translation>%1 çalıştırılabilir dosyası</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="84"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="92"/>
         <source>Project directory of %1</source>
         <translation>%1 proje dizini</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="93"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="101"/>
         <source>asking %1 for its version...</source>
         <translation>%1 sürümü soruluyor...</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="116"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="124"/>
         <source>Check</source>
         <translation>Denetle</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="117"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="125"/>
         <source>executable (optional; found on PATH or in the project&apos;s .venv otherwise)</source>
         <translation>çalıştırılabilir dosya (isteğe bağlı; yoksa PATH&apos;te veya projenin .venv&apos;inde aranır)</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="120"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="128"/>
         <source>project directory (the checkout with pyproject.toml)</source>
         <translation>proje dizini (pyproject.toml içeren kopya)</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="121"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="129"/>
         <source>Executable</source>
         <translation>Çalıştırılabilir</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="122"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="130"/>
         <source>Project</source>
         <translation>Proje</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="123"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="131"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="125"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="133"/>
         <source>Optional: the tool&apos;s command-line executable, for running the original tool beside the application. Empty looks on the PATH and in the project&apos;s .venv. Nothing in the other pages needs it.</source>
         <translation>İsteğe bağlı: özgün aracı uygulamanın yanında çalıştırmak için aracın komut satırı çalıştırılabilir dosyası. Boş bırakılırsa PATH&apos;te ve projenin .venv klasöründe aranır. Diğer sayfalarda hiçbir şey buna gerek duymaz.</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="130"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="138"/>
         <source>Optional: the tool&apos;s project directory, a checkout with its pyproject.toml. Its .venv is searched for the executable.</source>
         <translation>İsteğe bağlı: aracın proje dizini, yani pyproject.toml dosyasını içeren çalışma kopyası. Çalıştırılabilir dosya bunun .venv klasöründe aranır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="134"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="142"/>
         <source>Asks the tool for its version to see whether it can be run.</source>
         <translation>Çalıştırılıp çalıştırılamadığını görmek için araca sürümünü sorar.</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="145"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="153"/>
         <source>the configured path is not an executable file</source>
         <translation>ayarlanan yol çalıştırılabilir bir dosya değil</translation>
     </message>
@@ -8708,52 +8775,112 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
 <context>
     <name>skg::WaveScan</name>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="66"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="110"/>
         <source>Waveforms: which stations</source>
         <translation>Dalga formları: hangi istasyonlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="66"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="110"/>
         <source>Waveforms: coverage</source>
         <translation>Dalga formları: kapsam</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="68"/>
-        <source>first record of every file in the waveform folders</source>
-        <translation>dalga formu klasörlerindeki her dosyanın ilk kaydı</translation>
+        <location filename="../src/modules/study/waveforms.cpp" line="81"/>
+        <source>%1 GB</source>
+        <translation>%1 GB</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="69"/>
-        <source>every record header in the waveform folders</source>
-        <translation>dalga formu klasörlerindeki bütün kayıt başlıkları</translation>
+        <location filename="../src/modules/study/waveforms.cpp" line="82"/>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="115"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="88"/>
+        <source>%1 s</source>
+        <translation>%1 sn</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="90"/>
+        <source>%1 min</source>
+        <translation>%1 dk</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="91"/>
+        <source>%1 h %2 min</source>
+        <translation>%1 sa %2 dk</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="112"/>
+        <source>the names and the first record of every file in the waveform folders</source>
+        <translation>dalga formu klasörlerindeki her dosyanın adı ve ilk kaydı</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/waveforms.cpp" line="114"/>
+        <source>every record header in the waveform folders, %n file(s) at a time</source>
+        <translation>
+            <numerusform>dalga formu klasörlerindeki her kayıt başlığı, aynı anda %n dosya</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="144"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="169"/>
+        <source>%1 of %2 files</source>
+        <translation>%1 / %2 dosya</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="159"/>
+        <source>%1 of %2</source>
+        <translation>%1 / %2</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="163"/>
+        <source>%1/s</source>
+        <translation>%1/sn</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="166"/>
+        <source>about %1 left</source>
+        <translation>yaklaşık %1 kaldı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="203"/>
         <source>Looking for stations…</source>
         <translation>İstasyonlar aranıyor…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="115"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="203"/>
         <source>Reading coverage…</source>
         <translation>Kapsam okunuyor…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="119"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="210"/>
+        <source>%1%</source>
+        <translation>%%1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="212"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="216"/>
         <source>Looking for stations: %1</source>
         <translation>İstasyonlar aranıyor: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="120"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="214"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="217"/>
         <source>Reading coverage: %1</source>
         <translation>Kapsam okunuyor: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="137"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="215"/>
+        <source>Reading coverage: %1, %2</source>
+        <translation>Kapsam okunuyor: %1, %2</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="239"/>
         <source>The scan was stopped; what it had read is kept.</source>
         <translation>Tarama durduruldu; okunanlar korundu.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="138"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="240"/>
         <source>The scan ended with errors; see the Jobs panel.</source>
         <translation>Tarama hatalarla bitti; İşler paneline bakın.</translation>
     </message>
@@ -8761,321 +8888,334 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
 <context>
     <name>skg::WaveformsDialog</name>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="157"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="260"/>
         <source>Waveforms of this study</source>
         <translation>Bu çalışmanın dalga formları</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="159"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="262"/>
         <source>Folders holding the waveforms you already have. Any layout works: the station, the channels and the times are read from the miniSEED headers, plain files or zip archives, not from folder or file names. Other files are listed as skipped.</source>
         <translation>Elinizdeki dalga formlarını tutan klasörler. Her düzen çalışır: istasyon, kanallar ve zamanlar klasör ya da dosya adlarından değil, miniSEED başlıklarından okunur; düz dosyalar ya da zip arşivleri. Diğer dosyalar atlanmış olarak listelenir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="171"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="274"/>
         <source>Add folders…</source>
         <translation>Klasör ekle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="173"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="276"/>
         <source>Moved…</source>
         <translation>Taşındı…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="174"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="277"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="175"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="278"/>
         <source>Scan again</source>
         <translation>Yeniden tara</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="176"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="279"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="197"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="300"/>
         <source>Station</source>
         <translation>İstasyon</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="197"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="300"/>
         <source>Network</source>
         <translation>Ağ</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="197"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="300"/>
         <source>Channels</source>
         <translation>Kanallar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="197"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="300"/>
         <source>Rate</source>
         <translation>Örnekleme</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="198"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="301"/>
         <source>First day</source>
         <translation>İlk gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="198"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="301"/>
         <source>Last day</source>
         <translation>Son gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="198"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="301"/>
         <source>Days with data</source>
         <translation>Veri olan gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="198"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="301"/>
         <source>Files</source>
         <translation>Dosya</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="199"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="302"/>
         <source>Coordinates</source>
         <translation>Koordinatlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="199"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="302"/>
         <source>Notes</source>
         <translation>Notlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="209"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="312"/>
         <source>No stations yet.
 Add the folder that holds your miniSEED files, or drop it here.</source>
         <translation>Henüz istasyon yok.
 miniSEED dosyalarınızı tutan klasörü ekleyin ya da buraya bırakın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="215"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="318"/>
         <source>Type coordinates…</source>
         <translation>Koordinat gir…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="216"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="319"/>
         <source>Load StationXML…</source>
         <translation>StationXML yükle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="218"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="321"/>
         <source>Find earthquakes near these…</source>
         <translation>Bunlara yakın depremleri bul…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="224"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="327"/>
         <source>Station coverage…</source>
         <translation>İstasyon kapsamı…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="227"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="330"/>
         <source>A map of what the selected stations cover (all of them when none is selected): the area within a distance of them and the earthquakes of the catalog that fall inside it.</source>
         <translation>Seçili istasyonların (hiçbiri seçili değilse hepsinin) neyi kapsadığını gösteren harita: onlara belirli uzaklıktaki alan ve katalogdaki bu alana düşen depremler.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="248"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="351"/>
         <source>The waveform folders of this study. Each is scanned through all its sub-folders, except those whose name starts with _ or a dot.</source>
         <translation>Bu çalışmanın dalga formu klasörleri. Her biri, adı _ ya da nokta ile başlayanlar dışında bütün alt klasörleriyle taranır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="251"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="354"/>
         <source>Adds one or several folders of miniSEED files (plain or zipped) and scans them. Hold Ctrl or Shift to pick more than one. A folder of station folders (stations/CODE/…) is added once, as a whole; folders can also be dropped on this window.</source>
         <translation>Bir ya da birkaç miniSEED klasörü (düz ya da zip) ekler ve tarar. Birden fazlası için Ctrl ya da Shift&apos;i basılı tutun. İstasyon klasörlerini tutan bir klasör (stations/KOD/…) bir kez, bütün olarak eklenir; klasörler bu pencereye de bırakılabilir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="256"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="359"/>
         <source>Goes on to adding a case, listing only the earthquakes close to the stations selected in the table (all stations when none is selected).</source>
         <translation>Vaka eklemeye geçer; yalnızca tabloda seçili istasyonlara (hiçbiri seçili değilse hepsine) yakın depremler listelenir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="260"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="363"/>
         <source>Tells the study that the selected folder now lives somewhere else, for example on another drive. Files that did not change are not read again.</source>
         <translation>Çalışmaya, seçili klasörün artık başka bir yerde, örneğin başka bir sürücüde olduğunu bildirir. Değişmeyen dosyalar yeniden okunmaz.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="264"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="367"/>
         <source>Takes the selected folder out of the study. Nothing on disk is deleted.</source>
         <translation>Seçili klasörü çalışmadan çıkarır. Diskten hiçbir şey silinmez.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="267"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="370"/>
         <source>Looks at the folders again. Only new or changed files are read.</source>
         <translation>Klasörlere yeniden bakar. Yalnızca yeni ya da değişmiş dosyalar okunur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="269"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="372"/>
         <source>Stops the scan. What it has read so far is kept.</source>
         <translation>Taramayı durdurur. O ana kadar okunanlar korunur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="271"/>
-        <source>One row per station found in the files. Days with data is exact once the coverage has been read; before that it shows a dash.</source>
-        <translation>Dosyalarda bulunan her istasyon için bir satır. Veri olan gün, kapsam okunduktan sonra kesindir; öncesinde çizgi gösterir.</translation>
+        <location filename="../src/modules/study/waveforms.cpp" line="374"/>
+        <source>One row per station found in the files. Last day and Days with data are exact once the coverage has been read. Until then they are an estimate from the periods in the file names, marked ≈ (gaps are not known yet), or a dash when the names carry no period.</source>
+        <translation>Dosyalarda bulunan her istasyon için bir satır. Son gün ve Veri olan gün, kapsam okunduktan sonra kesindir. O zamana kadar dosya adlarındaki dönemlerden yapılan bir tahmindir ve ≈ ile gösterilir (boşluklar henüz bilinmez); adlarda dönem yoksa çizgi gösterilir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="274"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="380"/>
         <source>For a station the station list does not know: type its latitude and longitude once. They are kept in the study and used for distances and for the Features calibration.</source>
         <translation>İstasyon listesinin tanımadığı bir istasyon için: enlemini ve boylamını bir kez girin. Çalışmada saklanır; uzaklıklar ve Öznitelik kalibrasyonu için kullanılır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="278"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="384"/>
         <source>Reads station coordinates from a StationXML file (as FDSN data centres provide) for the stations the station list does not know.</source>
         <translation>İstasyon listesinin tanımadığı istasyonların koordinatlarını bir StationXML dosyasından (FDSN veri merkezlerinin verdiği gibi) okur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="282"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="388"/>
         <source>Lists the files that were not recognised as miniSEED, with the reason.</source>
         <translation>miniSEED olarak tanınmayan dosyaları nedenleriyle listeler.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="333"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="439"/>
         <source>The study could not be saved: %1</source>
         <translation>Çalışma kaydedilemedi: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="351"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="457"/>
         <source>%1  (not found)</source>
         <translation>%1  (bulunamadı)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="393"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="499"/>
         <source>%1 Hz</source>
         <translation>%1 Hz</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="394"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="500"/>
         <source>unknown</source>
         <translation>bilinmiyor</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="397"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="503"/>
         <source>station list</source>
         <translation>istasyon listesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="402"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="508"/>
         <source>StationXML</source>
         <translation>StationXML</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="403"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="509"/>
         <source>typed</source>
         <translation>elle girildi</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="410"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="516"/>
         <source>⚠ no coordinates</source>
         <translation>⚠ koordinat yok</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="413"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="519"/>
         <source>⚠ mixed sample rates</source>
         <translation>⚠ karışık örnekleme hızları</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="415"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="521"/>
         <source>⚠ in a folder named %1</source>
         <translation>⚠ %1 adlı bir klasörde</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="418"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="524"/>
         <source>shares files with other stations</source>
         <translation>dosyaları başka istasyonlarla ortak</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="426"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="536"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="540"/>
+        <source>≈ %1</source>
+        <translation>≈ %1</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="537"/>
         <source>≥ %1</source>
         <translation>≥ %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="442"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="556"/>
         <source>Skipped files (%1)…</source>
         <translation>Atlanan dosyalar (%1)…</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="448"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="563"/>
         <source>%1 stations in %2 files; coverage not read yet for %3 of them.</source>
         <translation>%2 dosyada %1 istasyon; %3 tanesi için kapsam henüz okunmadı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="453"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="568"/>
         <source>%1 stations in %2 files; coverage read for all.</source>
         <translation>%2 dosyada %1 istasyon; hepsinin kapsamı okundu.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/waveforms.cpp" line="460"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="573"/>
+        <source>%n file(s) shown by an estimate from their names until then (≈)</source>
+        <translation>
+            <numerusform>o zamana kadar %n dosya adından yapılan tahminle gösteriliyor (≈)</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/waveforms.cpp" line="580"/>
         <source>⚠ %n station(s) are not in the station list. Select the row and type the coordinates, or load a StationXML file; without them the station cannot be offered for a case.</source>
         <translation>
             <numerusform>⚠ %n istasyon, istasyon listesinde yok. Satırı seçip koordinatları girin ya da bir StationXML dosyası yükleyin; koordinat olmadan istasyon bir vakaya önerilemez.</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="471"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="591"/>
         <source>Folders of waveforms</source>
         <translation>Dalga formu klasörleri</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="482"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="602"/>
         <source>Already covered by a listed folder: %1</source>
         <translation>Listedeki bir klasör bunu zaten kapsıyor: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="485"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="605"/>
         <source>Now covered by a folder that holds it, so taken off the list (its files are read again once): %1</source>
         <translation>Artık onu içeren bir klasör kapsıyor, bu yüzden listeden çıkarıldı (dosyaları bir kez yeniden okunur): %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="514"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="634"/>
         <source>Where the folder is now</source>
         <translation>Klasörün şimdiki yeri</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="554"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="674"/>
         <source>Coordinates of %1</source>
         <translation>%1 koordinatları</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="567"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="687"/>
         <source>Latitude (°N)</source>
         <translation>Enlem (°K)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="568"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="688"/>
         <source>Longitude (°E)</source>
         <translation>Boylam (°D)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="576"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="696"/>
         <source>Latitude of the station in decimal degrees, north positive.</source>
         <translation>İstasyonun ondalık derece olarak enlemi, kuzey artı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="578"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="698"/>
         <source>Longitude of the station in decimal degrees, east positive.</source>
         <translation>İstasyonun ondalık derece olarak boylamı, doğu artı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="593"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="713"/>
         <source>StationXML file</source>
         <translation>StationXML dosyası</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="594"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="714"/>
         <source>StationXML (*.xml);;All files (*)</source>
         <translation>StationXML (*.xml);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="616"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="736"/>
         <source>%1 of the %2 stations in the file are in the waveform folders and now have coordinates.</source>
         <translation>Dosyadaki %2 istasyonun %1 tanesi dalga formu klasörlerinde bulunuyor ve artık koordinatı var.</translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="633"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="753"/>
         <source>Files that were skipped</source>
         <translation>Atlanan dosyalar</translation>
     </message>
@@ -9161,197 +9301,197 @@ miniSEED dosyalarınızı tutan klasörü ekleyin ya da buraya bırakın.</trans
         <translation>katalog bulunamadı: %1 (Vakalar sayfasında yeniden seçin)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="188"/>
+        <location filename="../src/study/runs.cpp" line="213"/>
         <source>warning: the catalog places this earthquake at %1, the case at %2. The catalog&apos;s time offset on the Cases page may be wrong; events are used up to the earlier of the two.</source>
         <translation>uyarı: katalog bu depremi %1 zamanına, vaka ise %2 zamanına koyuyor. Vakalar sayfasındaki katalog zaman farkı yanlış olabilir; olaylar ikisinden erken olana kadar kullanılır.</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="199"/>
+        <location filename="../src/study/runs.cpp" line="224"/>
         <source>%1 catalog events from %2 to %3</source>
         <translation>%2 – %3 arasında %1 katalog olayı</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="203"/>
+        <location filename="../src/study/runs.cpp" line="228"/>
         <source>the catalog has no events in the case&apos;s span (%1 to %2): check the span and the dates the catalog covers</source>
         <translation>katalogda vakanın süresinde (%1 – %2) olay yok: süreyi ve kataloğun kapsadığı tarihleri denetleyin</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="249"/>
+        <location filename="../src/study/runs.cpp" line="274"/>
         <source>only %1 events in the zone: too few to estimate the completeness magnitude</source>
         <translation>bölgede yalnızca %1 olay var: tamamlılık büyüklüğünü kestirmek için çok az</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="255"/>
+        <location filename="../src/study/runs.cpp" line="280"/>
         <source>completeness magnitude estimated: %1</source>
         <translation>tamamlılık büyüklüğü kestirildi: %1</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="283"/>
+        <location filename="../src/study/runs.cpp" line="308"/>
         <source>the case has no station %1</source>
         <translation>vakanın %1 istasyonu yok</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="290"/>
+        <location filename="../src/study/runs.cpp" line="317"/>
         <source>no waveform files for %1 in the span %2 to %3 (%4): add or scan its waveform folder on the Cases page, or get the waveforms on the Data page</source>
         <translation>%1 için %2 – %3 süresinde dalga formu dosyası yok (%4): Vakalar sayfasında dalga formu klasörünü ekleyin ya da tarayın, ya da dalga formlarını Veri sayfasından alın</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="297"/>
+        <location filename="../src/study/runs.cpp" line="324"/>
         <source> Waveforms from %1</source>
         <translation> Dalga formları: %1</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="305"/>
+        <location filename="../src/study/runs.cpp" line="334"/>
         <source>the recipe&apos;s config is not valid JSON: %1</source>
         <translation>tarifin yapılandırması geçerli JSON değil: %1</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="330"/>
+        <location filename="../src/study/runs.cpp" line="359"/>
         <source>calibration catalog: %1 events moved to UTC (the study&apos;s catalog is %2 h from UTC)</source>
         <translation>kalibrasyon kataloğu: %1 olay UTC&apos;ye taşındı (çalışmanın kataloğu UTC&apos;den %2 saat farklı)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="340"/>
+        <location filename="../src/study/runs.cpp" line="369"/>
         <source>the recipe&apos;s own calibration catalog is not found: %1 (edit the recipe; clearing it there uses the study&apos;s catalog)</source>
         <translation>tarifin kendi kalibrasyon kataloğu bulunamadı: %1 (tarifi düzenleyin; orada temizlenirse çalışmanın kataloğu kullanılır)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="345"/>
+        <location filename="../src/study/runs.cpp" line="374"/>
         <source>calibration catalog: the recipe&apos;s own, %1 (not the study&apos;s)</source>
         <translation>kalibrasyon kataloğu: tarifin kendisininki, %1 (çalışmanınki değil)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="375"/>
+        <location filename="../src/study/runs.cpp" line="404"/>
         <source>the feature run wrote no table</source>
         <translation>öznitelik çalıştırması tablo yazmadı</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="405"/>
+        <location filename="../src/study/runs.cpp" line="434"/>
         <source>&quot;%1&quot; is not a range of days such as 31-90</source>
         <translation>&quot;%1&quot;, 31-90 gibi bir gün aralığı değil</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="418"/>
+        <location filename="../src/study/runs.cpp" line="447"/>
         <source>the recipe names no features recipe: choose one with Edit recipe</source>
         <translation>tarif bir öznitelik tarifi belirtmiyor: Tarifi düzenle ile birini seçin</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="420"/>
+        <location filename="../src/study/runs.cpp" line="449"/>
         <source>its features recipe &quot;%1&quot; is no longer in the study: choose another with Edit recipe</source>
         <translation>öznitelik tarifi &quot;%1&quot; artık çalışmada değil: Tarifi düzenle ile başka birini seçin</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="429"/>
+        <location filename="../src/study/runs.cpp" line="458"/>
         <source>needs the features of &quot;%1&quot; first: run that cell (Run missing and stale does it in order)</source>
         <translation>önce &quot;%1&quot; özniteliklerini ister: o hücreyi çalıştırın (Eksik ve eskimişleri çalıştır bunu sırayla yapar)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="443"/>
+        <location filename="../src/study/runs.cpp" line="472"/>
         <source>the features run has no table %1</source>
         <translation>öznitelik çalıştırmasında %1 tablosu yok</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="476"/>
+        <location filename="../src/study/runs.cpp" line="505"/>
         <source>the recipe needs at least two classes</source>
         <translation>tarif en az iki sınıf ister</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="575"/>
+        <location filename="../src/study/runs.cpp" line="604"/>
         <source>no window is left to train on (%1 dropped for missing values)</source>
         <translation>eğitilecek pencere kalmadı (%1 tanesi eksik değerler yüzünden atıldı)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="601"/>
+        <location filename="../src/study/runs.cpp" line="630"/>
         <source>step %1 failed: %2</source>
         <translation>%1 adımı başarısız oldu: %2</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="603"/>
+        <location filename="../src/study/runs.cpp" line="632"/>
         <source>the run trained no model</source>
         <translation>çalıştırma hiçbir model eğitmedi</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="833"/>
+        <location filename="../src/study/runs.cpp" line="879"/>
         <source>the case has no stations: tick them on the Cases page</source>
         <translation>vakanın istasyonu yok: Vakalar sayfasında işaretleyin</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="858"/>
+        <location filename="../src/study/runs.cpp" line="905"/>
         <source>no waveforms for %1: add a waveform folder on the Cases page, or get them on the Data page</source>
         <translation>%1 için dalga formu yok: Vakalar sayfasında bir dalga formu klasörü ekleyin ya da Veri sayfasından alın</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="861"/>
+        <location filename="../src/study/runs.cpp" line="908"/>
         <source>no waveforms for %1: %2 does not exist and no scanned waveform folder holds the station (the folders are set on the Cases page)</source>
         <translation>%1 için dalga formu yok: %2 yok ve taranmış hiçbir dalga formu klasörü istasyonu tutmuyor (klasörler Vakalar sayfasında ayarlanır)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="888"/>
+        <location filename="../src/study/runs.cpp" line="936"/>
         <source>recorded with an earlier version of the application, which noted less about a run: run it again</source>
         <translation>uygulamanın, çalıştırma hakkında daha az şey kaydeden eski bir sürümüyle kaydedilmiş: yeniden çalıştırın</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="892"/>
+        <location filename="../src/study/runs.cpp" line="940"/>
         <source>the recipe was edited after this run (revision %1, now %2)</source>
         <translation>tarif bu çalıştırmadan sonra düzenlendi (sürüm %1, şimdi %2)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="897"/>
+        <location filename="../src/study/runs.cpp" line="945"/>
         <source>the case, its station or the catalog&apos;s time offset was changed after this run</source>
         <translation>vaka, istasyonu ya da kataloğun zaman farkı bu çalıştırmadan sonra değişti</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="905"/>
+        <location filename="../src/study/runs.cpp" line="953"/>
         <source>the catalog file has changed since this run</source>
         <translation>katalog dosyası bu çalıştırmadan sonra değişti</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="908"/>
+        <location filename="../src/study/runs.cpp" line="957"/>
         <source>the waveform files for the case&apos;s span have changed since this run (new or replaced files)</source>
         <translation>vakanın süresindeki dalga formu dosyaları bu çalıştırmadan sonra değişti (yeni ya da değiştirilmiş dosyalar)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="912"/>
+        <location filename="../src/study/runs.cpp" line="961"/>
         <source>the features it was trained on are no longer current</source>
         <translation>eğitildiği öznitelikler artık güncel değil</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="915"/>
+        <location filename="../src/study/runs.cpp" line="964"/>
         <source>its features were run again after this run</source>
         <translation>öznitelikleri bu çalıştırmadan sonra yeniden çalıştırıldı</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="939"/>
+        <location filename="../src/study/runs.cpp" line="988"/>
         <source>a later run failed and was set aside: %1</source>
         <translation>sonraki bir çalıştırma başarısız oldu ve kenara ayrıldı: %1</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="989"/>
+        <location filename="../src/study/runs.cpp" line="1038"/>
         <source>cannot create %1</source>
         <translation>%1 oluşturulamıyor</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1005"/>
+        <location filename="../src/study/runs.cpp" line="1054"/>
         <source>warning: the run log cannot be written: %1</source>
         <translation>uyarı: çalıştırma günlüğü yazılamıyor: %1</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1037"/>
+        <location filename="../src/study/runs.cpp" line="1086"/>
         <source>unknown tool %1</source>
         <translation>bilinmeyen araç %1</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1062"/>
+        <location filename="../src/study/runs.cpp" line="1111"/>
         <source>cannot write %1</source>
         <translation>%1 yazılamıyor</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1071"/>
+        <location filename="../src/study/runs.cpp" line="1120"/>
         <source>cannot replace %1 with the new run, which is kept in %2 (is a file of the folder open?)</source>
         <translation>%1 yeni çalıştırmayla değiştirilemiyor; yeni çalıştırma %2 içinde tutuluyor (klasördeki bir dosya açık mı?)</translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1077"/>
+        <location filename="../src/study/runs.cpp" line="1126"/>
         <source>cannot move the finished run from %1 into place</source>
         <translation>bitmiş çalıştırma %1 konumundan yerine taşınamıyor</translation>
     </message>
@@ -9430,17 +9570,17 @@ miniSEED dosyalarınızı tutan klasörü ekleyin ya da buraya bırakın.</trans
 <context>
     <name>skg::study::WaveText</name>
     <message>
-        <location filename="../src/study/waveindex.cpp" line="519"/>
+        <location filename="../src/study/waveindex.cpp" line="912"/>
         <source>the folder %1 does not exist</source>
         <translation>%1 klasörü yok</translation>
     </message>
     <message>
-        <location filename="../src/study/waveindex.cpp" line="679"/>
+        <location filename="../src/study/waveindex.cpp" line="1083"/>
         <source>cannot open %1</source>
         <translation>%1 açılamıyor</translation>
     </message>
     <message>
-        <location filename="../src/study/waveindex.cpp" line="722"/>
+        <location filename="../src/study/waveindex.cpp" line="1126"/>
         <source>%1 names no station with coordinates</source>
         <translation>%1 koordinatı olan bir istasyon belirtmiyor</translation>
     </message>

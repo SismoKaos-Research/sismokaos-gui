@@ -91,14 +91,59 @@ Waveforms, station coverage) and the header's study selector;
 - Comments and unknown keys are dropped on save.
 
 **The waveform index** (`study/waveindex.h`) is `waveforms.index.json` beside
-`study.toml`: a version, then folder id, then path relative to that folder,
-then the file (size, mtime, pass, channels with their spans). `scanRoot()`
-brings one folder up to date for a pass (identity or coverage);
-`WaveIndex::shared()` is the cached, thread-safe read; `waveFilesFor()` is
-what a Features run reads for a case's span. `WaveScan`
-(`modules/study/waveforms.h`) runs the two passes as jobs and saves as it
-goes. The scanner reuses `tdvms::MseedScanner` and `fx::parseHeader`; do not
-add a third miniSEED reader.
+`study.toml`: a version (2), then folder id, then path relative to that
+folder, then the file (size, mtime, pass, channels with their `spans` and,
+until the exact pass has read the file, an `estimate`). `scanRoots()` brings
+folders up to date for a pass (`scanRoot()` is one folder);
+`WaveIndex::shared()` is the cached, thread-safe read; `chooseWaveFiles()`
+is what a Features run reads for a case's span, with the files it took on an
+estimate named in `uncertain` (`waveFilesFor()` is the same list alone).
+`WaveScan` (`modules/study/waveforms.h`) runs the two passes as jobs and
+saves as it goes. The scanner reuses `tdvms::MseedScanner` and
+`fx::parseHeader`; do not add a third miniSEED reader, and do not add a
+decompression library: the zips go through miniz.
+
+- **Two passes.** `ScanPass::Identity` is the quick one: the zip directory
+  and the first record of each file or member (the inflate is stopped after
+  512 bytes), plus an estimate from the name when `periodInFileName()` finds
+  `_ddMMyyyy_HHmmss_ddMMyyyy_HHmmss` and the first record starts inside that
+  period or up to a day before it. `ScanPass::Coverage` streams every record
+  header through the scanner and clears the estimate. `WaveFile::exact()`
+  and `estimated()` tell them apart; anything that reads coverage must cope
+  with all three states (exact, estimated, neither) the way `daysCovered()`
+  and `filesFor()` do, and say which it showed.
+- **Workers.** `ScanOptions::workers` files are read at once, each by its own
+  thread streaming one file; the calling thread alone touches the index and
+  calls the hooks (`progress` per file, `bytes` a few times a second,
+  `checkpoint` every 50 files or 5 s). A stop request reaches a reader inside
+  a file within `pollMs` and one chunk; an interrupted file keeps its earlier
+  entry. The order is one over all folders: `firstStations` (the stations
+  ticked in cases), then station by station. `defaultScanWorkers()` is
+  `clamp(cores - 2, 1, 6)`; the setting is `waveforms/scanWorkers` (0 =
+  automatic), read through `WaveScan::workers()`.
+- **The scan cache** (`study/scancache.h`): exact results per user, one small
+  JSON file per waveform file under `<cache>/path/` (keyed by real path, size
+  and mtime) and `<cache>/name/` (name, size, mtime to two seconds, and the
+  first record of the file, for data that moved), each written with
+  `QSaveFile`, so several running applications share it without a lock.
+  `scanRoots()` asks it before reading a file, in either pass, and files
+  what the exact pass read. It is off (`ScanCache::sharedDir()` empty) until
+  `main()` sets it, so tests do not touch the user's cache; a test that
+  wants it calls `ScanCache::setSharedDir()` with a temporary folder and
+  clears it in `cleanup()`. With `--settings <ini>` the application keeps
+  its cache in `<ini>.scan-cache/`.
+- **Runs and estimates.** A Features run records the files it read
+  (`waveform_files`, one `name|size|time` line each) and whether some were
+  taken on an estimate (`waveforms_estimated`). `waveFilesChanged()` decides
+  staleness from those: uncertain files prove nothing either way.
+- **Timing a folder.** `tst_study_scan scanBenchmark` is skipped unless
+  `SKG_SCAN_BENCH_DATA` (a folder, only read) and `SKG_SCAN_BENCH_OUT` (a
+  scratch folder) are set; `SKG_SCAN_BENCH_MAKE=6x150` first fills an empty
+  data folder with six archives of 150 MB shaped like the TDVMS ones. It
+  prints the quick pass, the exact pass with one and with several workers,
+  and a scan served from the cache. Use an optimised build
+  (`-DCMAKE_BUILD_TYPE=RelWithDebInfo`); the figures of a debug build say
+  little about a release.
 
 **Catalogs** (`study/catalogs.h`): `builtInEvents()` and `pickingEvents()`
 for picking cases, `queryForStudy()` and `fetchCatalog()` for the download.
@@ -123,7 +168,8 @@ table to `seriesColumns()` and `seriesOf()` in `compare.cpp`.
   `case_signature` (the tool's own line from `runSignature()`, starting with
   the tool name), `catalog_sha256`, `upstream` (classification: when its
   features run finished), `waveforms` (features: a stamp of the files read),
-  `app_version`, `started`, `finished`, `ok`, `error`, `settings`, `inputs`,
+  `waveform_files` and `waveforms_estimated` (features: the files themselves,
+  and whether some were chosen on an estimate), `app_version`, `started`, `finished`, `ok`, `error`, `settings`, `inputs`,
   `fitted`, `outputs`. A record whose signature does not start with the tool
   name predates the per-tool signatures and reads as stale.
 - Reasons shown to the user go through `RunText::tr()` (context
@@ -135,6 +181,8 @@ table to `seriesColumns()` and `seriesOf()` in `compare.cpp`.
 
 **Tests.** `tests/tst_study` and `tst_study_portable` cover the study file
 and moving a study; `tst_study_waveindex` the scanner and the index;
+`tst_study_scan` the estimates, the parallel scan, a stop inside a member,
+the scan cache and the scan settings;
 `tst_study_runs` runs recipes on the synthetic catalog, fabricated feature
 tables and the fx test waveforms; `tst_study_setup` the setup dialog, the
 built-in list and the download through a fake service; `tst_study_pages`,

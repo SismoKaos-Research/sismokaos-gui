@@ -255,17 +255,41 @@ onto the list from the file manager.
 - **The file headers decide** which station and channels a file belongs to
   and which times it covers. Folder and file names are not trusted for that;
   a folder named differently from the station in its files is flagged.
-- The scan runs as two jobs. The first reads one record per file and shows
-  which stations are there; the second reads every record header and gives
-  the exact days covered. Both can be stopped, and what was read is kept. A
-  file that has not changed is not read again. The second pass has to read
-  through whole zip archives, so the first scan of a large archive takes
-  time.
+- The scan runs as two jobs, a quick one and an exact one. Both can be
+  stopped, and what was read is kept. A file that has not changed is not read
+  again.
+  - **The quick pass** reads only a few kilobytes of each file, however
+    large: the directory of each zip and the first record of each file,
+    which says which stations are there. Where a name carries a period
+    (`…_ddMMyyyy_HHmmss_ddMMyyyy_HHmmss_…`, as the members of the TDVMS
+    archives and the FDSN day files are named) and the first record agrees
+    with it, that period becomes an **estimate** of what the file covers.
+    The station is still read from the header, never from the name.
+  - **The exact pass** reads every record header and gives the exact days
+    covered, gaps included. It has to read through whole zip archives, so
+    it is the slow part. It reads several files at the same time
+    (*Settings → Files read at once*), starts with the stations your cases
+    use, and shows in the Jobs panel how many gigabytes are done, the speed
+    and the time left.
+- **You do not have to wait for the exact pass.** Until a file has been read,
+  its estimate stands in: the Cases page says *about N of M days in span —
+  exact scan running*, and the Waveforms dialog marks the last day and the
+  day count with ≈. The figures become exact by themselves as the scan gets
+  to the files. An estimate knows nothing of gaps, and a name can be wrong
+  about its period; the exact pass corrects both. A file whose name carries
+  no period counts for the day it starts on until it has been read (*found:
+  at least N…*).
+- Exact results are also kept for you outside the study, in a **scan cache**:
+  a second study on the same data, the same folder added again, or the data
+  on another drive is not read a second time. *Settings → Clear scan cache*
+  removes it; nothing of your data is touched.
 - The dialog then has one row per station: network, channels, sample rate,
   first and last day, days with data, files, and where its **coordinates**
   come from: the station list, a StationXML file (*Load StationXML…*) or
   typed in (*Type coordinates…*). A station with no coordinates, mixed
-  sample rates, or files shared with other stations is flagged.
+  sample rates, or files shared with other stations is flagged. Before the
+  exact pass has read a station's files, only the channel of each file's
+  first record is listed.
 - A folder that is already listed, or lies inside a listed one, is not added
   twice. Adding a parent of a listed folder replaces the listed one.
 - New files in a listed folder are picked up when the Cases page is next
@@ -282,9 +306,14 @@ folders, and the page says so. *Next: get waveforms →* on the Cases page
 opens the Data page with the case's stations and span filled in.
 
 **How Features uses them.** A Features run reads only the files that overlap
-the case's span, chosen by what the scan found in the headers. If the folders
-have not been scanned for a station, the run falls back to a sub-folder named
-by the station code and to the dates in the file names. For one station of
+the case's span, chosen by what the scan found in the headers. A file the
+exact pass has not read yet is chosen by its estimate with a day of margin at
+both ends, so a run started early may read a file more than it needed, and
+leaves one out only if its name is wrong about its period by more than a
+day; the run's log says how many files were taken that way. Such a run is
+not marked stale when the exact pass later narrows the choice. If the
+folders have not been scanned for a station, the run falls back to a
+sub-folder named by the station code and to the dates in the file names. For one station of
 one case, *Choose folder…* on the Cases page names a folder outright; *Use
 the study's folders* drops that choice.
 
@@ -407,6 +436,12 @@ valid, with a note that a later run failed.
 A change of the zone does not touch Features or Classification. A run made
 with an earlier version of the application, which recorded less about a run,
 reads as stale and says so: run it again.
+
+For Features, "the waveform files change" is judged on files the exact scan
+has read. A new file that is only estimated to overlap the span does not
+make a run stale until the scan has read it and it does; and a run that was
+started before the exact scan finished, and so read a file more than the
+span turned out to need, stays valid.
 
 **Keyboard.** In the matrix the arrow keys, Home and End move the selection,
 Enter or Space runs the cell (or does its fix), and a double-click opens its
@@ -1105,7 +1140,18 @@ working directory of the run.
 
 ## Settings page
 
-**Interface** chooses the language and the theme. The **tools** section locates the
+**Interface** chooses the language and the theme.
+
+**Waveform scan** has two things. *Files read at once* is how many waveform
+files the exact coverage scan of a study reads at the same time. *Automatic*
+leaves two processor cores free and uses at most six; lower it if the
+computer gets sluggish during a scan. On a slow external drive a higher
+number rarely helps, because the drive is then the limit. Beside it is how
+many waveform files have their exact coverage in the scan cache, and *Clear
+scan cache*, which removes those results: the studies' own indexes and your
+data are not touched, and the files are read again when a study needs them.
+
+The **tools** section locates the
 original command-line tools (`sismokaos`, `sfc`, `tdvms`) for anyone who
 wants to run them beside the application: give the executable or the
 project directory (a checkout with its `pyproject.toml`), and *Check* asks
@@ -1122,6 +1168,7 @@ Early warning page runs it.
 | mailbox and defaults (`mailbox.env`, `settings.env`), and the built-in lists once updated (`stations.csv`, `events.csv`) | `~/.config/tdvms/` | `~/.config/tdvms/` | `%APPDATA%\tdvms\` |
 | a study (`study.toml`, `waveforms.index.json`, downloaded catalogs, exports, every run's results, `run.json` and `run.log`) | the study folder you chose | | |
 | your waveforms | wherever they are; the study only records the folders | | |
+| the scan cache (exact coverage of waveform files already read; safe to delete) | `~/.cache/sismokaos/sismokaos-gui/waveform-scans/` | the user's cache folder; the Settings page shows the path when you hover the line | the user's cache folder; as on macOS |
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
 | feature extraction results, labelled tables | the output directory you chose | | |
 | classification projects (`project.toml`, `results/`) | the project folder you chose | | |
@@ -1141,9 +1188,12 @@ Stated plainly, so that nobody finds them the hard way:
 
 - **Real waveform archives at scale.** The waveform import, the coverage it
   reports and the Features runs of a study have been exercised on small test
-  data only, not on a real archive of hundreds of gigabytes. The second scan
-  pass reads through whole zip archives and will be slow the first time on a
-  large one. Treat the first study on real data as a trial and check the
+  data, and the two scan passes were timed on a single real TDVMS archive
+  (843 MB), not on a real archive of hundreds of gigabytes. On that one file
+  the exact pass read about 180 MB a second per worker, limited by
+  decompression and not by the SSD it was on; with several workers the disk
+  becomes the limit, and how fast a whole archive goes on your drive has not
+  been measured. Treat the first study on real data as a trial and check the
   reported coverage against what you know you have.
 - **The catalog download** (*Get the catalog…*) has been tested against a
   simulated service, not against the live one.
