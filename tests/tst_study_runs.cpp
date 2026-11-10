@@ -86,6 +86,12 @@ private slots:
   void classificationOnAFabricatedTable();
   void comparisonReadsTheRuns();
   void aFailedRunIsRecorded();
+  void eachToolHasItsOwnSignature();
+  void aRunReplacesTheFolderOnlyWhenItFinishes();
+  void theCatalogOffsetNeverLetsTheEventIn();
+  void aChangedOrMissingCatalog();
+  void recipeOrderIsExplained();
+  void rerunFeaturesMakeTheClassificationStale();
 
 private:
   QTemporaryDir dir_;
@@ -159,8 +165,10 @@ void TstStudyRuns::layoutAndDefaults() {
            3);
   QCOMPARE(again.findRecipe(indicators_.id)->settings.value("estimate_mc"),
            QVariant(true));
-  QVERIFY(caseSignature(c, QStringLiteral("SYN1")) !=
-          caseSignature(c, QString()));
+  QVERIFY(runSignature(s_, c, QStringLiteral("SYN1"), kToolFeatures) !=
+          runSignature(s_, c, QString(), kToolFeatures));
+  QCOMPARE(runTmpDir(QStringLiteral("/a/b")), QStringLiteral("/a/b.tmp"));
+  QCOMPARE(runFailedDir(QStringLiteral("/a/b")), QStringLiteral("/a/b.failed"));
 }
 
 void TstStudyRuns::indicatorsRunAndGoStale() {
@@ -188,6 +196,17 @@ void TstStudyRuns::indicatorsRunAndGoStale() {
     QCOMPARE(cell.record->inputs.value(s_.catalogPath()).toString(),
              sha256Of(s_.catalogPath()));
     QCOMPARE(cell.record->inputs.value(s_.catalogPath()).toString().size(), 64);
+    QCOMPARE(cell.record->catalogSha, sha256Cached(s_.catalogPath()));
+    // The run's log is kept beside its record, and nothing is left beside
+    // the folder.
+    QCOMPARE(cell.log, QDir(cell.dir).filePath(kRunLogName));
+    QFile runLog(cell.log);
+    QVERIFY(runLog.open(QIODevice::ReadOnly));
+    const QByteArray logged = runLog.readAll();
+    QVERIFY(logged.contains("catalog events from"));
+    QVERIFY(logged.contains("finished "));
+    QVERIFY(!QDir(runTmpDir(cell.dir)).exists());
+    QVERIFY(!QDir(runFailedDir(cell.dir)).exists());
   }
   QVERIFY(!log.isEmpty());
   // The event itself is not among the events used: the span file ends
@@ -203,12 +222,15 @@ void TstStudyRuns::indicatorsRunAndGoStale() {
   // A changed recipe, or a changed case, makes the run stale.
   Recipe edited = indicators_;
   edited.revision += 1;
-  QCOMPARE(cellOf(s_, s_.cases[0], QStringLiteral("SYN1"), edited).state,
-           CellState::Stale);
+  Cell stale = cellOf(s_, s_.cases[0], QStringLiteral("SYN1"), edited);
+  QCOMPARE(stale.state, CellState::Stale);
+  QVERIFY2(stale.why.contains(QStringLiteral("recipe was edited")),
+           qPrintable(stale.why));
   Case moved = s_.cases[0];
   moved.spanDays = 100;
-  QCOMPARE(cellOf(s_, moved, QStringLiteral("SYN1"), indicators_).state,
-           CellState::Stale);
+  stale = cellOf(s_, moved, QStringLiteral("SYN1"), indicators_);
+  QCOMPARE(stale.state, CellState::Stale);
+  QVERIFY2(stale.why.contains(QStringLiteral("case")), qPrintable(stale.why));
   QCOMPARE(cellOf(s_, s_.cases[0], QStringLiteral("SYN1"), indicators_).state,
            CellState::Done);
 }
@@ -218,17 +240,34 @@ void TstStudyRuns::blockedCellsSayWhy() {
   Cell cell = cellOf(s_, c, QStringLiteral("SYN1"), features_);
   QCOMPARE(cell.state, CellState::Blocked);
   QVERIFY(cell.why.contains(QStringLiteral("waveform")));
+  // The reason says where it is put right.
+  QVERIFY(cell.why.contains(QStringLiteral("Cases page")));
+  QCOMPARE(cell.fix, Fix::Cases);
+  // A folder that is named but is not there is named in the reason.
+  Study withRoot = s_;
+  withRoot.dataRoot = dir_.filePath("no-such-waveforms");
+  cell = cellOf(withRoot, c, QStringLiteral("SYN1"), features_);
+  QCOMPARE(cell.state, CellState::Blocked);
+  QVERIFY2(cell.why.contains(QStringLiteral("no-such-waveforms")),
+           qPrintable(cell.why));
   cell = cellOf(s_, c, QStringLiteral("SYN1"), classification_);
   QCOMPARE(cell.state, CellState::Blocked);
   QVERIFY(cell.why.contains(QStringLiteral("features")));
-  // A case without stations has nothing for the per-station tools.
-  QCOMPARE(cellOf(s_, c, QString(), classification_).state,
-           CellState::NotApplicable);
+  QCOMPARE(cell.fix, Fix::RunFirst);
+  // A case without stations: the per-station tools wait, and say for what.
+  cell = cellOf(s_, c, QString(), classification_);
+  QCOMPARE(cell.state, CellState::Blocked);
+  QVERIFY2(cell.why.contains(QStringLiteral("no stations")),
+           qPrintable(cell.why));
+  QCOMPARE(cell.fix, Fix::Cases);
+  QCOMPARE(cellOf(s_, c, QString(), features_).state, CellState::Blocked);
   Study noCatalog = s_;
   noCatalog.catalog.clear();
   noCatalog.dir = dir_.filePath("other");
-  QCOMPARE(cellOf(noCatalog, c, QString(), indicators_).state,
-           CellState::Blocked);
+  cell = cellOf(noCatalog, c, QString(), indicators_);
+  QCOMPARE(cell.state, CellState::Blocked);
+  QCOMPARE(cell.fix, Fix::Cases);
+  QVERIFY(cell.why.contains(QStringLiteral("no earthquake catalog")));
 }
 
 void TstStudyRuns::classificationOnAFabricatedTable() {
@@ -245,7 +284,8 @@ void TstStudyRuns::classificationOnAFabricatedTable() {
     rec.caseId = c.id;
     rec.station = QStringLiteral("SYN1");
     rec.revision = features_.revision;
-    rec.caseSignature = caseSignature(c, QStringLiteral("SYN1"));
+    rec.caseSignature =
+        runSignature(s_, c, QStringLiteral("SYN1"), kToolFeatures);
     rec.ok = true;
     rec.started = rec.finished = QDateTime::currentDateTimeUtc();
     rec.outputs.insert(QStringLiteral("features"),
@@ -276,6 +316,10 @@ void TstStudyRuns::classificationOnAFabricatedTable() {
     QCOMPARE(cell.record->fitted.value("days").toInt(), 31);
     QCOMPARE(cell.record->fitted.value("features").toInt(), 2);
     QVERIFY(cell.record->fitted.value("windows").toInt() > 10000);
+    // Which features run it read is recorded.
+    QCOMPARE(cell.record->upstream,
+             cellOf(s_, c, QStringLiteral("SYN1"), features_)
+                 .record->finished.toString(Qt::ISODate));
   }
   QVERIFY(lastFraction > 0);
 }
@@ -370,7 +414,247 @@ void TstStudyRuns::aFailedRunIsRecorded() {
   const Cell cell = cellOf(s_, c, QStringLiteral("SYN1"), bad);
   QCOMPARE(cell.state, CellState::Failed);
   QVERIFY(cell.why.contains(QStringLiteral("range of days")));
-  QVERIFY(!cell.record->ok);
+  // The failed attempt is set aside with its record and its log; the run
+  // folder itself was never made.
+  QVERIFY(!cell.record.has_value());
+  QVERIFY(!QDir(cell.dir).exists());
+  QVERIFY(!QDir(runTmpDir(cell.dir)).exists());
+  const std::optional<RunRecord> failed =
+      RunRecord::read(runFailedDir(cell.dir));
+  QVERIFY(failed.has_value());
+  QVERIFY(!failed->ok);
+  QCOMPARE(cell.log, QDir(runFailedDir(cell.dir)).filePath(kRunLogName));
+  QFile log(cell.log);
+  QVERIFY(log.open(QIODevice::ReadOnly));
+  QVERIFY(log.readAll().contains("error: "));
+}
+
+void TstStudyRuns::eachToolHasItsOwnSignature() {
+  const Case &c = s_.cases[0];
+  const QString st = QStringLiteral("SYN1");
+  for (const Recipe *r : {&indicators_, &features_, &classification_})
+    QCOMPARE(cellOf(s_, c, st, *r).state, CellState::Done);
+
+  // The zone belongs to the indicators only: the hours of feature
+  // extraction are not thrown away by a change of radius.
+  Study zone = s_;
+  zone.cases[0].zone.radiusKm = 90;
+  QCOMPARE(cellOf(zone, zone.cases[0], st, indicators_).state,
+           CellState::Stale);
+  QCOMPARE(cellOf(zone, zone.cases[0], st, features_).state, CellState::Done);
+  QCOMPARE(cellOf(zone, zone.cases[0], st, classification_).state,
+           CellState::Done);
+  QCOMPARE(runsMadeStale(s_, zone), 1);
+
+  // The span belongs to the indicators and the features; the classification
+  // follows its features.
+  Study span = s_;
+  span.cases[0].spanDays = 200;
+  QCOMPARE(runSignature(s_, c, st, kToolClassification),
+           runSignature(span, span.cases[0], st, kToolClassification));
+  QCOMPARE(cellOf(span, span.cases[0], st, indicators_).state,
+           CellState::Stale);
+  // (stale, and with no waveform folder here it also waits)
+  QVERIFY(cellOf(span, span.cases[0], st, features_).state != CellState::Done);
+  const Cell cls = cellOf(span, span.cases[0], st, classification_);
+  QCOMPARE(cls.state, CellState::Blocked); // stale, and its features first
+  QCOMPARE(runsMadeStale(s_, span), 3);
+
+  // The catalog's time offset belongs to the two tools that read it.
+  Study offset = s_;
+  offset.catalogUtcOffsetHours = 3;
+  QVERIFY(runSignature(s_, c, QString(), kToolIndicators) !=
+          runSignature(offset, c, QString(), kToolIndicators));
+  QVERIFY(runSignature(s_, c, st, kToolFeatures) !=
+          runSignature(offset, c, st, kToolFeatures));
+  QCOMPARE(cellOf(offset, c, st, indicators_).state, CellState::Stale);
+  // Every case: three indicators, three features, three classifications.
+  QCOMPARE(runsMadeStale(s_, offset), 9);
+  QCOMPARE(runsMadeStale(s_, s_), 0);
+
+  // A removed recipe or case leaves its finished runs behind.
+  Study fewer = s_;
+  fewer.recipes.removeFirst();
+  QCOMPARE(runsMadeStale(s_, fewer), 3);
+}
+
+void TstStudyRuns::aRunReplacesTheFolderOnlyWhenItFinishes() {
+  const Case &c = s_.cases[0];
+  const Cell before = cellOf(s_, c, QString(), indicators_);
+  QCOMPARE(before.state, CellState::Done);
+  const QString table =
+      QDir(before.dir).filePath(before.record->outputs.value("table").toString());
+  const QByteArray tableHash = sha256Of(table).toLatin1();
+  QVERIFY(!tableHash.isEmpty());
+
+  // Stopped part way: nothing is left, the finished run is as it was.
+  RunHooks stop;
+  bool stopNow = false;
+  stop.log = [&stopNow](const QString &) { stopNow = true; };
+  stop.shouldStop = [&stopNow] { return stopNow; };
+  QVERIFY(!runCell(s_, c, QString(), indicators_, QStringLiteral("test"), stop));
+  Cell cell = cellOf(s_, c, QString(), indicators_);
+  QCOMPARE(cell.state, CellState::Done);
+  QCOMPARE(cell.record->finished, before.record->finished);
+  QCOMPARE(sha256Of(table).toLatin1(), tableHash);
+  QVERIFY(!QDir(runTmpDir(cell.dir)).exists());
+  QVERIFY(!QDir(runFailedDir(cell.dir)).exists());
+  QVERIFY(cell.note.isEmpty());
+
+  // Failed part way: the attempt is set aside, the finished run is as it
+  // was and still counts, and the cell says that a later run failed.
+  RunHooks breaking;
+  breaking.log = [](const QString &line) {
+    if (line.contains(QStringLiteral("catalog events")))
+      throw std::runtime_error("the disk is full");
+  };
+  QVERIFY_THROWS_EXCEPTION(
+      std::runtime_error,
+      runCell(s_, c, QString(), indicators_, QStringLiteral("test"), breaking));
+  cell = cellOf(s_, c, QString(), indicators_);
+  QCOMPARE(cell.state, CellState::Done);
+  QCOMPARE(cell.record->finished, before.record->finished);
+  QCOMPARE(sha256Of(table).toLatin1(), tableHash);
+  QVERIFY2(cell.note.contains(QStringLiteral("the disk is full")),
+           qPrintable(cell.note));
+  QVERIFY(!QDir(runTmpDir(cell.dir)).exists());
+  QVERIFY(QFileInfo::exists(
+      QDir(runFailedDir(cell.dir)).filePath(RunRecord::kFileName)));
+  QCOMPARE(cell.log, QDir(runFailedDir(cell.dir)).filePath(kRunLogName));
+  // The comparison still reads the finished run.
+  QCOMPARE(seriesOf(s_, indicators_, QStringLiteral("b_value")).size(), 3);
+
+  // A run that finishes takes the folder's place and clears the failure.
+  QTest::qWait(1100); // run.json keeps whole seconds
+  QVERIFY(runCell(s_, c, QString(), indicators_, QStringLiteral("test"), {}));
+  cell = cellOf(s_, c, QString(), indicators_);
+  QCOMPARE(cell.state, CellState::Done);
+  QVERIFY(cell.record->finished > before.record->finished);
+  QVERIFY(cell.note.isEmpty());
+  QVERIFY(QFileInfo::exists(table));
+  QVERIFY(!QDir(runFailedDir(cell.dir)).exists());
+  QVERIFY(!QDir(cell.dir + QStringLiteral(".old")).exists());
+}
+
+void TstStudyRuns::theCatalogOffsetNeverLetsTheEventIn() {
+  // The case's time was taken from the catalog read as UTC. Read the same
+  // catalog three hours off, either way, and the earthquake's own time
+  // there differs from the case's; it must still not be one of the events
+  // "before" itself.
+  for (double offset : {3.0, -3.0}) {
+    Study shifted = s_;
+    shifted.dir = dir_.filePath(offset > 0 ? "shifted-east" : "shifted-west");
+    shifted.catalog = s_.catalogPath();
+    shifted.catalogUtcOffsetHours = offset;
+    const Case &c = shifted.cases[1]; // 2020-07-07T07:07:07Z, M 6.4
+    QStringList log;
+    RunHooks hooks;
+    hooks.log = [&log](const QString &l) { log << l; };
+    QVERIFY(runCell(shifted, c, QString(), indicators_, QStringLiteral("test"),
+                    hooks));
+    QFile span(QDir(runDir(shifted, c, QString(), indicators_))
+                   .filePath("catalog.csv"));
+    QVERIFY(span.open(QIODevice::ReadOnly));
+    const QList<QByteArray> lines = span.readAll().split('\n');
+    QVERIFY(lines.size() > 100);
+    const QDateTime event = c.time;
+    for (const QByteArray &line : lines.mid(1)) {
+      if (line.isEmpty())
+        continue;
+      const QList<QByteArray> cols = line.split(',');
+      // Not the earthquake itself (M 6.4 at the case's place) ...
+      QVERIFY2(!(cols.value(6) == "6.4" && cols.value(1) == "39.4906"),
+               line.constData());
+      // ... and nothing later than the case's time.
+      const QDateTime t = QDateTime::fromString(
+          QString::fromLatin1(cols.value(0)),
+          QStringLiteral("dd/MM/yyyy HH:mm:ss"));
+      QVERIFY(QDateTime(t.date(), t.time(), QTimeZone::UTC) < event);
+    }
+    // The disagreement is said in the log.
+    QVERIFY2(log.join('\n').contains(QStringLiteral("time offset")),
+             qPrintable(log.join('\n')));
+  }
+}
+
+void TstStudyRuns::aChangedOrMissingCatalog() {
+  Study own = s_;
+  own.dir = dir_.filePath("own-catalog");
+  QVERIFY(QDir().mkpath(own.dir));
+  own.catalog = QStringLiteral("catalog.csv");
+  QVERIFY(QFile::copy(s_.catalogPath(), own.catalogPath()));
+  const Case &done = own.cases[0], &never = own.cases[1];
+  QVERIFY(runCell(own, done, QString(), indicators_, QStringLiteral("test"), {}));
+  QCOMPARE(cellOf(own, done, QString(), indicators_).state, CellState::Done);
+
+  // The file is gone: what has not been run waits and names the path; what
+  // is finished stays finished (it cannot be told to be out of date).
+  QVERIFY(QFile::rename(own.catalogPath(), own.catalogPath() + ".away"));
+  Cell cell = cellOf(own, never, QString(), indicators_);
+  QCOMPARE(cell.state, CellState::Blocked);
+  QCOMPARE(cell.fix, Fix::Cases);
+  QVERIFY2(cell.why.contains(QStringLiteral("catalog not found")) &&
+               cell.why.contains(QDir::toNativeSeparators(own.catalogPath())),
+           qPrintable(cell.why));
+  QCOMPARE(cellOf(own, done, QString(), indicators_).state, CellState::Done);
+  QVERIFY_THROWS_EXCEPTION(std::runtime_error,
+                           runCell(own, never, QString(), indicators_,
+                                   QStringLiteral("test"), {}));
+
+  // The same file back: still finished. A different file under the same
+  // name: stale, and the reason says it is the catalog.
+  QVERIFY(QFile::rename(own.catalogPath() + ".away", own.catalogPath()));
+  QCOMPARE(cellOf(own, done, QString(), indicators_).state, CellState::Done);
+  QFile f(own.catalogPath());
+  QVERIFY(f.open(QIODevice::Append));
+  f.write("01/01/2022 00:00:00,39.0000,38.0000,5.00,,ML,2.0,Added,x1\n");
+  f.close();
+  cell = cellOf(own, done, QString(), indicators_);
+  QCOMPARE(cell.state, CellState::Stale);
+  QVERIFY2(cell.why.contains(QStringLiteral("catalog file has changed")),
+           qPrintable(cell.why));
+  QCOMPARE(sha256Cached(own.catalogPath()), sha256Of(own.catalogPath()));
+}
+
+void TstStudyRuns::recipeOrderIsExplained() {
+  const Case &c = s_.cases[0];
+  Recipe unbound = classification_;
+  unbound.id = QStringLiteral("unbound");
+  unbound.settings.insert(QStringLiteral("features_recipe"), QString());
+  Cell cell = cellOf(s_, c, QStringLiteral("SYN1"), unbound);
+  QCOMPARE(cell.state, CellState::Blocked);
+  QCOMPARE(cell.fix, Fix::Recipe);
+  QVERIFY2(cell.why.contains(QStringLiteral("Edit recipe")),
+           qPrintable(cell.why));
+  unbound.settings.insert(QStringLiteral("features_recipe"),
+                          QStringLiteral("gone"));
+  cell = cellOf(s_, c, QStringLiteral("SYN1"), unbound);
+  QCOMPARE(cell.fix, Fix::Recipe);
+  QVERIFY2(cell.why.contains(QStringLiteral("gone")), qPrintable(cell.why));
+
+  // A features config that names a catalog of its own is seen as such.
+  QVERIFY(calibrationOverride(features_).isEmpty());
+  Recipe own = features_;
+  own.settings.insert(
+      QStringLiteral("config_json"),
+      QStringLiteral("{\"chaos_calibration\": {\"catalog\": \"/x/y.csv\"}}"));
+  QCOMPARE(calibrationOverride(own), QStringLiteral("/x/y.csv"));
+}
+
+void TstStudyRuns::rerunFeaturesMakeTheClassificationStale() {
+  const Case &c = s_.cases[0];
+  const QString st = QStringLiteral("SYN1");
+  QCOMPARE(cellOf(s_, c, st, classification_).state, CellState::Done);
+  // The features are run again (a new record, a later time).
+  const QString dir = runDir(s_, c, st, features_);
+  RunRecord rec = *RunRecord::read(dir);
+  rec.finished = rec.finished.addSecs(3600);
+  QVERIFY(rec.write(dir));
+  QCOMPARE(cellOf(s_, c, st, features_).state, CellState::Done);
+  const Cell cell = cellOf(s_, c, st, classification_);
+  QCOMPARE(cell.state, CellState::Stale);
+  QVERIFY2(cell.why.contains(QStringLiteral("features were run again")),
+           qPrintable(cell.why));
 }
 
 QTEST_MAIN(TstStudyRuns)

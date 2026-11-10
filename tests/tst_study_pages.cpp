@@ -16,8 +16,15 @@
 #include <QFileInfo>
 #include <QTimeZone>
 
+#include <QLabel>
+#include <QMenu>
 #include <QPainter>
+#include <QPlainTextEdit>
 #include <QPushButton>
+#include <QSignalSpy>
+#include <QStackedWidget>
+#include <QTimer>
+#include <QToolButton>
 #include <QRandomGenerator>
 #include <QSettings>
 #include <QSvgGenerator>
@@ -31,6 +38,7 @@
 #include "fx/npy.h"
 #include "jobs/job.h"
 #include "jobs/jobmodel.h"
+#include "jobs/taskjob.h"
 #include "modules/study/casedialogs.h"
 #include "modules/study/casespage.h"
 #include "modules/study/comparepage.h"
@@ -119,6 +127,8 @@ private slots:
   void addFromCatalog();
   void referenceDate();
   void runsPage();
+  void runsPageGuards();
+  void runsPageFromNothing();
   void recipeDialog();
   void comparePage();
   void waveformsOnCases();
@@ -395,7 +405,7 @@ void TstStudyPages::runsPage() {
     rec.caseId = c.id;
     rec.station = code;
     rec.revision = fea.revision;
-    rec.caseSignature = caseSignature(c, code);
+    rec.caseSignature = runSignature(s, c, code, kToolFeatures);
     rec.ok = true;
     rec.started = rec.finished = QDateTime::currentDateTimeUtc();
     rec.outputs.insert(QStringLiteral("features"),
@@ -438,6 +448,244 @@ void TstStudyPages::runsPage() {
   }));
 }
 
+// What keeps a run from doing harm, and what tells the user where to go:
+// the question before a finished run is run again, Stop, the reason and the
+// button of a waiting cell, the log, the keys.
+void TstStudyPages::runsPageGuards() {
+  const Study &s = store_->study();
+  Navigator nav;
+  AppContext ctx = ctx_;
+  ctx.nav = &nav;
+  QSignalSpy went(&nav, &Navigator::requested);
+  RunsPage page(ctx);
+  page.resize(1100, 760);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  QStringList asked;
+  bool answer = false;
+  page.confirm = [&asked, &answer](const QString &, const QString &text) {
+    asked << text;
+    return answer;
+  };
+  auto *matrix = page.findChild<RunMatrix *>();
+  auto *runAll = page.findChild<QPushButton *>(QStringLiteral("runAll"));
+  auto *stop = page.findChild<QPushButton *>(QStringLiteral("stopBatch"));
+  auto *runOne = page.findChild<QPushButton *>(QStringLiteral("runOne"));
+  auto *fix = page.findChild<QPushButton *>(QStringLiteral("fixCell"));
+  auto *showLog = page.findChild<QPushButton *>(QStringLiteral("showLog"));
+  auto *info = page.findChild<QLabel *>(QStringLiteral("cellInfo"));
+  auto *guide = page.findChild<QLabel *>(QStringLiteral("runsGuide"));
+  auto *guideGo = page.findChild<QPushButton *>(QStringLiteral("runsGuideGo"));
+  QVERIFY(matrix && runAll && stop && runOne && fix && showLog && info &&
+          guide && guideGo);
+  const auto waitForWorkers = [this] {
+    for (int i = 0; i < jobs_->rowCount(); ++i)
+      if (auto *task = qobject_cast<TaskJob *>(jobs_->jobAt(i)))
+        task->wait();
+    QTest::qWait(900); // the page's tick notices that the workers have left
+  };
+
+  // Everything is done: the page says so and points to Compare.
+  QVERIFY(!runAll->isEnabled());
+  QVERIFY(!stop->isEnabled());
+  QVERIFY(guide->isVisible());
+  QVERIFY(guideGo->isVisible());
+  guideGo->click();
+  QCOMPARE(went.size(), 1);
+  QCOMPARE(went[0][0].toString(), QStringLiteral("compare"));
+
+  // A finished cell is run again only after a yes.
+  matrix->select(0, 0);
+  QVERIFY(runOne->isEnabled());
+  QVERIFY(info->text().contains(QStringLiteral("Done")));
+  const int jobsBefore = jobs_->rowCount();
+  const Cell first = cellOf(s, s.cases[0], QString(), s.recipes[0]);
+  runOne->click();
+  QCOMPARE(asked.size(), 1);
+  QVERIFY(asked[0].contains(QStringLiteral("finished run")));
+  QCOMPARE(jobs_->rowCount(), jobsBefore);
+
+  // The log of the last run can be read.
+  QVERIFY(showLog->isEnabled());
+  showLog->click();
+  auto *logDialog = page.findChild<QDialog *>(QStringLiteral("runLog"));
+  QVERIFY(logDialog);
+  QVERIFY(logDialog->findChild<QPlainTextEdit *>()->toPlainText().contains(
+      QStringLiteral("catalog events from")));
+  shot(*logDialog, QStringLiteral("runs_log"));
+  logDialog->close();
+
+  // The keys: arrows move the selection, Enter runs (and asks, here).
+  matrix->setFocus();
+  QTest::keyClick(matrix, Qt::Key_Right);
+  QCOMPARE(matrix->selectedColumn(), 1);
+  QTest::keyClick(matrix, Qt::Key_Down);
+  QCOMPARE(matrix->selectedRow(), 1);
+  QTest::keyClick(matrix, Qt::Key_Left);
+  QTest::keyClick(matrix, Qt::Key_Up);
+  QCOMPARE(matrix->selectedRow(), 0);
+  QCOMPARE(matrix->selectedColumn(), 0);
+  QTest::keyClick(matrix, Qt::Key_Return);
+  QCOMPARE(asked.size(), 2);
+  QCOMPARE(jobs_->rowCount(), jobsBefore);
+
+  // Stop ends a batch: what runs is cancelled, nothing further starts, and
+  // the finished runs are as they were.
+  const QString ind = s.recipes[0].id;
+  QVERIFY(store_->update([&ind](Study &st) {
+    for (Recipe &r : st.recipes)
+      if (r.id == ind)
+        r.revision += 1;
+  }));
+  QVERIFY(runAll->isEnabled());
+  QVERIFY(runAll->text().contains(QStringLiteral("(3)")));
+  runAll->click();
+  QVERIFY(page.batchRunning());
+  QVERIFY(stop->isEnabled());
+  QCOMPARE(jobs_->rowCount(), jobsBefore + 2); // two at a time
+  stop->click();
+  QVERIFY(!page.batchRunning());
+  for (int i = jobsBefore; i < jobs_->rowCount(); ++i)
+    QCOMPARE(jobs_->jobAt(i)->state(), Job::State::Cancelled);
+  waitForWorkers();
+  QCOMPARE(jobs_->rowCount(), jobsBefore + 2); // the third never started
+  for (const Case &c : store_->study().cases) {
+    const Cell cell = cellOf(store_->study(), c, QString(),
+                             *store_->study().findRecipe(ind));
+    QCOMPARE(cell.state, CellState::Stale);
+    QVERIFY(!QDir(runTmpDir(cell.dir)).exists());
+    QVERIFY(!QDir(runFailedDir(cell.dir)).exists());
+  }
+  matrix->select(0, 0);
+  QVERIFY(info->text().contains(QStringLiteral("recipe was edited")));
+  QVERIFY(runOne->isEnabled()); // the worker has left: it can be run again
+  QVERIFY(store_->update([&ind](Study &st) {
+    for (Recipe &r : st.recipes)
+      if (r.id == ind)
+        r.revision -= 1;
+  }));
+  const Cell again = cellOf(s, s.cases[0], QString(), s.recipes[0]);
+  QCOMPARE(again.state, CellState::Done);
+  QCOMPARE(again.record->finished, first.record->finished);
+
+  // A case without stations: its per-station cells wait, say for what, and
+  // the button goes to the page where stations are ticked.
+  QVERIFY(store_->update([](Study &st) {
+    Case bare = st.cases[0];
+    bare.name = QStringLiteral("No stations");
+    bare.id = st.freeCaseId(bare.name);
+    bare.stations.clear();
+    st.cases << bare;
+  }));
+  const int bareRow = 3;
+  matrix->select(bareRow, 1);
+  QVERIFY2(info->text().contains(QStringLiteral("no stations")),
+           qPrintable(info->text()));
+  QVERIFY(info->text().contains(QStringLiteral("Cases page")));
+  QVERIFY(!runOne->isEnabled());
+  QVERIFY(fix->isVisible());
+  QCOMPARE(fix->text(), QStringLiteral("Go to Cases"));
+  shot(page, QStringLiteral("runs_waiting"));
+  fix->click();
+  QCOMPARE(went.size(), 2);
+  QCOMPARE(went[1][0].toString(), QStringLiteral("cases"));
+  QCOMPARE(went[1][1].toMap().value(QStringLiteral("case")).toString(),
+           store_->study().cases[3].id);
+  // The indicators of that case can run (they need no station): the batch
+  // would take them.
+  QVERIFY(runAll->text().contains(QStringLiteral("(1)")));
+  QVERIFY(store_->update([](Study &st) { st.cases.removeLast(); }));
+  QCOMPARE(store_->study().cases.size(), 3);
+}
+
+// From an empty application: no study, then a study with no cases, then the
+// recipes in the order that works.
+void TstStudyPages::runsPageFromNothing() {
+  QSettings settings(dir_.filePath("s2.ini"), QSettings::IniFormat);
+  StudyStore store(&settings);
+  Navigator nav;
+  AppContext ctx = ctx_;
+  ctx.study = &store;
+  ctx.nav = &nav;
+  QSignalSpy went(&nav, &Navigator::requested);
+  RunsPage page(ctx);
+  page.resize(1100, 760);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  // No study: the two ways on are buttons, not only words.
+  auto *newStudy = page.findChild<QPushButton *>(QStringLiteral("newStudy"));
+  auto *openStudy = page.findChild<QPushButton *>(QStringLiteral("openStudy"));
+  QVERIFY(newStudy && newStudy->isVisible());
+  QVERIFY(openStudy && openStudy->isVisible());
+  shot(page, QStringLiteral("runs_no_study"));
+
+  QVERIFY(store.create(dir_.filePath("fresh"), QStringLiteral("Fresh")));
+  auto *guide = page.findChild<QLabel *>(QStringLiteral("runsGuide"));
+  auto *guideGo = page.findChild<QPushButton *>(QStringLiteral("runsGuideGo"));
+  QVERIFY(!newStudy->isVisible());
+  QVERIFY(guide->isVisible());
+  QVERIFY(guide->text().contains(QStringLiteral("no cases")));
+  QVERIFY(guideGo->isVisible());
+  shot(page, QStringLiteral("runs_no_cases"));
+  guideGo->click();
+  QCOMPARE(went.size(), 1);
+  QCOMPARE(went[0][0].toString(), QStringLiteral("cases"));
+
+  // A classification first: the page offers the features recipe it needs,
+  // and the new classification is bound to it.
+  QStringList asked;
+  page.confirm = [&asked](const QString &, const QString &text) {
+    asked << text;
+    return true;
+  };
+  auto *newRecipe = page.findChild<QToolButton *>(QStringLiteral("studySwitch"));
+  QVERIFY(newRecipe && newRecipe->menu());
+  emit newRecipe->menu()->aboutToShow();
+  QAction *classification = nullptr;
+  for (QAction *a : newRecipe->menu()->actions())
+    if (a->text() == QLatin1String("Classification"))
+      classification = a;
+  QVERIFY(classification);
+  bool sawList = false;
+  QTimer::singleShot(200, &page, [&sawList] {
+    auto *dialog = qobject_cast<RecipeDialog *>(QApplication::activeModalWidget());
+    if (!dialog)
+      return;
+    auto *box = dialog->findChild<QComboBox *>(QStringLiteral("featuresRecipe"));
+    sawList = box && box->count() == 2 && box->currentIndex() == 1;
+    dialog->accept();
+  });
+  classification->trigger();
+  QVERIFY(sawList);
+  QCOMPARE(asked.size(), 1);
+  QVERIFY(asked[0].contains(QStringLiteral("features recipe")));
+  QCOMPARE(store.study().recipes.size(), 2);
+  QCOMPARE(store.study().recipes[0].tool, kToolFeatures);
+  QCOMPARE(store.study().recipes[1].tool, kToolClassification);
+  QCOMPARE(store.study().recipes[1].settings.value("features_recipe").toString(),
+           store.study().recipes[0].id);
+
+  // Removing the features recipe names the recipe that depends on it.
+  auto *matrix = page.findChild<RunMatrix *>();
+  matrix->select(-1, 0);
+  page.confirm = [&asked](const QString &, const QString &text) {
+    asked << text;
+    return false;
+  };
+  QPushButton *remove = nullptr;
+  for (QPushButton *b : page.findChildren<QPushButton *>())
+    if (b->text() == QLatin1String("Remove recipe"))
+      remove = b;
+  QVERIFY(remove && remove->isEnabled());
+  remove->click();
+  QCOMPARE(asked.size(), 2);
+  QVERIFY2(asked[1].contains(store.study().recipes[1].name),
+           qPrintable(asked[1]));
+  QCOMPARE(store.study().recipes.size(), 2);
+  store.close();
+  QVERIFY(newStudy->isVisible());
+}
+
 void TstStudyPages::recipeDialog() {
   const Study &s = store_->study();
   RecipeDialog dialog(s, s.recipes[0]);
@@ -471,6 +719,54 @@ void TstStudyPages::recipeDialog() {
   QCOMPARE(edited.settings.value("ma_windows").toList()[1].toInt(), 9);
   QCOMPARE(edited.settings.value("bollinger"), QVariant(true));
   QCOMPARE(edited.settings.value("mc"), s.recipes[0].settings.value("mc"));
+
+  // A classification chooses its features recipe from a list.
+  RecipeDialog third(s, s.recipes[2]);
+  auto *box = third.findChild<QComboBox *>(QStringLiteral("featuresRecipe"));
+  QVERIFY(box);
+  QCOMPARE(box->count(), 2); // none, and the study's one features recipe
+  QCOMPARE(box->currentData().toString(), s.recipes[1].id);
+  QCOMPARE(box->currentText(), s.recipes[1].name);
+  QVERIFY(!box->toolTip().isEmpty());
+  box->setCurrentIndex(0);
+  third.accept();
+  QCOMPARE(third.recipe().settings.value("features_recipe").toString(),
+           QString());
+  QCOMPARE(third.recipe().revision, s.recipes[2].revision + 1);
+
+  // A features configuration with a catalog of its own: the study's is used
+  // unless the override is kept, and an override is said in the dialog.
+  const QString config = QStringLiteral(
+      "{\"FREQMIN\": 1.0, \"chaos_calibration\": {\"catalog\": "
+      "\"/elsewhere/own.csv\", \"min_mag\": 1.5}}");
+  RecipeDialog fourth(s, s.recipes[1]);
+  auto *said = fourth.findChild<QLabel *>(QStringLiteral("calibrationCatalog"));
+  auto *clear =
+      fourth.findChild<QPushButton *>(QStringLiteral("clearOverride"));
+  QVERIFY(said && clear);
+  fourth.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&fourth));
+  QVERIFY(fourth.ownCatalog().isEmpty());
+  QVERIFY(!clear->isVisible());
+  QVERIFY(!fourth.loadText(QStringLiteral("no_such_setting"), config, true));
+  QVERIFY(fourth.loadText(QStringLiteral("config_json"), config, false));
+  QVERIFY(fourth.ownCatalog().isEmpty());
+  QVERIFY(fourth.loadText(QStringLiteral("config_json"), config, true));
+  QCOMPARE(fourth.ownCatalog(), QStringLiteral("/elsewhere/own.csv"));
+  QVERIFY(said->text().contains(QStringLiteral("own.csv")));
+  QVERIFY(clear->isVisible());
+  shot(fourth, QStringLiteral("recipe_override"));
+  clear->click();
+  QVERIFY(fourth.ownCatalog().isEmpty());
+  QVERIFY(!clear->isVisible());
+  fourth.accept();
+  // The rest of the configuration is kept.
+  const QString kept =
+      fourth.recipe().settings.value("config_json").toString();
+  QVERIFY(kept.contains(QStringLiteral("min_mag")));
+  QVERIFY(kept.contains(QStringLiteral("FREQMIN")));
+  QVERIFY(!kept.contains(QStringLiteral("own.csv")));
+  QVERIFY(calibrationOverride(fourth.recipe()).isEmpty());
 }
 
 namespace {

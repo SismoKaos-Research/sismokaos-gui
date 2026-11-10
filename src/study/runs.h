@@ -8,21 +8,32 @@
 // (recipe revision, the settings in effect, the case as it was), on what
 // (inputs with their SHA-256), by which version, when, how it ended, and
 // the values the case fitted for itself. A cell of the Runs page is "done"
-// when its run.json says so for the recipe and the case as they are now.
+// when its run.json says so for the recipe, the case and the catalog as they
+// are now.
+//
+// A run never works in that folder. It writes into <folder>.tmp, and only a
+// run that finishes takes the folder's place; one that is stopped leaves
+// nothing, and one that fails is kept as <folder>.failed (its files, run.log
+// and run.json with the error) until the next attempt. So a finished run
+// stays as it was until a newer one has succeeded. Every run also writes its
+// log to run.log.
 //
 // The tools and their recipe settings:
 //
 //   indicators (one run per case; station folder "_case")
 //     The catalog events of the case's zone from one window before the span
-//     up to, not including, the event; cbi's indicator table and figures.
+//     up to, not including, the event (the earthquake is looked up in the
+//     catalog, so it stays out even when the catalog's time offset is wrong);
+//     cbi's indicator table and figures.
 //     estimate_mc (fitted per case when true), mc, mag_bin, window_months,
 //     step_months, half_gauss_sigma, ma_windows, bollinger, bb_window, bb_k,
 //     homogenize, decluster, figures, figure_dpi, figure_language.
 //
 //   features (one run per station)
 //     fx on the station's waveform folder; the chaos parameters are
-//     calibrated per station (fitted). config_json: an fx config.json as
-//     text (empty: fx's defaults). The whole folder is processed.
+//     calibrated per station (fitted) on the study's catalog, in UTC.
+//     config_json: an fx config.json as text (empty: fx's defaults); a
+//     catalog named in it is an explicit override of the study's.
 //
 //   classification (one run per station)
 //     sfc on the feature table of a features recipe. The classes are ranges
@@ -41,6 +52,7 @@
 #include <functional>
 #include <optional>
 
+#include "analysis/events.h"
 #include "study/study.h"
 
 namespace skg::study {
@@ -59,11 +71,19 @@ Recipe defaultRecipe(const QString &tool);
 // <study>/<case>/<station or _case>/<tool>/<recipe>
 QString runDir(const Study &s, const Case &c, const QString &station,
                const Recipe &r);
+// Beside a run folder: where a run works, and where a failed one is kept.
+QString runTmpDir(const QString &runDir);    // <runDir>.tmp
+QString runFailedDir(const QString &runDir); // <runDir>.failed
+extern const QString kRunLogName;            // "run.log"
 
 struct RunRecord {
   QString tool, recipe, caseId, station;
   int revision = 0;
-  QString caseSignature; // what of the case the run depended on
+  QString caseSignature; // what of the case and study the run depended on
+  QString catalogSha;    // SHA-256 of the study's catalog as the run read it
+  QString upstream;      // classification: when its features run finished
+  QString waveStamp;     // features: the waveform files read (names, sizes,
+                         // times), so new files for the span are noticed
   QString appVersion;
   QDateTime started, finished; // UTC
   bool ok = false;
@@ -78,8 +98,14 @@ struct RunRecord {
   static std::optional<RunRecord> read(const QString &dir);
 };
 
-// Everything of a case a run depends on, as one line.
-QString caseSignature(const Case &c, const QString &station);
+// Everything of the case and of the study's inputs a run of `tool` depends
+// on, as one line; a run whose line differs from today's is stale. Each tool
+// has its own: the indicators depend on the case's time, place, span and
+// zone; the features on the time, the span and the station (not the zone);
+// the classification on the time and the station. The catalog's time offset
+// is part of the first two.
+QString runSignature(const Study &s, const Case &c, const QString &station,
+                     const QString &tool);
 
 enum class CellState {
   Done,          // run.json: ok, for this recipe revision and this case
@@ -89,26 +115,51 @@ enum class CellState {
   Blocked,       // cannot run yet (`why` says what is needed)
   NotApplicable, // the tool does not apply to this row
 };
+// Where a blocked cell is put right.
+enum class Fix {
+  None,
+  Cases,    // on the Cases page (catalog, stations, waveform folder)
+  Recipe,   // by editing this recipe
+  RunFirst, // by running another cell first
+};
 struct Cell {
   CellState state = CellState::Missing;
-  QString why; // Blocked, Failed: the reason
+  QString why; // Blocked, Failed, Stale: the reason, with the path checked
+  Fix fix = Fix::None;
   QString dir; // the run folder
-  std::optional<RunRecord> record;
+  std::optional<RunRecord> record; // the finished run in `dir`, if any
+  QString note; // Done: a later attempt that failed, if any
+  QString log;  // the run log to show (of the last attempt), if any
 };
-// `station` empty: the case has no stations.
+// `station` empty: the case has no stations (a per-station tool then waits
+// for one).
 Cell cellOf(const Study &s, const Case &c, const QString &station,
             const Recipe &r);
+// How many finished runs of `before` are no longer finished and current in
+// `after` (the same study after an edit): what a change would make stale.
+int runsMadeStale(const Study &before, const Study &after);
+// The catalog event a case was made from: same place and magnitude, within
+// 15 hours of the case's time (a wrong time offset moves it by hours, not
+// more). nullptr for a reference date or when the catalog has none.
+const analysis::Event *eventOfCase(const Case &c,
+                                   const std::vector<analysis::Event> &events);
+// The catalog a features recipe names for itself in its config, or empty.
+QString calibrationOverride(const Recipe &features);
 
 struct RunHooks {
   std::function<void(const QString &)> log;
   std::function<bool()> shouldStop;
   std::function<void(double fraction, const QString &what)> progress;
 };
-// Runs the cell and writes run.json (also when it fails). Throws
-// std::runtime_error with the reason on failure; returns false when stopped.
+// Runs the cell in <folder>.tmp and puts it in the folder's place when it
+// has finished (see the top of this file). Throws std::runtime_error with the
+// reason on failure; returns false when stopped.
 bool runCell(const Study &s, const Case &c, const QString &station,
              const Recipe &r, const QString &appVersion, const RunHooks &hooks);
 
 QString sha256Of(const QString &path); // empty when unreadable
+// The same, remembered per path until the file's size or time changes, so
+// asking on every refresh costs nothing. Thread-safe.
+QString sha256Cached(const QString &path);
 
 } // namespace skg::study

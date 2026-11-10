@@ -1,6 +1,10 @@
 // The Runs page: which recipe has been run on which case. A matrix of
 // recipes (columns) by case and station (rows); the recipes are made and
 // edited here, and the missing and stale cells are queued as jobs.
+//
+// The cells are read from disk when something that can change them happens
+// (the study is edited, a job ends, the page is shown) and kept; while jobs
+// run, only their progress is redrawn.
 #pragma once
 
 #include <QDialog>
@@ -9,10 +13,15 @@
 #include <QSet>
 #include <QWidget>
 
+#include <atomic>
+#include <functional>
+#include <memory>
+
 #include "core/module.h"
 #include "study/runs.h"
 #include "study/study.h"
 
+class QComboBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -34,6 +43,9 @@ struct MatrixCell {
   double fraction = -1;
 };
 
+// Mouse: a click selects a cell (or a column, on its heading), a double
+// click opens it. Keyboard, when the matrix has the focus: the arrow keys
+// move the selection, Enter or Space activates the cell.
 class RunMatrix : public QWidget {
   Q_OBJECT
 public:
@@ -53,10 +65,16 @@ public:
 
 signals:
   void selectionChanged();
+  void activated(); // Enter or Space on the selected cell
+  void opened();    // a double click on a cell
 
 protected:
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *e) override;
+  void mouseDoubleClickEvent(QMouseEvent *e) override;
+  void keyPressEvent(QKeyEvent *e) override;
+  void focusInEvent(QFocusEvent *e) override;
+  void focusOutEvent(QFocusEvent *e) override;
 
 private:
   QRectF cellRect(int row, int column) const;
@@ -69,7 +87,8 @@ private:
 };
 
 // Name and settings of one recipe. Values are typed as text and keep the
-// type the setting had.
+// type the setting had; the features recipe a classification builds on is
+// chosen from a list.
 class RecipeDialog : public QDialog {
   Q_OBJECT
 public:
@@ -79,12 +98,25 @@ public:
   study::Recipe recipe() const { return recipe_; }
   void accept() override;
 
+  // Puts `text` (a file's contents) into the text setting `key`. A features
+  // configuration that names a calibration catalog of its own keeps it only
+  // when `keepOwnCatalog`; otherwise the name is cleared and the study's
+  // catalog is used. Returns false when the recipe has no such text setting.
+  bool loadText(const QString &key, const QString &text, bool keepOwnCatalog);
+  // The catalog the configuration in the dialog names for itself, or empty.
+  QString ownCatalog() const;
+
 private:
   void loadFile();
+  void showOverride();
+  int rowOf(const QString &key) const;
 
   study::Recipe recipe_;
   QLineEdit *name_;
   QTableWidget *table_;
+  QComboBox *featuresBox_ = nullptr; // classification: the features recipe
+  QLabel *override_ = nullptr;       // features: the catalog override, if any
+  QPushButton *clearOverride_ = nullptr;
 };
 
 class RunsPage : public QWidget {
@@ -92,38 +124,63 @@ class RunsPage : public QWidget {
 public:
   RunsPage(AppContext &ctx, QWidget *parent = nullptr);
 
+  // Every yes/no question of the page is asked through this (a message box
+  // by default), so that a test can answer.
+  std::function<bool(const QString &title, const QString &text)> confirm;
+  // Whether a batch ("Run missing and stale") is going on.
+  bool batchRunning() const { return runAll_; }
+
 protected:
   void changeEvent(QEvent *e) override;
+  void showEvent(QShowEvent *e) override;
 
 private:
   struct Row {
     QString caseId, station;
   };
   void retranslate();
-  void refresh();
+  void reload(); // reads every cell from disk, then render()
+  // Redraws from what was read and the running jobs; `selection` also the
+  // selected cell's line and the recipe's settings.
+  void render(bool selection = true);
   void showSelection();
   void newRecipe(const QString &tool);
   void editRecipe();
   void removeRecipe();
   void runAll();
   void runSelected();
+  void stopBatch();
+  void fixSelected();
+  void showLog();
+  void openSelectedFolder();
   void pump();
   bool start(const Row &row, const study::Recipe &r);
   static QString key(const QString &caseId, const QString &station,
                      const QString &recipeId);
+  QString keyOf(int row, const study::Recipe &r) const;
+  bool busy(const QString &key) const;
+  const study::Cell *cellAt(int row, int column) const;
   QList<QPair<Row, QString>> runnable() const; // row, recipe id
 
   AppContext ctx_;
   QList<Row> rows_;
+  QList<QList<study::Cell>> cells_; // rows_ by the study's recipes
   QHash<QString, QPointer<Job>> running_;
+  // Set while a cell's worker is still in its run, also after the job was
+  // cancelled: the same cell is not started twice.
+  QHash<QString, std::shared_ptr<std::atomic<bool>>> working_;
   QSet<QString> attempted_;
   bool runAll_ = false;
 
   QStackedWidget *stack_;
   QLabel *noStudy_;
-  QPushButton *run_, *runOne_, *edit_, *remove_, *openFolder_;
+  QPushButton *newStudy_, *openStudy_;
+  QPushButton *run_, *stop_, *runOne_, *edit_, *remove_;
+  QPushButton *fix_, *showLog_, *openFolder_;
   QToolButton *new_;
   QLabel *hint_;
+  QLabel *guide_;
+  QPushButton *guideGo_;
   RunMatrix *matrix_;
   QLabel *cellInfo_;
   QLabel *recipeTitle_;

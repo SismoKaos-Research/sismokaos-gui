@@ -98,6 +98,12 @@ SettingInfo features(const QString &key) {
                      "defaults. Load it with the button below; the station, "
                      "the folders and the calibration are set by the "
                      "study for each case.")};
+  if (key == QLatin1String("calibration catalog"))
+    return {Help::tr("Calibration catalog"),
+            Help::tr("The earthquake catalog the quiet periods for the "
+                     "calibration are found with: the study's, unless the "
+                     "configuration names one of its own, which then "
+                     "overrides the study's for this recipe.")};
   if (key == QLatin1String("chaos parameters (calibration)"))
     return {Help::tr("Chaos parameters (calibration)"),
             Help::tr("The embedding delay, embedding dimension, mean "
@@ -109,9 +115,10 @@ SettingInfo features(const QString &key) {
 SettingInfo classification(const QString &key) {
   if (key == QLatin1String("features_recipe"))
     return {Help::tr("Features recipe"),
-            Help::tr("The id of the features recipe whose feature table is "
-                     "classified. The classification of a case waits until "
-                     "that recipe has run on it.")};
+            Help::tr("The features recipe whose feature table is "
+                     "classified, chosen from the study's features recipes. "
+                     "The classification of a case waits until that recipe "
+                     "has run on it.")};
   if (key == QLatin1String("band"))
     return {Help::tr("Band"),
             Help::tr("For a features recipe with frequency bands: the name "
