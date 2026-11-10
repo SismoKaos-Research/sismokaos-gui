@@ -154,8 +154,9 @@ dialog load on a worker thread: wait on `loading()` before asserting.
    `description()`, `requiredTools()`, `createWidget()`. The widget gets an
    `AppContext` with the jobs model, the tool registry, the settings, the
    theme, the study store (`study`; it may hold no open study) and the
-   navigator (`nav`, null in some tests). `section()` says where it sits in the sidebar (Study, Tools, or
-   Footer; Tools by default) and `iconId()` names its icon, by default
+   navigator (`nav`, null in some tests). `section()` says where it sits in
+   the sidebar (Study, Tools, or Footer; Tools by default) and `iconId()`
+   names its icon, by default
    `src/core/resources/icons/<id>.svg` (a 24x24 line drawing with
    `stroke="#000"`, recoloured at run time; a plain square when missing).
 3. Register it in `src/app/main.cpp` with `modules.emplace<YourModule>()`.

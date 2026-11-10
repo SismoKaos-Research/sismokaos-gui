@@ -306,8 +306,9 @@ The page has the study's inputs at the top, the table of cases with the
   your waveform folders. Selecting an earthquake lists the stations within
   the distance you set, with distance and azimuth and, for each, whether
   waveforms were found for the span; the nearest three that have waveforms
-  start ticked, or simply the nearest three when none has. Set the **span** and *Add case*. The dialog warns when no station
-  is ticked (only the Indicators recipes will then run for the case), when
+  start ticked, or simply the nearest three when none has. Set the **span**
+  and *Add case*. The dialog warns when no station is ticked (only the
+  Indicators recipes will then run for the case), when
   the earthquake is already a case, and when the span starts before the
   catalog does.
 - *Add reference date…* takes a name, a date, and either the place and
@@ -1158,8 +1159,9 @@ Stated plainly, so that nobody finds them the hard way:
   (see [Maps and fault lines](#maps-and-fault-lines)).
 - **The built-in earthquake list** is for picking earthquakes only (see
   [The earthquake catalog](#the-earthquake-catalog)).
-- **Numbers against the Python tools.** Clustering, model training and the chaos
-  features use the application's own implementations; see the notes in the
+- **Numbers against the Python tools.** Clustering, model training and the
+  chaos features use the application's own implementations; see the notes
+  in the
   Classification and Regions sections before comparing numbers with the
   original Python tools.
 
