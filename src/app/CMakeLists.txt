@@ -20,6 +20,19 @@ if(APPLE)
             $<TARGET_BUNDLE_CONTENT_DIR:sismokaos-gui>/Resources/LICENSE VERBATIM)
 endif()
 
+# The fault data files (see the top-level CMakeLists.txt): in
+# Contents/Resources/data of the macOS bundle, in data\ beside the executable
+# on Windows; Linux packages take them from `cmake --install`.
+if(APPLE)
+  add_custom_command(TARGET sismokaos-gui POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/data/faults
+            $<TARGET_BUNDLE_CONTENT_DIR:sismokaos-gui>/Resources/data VERBATIM)
+elseif(WIN32)
+  add_custom_command(TARGET sismokaos-gui POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/data/faults
+            $<TARGET_FILE_DIR:sismokaos-gui>/data VERBATIM)
+endif()
+
 # ayzek, when bundled (third_party/CMakeLists.txt): beside the executable on
 # Windows, in Contents/Resources in the macOS bundle; Linux packages take it
 # from `cmake --install` (share/sismokaos-gui/ayzek).

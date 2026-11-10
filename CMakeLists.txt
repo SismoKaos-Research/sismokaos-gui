@@ -63,6 +63,15 @@ install(TARGETS sismokaos-gui RUNTIME DESTINATION bin BUNDLE DESTINATION .)
 if(UNIX AND NOT APPLE)
   install(FILES LICENSE DESTINATION share/doc/sismokaos-gui)
 endif()
+# The fault data files (data/faults) carry their own licences (CC BY 4.0 and
+# CC BY-SA 4.0), so they ship as files beside the program, never as Qt
+# resources: share/sismokaos-gui/data here for Linux (and the AppImage),
+# Contents/Resources/data on macOS and data\ beside the executable on Windows
+# (src/app/CMakeLists.txt). cbi::dataDirs() looks in those places;
+# packaging/check_package.sh fails a package that lacks them.
+if(UNIX AND NOT APPLE)
+  install(DIRECTORY data/faults/ DESTINATION share/sismokaos-gui/data)
+endif()
 
 enable_testing()
 add_subdirectory(tests)

@@ -84,3 +84,21 @@ jobs:
           QT_QPA_PLATFORM: offscreen
           # QtTest on Windows logs to the debugger when stdout is a pipe.
           QT_ASSUME_STDERR_HAS_CONSOLE: "1"
+
+      - name: Package contents (data files and ayzek)
+        shell: bash
+        run: |
+          # A package without these would start and then fail at run time
+          # (v0.3.0 first went out without ayzek). Where each platform keeps
+          # them is in the top-level CMakeLists.txt.
+          case "$RUNNER_OS" in
+            Linux)
+              cmake --install build --prefix pkgcheck/usr
+              bash packaging/check_package.sh pkgcheck/usr/share/sismokaos-gui ayzek ;;
+            macOS)
+              bash packaging/check_package.sh build/src/app/sismokaos-gui.app/Contents/Resources ayzek ;;
+            Windows)
+              exe="$(find build -name sismokaos-gui.exe | head -n 1)"
+              test -n "$exe" || { echo "sismokaos-gui.exe not found under build"; exit 1; }
+              bash packaging/check_package.sh "$(dirname "$exe")" ayzek.exe ;;
+          esac

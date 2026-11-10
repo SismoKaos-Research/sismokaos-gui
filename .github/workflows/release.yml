@@ -109,6 +109,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           cmake --install build --prefix AppDir/usr
+          bash packaging/check_package.sh AppDir/usr/share/sismokaos-gui ayzek
           curl -fsSLo linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           curl -fsSLo linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
           chmod +x linuxdeploy linuxdeploy-plugin-qt
@@ -132,9 +133,20 @@ jobs:
           if (-not $exe) { throw "sismokaos-gui.exe not found under build" }
           Copy-Item $exe.FullName "dist\$name\"
           Copy-Item -Recurse build\ayzek "dist\$name\ayzek"
+          # The fault data files, which the build copies beside the executable.
+          Copy-Item -Recurse (Join-Path $exe.DirectoryName "data") "dist\$name\data"
           Copy-Item install.ps1 "dist\$name\update.ps1"
           Copy-Item LICENSE "dist\$name\LICENSE.txt"
           windeployqt --release --no-compiler-runtime "dist\$name\sismokaos-gui.exe"
+          # The same list as packaging/check_package.sh, in PowerShell (bash
+          # in a pwsh step may be the WSL launcher, not Git Bash).
+          foreach ($f in "data\eafz.geojson", "data\faults_tr.geojson", "data\LICENSE.txt",
+                         "data\PROVENANCE.md", "ayzek\ayzek.exe", "ayzek\LICENSE") {
+            $p = "dist\$name\$f"
+            if (-not (Test-Path $p -PathType Leaf) -or (Get-Item $p).Length -eq 0) {
+              throw "MISSING from the package: $p"
+            }
+          }
           # The MSVC runtime, so no separate redistributable is needed.
           $redist = Get-ChildItem "$env:VCToolsRedistDir\x64\Microsoft.VC*.CRT\*.dll" -ErrorAction SilentlyContinue
           if ($redist) { Copy-Item $redist "dist\$name\" }
@@ -145,6 +157,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           macdeployqt build/src/app/sismokaos-gui.app
+          bash packaging/check_package.sh build/src/app/sismokaos-gui.app/Contents/Resources ayzek
           mkdir -p dist
           ditto -c -k --keepParent build/src/app/sismokaos-gui.app "dist/sismokaos-gui-$VERSION-macos-universal.zip"
 
