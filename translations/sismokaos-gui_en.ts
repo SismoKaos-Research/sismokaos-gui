@@ -2879,22 +2879,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="86"/>
+        <location filename="../src/app/mainwindow.cpp" line="82"/>
+        <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="96"/>
         <source>Started: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="90"/>
+        <location filename="../src/app/mainwindow.cpp" line="100"/>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="111"/>
+        <location filename="../src/app/mainwindow.cpp" line="121"/>
         <source>Jobs still running</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="112"/>
+        <location filename="../src/app/mainwindow.cpp" line="122"/>
         <source>%n job(s) are still running. Quit and stop them?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2902,47 +2907,47 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="133"/>
+        <location filename="../src/app/mainwindow.cpp" line="143"/>
         <source>Jobs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="134"/>
+        <location filename="../src/app/mainwindow.cpp" line="144"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="135"/>
+        <location filename="../src/app/mainwindow.cpp" line="145"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="136"/>
+        <location filename="../src/app/mainwindow.cpp" line="146"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="137"/>
+        <location filename="../src/app/mainwindow.cpp" line="147"/>
         <source>&amp;Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="138"/>
+        <location filename="../src/app/mainwindow.cpp" line="148"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="139"/>
+        <location filename="../src/app/mainwindow.cpp" line="149"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="140"/>
+        <location filename="../src/app/mainwindow.cpp" line="150"/>
         <source>Check for &amp;updates…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="141"/>
+        <location filename="../src/app/mainwindow.cpp" line="151"/>
         <source>Check for updates at start</source>
         <translation type="unfinished"></translation>
     </message>

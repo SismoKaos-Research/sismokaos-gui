@@ -53,6 +53,12 @@ qt_add_translations(TARGETS sismokaos-gui ${SKG_TRANSLATED_TARGETS}
   RESOURCE_PREFIX "/i18n")
 
 install(TARGETS sismokaos-gui RUNTIME DESTINATION bin BUNDLE DESTINATION .)
+# The licence travels with every package: here for Linux (and the AppImage),
+# in Contents/Resources on macOS (src/app/CMakeLists.txt), as LICENSE.txt in
+# the Windows zip (release.yml).
+if(UNIX AND NOT APPLE)
+  install(FILES LICENSE DESTINATION share/doc/sismokaos-gui)
+endif()
 
 enable_testing()
 add_subdirectory(tests)

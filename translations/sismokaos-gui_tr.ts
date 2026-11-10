@@ -2214,7 +2214,9 @@
     <message numerus="yes">
         <location filename="../src/modules/indicators/resultspane.cpp" line="175"/>
         <source>%1: %n window(s), %2 figure(s)%3</source>
-        <translation><numerusform>%1: %n pencere, %2 grafik%3</numerusform></translation>
+        <translation>
+            <numerusform>%1: %n pencere, %2 grafik%3</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="208"/>
@@ -2293,7 +2295,7 @@
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
         <source>FeatureCollection of LineString features; property &quot;strand&quot; optional</source>
-        <translation>LineString öğelerinden oluşan FeatureCollection; "strand" özelliği isteğe bağlı</translation>
+        <translation>LineString öğelerinden oluşan FeatureCollection; &quot;strand&quot; özelliği isteğe bağlı</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
@@ -2547,7 +2549,9 @@
     <message numerus="yes">
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="511"/>
         <source>Mc by maximum curvature + 0.2: %1 (%n event(s))</source>
-        <translation><numerusform>En büyük eğrilik + 0,2 ile Mc: %1 (%n olay)</numerusform></translation>
+        <translation>
+            <numerusform>En büyük eğrilik + 0,2 ile Mc: %1 (%n olay)</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="523"/>
@@ -2886,69 +2890,74 @@
         <translation>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;sismokaos araçları için masaüstü arayüzü: öznitelik çıkarımı, sınıflandırma ve AFAD/TDVMS indirmeleri.&lt;br&gt;Qt %2</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="86"/>
+        <location filename="../src/app/mainwindow.cpp" line="82"/>
+        <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
+        <translation>&lt;br&gt;&lt;br&gt;Telif hakkı (C) 2026 H. Oğuz Bolat.&lt;br&gt;Bu program HİÇBİR GARANTİ verilmeden sunulur. Özgür bir yazılımdır; GNU Genel Kamu Lisansı'nın 3. sürümü veya (tercihinize bağlı olarak) sonraki bir sürümünün koşulları altında yeniden dağıtabilirsiniz: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Kaynak kod: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="96"/>
         <source>Started: %1</source>
         <translation>Başlatıldı: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="90"/>
+        <location filename="../src/app/mainwindow.cpp" line="100"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="111"/>
+        <location filename="../src/app/mainwindow.cpp" line="121"/>
         <source>Jobs still running</source>
         <translation>İşler hâlâ çalışıyor</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="112"/>
+        <location filename="../src/app/mainwindow.cpp" line="122"/>
         <source>%n job(s) are still running. Quit and stop them?</source>
         <translation>
             <numerusform>%n iş hâlâ çalışıyor. Çıkıp durdurulsun mu?</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="133"/>
+        <location filename="../src/app/mainwindow.cpp" line="143"/>
         <source>Jobs</source>
         <translation>İşler</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="134"/>
+        <location filename="../src/app/mainwindow.cpp" line="144"/>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="135"/>
+        <location filename="../src/app/mainwindow.cpp" line="145"/>
         <source>&amp;Quit</source>
         <translation>&amp;Çık</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="136"/>
+        <location filename="../src/app/mainwindow.cpp" line="146"/>
         <source>&amp;View</source>
         <translation>&amp;Görünüm</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="137"/>
+        <location filename="../src/app/mainwindow.cpp" line="147"/>
         <source>&amp;Language</source>
         <translation>&amp;Dil</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="138"/>
+        <location filename="../src/app/mainwindow.cpp" line="148"/>
         <source>&amp;Help</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="139"/>
+        <location filename="../src/app/mainwindow.cpp" line="149"/>
         <source>&amp;About</source>
         <translation>&amp;Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="140"/>
+        <location filename="../src/app/mainwindow.cpp" line="150"/>
         <source>Check for &amp;updates…</source>
         <translation>G&amp;üncellemeleri denetle…</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="141"/>
+        <location filename="../src/app/mainwindow.cpp" line="151"/>
         <source>Check for updates at start</source>
         <translation>Başlangıçta güncellemeleri denetle</translation>
     </message>

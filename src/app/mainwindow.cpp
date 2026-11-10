@@ -77,8 +77,18 @@ MainWindow::MainWindow(AppContext ctx, ModuleRegistry &modules, I18n *i18n,
         tr("<b>sismokaos-gui %1</b><br>A desktop front end for the sismokaos "
            "tools: feature extraction, classification and AFAD/TDVMS "
            "downloads.<br>Qt %2")
-            .arg(QCoreApplication::applicationVersion(),
-                 QLatin1String(qVersion())));
+                .arg(QCoreApplication::applicationVersion(),
+                     QLatin1String(qVersion())) +
+            tr("<br><br>Copyright (C) 2026 H. Oğuz Bolat.<br>This program "
+               "comes with ABSOLUTELY NO WARRANTY. It is free software, and "
+               "you are welcome to redistribute it under the terms of the "
+               "GNU General Public License, version 3 or (at your option) "
+               "any later version: "
+               "<a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">"
+               "gnu.org/licenses/gpl-3.0</a>. Source: "
+               "<a href=\"https://github.com/SismoKaos-Research/"
+               "sismokaos-gui\">github.com/SismoKaos-Research/"
+               "sismokaos-gui</a>."));
   });
 
   connect(ctx_.jobs, &JobModel::jobAdded, this, [this](Job *job) {

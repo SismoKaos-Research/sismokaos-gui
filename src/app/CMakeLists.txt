@@ -14,6 +14,12 @@ set_target_properties(sismokaos-gui PROPERTIES
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
 
+if(APPLE)
+  add_custom_command(TARGET sismokaos-gui POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/LICENSE
+            $<TARGET_BUNDLE_CONTENT_DIR:sismokaos-gui>/Resources/LICENSE VERBATIM)
+endif()
+
 # ayzek, when bundled (third_party/CMakeLists.txt): beside the executable on
 # Windows, in Contents/Resources in the macOS bundle; Linux packages take it
 # from `cmake --install` (share/sismokaos-gui/ayzek).

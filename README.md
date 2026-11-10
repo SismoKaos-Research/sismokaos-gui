@@ -633,9 +633,31 @@ same campaign at the same time.
 
 ## Licence
 
-MIT, see `LICENSE`. Qt is used under the LGPL v3; miniz under MIT
-(`third_party/miniz/PROVENANCE.md`). ayzek, which the Early warning tab
-runs, is a separate program under the GPL-3.0-or-later: it is not linked
-into the application but shipped beside it with its licence, and its
-source is the `third_party/ayzek` submodule
-(`third_party/AYZEK-PROVENANCE.md`).
+Copyright (C) 2026 H. Oğuz Bolat.
+
+sismokaos-gui is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version (GPL-3.0-or-later). It is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. The full text is in
+`LICENSE`. Releases up to and including v0.2.1 were published under the MIT
+licence and remain available under it.
+
+The source of every release is this repository at the release's tag, with
+its submodules (`git clone --recursive`).
+
+Third-party parts, each with a provenance note:
+
+| Part | Licence | Note |
+| --- | --- | --- |
+| Qt 6 (linked dynamically) | LGPL v3 | <https://www.qt.io/licensing> |
+| XGBoost and dmlc-core (linked statically) | Apache 2.0 | `third_party/XGBOOST-PROVENANCE.md` |
+| libsvm | BSD 3-clause | `third_party/libsvm/PROVENANCE.md` |
+| toml++ | MIT | `third_party/tomlplusplus/PROVENANCE.md` |
+| miniz | MIT | `third_party/miniz/PROVENANCE.md` |
+| East Anatolian Fault traces (GEM GAF-DB) | CC BY-SA 4.0 | `src/cbi/data/PROVENANCE.md` |
+| ayzek (a separate program run by the Early warning tab) | GPL-3.0-or-later | `third_party/AYZEK-PROVENANCE.md` |
+
+ayzek is not linked into the application: it is shipped beside it with its
+licence, and its source is the `third_party/ayzek` submodule.

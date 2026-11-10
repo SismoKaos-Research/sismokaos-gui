@@ -6,7 +6,8 @@
   DOI 10.5281/zenodo.23672495; `third_party/ayzek/CITATION.cff` says how to
   cite it.
 - Licence: GPL-3.0-or-later (`third_party/ayzek/LICENSE`). ayzek is not
-  linked into sismokaos-gui (MIT): it is built as its own executable and
+  linked into sismokaos-gui (also GPL-3.0-or-later since 0.3.0; MIT up to
+  0.2.1): it is built as its own executable and
   shipped beside the application together with its licence, its citation
   file and its model weights (`models/`, about 4 MB), and the GUI starts it
   as a separate process. Its source travels with this repository as the
