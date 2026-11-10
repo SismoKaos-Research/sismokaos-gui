@@ -19,7 +19,10 @@ param(
   [switch]$Force,
   [switch]$Uninstall,
   [int]$WaitPid = 0,
-  [switch]$Relaunch
+  [int]$WaitSeconds = 60,
+  [switch]$Relaunch,
+  # Stops before anything is downloaded or changed (used by the tests).
+  [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -34,7 +37,18 @@ $Shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\sismok
 
 if ($WaitPid -gt 0) {
   # Called from the running application: let it exit first.
-  for ($i = 0; $i -lt 60 -and (Get-Process -Id $WaitPid -ErrorAction SilentlyContinue); $i++) { Start-Sleep 1 }
+  for ($i = 0; $i -lt $WaitSeconds -and (Get-Process -Id $WaitPid -ErrorAction SilentlyContinue); $i++) { Start-Sleep 1 }
+  # Still there (it was asked to stay open, or it is finishing its jobs):
+  # replacing an application that runs would break it, so nothing is touched.
+  if (Get-Process -Id $WaitPid -ErrorAction SilentlyContinue) {
+    Write-Host "error: sismokaos-gui (process $WaitPid) is still running after $WaitSeconds s; nothing was changed. Close it and update again."
+    exit 3
+  }
+}
+
+if ($DryRun) {
+  Write-Host "dry run: nothing downloaded, nothing changed (installation: $HomeDir)."
+  exit 0
 }
 
 if ($Uninstall) {
@@ -76,13 +90,39 @@ try {
   $inner = Get-ChildItem (Join-Path $Tmp "unpacked") -Directory | Select-Object -First 1
   $source = if ($inner) { $inner.FullName } else { Join-Path $Tmp "unpacked" }
 
-  # Replace the installation whole; a running copy has been waited for above.
-  if (Test-Path $HomeDir) { Remove-Item -Recurse -Force $HomeDir }
+  # The new version goes beside the old one first, then the two are swapped:
+  # the old one is only removed once the new one is in place. A file of the
+  # old one that is still in use makes the rename fail as a whole, with
+  # nothing deleted, and the old version stays as it was.
+  # This script may itself live in the installation that is about to move.
+  $Self = $null
+  if ($PSCommandPath -and (Test-Path $PSCommandPath)) {
+    $Self = Join-Path $Tmp "self.ps1"
+    Copy-Item $PSCommandPath $Self -Force
+  }
+  $New = $HomeDir + ".new"
+  $Old = $HomeDir + ".old"
+  if (Test-Path $New) { Remove-Item -Recurse -Force $New }
+  if (Test-Path $Old) { Remove-Item -Recurse -Force $Old }
   New-Item -ItemType Directory -Path (Split-Path $HomeDir) -Force | Out-Null
-  Move-Item -Path $source -Destination $HomeDir
+  Move-Item -Path $source -Destination $New
+  if (Test-Path $HomeDir) {
+    try { Move-Item -Path $HomeDir -Destination $Old }
+    catch {
+      Remove-Item -Recurse -Force $New -ErrorAction SilentlyContinue
+      throw "the installed version is in use and was left as it is ($($_.Exception.Message)); close sismokaos-gui and update again"
+    }
+  }
+  try { Move-Item -Path $New -Destination $HomeDir }
+  catch {
+    if (Test-Path $Old) { Move-Item -Path $Old -Destination $HomeDir }
+    Remove-Item -Recurse -Force $New -ErrorAction SilentlyContinue
+    throw "could not put the new version in place; the installed version was put back ($($_.Exception.Message))"
+  }
+  if (Test-Path $Old) { Remove-Item -Recurse -Force $Old -ErrorAction SilentlyContinue }
 
   # Keep this script beside the application as the updater.
-  if ($PSCommandPath -and (Test-Path $PSCommandPath)) { Copy-Item $PSCommandPath $Updater -Force }
+  if ($Self -and (Test-Path $Self)) { Copy-Item $Self $Updater -Force }
   elseif (-not (Test-Path $Updater)) { try { Invoke-WebRequest -Uri $Raw -OutFile $Updater -UseBasicParsing } catch {} }
   Set-Content -Path $VersionFile -Value $Version
 

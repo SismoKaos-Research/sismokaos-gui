@@ -22,14 +22,19 @@ WANT=""
 FORCE=0
 UNINSTALL=0
 WAIT_PID=""
+WAIT_SECONDS=60
 RELAUNCH=0
+DRY_RUN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --version) WANT="${2#v}"; shift ;;
     --force) FORCE=1 ;;
     --uninstall) UNINSTALL=1 ;;
     --wait-pid) WAIT_PID="$2"; shift ;;
+    --wait-seconds) WAIT_SECONDS="$2"; shift ;;
     --relaunch) RELAUNCH=1 ;;
+    # Stops before anything is downloaded or changed (used by the tests).
+    --dry-run) DRY_RUN=1 ;;
     -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
@@ -66,7 +71,17 @@ UPDATER="$HOME_DIR/update"
 if [ -n "$WAIT_PID" ]; then
   # Called from the running application: let it exit first.
   i=0
-  while kill -0 "$WAIT_PID" 2>/dev/null && [ $i -lt 60 ]; do sleep 1; i=$((i + 1)); done
+  while kill -0 "$WAIT_PID" 2>/dev/null && [ $i -lt "$WAIT_SECONDS" ]; do sleep 1; i=$((i + 1)); done
+  # Still there (it was asked to stay open, or it is finishing its jobs):
+  # replacing an application that runs would break it, so nothing is touched.
+  if kill -0 "$WAIT_PID" 2>/dev/null; then
+    die "sismokaos-gui (process $WAIT_PID) is still running after $WAIT_SECONDS s; nothing was changed. Close it and update again."
+  fi
+fi
+
+if [ "$DRY_RUN" = 1 ]; then
+  say "dry run: nothing downloaded, nothing changed (installation: $HOME_DIR)."
+  exit 0
 fi
 
 if [ "$UNINSTALL" = 1 ]; then
@@ -108,7 +123,12 @@ mkdir -p "$HOME_DIR" "$BIN_DIR"
 case "$OS" in
   Linux)
     chmod +x "$TMP/$ASSET"
-    mv -f "$TMP/$ASSET" "$APP"
+    # Beside the old one first, then in its place in one step: a failure on
+    # the way (a full disk) leaves the installed version as it was.
+    rm -f "$APP.new"
+    cp "$TMP/$ASSET" "$APP.new" || { rm -f "$APP.new"; die "could not write $APP.new; the installed version is unchanged"; }
+    chmod +x "$APP.new"
+    mv -f "$APP.new" "$APP"
     ln -sfn "$APP" "$BIN_DIR/sismokaos-gui"
     mkdir -p "$HOME/.local/share/applications" "$HOME/.local/share/icons/hicolor/scalable/apps"
     curl -fsSL -o "$HOME/.local/share/icons/hicolor/scalable/apps/sismokaos-gui.svg" \
@@ -128,9 +148,22 @@ EOF
     ;;
   Darwin)
     need ditto
-    ditto -x -k "$TMP/$ASSET" "$TMP/unpacked"
-    rm -rf "$APP"
-    mv "$TMP/unpacked/sismokaos-gui.app" "$APP"
+    # Unpacked beside the old bundle, then swapped in: the old one is only
+    # removed once the new one is in place, and comes back if the swap fails.
+    NEW="$HOME_DIR/.sismokaos-gui.new"
+    OLD="$HOME_DIR/.sismokaos-gui.old"
+    rm -rf "$NEW" "$OLD"
+    ditto -x -k "$TMP/$ASSET" "$NEW" || { rm -rf "$NEW"; die "could not unpack $ASSET; the installed version is unchanged"; }
+    [ -d "$NEW/sismokaos-gui.app" ] || { rm -rf "$NEW"; die "$ASSET holds no sismokaos-gui.app; the installed version is unchanged"; }
+    if [ -e "$APP" ]; then
+      mv "$APP" "$OLD" || { rm -rf "$NEW"; die "could not move the installed version aside; it is unchanged"; }
+    fi
+    if ! mv "$NEW/sismokaos-gui.app" "$APP"; then
+      [ -e "$OLD" ] && mv "$OLD" "$APP"
+      rm -rf "$NEW"
+      die "could not put the new version in place; the installed version was put back"
+    fi
+    rm -rf "$NEW" "$OLD"
     # The bundle is not notarised; without this Gatekeeper refuses a download.
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null || true
     ln -sfn "$APP/Contents/MacOS/sismokaos-gui" "$BIN_DIR/sismokaos-gui"
