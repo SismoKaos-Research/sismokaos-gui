@@ -1,5 +1,7 @@
 #include "modules/tdvms/tdvmsmodule.h"
 
+#include "core/ui.h"
+
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
@@ -559,6 +561,9 @@ void TdvmsWidget::changeEvent(QEvent *e) {
 }
 
 void TdvmsWidget::retranslate() {
+  ui::setEmptyHint(table_,
+                   tr("No campaign open.\nChoose a data folder, then New "
+                      "campaign… to plan the stations and dates to download."));
   root_->setPlaceholderText(tr("folder holding the campaigns"));
   rootBrowse_->setText(tr("Browse..."));
   newCampaign_->setText(tr("New campaign..."));
@@ -572,6 +577,8 @@ void TdvmsWidget::retranslate() {
   dryRun_->setText(tr("dry run (no mail flagged, no submissions)"));
   mailbox_->setText(tr("Mailbox..."));
   start_->setText(tr("Start"));
+  ui::setPrimary(start_);
+  status_->setPlaceholderText(tr("The run log appears here."));
   stop_->setText(tr("Stop"));
   reset_->setText(tr("Reset to pending"));
   tabs_->setTabText(0, tr("Chunks"));

@@ -1,5 +1,7 @@
 #include "modules/analysis/regionspane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDesktopServices>
@@ -618,6 +620,8 @@ void RegionsPane::retranslate() {
   svg_->setText(tr("and SVG"));
   svg_->setToolTip(tr("An SVG beside every PNG; large for big catalogs"));
   start_->setText(tr("Run"));
+  ui::setPrimary(start_);
+  log_->setPlaceholderText(tr("The run log appears here."));
   stop_->setText(tr("Stop"));
   open_->setText(tr("Open output folder"));
   table_->setHorizontalHeaderLabels({tr("Method"), tr("Region"), tr("Centre"),

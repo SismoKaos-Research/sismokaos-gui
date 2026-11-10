@@ -281,22 +281,22 @@
 <context>
     <name>skg::AyzekEventsModel</name>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="109"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="111"/>
         <source>Kind</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="111"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="113"/>
         <source>Alarm</source>
         <translation>Alarm</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="113"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="115"/>
         <source>Time (UTC)</source>
         <translation>Zaman (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="115"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="117"/>
         <source>Message</source>
         <translation>İleti</translation>
     </message>
@@ -357,116 +357,123 @@
 <context>
     <name>skg::CatalogPane</name>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="140"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="142"/>
         <source>fit</source>
         <translation>sığdır</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="147"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="149"/>
         <source>View half-width (km)</source>
         <translation>Görünüm yarı genişliği (km)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="191"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="193"/>
         <source>Set the station (a feature table from the Features tab names it) to see the events around it.</source>
         <translation>Çevresindeki depremleri görmek için istasyonu belirleyin (Öznitelikler sekmesinden gelen bir tablo onu adlandırır).</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="198"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="200"/>
         <source>%1 at %2, %3</source>
         <translation>%1, %2, %3 konumunda</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="203"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="205"/>
         <source>; table from %1 to %2 (UTC)</source>
         <translation>; tablo %1 - %2 (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="211"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="213"/>
         <source>; no catalog loaded</source>
         <translation>; katalog yüklü değil</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="213"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="215"/>
         <source>; %n event(s) in SCAP&apos;s bands</source>
         <translation>
             <numerusform>; SCAP bantlarında %n deprem</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="216"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="218"/>
         <source>; main event M%1 %2 at %3 km (%4)</source>
         <translation>; ana deprem M%1 %2, %3 km (%4)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="225"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="227"/>
         <source>; no M5+ event in the period</source>
         <translation>; dönemde M5+ deprem yok</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="229"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="231"/>
         <source>No fault lines loaded.</source>
         <translation>Fay hattı yüklü değil.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="231"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="233"/>
         <source>Nearest fault to the station: %1, %2 km, station lies %3 of it (%4, %5)</source>
         <translation>İstasyona en yakın fay: %1, %2 km, istasyon fayın %3 yönünde (%4, %5)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="261"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="263"/>
         <source>Save the map</source>
         <translation>Haritayı kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="262"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="264"/>
         <source>SVG (*.svg)</source>
         <translation>SVG (*.svg)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="262"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="264"/>
         <source>PNG (*.png)</source>
         <translation>PNG (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="267"/>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="281"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="269"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="283"/>
         <source>Export</source>
         <translation>Dışa aktar</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="268"/>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="282"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="270"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="284"/>
         <source>Could not write %1.</source>
         <translation>%1 yazılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="275"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="277"/>
         <source>Save the event table</source>
         <translation>Deprem tablosunu kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="276"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="278"/>
         <source>CSV (*.csv)</source>
         <translation>CSV (*.csv)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="310"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="312"/>
+        <source>No earthquakes listed yet.
+Choose a catalog and a station at the top of the page.</source>
+        <translation>Henüz listelenen deprem yok.
+Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="313"/>
         <source>show faults</source>
         <translation>fayları göster</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="311"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="314"/>
         <source>Map as PNG…</source>
         <translation>Harita PNG…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="312"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="315"/>
         <source>Map as SVG…</source>
         <translation>Harita SVG…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="313"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="316"/>
         <source>Events as CSV…</source>
         <translation>Depremler CSV…</translation>
     </message>
@@ -487,154 +494,159 @@
 <context>
     <name>skg::ClassificationWidget</name>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="86"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="436"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="439"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="88"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="438"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="443"/>
         <source>Run</source>
         <translation>Koşu</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="153"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="155"/>
         <source>Project folder (project.toml lives here)</source>
         <translation>Proje klasörü (project.toml burada)</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="171"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="173"/>
         <source>Loaded %1</source>
         <translation>%1 yüklendi</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="173"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="246"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="175"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="248"/>
         <source>Cannot read %1: %2</source>
         <translation>%1 okunamıyor: %2</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="178"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="180"/>
         <source>New project: the settings are the defaults until you save project.toml.</source>
         <translation>Yeni proje: project.toml kaydedilene dek ayarlar varsayılanlar.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="201"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="203"/>
         <source>Labelled windows or a feature table</source>
         <translation>Etiketli pencereler ya da bir öznitelik tablosu</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="202"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="204"/>
         <source>sfc feature tables (*_features_labeled.csv);;fx feature tables (*.npy *.csv);;All files (*)</source>
         <translation>sfc öznitelik tabloları (*_features_labeled.csv);;fx öznitelik tabloları (*.npy *.csv);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="259"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="261"/>
         <source>Choose the labelled windows: sfc&apos;s &lt;STATION&gt;_N_features_labeled.csv, or a feature table from the Features tab, which the class table around the event then labels.</source>
         <translation>Etiketli pencereleri seçin: sfc’nin &lt;İSTASYON&gt;_N_features_labeled.csv dosyası ya da Öznitelikler sekmesinden bir tablo; ikincisini deprem çevresindeki sınıf tablosu etiketler.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="269"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="271"/>
         <source>sfc table: %n window(s)</source>
         <translation>
             <numerusform>sfc tablosu: %n pencere</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="281"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="283"/>
         <source>%n selected day(s) -&gt; %1 windows</source>
         <translation>
             <numerusform>%n seçili gün -&gt; %1 pencere</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="287"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="289"/>
         <source>Cannot build the dataset: %1</source>
         <translation>Veri kümesi oluşturulamıyor: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="300"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="302"/>
         <source>%n window(s), %1 features; days per label %2</source>
         <translation>
             <numerusform>%n pencere, %1 öznitelik; etiket başına gün %2</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="316"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="337"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="318"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="339"/>
         <source>Choose the project folder first.</source>
         <translation>Önce proje klasörünü seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="321"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="323"/>
         <source>Saved %1</source>
         <translation>%1 kaydedildi</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="323"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="325"/>
         <source>Cannot write %1</source>
         <translation>%1 yazılamıyor</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="341"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="343"/>
         <source>No labelled windows to train on.</source>
         <translation>Eğitilecek etiketli pencere yok.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="349"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="351"/>
         <source>Tick at least one step.</source>
         <translation>En az bir adım işaretleyin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="362"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="364"/>
         <source>Every window has a NaN feature; nothing to train on.</source>
         <translation>Her pencerede NaN öznitelik var; eğitilecek bir şey yok.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="380"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="382"/>
         <source>sfc run %1</source>
         <translation>sfc koşusu %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="381"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="383"/>
         <source>%1 on %n window(s)</source>
         <translation>
             <numerusform>%n pencere üzerinde %1</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="429"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="431"/>
         <source>Project folder</source>
         <translation>Proje klasörü</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="430"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="432"/>
         <source>Labelled windows</source>
         <translation>Etiketli pencereler</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="432"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="434"/>
         <source>the folder with project.toml; results/ is written under it</source>
         <translation>project.toml’un bulunduğu klasör; results/ altına yazılır</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="433"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="435"/>
         <source>&lt;STATION&gt;_N_features_labeled.csv from sfc, or an fx feature table (.npy/.csv)</source>
         <translation>sfc’den &lt;İSTASYON&gt;_N_features_labeled.csv ya da bir fx öznitelik tablosu (.npy/.csv)</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="435"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="437"/>
         <source>Save project.toml</source>
         <translation>project.toml kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="437"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="440"/>
+        <source>The run log appears here.</source>
+        <translation>Çalıştırma günlüğü burada görünür.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="441"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="438"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="442"/>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="440"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="444"/>
         <source>Experiments</source>
         <translation>Deneyler</translation>
     </message>
@@ -1029,417 +1041,422 @@
 <context>
     <name>skg::EarlyWarningWidget</name>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="349"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="356"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="351"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="358"/>
         <source>CSV files (*.csv);;All files (*)</source>
         <translation>CSV dosyaları (*.csv);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="381"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="383"/>
         <source>ayzek:</source>
         <translation>ayzek:</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="382"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="384"/>
         <source>Choose executable...</source>
         <translation>Çalıştırılabilir dosyayı seç...</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="383"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="385"/>
         <source>Use the shipped copy</source>
         <translation>Uygulamayla gelen kopyayı kullan</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="384"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="464"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="386"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="466"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="385"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="387"/>
         <source>Results</source>
         <translation>Sonuçlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="386"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="388"/>
         <source>Input</source>
         <translation>Giriş</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="387"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="389"/>
         <source>Replay miniSEED files</source>
         <translation>miniSEED dosyalarını yeniden oynat</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="388"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="390"/>
         <source>Live SeedLink stream</source>
         <translation>Canlı SeedLink akışı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="389"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="391"/>
         <source>Replay</source>
         <translation>Yeniden oynatma</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="390"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="392"/>
         <source>Add files...</source>
         <translation>Dosya ekle...</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="391"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="393"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="392"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="394"/>
         <source>One miniSEED file per station, HH? channels; the station code is read from the records and its position from the station table.</source>
         <translation>İstasyon başına bir miniSEED dosyası, HH? kanalları; istasyon kodu kayıtlardan, konumu istasyon tablosundan okunur.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="395"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="397"/>
         <source>Speed</source>
         <translation>Hız</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="396"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="398"/>
         <source>1 = real time, 10 = ten times faster, 0 = as fast as the machine allows</source>
         <translation>1 = gerçek zaman, 10 = on kat hızlı, 0 = makinenin izin verdiği kadar hızlı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="398"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="400"/>
         <source>as fast as possible</source>
         <translation>olabildiğince hızlı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="399"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="401"/>
         <source>Detect from (UTC)</source>
         <translation>Şu andan itibaren algıla (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="400"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="402"/>
         <source>No triggers before this time; earlier data still warms up the filters. Empty: from the start.</source>
         <translation>Bu zamandan önce tetikleme yok; önceki veri yine de süzgeçleri ısıtır. Boş: baştan itibaren.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="402"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="404"/>
         <source>AFAD catalog</source>
         <translation>AFAD kataloğu</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="403"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="405"/>
         <source>An AFAD catalogue export (CSV). Each alarm is compared with it; without one, alarms are reported but not scored.</source>
         <translation>Bir AFAD katalog dışa aktarımı (CSV). Her alarm onunla karşılaştırılır; katalog yoksa alarmlar bildirilir ama puanlanmaz.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="406"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="415"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="450"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="458"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="461"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="408"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="417"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="452"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="460"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="463"/>
         <source>Browse...</source>
         <translation>Gözat...</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="407"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="409"/>
         <source>Live</source>
         <translation>Canlı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="408"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="410"/>
         <source>SeedLink server</source>
         <translation>SeedLink sunucusu</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="409"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="411"/>
         <source>Streams</source>
         <translation>Akışlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="410"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="412"/>
         <source>NET.STA or NET.STA.LOC, comma-separated; every station needs coordinates in the station table</source>
         <translation>AĞ.İST ya da AĞ.İST.KONUM, virgülle ayrılmış; her istasyonun istasyon tablosunda koordinatı olmalı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="412"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="414"/>
         <source>Archive to</source>
         <translation>Arşivle</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="413"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="415"/>
         <source>Every record received is appended to DIR/STATION.mseed, which replays like any file</source>
         <translation>Alınan her kayıt KLASÖR/İSTASYON.mseed dosyasına eklenir; bu dosya herhangi bir dosya gibi yeniden oynatılır</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="416"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="418"/>
         <source>Duration (s)</source>
         <translation>Süre (s)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="417"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="419"/>
         <source>until stopped</source>
         <translation>durdurulana kadar</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="418"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="420"/>
         <source>Detection</source>
         <translation>Algılama</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="419"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="421"/>
         <source>Detector</source>
         <translation>Algılayıcı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="420"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="422"/>
         <source>6 s window detector (3-seed ensemble)</source>
         <translation>6 s pencere algılayıcısı (3 tohumlu topluluk)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="421"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="423"/>
         <source>Streaming onset transformer</source>
         <translation>Akışlı başlangıç dönüştürücüsü</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="422"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="424"/>
         <source>STA/LTA (reference)</source>
         <translation>STA/LTA (karşılaştırma)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="423"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="425"/>
         <source>FilterPicker (reference)</source>
         <translation>FilterPicker (karşılaştırma)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="424"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="426"/>
         <source>Stations to declare</source>
         <translation>İlan için istasyon sayısı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="425"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="430"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="427"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="432"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="434"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="436"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="438"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="440"/>
         <source>default</source>
         <translation>varsayılan</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="426"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="428"/>
         <source>Station detections needed to declare an event; ayzek&apos;s default is 2 (3 for the transformer)</source>
         <translation>Bir olayı ilan etmek için gereken istasyon algılaması; ayzek&apos;in varsayılanı 2 (dönüştürücü için 3)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="429"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="431"/>
         <source>Trigger threshold</source>
         <translation>Tetikleme eşiği</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="431"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="433"/>
         <source>Trigger windows</source>
         <translation>Tetikleme penceresi sayısı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="433"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="435"/>
         <source>Instant threshold</source>
         <translation>Anlık eşik</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="435"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="437"/>
         <source>Release</source>
         <translation>Bırakma</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="437"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="439"/>
         <source>Location</source>
         <translation>Konumlama</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="439"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="441"/>
         <source>geometry head of the transformer</source>
         <translation>dönüştürücünün geometri başlığı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="440"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="442"/>
         <source>P and S picks</source>
         <translation>P ve S seçimleri</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="441"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="443"/>
         <source>Assess every alarm from its S-P picks (writes assess.csv in the output folder)</source>
         <translation>Her alarmı S-P seçimlerinden değerlendir (çıktı klasörüne assess.csv yazar)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="443"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="445"/>
         <source>Write every window&apos;s detector probability (scores/ in the output folder)</source>
         <translation>Her pencerenin algılayıcı olasılığını yaz (çıktı klasöründe scores/)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="445"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="447"/>
         <source>No magnitude estimate</source>
         <translation>Büyüklük kestirimi yok</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="446"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="448"/>
         <source>Verbose: every station detection, pick and Pd</source>
         <translation>Ayrıntılı: her istasyon algılaması, seçim ve Pd</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="447"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="449"/>
         <source>Output folder</source>
         <translation>Çıktı klasörü</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="448"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="450"/>
         <source>Working directory of the run; the assessment table and the scores go here</source>
         <translation>Çalıştırmanın çalışma klasörü; değerlendirme tablosu ve puanlar buraya yazılır</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="451"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="453"/>
         <source>Warning sites</source>
         <translation>Uyarı yerleri</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="452"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="454"/>
         <source>One place per line as NAME,LAT,LON; the S-wave warning time at each is reported</source>
         <translation>Her satıra bir yer, AD,ENLEM,BOYLAM biçiminde; her birinde S dalgası uyarı süresi bildirilir</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="454"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="456"/>
         <source>Station table</source>
         <translation>İstasyon tablosu</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="455"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="457"/>
         <source>code,lat,lon[,...] in place of the shipped table (TU and KO stations), for another network</source>
         <translation>Başka bir ağ için, uygulamayla gelen tablonun (TU ve KO istasyonları) yerine kod,enlem,boylam[,...]</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="459"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="461"/>
         <source>Models folder</source>
         <translation>Model klasörü</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="460"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="462"/>
         <source>Weights directory; empty uses the shipped models</source>
         <translation>Ağırlık klasörü; boş bırakılırsa uygulamayla gelen modeller kullanılır</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="462"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="464"/>
         <source>Extra options</source>
         <translation>Ek seçenekler</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="463"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="465"/>
         <source>Any other ayzek option, as on the command line</source>
         <translation>Komut satırındaki gibi, başka herhangi bir ayzek seçeneği</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="465"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="468"/>
+        <source>The run log appears here.</source>
+        <translation>Çalıştırma günlüğü burada görünür.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="469"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="466"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="470"/>
         <source>Open output folder</source>
         <translation>Çıktı klasörünü aç</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="468"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="472"/>
         <source>ayzek is a separate program, GPL-3.0-or-later, by H. Oğuz Bolat, Sibel Çimen, Bülent Bolat and Tülay Yıldırım (Yıldız Technical University), shipped beside this application with its source (third_party/ayzek) and models. Please cite it: &lt;a href=&quot;https://doi.org/10.5281/zenodo.23672495&quot;&gt;doi:10.5281/zenodo.23672495&lt;/a&gt;; &lt;a href=&quot;https://github.com/hogib/ayzek&quot;&gt;github.com/hogib/ayzek&lt;/a&gt;.</source>
         <translation>ayzek ayrı bir programdır, GPL-3.0-or-later lisanslıdır; H. Oğuz Bolat, Sibel Çimen, Bülent Bolat ve Tülay Yıldırım (Yıldız Teknik Üniversitesi) tarafından yazılmıştır ve kaynak kodu (third_party/ayzek) ile modelleriyle birlikte bu uygulamanın yanında dağıtılır. Lütfen atıf verin: &lt;a href=&quot;https://doi.org/10.5281/zenodo.23672495&quot;&gt;doi:10.5281/zenodo.23672495&lt;/a&gt;; &lt;a href=&quot;https://github.com/hogib/ayzek&quot;&gt;github.com/hogib/ayzek&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="477"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="481"/>
         <source>No run yet.</source>
         <translation>Henüz çalıştırma yok.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="487"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="491"/>
         <source>ayzek was not found beside the application or on the PATH; choose its executable</source>
         <translation>ayzek uygulamanın yanında ya da PATH üzerinde bulunamadı; çalıştırılabilir dosyasını seçin</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="499"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="503"/>
         <source>models: %1</source>
         <translation>modeller: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="502"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="506"/>
         <source>no models/ beside it; set the models folder below</source>
         <translation>yanında models/ yok; aşağıda model klasörünü belirtin</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="511"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="515"/>
         <source>ayzek executable</source>
         <translation>ayzek çalıştırılabilir dosyası</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="521"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="525"/>
         <source>miniSEED files, one per station</source>
         <translation>miniSEED dosyaları, istasyon başına bir tane</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="523"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="527"/>
         <source>miniSEED (*.mseed *.msd *.seed);;All files (*)</source>
         <translation>miniSEED (*.mseed *.msd *.seed);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="663"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="667"/>
         <source>ayzek was not found; choose its executable above.</source>
         <translation>ayzek bulunamadı; yukarıdan çalıştırılabilir dosyasını seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="669"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="673"/>
         <source>The start time must be UTC like 2025-11-10T18:20:00.</source>
         <translation>Başlangıç zamanı 2025-11-10T18:20:00 gibi UTC olmalı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="678"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="682"/>
         <source>Cannot create the output folder %1</source>
         <translation>Çıktı klasörü %1 oluşturulamıyor</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="688"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="692"/>
         <source>ayzek live %1</source>
         <translation>ayzek canlı %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="689"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="693"/>
         <source>ayzek replay, %n file(s)</source>
         <translation>
             <numerusform>ayzek yeniden oynatma, %n dosya</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="694"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="698"/>
         <source>Running...</source>
         <translation>Çalışıyor...</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="702"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="706"/>
         <source>Started: %1 %2</source>
         <translation>Başlatıldı: %1 %2</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="725"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="729"/>
         <source>%n alarm(s)</source>
         <translation>
             <numerusform>%n alarm</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="727"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="731"/>
         <source>%1 matching a catalogue event, %2 without one</source>
         <translation>%1 tanesi bir katalog olayıyla eşleşiyor, %2 tanesi eşleşmiyor</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="731"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="735"/>
         <source>%1 catalogue events: %2 detected (%3 before S), %4 missed</source>
         <translation>%1 katalog olayı: %2 algılandı (%3 tanesi S&apos;den önce), %4 kaçırıldı</translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="738"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="742"/>
         <source> (exit %1; see the log)</source>
         <translation> (çıkış %1; günlüğe bakın)</translation>
     </message>
@@ -1447,52 +1464,52 @@
 <context>
     <name>skg::EventsModel</name>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="97"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="99"/>
         <source>Time (UTC)</source>
         <translation>Zaman (UTC)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="99"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="101"/>
         <source>M</source>
         <translation>M</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="101"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="103"/>
         <source>Depth (km)</source>
         <translation>Derinlik (km)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="103"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="105"/>
         <source>Place</source>
         <translation>Yer</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="105"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="107"/>
         <source>Distance (km)</source>
         <translation>Uzaklık (km)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="107"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="109"/>
         <source>Direction</source>
         <translation>Yön</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="109"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="111"/>
         <source>Band</source>
         <translation>Bant</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="111"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="113"/>
         <source>Nearest fault</source>
         <translation>En yakın fay</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="113"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="115"/>
         <source>Fault (km)</source>
         <translation>Fay (km)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="115"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="117"/>
         <source>Side of fault</source>
         <translation>Fayın yönü</translation>
     </message>
@@ -1500,69 +1517,76 @@
 <context>
     <name>skg::ExperimentsPane</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="277"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="279"/>
         <source>No experiments yet: set the project and run.</source>
         <translation>Henüz deney yok: projeyi belirleyin ve çalıştırın.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/experimentspane.cpp" line="292"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="294"/>
         <source>%1: %n model(s)</source>
         <translation>
             <numerusform>%1: %n model</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="295"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="297"/>
         <source>; the project&apos;s settings</source>
         <translation>; projenin ayarları</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="296"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="298"/>
         <source>; changed: %1</source>
         <translation>; değişen: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="331"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="333"/>
         <source>Cannot read %1</source>
         <translation>%1 okunamıyor</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="340"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="342"/>
         <source>Delete run</source>
         <translation>Koşuyu sil</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="341"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="343"/>
         <source>Delete the run &apos;%1&apos;: its folder and its rows in experiments.csv?</source>
         <translation>&apos;%1&apos; koşusu silinsin mi: klasörü ve experiments.csv’deki satırları?</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="357"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="359"/>
         <source>Report</source>
         <translation>Rapor</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="357"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="359"/>
         <source>Could not write the report.</source>
         <translation>Rapor yazılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="367"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="369"/>
+        <source>No experiments yet.
+Choose a project folder and run the steps.</source>
+        <translation>Henüz deney yok.
+Bir proje klasörü seçin ve adımları çalıştırın.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="368"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="371"/>
         <source>HTML report</source>
         <translation>HTML rapor</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="369"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="372"/>
         <source>Delete run…</source>
         <translation>Koşuyu sil…</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="373"/>
         <source>Open folder</source>
         <translation>Klasörü aç</translation>
     </message>
@@ -1570,84 +1594,84 @@
 <context>
     <name>skg::FdsnPane</name>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="61"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="63"/>
         <source>Station</source>
         <translation>İstasyon</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="62"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="64"/>
         <source>Network</source>
         <translation>Ağ</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="63"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="65"/>
         <source>Channels</source>
         <translation>Kanallar</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="64"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="66"/>
         <source>Service</source>
         <translation>Servis</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="65"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="67"/>
         <source>First day</source>
         <translation>İlk gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="66"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="68"/>
         <source>Day after the last</source>
         <translation>Son günden sonraki gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="67"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="69"/>
         <source>Tries per day</source>
         <translation>Gün başına deneme</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="99"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="101"/>
         <source>Days are recorded in %1 and filed under %2.</source>
         <translation>Günler %1 dosyasına kaydedilir ve %2 altına yerleştirilir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="124"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="126"/>
         <source>fdsn %1</source>
         <translation>fdsn %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="125"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="127"/>
         <source>%n day(s) of %1 from %2</source>
         <translation>
             <numerusform>%2 servisinden %1 için %n gün</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="135"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="137"/>
         <source>%1: %2 day(s) added, %3 already on disk, %4 back to pending; %5 to fetch from %6 into %7</source>
         <translation>%1: %2 gün eklendi, %3 zaten diskte, %4 yeniden beklemede; %6 servisinden %7 içine %5 gün indirilecek</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="172"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="174"/>
         <source>done: %1</source>
         <translation>bitti: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="199"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="201"/>
         <source>only add the days, do not fetch</source>
         <translation>yalnızca günleri ekle, indirme</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="200"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="202"/>
         <source>put this station&apos;s failed days back first</source>
         <translation>önce bu istasyonun başarısız günlerini geri al</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="201"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="203"/>
         <source>Fetch</source>
         <translation>İndir</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="202"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="205"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
@@ -1668,259 +1692,264 @@
 <context>
     <name>skg::FeaturesWidget</name>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="157"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="159"/>
         <source>Choose a calibration</source>
         <translation>Kalibrasyon seç</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="158"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="160"/>
         <source>Calibrations (*_calibration.json);;All files (*)</source>
         <translation>Kalibrasyonlar (*_calibration.json);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="190"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="192"/>
         <source>Choose a directory</source>
         <translation>Dizin seç</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="203"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="205"/>
         <source>Load a config</source>
         <translation>Yapılandırma yükle</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="204"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="206"/>
         <source>Config files (*.json);;All files (*)</source>
         <translation>Yapılandırma dosyaları (*.json);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="209"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="214"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="236"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="432"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="211"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="216"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="238"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="434"/>
         <source>Config</source>
         <translation>Yapılandırma</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="209"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="211"/>
         <source>Cannot read %1.</source>
         <translation>%1 okunamıyor.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="215"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="217"/>
         <source>%1 is not a JSON object.</source>
         <translation>%1 bir JSON nesnesi değil.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="221"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="223"/>
         <source>Loaded %1</source>
         <translation>%1 yüklendi</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="229"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="231"/>
         <source>Save the config</source>
         <translation>Yapılandırmayı kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="231"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="233"/>
         <source>Config files (*.json)</source>
         <translation>Yapılandırma dosyaları (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="236"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="238"/>
         <source>Cannot write %1.</source>
         <translation>%1 yazılamıyor.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="241"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="243"/>
         <source>Saved %1</source>
         <translation>%1 kaydedildi</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="271"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="276"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="284"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="316"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="273"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="278"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="286"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="318"/>
         <source>Features</source>
         <translation>Öznitelikler</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="272"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="274"/>
         <source>Choose the data directory first.</source>
         <translation>Önce veri dizinini seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="277"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="279"/>
         <source>Choose the output directory first.</source>
         <translation>Önce çıktı dizinini seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="291"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="293"/>
         <source>band %1: %2</source>
         <translation>bant %1: %2</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="293"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="295"/>
         <source>Invalid configuration</source>
         <translation>Geçersiz yapılandırma</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="298"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="300"/>
         <source>Warning: %1</source>
         <translation>Uyarı: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/features/featuresmodule.cpp" line="300"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="302"/>
         <source>Dry run: %n run(s)</source>
         <translation>
             <numerusform>Deneme: %n koşu</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="304"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="306"/>
         <source>(single run)</source>
         <translation>(tek koşu)</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="317"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="319"/>
         <source>A full run calibrates the chaos parameters on quiet periods, which needs the earthquake catalog (and the station list or position). Set them in the calibration group, or reuse a previous run&apos;s calibration.</source>
         <translation>Tam koşu, kaos parametrelerini sakin dönemlerde kalibre eder; bunun için deprem kataloğu (ve istasyon listesi ya da konumu) gerekir. Bunları kalibrasyon grubunda ayarlayın ya da önceki bir koşunun kalibrasyonunu yeniden kullanın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="327"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="329"/>
         <source>preprocess %1</source>
         <translation>ön işleme %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="327"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="329"/>
         <source>features %1</source>
         <translation>öznitelikler %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/features/featuresmodule.cpp" line="329"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="331"/>
         <source>%n run(s) over %1 into %2</source>
         <translation>
             <numerusform>%1 üzerinde %n koşu, çıktı: %2</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="365"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="367"/>
         <source>stopped</source>
         <translation>durduruldu</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="367"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="369"/>
         <source>wrote %1</source>
         <translation>%1 yazıldı</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/features/featuresmodule.cpp" line="369"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="371"/>
         <source>wrote %1 (%n window(s))</source>
         <translation>
             <numerusform>%1 yazıldı (%n pencere)</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="372"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="374"/>
         <source>Pipeline error: %1</source>
         <translation>İşlem hattı hatası: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="373"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="375"/>
         <source>run</source>
         <translation>koşu</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="384"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="386"/>
         <source>Failed: %1</source>
         <translation>Başarısız: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="414"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="416"/>
         <source>Run: calibrate on quiet periods, then extract features per band. Preprocess: filtered, decimated E/N/Z as float32 only. The log goes to the jobs panel and the Status tab.</source>
         <translation>Koşu: sakin dönemlerde kalibre et, sonra bant bant öznitelik çıkar. Ön işleme: yalnızca süzülmüş, seyreltilmiş E/N/Z, float32 olarak. Günlük işler paneline ve Durum sekmesine yazılır.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="419"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="421"/>
         <source>Running. Stop finishes the window in progress and writes nothing.</source>
         <translation>Çalışıyor. Durdur, eldeki pencereyi bitirir ve hiçbir şey yazmaz.</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="430"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="432"/>
         <source>Data directory</source>
         <translation>Veri dizini</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="431"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="433"/>
         <source>Output directory</source>
         <translation>Çıktı dizini</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="433"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="435"/>
         <source>Load…</source>
         <translation>Yükle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="434"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="436"/>
         <source>Save</source>
         <translation>Kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="435"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="437"/>
         <source>miniSEED files and zips of one station</source>
         <translation>tek bir istasyonun miniSEED dosyaları ve zipleri</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="436"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="438"/>
         <source>where the results go</source>
         <translation>sonuçların yazılacağı yer</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="437"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="439"/>
         <source>config.json (Rust or Python layout)</source>
         <translation>config.json (Rust ya da Python düzeni)</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="438"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="440"/>
         <source>reuse a previous run&apos;s calibration</source>
         <translation>önceki bir koşunun kalibrasyonunu yeniden kullan</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="439"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="441"/>
         <source>Bands to run</source>
         <translation>Koşulacak bantlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="440"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="442"/>
         <source>comma-separated names; empty = all</source>
         <translation>virgülle ayrılmış adlar; boş = hepsi</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="441"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="443"/>
         <source>Run</source>
         <translation>Koşu</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="442"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="445"/>
+        <source>The run log appears here.</source>
+        <translation>Çalıştırma günlüğü burada görünür.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="446"/>
         <source>Preprocess only</source>
         <translation>Yalnızca ön işleme</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="443"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="447"/>
         <source>Dry run</source>
         <translation>Deneme</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="444"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="448"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="445"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="449"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="446"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="450"/>
         <source>Results</source>
         <translation>Sonuçlar</translation>
     </message>
@@ -2076,101 +2105,101 @@
 <context>
     <name>skg::GridPane</name>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="54"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="56"/>
         <source>Column</source>
         <translation>Sütun</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="56"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="58"/>
         <source>At most</source>
         <translation>En çok</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="78"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="80"/>
         <source>Save the grid</source>
         <translation>Izgarayı kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="80"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="82"/>
         <source>PNG (*.png)</source>
         <translation>PNG (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="82"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="84"/>
         <source>Export</source>
         <translation>Dışa aktar</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="83"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="85"/>
         <source>Could not write %1.</source>
         <translation>%1 yazılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="107"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="109"/>
         <source>Add feature tables</source>
         <translation>Öznitelik tabloları ekle</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="109"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="111"/>
         <source>Feature tables (*.npy *.csv);;All files (*)</source>
         <translation>Öznitelik tabloları (*.npy *.csv);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="129"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="131"/>
         <source>grid %1</source>
         <translation>ızgara %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/gridpane.cpp" line="130"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="132"/>
         <source>%n station(s), column %1</source>
         <translation>
             <numerusform>%n istasyon, sütun %1</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="153"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="155"/>
         <source>%1: %2 (skipped)</source>
         <translation>%1: %2 (atlandı)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="170"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="172"/>
         <source>the tables share no day</source>
         <translation>tabloların ortak günü yok</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/gridpane.cpp" line="215"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="217"/>
         <source>%n station(s) x %1 day(s)</source>
         <translation>
             <numerusform>%n istasyon x %1 gün</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="223"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="225"/>
         <source>Building the grid; progress is in the Jobs panel.</source>
         <translation>Izgara oluşturuluyor; ilerleme İşler panelinde.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="233"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="235"/>
         <source>Add tables…</source>
         <translation>Tablo ekle…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="234"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="236"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="235"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="237"/>
         <source>Build grid</source>
         <translation>Izgarayı oluştur</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="236"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="239"/>
         <source>Save PNG…</source>
         <translation>PNG kaydet…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="237"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="240"/>
         <source> days</source>
         <translation> gün</translation>
     </message>
@@ -2178,17 +2207,17 @@
 <context>
     <name>skg::IndicatorTableModel</name>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="76"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="78"/>
         <source>Window</source>
         <translation>Pencere</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="78"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="80"/>
         <source>Start</source>
         <translation>Başlangıç</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="80"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="82"/>
         <source>End</source>
         <translation>Bitiş</translation>
     </message>
@@ -2209,29 +2238,36 @@
 <context>
     <name>skg::IndicatorsResultsPane</name>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="139"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="141"/>
+        <source>No results yet.
+Run the indicators, or open an earlier run&apos;s folder.</source>
+        <translation>Henüz sonuç yok.
+Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü açın.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="142"/>
         <source>Open folder</source>
         <translation>Klasörü aç</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="140"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="143"/>
         <source>Open an earlier run…</source>
         <translation>Önceki bir çalıştırmayı aç…</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="142"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="145"/>
         <source>No run yet. Run the indicators or open an earlier output folder.</source>
         <translation>Henüz çalıştırma yok. Göstergeleri çalıştırın ya da önceki bir çıktı klasörünü açın.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/resultspane.cpp" line="175"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="190"/>
         <source>%1: %n window(s), %2 figure(s)%3</source>
         <translation>
             <numerusform>%1: %n pencere, %2 grafik%3</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="208"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="223"/>
         <source>Output folder of an indicators run</source>
         <translation>Bir gösterge çalıştırmasının çıktı klasörü</translation>
     </message>
@@ -2239,379 +2275,384 @@
 <context>
     <name>skg::IndicatorsWidget</name>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="214"/>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="525"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="216"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="529"/>
         <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
         <translation>Kataloglar (*.csv *.csv.gz);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="217"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="219"/>
         <source>GeoJSON (*.geojson *.json);;All files (*)</source>
         <translation>GeoJSON (*.geojson *.json);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="220"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="222"/>
         <source>Magnitude conversion (*.json);;All files (*)</source>
         <translation>Büyüklük dönüşümü (*.json);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="253"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="255"/>
         <source>Catalog</source>
         <translation>Katalog</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="255"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="257"/>
         <source>AFAD export CSV: Date, Latitude, Longitude, Magnitude…</source>
         <translation>AFAD dışa aktarım CSV: Date, Latitude, Longitude, Magnitude…</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="256"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="258"/>
         <source>Describe</source>
         <translation>Özetle</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="257"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="259"/>
         <source>Loads the catalog, applies the selection and reports the events kept.</source>
         <translation>Kataloğu yükler, seçimi uygular ve kalan olayları bildirir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="259"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
         <source>Events</source>
         <translation>Olaylar</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="263"/>
         <source>Whole catalog</source>
         <translation>Tüm katalog</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="263"/>
         <source>Near the East Anatolian Fault Zone</source>
         <translation>Doğu Anadolu Fay Zonu yakınında</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="264"/>
         <source>Near a fault trace (GeoJSON file)</source>
         <translation>Bir fay hattı yakınında (GeoJSON dosyası)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="264"/>
         <source>Within a circle</source>
         <translation>Bir daire içinde</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="265"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
         <source>Fault GeoJSON</source>
         <translation>Fay GeoJSON</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
         <source>FeatureCollection of LineString features; property &quot;strand&quot; optional</source>
         <translation>LineString öğelerinden oluşan FeatureCollection; &quot;strand&quot; özelliği isteğe bağlı</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="271"/>
         <source>Strands</source>
         <translation>Kollar</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="271"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="273"/>
         <source>comma-separated, empty = all (EAFZ: main, northern)</source>
         <translation>virgülle ayrılmış, boş = tümü (DAFZ: main, northern)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="272"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="274"/>
         <source>Buffer (km)</source>
         <translation>Tampon (km)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="273"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="275"/>
         <source>Centre lat, lon, radius (km)</source>
         <translation>Merkez enlem, boylam, yarıçap (km)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="274"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="276"/>
         <source>From date</source>
         <translation>Başlangıç tarihi</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="275"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="277"/>
         <source>drop earlier events</source>
         <translation>öncesini at</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="276"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="278"/>
         <source>Homogenise magnitudes</source>
         <translation>Büyüklükleri homojenleştir</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="278"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="280"/>
         <source>Converts AFAD magnitudes before 2013-11-20 onto the 2014-2019 ML/Mw practice by rate matching. Empty file = the conversion shipped with the app.</source>
         <translation>2013-11-20 öncesi AFAD büyüklüklerini oran eşleştirmesiyle 2014-2019 ML/Mw uygulamasına dönüştürür. Boş dosya = uygulamayla gelen dönüşüm.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="281"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="283"/>
         <source>conversion JSON (empty = shipped)</source>
         <translation>dönüşüm JSON (boş = uygulamayla gelen)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="282"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="284"/>
         <source>Fit…</source>
         <translation>Kalibre et…</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="283"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="285"/>
         <source>Fits a conversion on a national AFAD catalog (declustered) and saves it as JSON.</source>
         <translation>Ulusal bir AFAD kataloğu üzerinde (artçılar ayıklanmış) dönüşümü kalibre eder ve JSON olarak kaydeder.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="285"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="287"/>
         <source>Decluster (Gardner-Knopoff mainshocks only)</source>
         <translation>Artçıları ayıkla (yalnızca Gardner-Knopoff ana şoklar)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="286"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="288"/>
         <source>Completeness Mc</source>
         <translation>Tamamlanma Mc</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="287"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="289"/>
         <source>Estimate</source>
         <translation>Kestir</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="289"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="291"/>
         <source>Maximum curvature + 0.2 on the selected events.</source>
         <translation>Seçili olaylarda en büyük eğrilik + 0,2.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="290"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="292"/>
         <source>Magnitude bin</source>
         <translation>Büyüklük aralığı</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="291"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
         <source>Window</source>
         <translation>Pencere</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="292"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="294"/>
         <source>Step</source>
         <translation>Adım</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>days</source>
         <translation>gün</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>weeks</source>
         <translation>hafta</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>months</source>
         <translation>ay</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>years</source>
         <translation>yıl</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="298"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="300"/>
         <source>Half-Gauss σ</source>
         <translation>Yarı Gauss σ</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="299"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="301"/>
         <source>Moving averages</source>
         <translation>Hareketli ortalamalar</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="300"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="302"/>
         <source>window counts, e.g. 7,15,23</source>
         <translation>pencere sayıları, örn. 7,15,23</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="301"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="303"/>
         <source>on one figure</source>
         <translation>tek grafikte</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="302"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="304"/>
         <source>Bollinger bands</source>
         <translation>Bollinger bantları</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="303"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="305"/>
         <source>window </source>
         <translation>pencere </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="304"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="306"/>
         <source>k </source>
         <translation>k </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="305"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="307"/>
         <source>Risk label</source>
         <translation>Risk etiketi</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="306"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="308"/>
         <source>M ≥ </source>
         <translation>M ≥ </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="307"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="309"/>
         <source> days before</source>
         <translation> gün öncesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="308"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="310"/>
         <source>Output root</source>
         <translation>Çıktı kök klasörü</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="309"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="311"/>
         <source>Figures</source>
         <translation>Grafikler</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="310"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="312"/>
         <source> dpi</source>
         <translation> dpi</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="311"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="313"/>
         <source>write PNG figures</source>
         <translation>PNG grafikleri yaz</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="312"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="314"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="313"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="316"/>
+        <source>The run log appears here.</source>
+        <translation>Çalıştırma günlüğü burada görünür.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="317"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="314"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="318"/>
         <source>Settings and run</source>
         <translation>Ayarlar ve çalıştırma</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="315"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="319"/>
         <source>Results</source>
         <translation>Sonuçlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="317"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="321"/>
         <source>Catalog and selection</source>
         <translation>Katalog ve seçim</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="320"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="324"/>
         <source>Indicators</source>
         <translation>Göstergeler</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="396"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="400"/>
         <source>Choose a catalog file first.</source>
         <translation>Önce bir katalog dosyası seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="404"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="408"/>
         <source>Choose the fault GeoJSON file.</source>
         <translation>Fay GeoJSON dosyasını seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="435"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="439"/>
         <source>Moving averages: comma-separated positive counts, e.g. 7,15,23.</source>
         <translation>Hareketli ortalamalar: virgülle ayrılmış pozitif sayılar, örn. 7,15,23.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="449"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="453"/>
         <source>Choose the output root folder.</source>
         <translation>Çıktı kök klasörünü seçin.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="486"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="490"/>
         <source>Catalog: %n event(s)</source>
         <translation>
             <numerusform>Katalog: %n deprem</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="489"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="493"/>
         <source>%n event(s) selected.</source>
         <translation>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="505"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="509"/>
         <source>No event matches the selection.</source>
         <translation>Seçime uyan olay yok.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="511"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="515"/>
         <source>Mc by maximum curvature + 0.2: %1 (%n event(s))</source>
         <translation>
             <numerusform>En büyük eğrilik + 0,2 ile Mc: %1 (%n olay)</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="523"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="527"/>
         <source>National AFAD catalog to calibrate on</source>
         <translation>Kalibrasyon için ulusal AFAD kataloğu</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="529"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="533"/>
         <source>Save the conversion as</source>
         <translation>Dönüşümü farklı kaydet</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="531"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="535"/>
         <source>JSON (*.json)</source>
         <translation>JSON (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="536"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="540"/>
         <source>Magnitude calibration</source>
         <translation>Büyüklük kalibrasyonu</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="537"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="541"/>
         <source>Rate matching on %1</source>
         <translation>%1 üzerinde oran eşleştirmesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="587"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="591"/>
         <source>Indicators %1</source>
         <translation>Göstergeler %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="589"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="593"/>
         <source>%1, window %2, step %3</source>
         <translation>%1, pencere %2, adım %3</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="620"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="624"/>
         <source>Done: %1</source>
         <translation>Tamamlandı: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="621"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="625"/>
         <source>The run did not finish; see the log.</source>
         <translation>Çalıştırma tamamlanmadı; günlüğe bakın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="626"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="630"/>
         <source>Running…</source>
         <translation>Çalışıyor…</translation>
     </message>
@@ -2892,84 +2933,139 @@
 <context>
     <name>skg::MainWindow</name>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="76"/>
+        <location filename="../src/app/mainwindow.cpp" line="294"/>
         <source>About sismokaos-gui</source>
         <translation>sismokaos-gui Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="77"/>
+        <location filename="../src/app/mainwindow.cpp" line="295"/>
         <source>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;A desktop front end for the sismokaos tools: feature extraction, classification and AFAD/TDVMS downloads.&lt;br&gt;Qt %2</source>
         <translation>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;sismokaos araçları için masaüstü arayüzü: öznitelik çıkarımı, sınıflandırma ve AFAD/TDVMS indirmeleri.&lt;br&gt;Qt %2</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="82"/>
+        <location filename="../src/app/mainwindow.cpp" line="300"/>
         <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
         <translation>&lt;br&gt;&lt;br&gt;Telif hakkı (C) 2026 H. Oğuz Bolat.&lt;br&gt;Bu program HİÇBİR GARANTİ verilmeden sunulur. Özgür bir yazılımdır; GNU Genel Kamu Lisansı&apos;nın 3. sürümü veya (tercihinize bağlı olarak) sonraki bir sürümünün koşulları altında yeniden dağıtabilirsiniz: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Kaynak kod: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="96"/>
+        <location filename="../src/app/mainwindow.cpp" line="161"/>
         <source>Started: %1</source>
         <translation>Başlatıldı: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="100"/>
+        <location filename="../src/app/mainwindow.cpp" line="166"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="121"/>
+        <location filename="../src/app/mainwindow.cpp" line="345"/>
+        <source>Jobs ▾</source>
+        <translation>İşler ▾</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="345"/>
+        <source>Jobs ▴</source>
+        <translation>İşler ▴</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/app/mainwindow.cpp" line="352"/>
+        <source>%n job(s) running</source>
+        <translation><numerusform>%n iş çalışıyor</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="367"/>
+        <source>No jobs running</source>
+        <translation>Çalışan iş yok</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="403"/>
         <source>Jobs still running</source>
         <translation>İşler hâlâ çalışıyor</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="122"/>
+        <location filename="../src/app/mainwindow.cpp" line="404"/>
         <source>%n job(s) are still running. Quit and stop them?</source>
         <translation>
             <numerusform>%n iş hâlâ çalışıyor. Çıkıp durdurulsun mu?</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="143"/>
+        <location filename="../src/app/mainwindow.cpp" line="435"/>
+        <source>STUDY</source>
+        <translation>ÇALIŞMA</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="437"/>
+        <source>TOOLS</source>
+        <translation>ARAÇLAR</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="438"/>
+        <source>Seismology toolkit</source>
+        <translation>Sismoloji araçları</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="443"/>
         <source>Jobs</source>
         <translation>İşler</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="144"/>
+        <location filename="../src/app/mainwindow.cpp" line="446"/>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="145"/>
+        <location filename="../src/app/mainwindow.cpp" line="447"/>
         <source>&amp;Quit</source>
         <translation>&amp;Çık</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="146"/>
+        <location filename="../src/app/mainwindow.cpp" line="448"/>
         <source>&amp;View</source>
         <translation>&amp;Görünüm</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="147"/>
+        <location filename="../src/app/mainwindow.cpp" line="449"/>
         <source>&amp;Language</source>
         <translation>&amp;Dil</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="148"/>
+        <location filename="../src/app/mainwindow.cpp" line="450"/>
+        <source>&amp;Theme</source>
+        <translation>&amp;Tema</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="451"/>
+        <source>Follow the system</source>
+        <translation>Sistemi izle</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="451"/>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="452"/>
+        <source>Dark</source>
+        <translation>Koyu</translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="455"/>
         <source>&amp;Help</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="149"/>
+        <location filename="../src/app/mainwindow.cpp" line="456"/>
         <source>&amp;About</source>
         <translation>&amp;Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="150"/>
+        <location filename="../src/app/mainwindow.cpp" line="457"/>
         <source>Check for &amp;updates…</source>
         <translation>G&amp;üncellemeleri denetle…</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="151"/>
+        <location filename="../src/app/mainwindow.cpp" line="458"/>
         <source>Check for updates at start</source>
         <translation>Başlangıçta güncellemeleri denetle</translation>
     </message>
@@ -3059,322 +3155,323 @@
 <context>
     <name>skg::RegionsPane</name>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="109"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="115"/>
         <source>Methods</source>
         <translation>Yöntemler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="110"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="116"/>
         <source>Regions (SOM)</source>
         <translation>Bölge sayısı (SOM)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="112"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="118"/>
         <source>Map before Mean Shift</source>
         <translation>Mean Shift öncesi harita</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="114"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="120"/>
         <source>Mean Shift quantile</source>
         <translation>Mean Shift kantili</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="115"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="121"/>
         <source>Training iterations</source>
         <translation>Eğitim yinelemesi</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="116"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="122"/>
         <source>Random seed</source>
         <translation>Rastgele tohum</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="147"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="153"/>
         <source>Area name</source>
         <translation>Alan adı</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="149"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="155"/>
         <source>Provinces</source>
         <translation>İller</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="151"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="157"/>
         <source>Cities</source>
         <translation>Şehirler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="153"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="159"/>
         <source>Layers</source>
         <translation>Katmanlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="167"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="173"/>
         <source>Output folder</source>
         <translation>Çıktı klasörü</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="234"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="240"/>
         <source>Choose the province boundaries</source>
         <translation>İl sınırlarını seçin</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="235"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="241"/>
         <source>Shapefiles (*.shp);;All files (*)</source>
         <translation>Shapefile (*.shp);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="241"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="247"/>
         <source>Choose a city list</source>
         <translation>Şehir listesi seçin</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="242"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="248"/>
         <source>City lists (*.csv);;All files (*)</source>
         <translation>Şehir listeleri (*.csv);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="248"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="254"/>
         <source>Choose the output folder</source>
         <translation>Çıktı klasörünü seçin</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="331"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="337"/>
         <source>Load an earthquake catalog at the top; its epicentres are what is split into regions.</source>
         <translation>Yukarıdan bir deprem kataloğu yükleyin; bölgelere ayrılan, katalogdaki dış merkezlerdir.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="333"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="339"/>
         <source>Catalog: %1</source>
         <translation>Katalog: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="361"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="367"/>
         <source>Load an earthquake catalog at the top first.</source>
         <translation>Önce yukarıdan bir deprem kataloğu yükleyin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="367"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="373"/>
         <source>Choose an output folder.</source>
         <translation>Bir çıktı klasörü seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="450"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="456"/>
         <source>Regions %1</source>
         <translation>Bölgeler %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="452"/>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="583"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="458"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="589"/>
         <source>SOM and SOM + Mean Shift</source>
         <translation>SOM ve SOM + Mean Shift</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/regionspane.cpp" line="453"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="459"/>
         <source>SOM, %n region(s)</source>
         <translation>
             <numerusform>SOM, %n bölge</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="454"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="460"/>
         <source>SOM + Mean Shift</source>
         <translation>SOM + Mean Shift</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="485"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="491"/>
         <source>Running…</source>
         <translation>Çalışıyor…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="492"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="498"/>
         <source>Done: %1</source>
         <translation>Bitti: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="493"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="499"/>
         <source>The run did not finish; see the log.</source>
         <translation>Çalıştırma tamamlanmadı; günlüğe bakın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="542"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="548"/>
         <source>Regions: SOM</source>
         <translation>Bölgeler: SOM</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="543"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="549"/>
         <source>Regions: SOM + Mean Shift</source>
         <translation>Bölgeler: SOM + Mean Shift</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="545"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="551"/>
         <source>Study area with faults and boundaries</source>
         <translation>Çalışma alanı, faylar ve sınırlarla</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="546"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="552"/>
         <source>Study area, events only</source>
         <translation>Çalışma alanı, yalnızca depremler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="581"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="587"/>
         <source>Regionalisation</source>
         <translation>Bölgeleme</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="582"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="588"/>
         <source>Maps</source>
         <translation>Haritalar</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="584"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="590"/>
         <source>SOM (a fixed number of regions)</source>
         <translation>SOM (sabit sayıda bölge)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="585"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="591"/>
         <source>SOM + Mean Shift (finds the number)</source>
         <translation>SOM + Mean Shift (sayıyı kendisi bulur)</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="586"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="592"/>
         <source>Units of the linear map; each becomes a region if events fall to it</source>
         <translation>Doğrusal haritanın birimleri; deprem düşen her birim bir bölge olur</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="589"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="595"/>
         <source>The map that compresses the catalog before Mean Shift groups its units</source>
         <translation>Mean Shift birimleri gruplamadan önce kataloğu özetleyen harita</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="593"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="599"/>
         <source>Share of the map&apos;s units used as neighbours for the bandwidth; larger gives fewer regions</source>
         <translation>Bant genişliği için komşu sayılan harita birimlerinin oranı; büyüdükçe bölge sayısı azalır</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="595"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="601"/>
         <source>The same seed gives the same regions</source>
         <translation>Aynı tohum aynı bölgeleri verir</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="597"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="603"/>
         <source>first line of the map titles, e.g. East Anatolian Fault Zone</source>
         <translation>harita başlıklarının ilk satırı, örn. Doğu Anadolu Fay Zonu</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="598"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="604"/>
         <source>Marker</source>
         <translation>İşaret</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="599"/>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="605"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="628"/>
         <source>Latitude</source>
         <translation>Enlem</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="600"/>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="606"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="628"/>
         <source>Longitude</source>
         <translation>Boylam</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="601"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="607"/>
         <source>label</source>
         <translation>etiket</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="602"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="608"/>
         <source>province polygons (.shp), optional</source>
         <translation>il poligonları (.shp), isteğe bağlı</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="604"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="610"/>
         <source>CSV of lat, lon, name; empty: 16 cities around the East Anatolian Fault</source>
         <translation>enlem, boylam, ad içeren CSV; boşsa: Doğu Anadolu Fayı çevresindeki 16 şehir</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="606"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="612"/>
         <source>countries</source>
         <translation>ülkeler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="607"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="613"/>
         <source>faults</source>
         <translation>faylar</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="609"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="615"/>
         <source>The fault shapefile loaded at the top, or the shipped East Anatolian traces when none is loaded</source>
         <translation>Yukarıda yüklenen fay shapefile&apos;ı; yüklenmemişse uygulamayla gelen Doğu Anadolu fay izleri</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="611"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="617"/>
         <source>cities</source>
         <translation>şehirler</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="612"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="618"/>
         <source>Write PNG maps</source>
         <translation>PNG haritaları yaz</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="613"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
         <source> dpi</source>
         <translation> dpi</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="614"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
         <source>and SVG</source>
         <translation>ve SVG</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="615"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
         <source>An SVG beside every PNG; large for big catalogs</source>
         <translation>Her PNG&apos;nin yanına bir SVG; büyük kataloglarda dosya büyür</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="616"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="622"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="617"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="625"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="618"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="626"/>
         <source>Open output folder</source>
         <translation>Çıktı klasörünü aç</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="627"/>
         <source>Method</source>
         <translation>Yöntem</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="627"/>
         <source>Region</source>
         <translation>Bölge</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="627"/>
         <source>Centre</source>
         <translation>Merkez</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="629"/>
         <source>Events</source>
         <translation>Deprem</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="629"/>
         <source>File</source>
         <translation>Dosya</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="622"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="624"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="630"/>
         <source>The run log appears here.</source>
         <translation>Çalıştırma günlüğü burada görünür.</translation>
     </message>
@@ -3449,42 +3546,42 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::RunsModel</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="93"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
         <source>Run</source>
         <translation>Koşu</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="93"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
         <source>Models</source>
         <translation>Model</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="94"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
         <source>Best model</source>
         <translation>En iyi model</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="94"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
         <source>val F1</source>
         <translation>doğ. F1</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="97"/>
         <source>test F1</source>
         <translation>test F1</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="97"/>
         <source>test acc</source>
         <translation>test doğruluk</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="98"/>
         <source>test AUC</source>
         <translation>test AUC</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="98"/>
         <source>Settings different from the project</source>
         <translation>Projeden farklı ayarlar</translation>
     </message>
@@ -3492,14 +3589,18 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::SettingsModule</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.h" line="17"/>
+        <location filename="../src/modules/settings/settingsmodule.h" line="18"/>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.h" line="19"/>
+        <location filename="../src/modules/settings/settingsmodule.h" line="20"/>
+        <source>Tool locations, language and theme</source>
+        <translation>Araç konumları, dil ve tema</translation>
+    </message>
+    <message>
         <source>Tool locations and language</source>
-        <translation>Araç konumları ve dil</translation>
+        <translation type="vanished">Araç konumları ve dil</translation>
     </message>
 </context>
 <context>
@@ -3718,14 +3819,34 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::SettingsWidget</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="191"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="217"/>
         <source>Interface</source>
         <translation>Arayüz</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="192"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="218"/>
         <source>Language</source>
         <translation>Dil</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="219"/>
+        <source>Theme</source>
+        <translation>Tema</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="220"/>
+        <source>Follow the system</source>
+        <translation>Sistemi izle</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="221"/>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="222"/>
+        <source>Dark</source>
+        <translation>Koyu</translation>
     </message>
 </context>
 <context>
@@ -3744,129 +3865,129 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::TdvmsWidget</name>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="86"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="88"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="98"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="100"/>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="99"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="101"/>
         <source>Slots</source>
         <translation>Yuva sayısı</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="100"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="102"/>
         <source>Interval</source>
         <translation>Aralık</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="180"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="415"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="576"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="182"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="417"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="581"/>
         <source>Reset to pending</source>
         <translation>Beklemeye al</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="210"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="212"/>
         <source>Folder with the campaigns</source>
         <translation>Kampanyaların bulunduğu klasör</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="259"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="261"/>
         <source>%1 has no chunks yet. Plan a station.</source>
         <translation>%1 henüz parça içermiyor. Bir istasyon planlayın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="271"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="273"/>
         <source>A run holds %1: pid %2, ledger %3</source>
         <translation>%1 adresini bir çalıştırma tutuyor: pid %2, defter %3</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="282"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="296"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="284"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="298"/>
         <source>New campaign</source>
         <translation>Yeni kampanya</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="283"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="285"/>
         <source>Name (lowercase letters, digits, - and _):</source>
         <translation>Ad (küçük harf, rakam, - ve _):</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="289"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="291"/>
         <source>Where to keep the downloads (cancel for the campaign folder)</source>
         <translation>İndirmeler nerede tutulsun (kampanya klasörü için iptal)</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="313"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="315"/>
         <source>plan %1</source>
         <translation>plan %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="314"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="316"/>
         <source>%1 from %2 to %3 in %4-day windows</source>
         <translation>%1, %2 - %3, %4 günlük pencereler</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="329"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="331"/>
         <source>the portal does not list &apos;%1&apos;. It lists %2 stations as bare codes. Closest by prefix: %3. Untick the check to plan it anyway.</source>
         <translation>portal &apos;%1&apos; istasyonunu listelemiyor. %2 istasyonu yalın kodlarla listeliyor. Önekçe en yakınlar: %3. Yine de planlamak için denetimi kaldırın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="335"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="337"/>
         <source>(none)</source>
         <translation>(yok)</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="341"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="343"/>
         <source>%1 is network %2, instrument %3%4</source>
         <translation>%1: ağ %2, alet %3%4</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="344"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="346"/>
         <source> -- strong motion, an accelerometer rather than a broadband</source>
         <translation> -- kuvvetli yer hareketi, geniş bant değil ivmeölçer</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="348"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="350"/>
         <source>could not reach the station list (%1); planning %2 unverified</source>
         <translation>istasyon listesine ulaşılamadı (%1); %2 doğrulanmadan planlanıyor</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="360"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="362"/>
         <source>planned %1 new chunk(s) for %2; ledger holds %3 chunk(s), %4 pending</source>
         <translation>%2 için %1 yeni parça planlandı; defterde %3 parça var, %4 beklemede</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="386"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="388"/>
         <source>Archive to file against its window</source>
         <translation>Penceresine yerleştirilecek arşiv</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="387"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="389"/>
         <source>Archives (*.zip *.part);;All files (*)</source>
         <translation>Arşivler (*.zip *.part);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="394"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="400"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="396"/>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="402"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="404"/>
         <source>Ingest</source>
         <translation>İçe al</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="395"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="397"/>
         <source>%1
 Overwrite the existing archive?</source>
         <translation>%1
 Mevcut arşivin üzerine yazılsın mı?</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="416"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="418"/>
         <source>Put %n chunk(s) back to pending?
 %1</source>
         <translation>
@@ -3875,150 +3996,162 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="421"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="423"/>
         <source>reset by hand</source>
         <translation>elle sıfırlandı</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="442"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="449"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="454"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="569"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="444"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="451"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="456"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="572"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="443"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="445"/>
         <source>A base address is needed (the mailbox user, usually).</source>
         <translation>Bir temel adres gerekli (genellikle posta kutusu kullanıcısı).</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="455"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="457"/>
         <source>No mailbox credentials are set, so links cannot be read and nothing will be downloaded. Submit anyway?</source>
         <translation>Posta kutusu kimlik bilgileri ayarlı değil; bağlantılar okunamaz ve hiçbir şey indirilmez. Yine de gönderilsin mi?</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="468"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="470"/>
         <source>run %1</source>
         <translation>çalıştır %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="470"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="472"/>
         <source>%1 slot(s) from %2 on %3</source>
         <translation>%3 üzerinde %2 adresinden %1 yuva</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="506"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="508"/>
         <source>catalog refresh</source>
         <translation>katalog yenileme</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="507"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="509"/>
         <source>stations from the portal, M5+ events from USGS</source>
         <translation>portaldan istasyonlar, USGS&apos;den M5+ depremler</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="512"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="514"/>
         <source>%1: %2 stations; %3: %4 events</source>
         <translation>%1: %2 istasyon; %3: %4 deprem</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="549"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="551"/>
         <source>Running. Progress and output are in the Jobs panel.</source>
         <translation>Çalışıyor. İlerleme ve çıktı İşler panelinde.</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="551"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="553"/>
         <source>Mailbox: %1</source>
         <translation>Posta kutusu: %1</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="552"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="554"/>
         <source>No mailbox credentials set (Mailbox...).</source>
         <translation>Posta kutusu kimlik bilgisi yok (Posta kutusu...).</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="562"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="564"/>
+        <source>No campaign open.
+Choose a data folder, then New campaign… to plan the stations and dates to download.</source>
+        <translation>Açık kampanya yok.
+Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak için Yeni kampanya… düğmesini kullanın.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="565"/>
         <source>folder holding the campaigns</source>
         <translation>kampanyaların bulunduğu klasör</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="563"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="566"/>
         <source>Browse...</source>
         <translation>Gözat...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="564"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="567"/>
         <source>New campaign...</source>
         <translation>Yeni kampanya...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="565"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="568"/>
         <source>Plan station...</source>
         <translation>İstasyon planla...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="566"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="569"/>
         <source>Ingest archive...</source>
         <translation>Arşiv içe al...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="567"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="570"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="568"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="571"/>
         <source>Refresh catalogs</source>
         <translation>Katalogları yenile</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="570"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="573"/>
         <source>stop when every chunk has an outcome</source>
         <translation>her parça sonuçlanınca dur</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="571"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="574"/>
         <source>one cycle only</source>
         <translation>yalnızca bir döngü</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="572"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="575"/>
         <source>dry run (no mail flagged, no submissions)</source>
         <translation>deneme (posta işaretlenmez, istek gönderilmez)</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="573"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="576"/>
         <source>Mailbox...</source>
         <translation>Posta kutusu...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="574"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="577"/>
         <source>Start</source>
         <translation>Başlangıç</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="575"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="579"/>
+        <source>The run log appears here.</source>
+        <translation>Çalıştırma günlüğü burada görünür.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="580"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="577"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="582"/>
         <source>Chunks</source>
         <translation>Parçalar</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="578"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="583"/>
         <source>Coverage</source>
         <translation>Kapsam</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="579"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="584"/>
         <source>FDSN</source>
         <translation>FDSN</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="583"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="588"/>
         <source>all states</source>
         <translation>tüm durumlar</translation>
     </message>
@@ -4026,58 +4159,58 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
 <context>
     <name>skg::ToolBox</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="70"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="73"/>
         <source>Executable of %1</source>
         <translation>%1 çalıştırılabilir dosyası</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="79"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="82"/>
         <source>Project directory of %1</source>
         <translation>%1 proje dizini</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="88"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="91"/>
         <source>asking %1 for its version...</source>
         <translation>%1 sürümü soruluyor...</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="109"/>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="110"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="112"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="113"/>
         <source>Browse...</source>
         <translation>Gözat...</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="111"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="114"/>
         <source>Check</source>
         <translation>Denetle</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="112"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="115"/>
         <source>executable (optional; found on PATH or in the project&apos;s .venv otherwise)</source>
         <translation>çalıştırılabilir dosya (isteğe bağlı; yoksa PATH&apos;te veya projenin .venv&apos;inde aranır)</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="115"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="118"/>
         <source>project directory (the checkout with pyproject.toml)</source>
         <translation>proje dizini (pyproject.toml içeren kopya)</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="116"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="119"/>
         <source>Executable</source>
         <translation>Çalıştırılabilir</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="117"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="120"/>
         <source>Project</source>
         <translation>Proje</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="118"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="121"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="128"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="131"/>
         <source>the configured path is not an executable file</source>
         <translation>ayarlanan yol çalıştırılabilir bir dosya değil</translation>
     </message>
@@ -4123,37 +4256,37 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
 <context>
     <name>skg::TrialsModel</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
         <source>train F1</source>
         <translation>eğitim F1</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
         <source>val F1</source>
         <translation>doğ. F1</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
         <source>test F1</source>
         <translation>test F1</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
         <source>test acc</source>
         <translation>test doğruluk</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
         <source>test AUC</source>
         <translation>test AUC</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="160"/>
         <source>Parameters</source>
         <translation>Parametreler</translation>
     </message>

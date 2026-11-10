@@ -1,5 +1,7 @@
 #include "modules/classification/experimentspane.h"
 
+#include "core/ui.h"
+
 #include <QDesktopServices>
 #include <QDir>
 #include <QDirIterator>
@@ -364,6 +366,9 @@ void ExperimentsPane::changeEvent(QEvent *e) {
 }
 
 void ExperimentsPane::retranslate() {
+  ui::setEmptyHint(
+      runs_,
+      tr("No experiments yet.\nChoose a project folder and run the steps."));
   refresh_->setText(tr("Refresh"));
   report_->setText(tr("HTML report"));
   remove_->setText(tr("Delete run…"));

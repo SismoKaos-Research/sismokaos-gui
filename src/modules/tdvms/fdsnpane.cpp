@@ -1,5 +1,7 @@
 #include "modules/tdvms/fdsnpane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QDateEdit>
 #include <QEvent>
@@ -199,6 +201,7 @@ void FdsnPane::retranslate() {
   planOnly_->setText(tr("only add the days, do not fetch"));
   retryFailed_->setText(tr("put this station's failed days back first"));
   go_->setText(tr("Fetch"));
+  ui::setPrimary(go_);
   stop_->setText(tr("Stop"));
 }
 

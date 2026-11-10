@@ -1,5 +1,7 @@
 #include "modules/indicators/indicatorsmodule.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDateEdit>
@@ -310,6 +312,8 @@ void IndicatorsWidget::retranslate() {
   dpi_->setSuffix(tr(" dpi"));
   plots_->setText(tr("write PNG figures"));
   run_->setText(tr("Run"));
+  ui::setPrimary(run_);
+  log_->setPlaceholderText(tr("The run log appears here."));
   stop_->setText(tr("Stop"));
   tabs_->setTabText(0, tr("Settings and run"));
   tabs_->setTabText(1, tr("Results"));

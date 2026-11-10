@@ -1,5 +1,7 @@
 #include "modules/analysis/catalogpane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QDateTime>
 #include <QDoubleSpinBox>
@@ -307,6 +309,8 @@ void CatalogPane::changeEvent(QEvent *e) {
 }
 
 void CatalogPane::retranslate() {
+  ui::setEmptyHint(table_, tr("No earthquakes listed yet.\nChoose a catalog "
+                              "and a station at the top of the page."));
   showFaults_->setText(tr("show faults"));
   exportPng_->setText(tr("Map as PNG…"));
   exportSvg_->setText(tr("Map as SVG…"));

@@ -1,5 +1,7 @@
 #include "modules/classification/classificationmodule.h"
 
+#include "core/ui.h"
+
 #include <QDir>
 #include <QEvent>
 #include <QFileDialog>
@@ -434,6 +436,8 @@ void ClassificationWidget::retranslate() {
                                  "or an fx feature table (.npy/.csv)"));
   save_->setText(tr("Save project.toml"));
   run_->setText(tr("Run"));
+  ui::setPrimary(run_);
+  log_->setPlaceholderText(tr("The run log appears here."));
   stop_->setText(tr("Stop"));
   tabs_->setTabText(0, tr("Settings"));
   tabs_->setTabText(1, tr("Run"));

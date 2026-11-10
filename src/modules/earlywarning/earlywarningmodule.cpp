@@ -1,5 +1,7 @@
 #include "modules/earlywarning/earlywarningmodule.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDateTime>
@@ -462,6 +464,8 @@ void EarlyWarningWidget::retranslate() {
   extraLabel_->setText(tr("Extra options"));
   extra_->setToolTip(tr("Any other ayzek option, as on the command line"));
   run_->setText(tr("Run"));
+  ui::setPrimary(run_);
+  log_->setPlaceholderText(tr("The run log appears here."));
   stop_->setText(tr("Stop"));
   openOutput_->setText(tr("Open output folder"));
   licence_->setText(

@@ -1,5 +1,7 @@
 #include "modules/analysis/gridpane.h"
 
+#include "core/ui.h"
+
 #include <QComboBox>
 #include <QEvent>
 #include <QFileDialog>
@@ -233,6 +235,7 @@ void GridPane::retranslate() {
   add_->setText(tr("Add tables…"));
   remove_->setText(tr("Remove"));
   build_->setText(tr("Build grid"));
+  ui::setPrimary(build_);
   save_->setText(tr("Save PNG…"));
   maxDays_->setSuffix(tr(" days"));
 }

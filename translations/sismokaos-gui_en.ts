@@ -250,22 +250,22 @@
 <context>
     <name>skg::AyzekEventsModel</name>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="109"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="111"/>
         <source>Kind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="111"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="113"/>
         <source>Alarm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="113"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="115"/>
         <source>Time (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="115"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="117"/>
         <source>Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -326,37 +326,37 @@
 <context>
     <name>skg::CatalogPane</name>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="140"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="142"/>
         <source>fit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="147"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="149"/>
         <source>View half-width (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="191"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="193"/>
         <source>Set the station (a feature table from the Features tab names it) to see the events around it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="198"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="200"/>
         <source>%1 at %2, %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="203"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="205"/>
         <source>; table from %1 to %2 (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="211"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="213"/>
         <source>; no catalog loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="213"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="215"/>
         <source>; %n event(s) in SCAP&apos;s bands</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -364,79 +364,85 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="216"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="218"/>
         <source>; main event M%1 %2 at %3 km (%4)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="225"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="227"/>
         <source>; no M5+ event in the period</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="229"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="231"/>
         <source>No fault lines loaded.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="231"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="233"/>
         <source>Nearest fault to the station: %1, %2 km, station lies %3 of it (%4, %5)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="261"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="263"/>
         <source>Save the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="262"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="264"/>
         <source>SVG (*.svg)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="262"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="264"/>
         <source>PNG (*.png)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="267"/>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="281"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="269"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="283"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="268"/>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="282"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="270"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="284"/>
         <source>Could not write %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="275"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="277"/>
         <source>Save the event table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="276"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="278"/>
         <source>CSV (*.csv)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="310"/>
-        <source>show faults</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="311"/>
-        <source>Map as PNG…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/modules/analysis/catalogpane.cpp" line="312"/>
-        <source>Map as SVG…</source>
+        <source>No earthquakes listed yet.
+Choose a catalog and a station at the top of the page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/catalogpane.cpp" line="313"/>
+        <source>show faults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="314"/>
+        <source>Map as PNG…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="315"/>
+        <source>Map as SVG…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="316"/>
         <source>Events as CSV…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -457,50 +463,50 @@
 <context>
     <name>skg::ClassificationWidget</name>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="86"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="436"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="439"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="88"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="438"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="443"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="153"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="155"/>
         <source>Project folder (project.toml lives here)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="171"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="173"/>
         <source>Loaded %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="173"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="246"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="175"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="248"/>
         <source>Cannot read %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="178"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="180"/>
         <source>New project: the settings are the defaults until you save project.toml.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="201"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="203"/>
         <source>Labelled windows or a feature table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="202"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="204"/>
         <source>sfc feature tables (*_features_labeled.csv);;fx feature tables (*.npy *.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="259"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="261"/>
         <source>Choose the labelled windows: sfc&apos;s &lt;STATION&gt;_N_features_labeled.csv, or a feature table from the Features tab, which the class table around the event then labels.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="269"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="271"/>
         <source>sfc table: %n window(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -508,7 +514,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="281"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="283"/>
         <source>%n selected day(s) -&gt; %1 windows</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -516,12 +522,12 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="287"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="289"/>
         <source>Cannot build the dataset: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="300"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="302"/>
         <source>%n window(s), %1 features; days per label %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -529,43 +535,43 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="316"/>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="337"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="318"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="339"/>
         <source>Choose the project folder first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="321"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="323"/>
         <source>Saved %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="323"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="325"/>
         <source>Cannot write %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="341"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="343"/>
         <source>No labelled windows to train on.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="349"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="351"/>
         <source>Tick at least one step.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="362"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="364"/>
         <source>Every window has a NaN feature; nothing to train on.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="380"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="382"/>
         <source>sfc run %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="381"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="383"/>
         <source>%1 on %n window(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -573,42 +579,47 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="429"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="431"/>
         <source>Project folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="430"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="432"/>
         <source>Labelled windows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="432"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="434"/>
         <source>the folder with project.toml; results/ is written under it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="433"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="435"/>
         <source>&lt;STATION&gt;_N_features_labeled.csv from sfc, or an fx feature table (.npy/.csv)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="435"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="437"/>
         <source>Save project.toml</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="437"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="440"/>
+        <source>The run log appears here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="441"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="438"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="442"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/classificationmodule.cpp" line="440"/>
+        <location filename="../src/modules/classification/classificationmodule.cpp" line="444"/>
         <source>Experiments</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1005,383 +1016,388 @@
 <context>
     <name>skg::EarlyWarningWidget</name>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="349"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="356"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="351"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="358"/>
         <source>CSV files (*.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="381"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="383"/>
         <source>ayzek:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="382"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="384"/>
         <source>Choose executable...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="383"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="385"/>
         <source>Use the shipped copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="384"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="464"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="386"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="466"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="385"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="387"/>
         <source>Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="386"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="388"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="387"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="389"/>
         <source>Replay miniSEED files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="388"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="390"/>
         <source>Live SeedLink stream</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="389"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="391"/>
         <source>Replay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="390"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="392"/>
         <source>Add files...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="391"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="393"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="392"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="394"/>
         <source>One miniSEED file per station, HH? channels; the station code is read from the records and its position from the station table.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="395"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="397"/>
         <source>Speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="396"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="398"/>
         <source>1 = real time, 10 = ten times faster, 0 = as fast as the machine allows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="398"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="400"/>
         <source>as fast as possible</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="399"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="401"/>
         <source>Detect from (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="400"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="402"/>
         <source>No triggers before this time; earlier data still warms up the filters. Empty: from the start.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="402"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="404"/>
         <source>AFAD catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="403"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="405"/>
         <source>An AFAD catalogue export (CSV). Each alarm is compared with it; without one, alarms are reported but not scored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="406"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="415"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="450"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="458"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="461"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="408"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="417"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="452"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="460"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="463"/>
         <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="407"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="409"/>
         <source>Live</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="408"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="410"/>
         <source>SeedLink server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="409"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="411"/>
         <source>Streams</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="410"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="412"/>
         <source>NET.STA or NET.STA.LOC, comma-separated; every station needs coordinates in the station table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="412"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="414"/>
         <source>Archive to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="413"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="415"/>
         <source>Every record received is appended to DIR/STATION.mseed, which replays like any file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="416"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="418"/>
         <source>Duration (s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="417"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="419"/>
         <source>until stopped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="418"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="420"/>
         <source>Detection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="419"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="421"/>
         <source>Detector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="420"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="422"/>
         <source>6 s window detector (3-seed ensemble)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="421"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="423"/>
         <source>Streaming onset transformer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="422"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="424"/>
         <source>STA/LTA (reference)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="423"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="425"/>
         <source>FilterPicker (reference)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="424"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="426"/>
         <source>Stations to declare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="425"/>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="430"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="427"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="432"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="434"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="436"/>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="438"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="440"/>
         <source>default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="426"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="428"/>
         <source>Station detections needed to declare an event; ayzek&apos;s default is 2 (3 for the transformer)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="429"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="431"/>
         <source>Trigger threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="431"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="433"/>
         <source>Trigger windows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="433"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="435"/>
         <source>Instant threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="435"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="437"/>
         <source>Release</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="437"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="439"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="439"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="441"/>
         <source>geometry head of the transformer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="440"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="442"/>
         <source>P and S picks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="441"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="443"/>
         <source>Assess every alarm from its S-P picks (writes assess.csv in the output folder)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="443"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="445"/>
         <source>Write every window&apos;s detector probability (scores/ in the output folder)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="445"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="447"/>
         <source>No magnitude estimate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="446"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="448"/>
         <source>Verbose: every station detection, pick and Pd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="447"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="449"/>
         <source>Output folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="448"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="450"/>
         <source>Working directory of the run; the assessment table and the scores go here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="451"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="453"/>
         <source>Warning sites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="452"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="454"/>
         <source>One place per line as NAME,LAT,LON; the S-wave warning time at each is reported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="454"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="456"/>
         <source>Station table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="455"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="457"/>
         <source>code,lat,lon[,...] in place of the shipped table (TU and KO stations), for another network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="459"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="461"/>
         <source>Models folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="460"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="462"/>
         <source>Weights directory; empty uses the shipped models</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="462"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="464"/>
         <source>Extra options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="463"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="465"/>
         <source>Any other ayzek option, as on the command line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="465"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="468"/>
+        <source>The run log appears here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="469"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="466"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="470"/>
         <source>Open output folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="468"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="472"/>
         <source>ayzek is a separate program, GPL-3.0-or-later, by H. Oğuz Bolat, Sibel Çimen, Bülent Bolat and Tülay Yıldırım (Yıldız Technical University), shipped beside this application with its source (third_party/ayzek) and models. Please cite it: &lt;a href=&quot;https://doi.org/10.5281/zenodo.23672495&quot;&gt;doi:10.5281/zenodo.23672495&lt;/a&gt;; &lt;a href=&quot;https://github.com/hogib/ayzek&quot;&gt;github.com/hogib/ayzek&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="477"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="481"/>
         <source>No run yet.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="487"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="491"/>
         <source>ayzek was not found beside the application or on the PATH; choose its executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="499"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="503"/>
         <source>models: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="502"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="506"/>
         <source>no models/ beside it; set the models folder below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="511"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="515"/>
         <source>ayzek executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="521"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="525"/>
         <source>miniSEED files, one per station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="523"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="527"/>
         <source>miniSEED (*.mseed *.msd *.seed);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="663"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="667"/>
         <source>ayzek was not found; choose its executable above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="669"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="673"/>
         <source>The start time must be UTC like 2025-11-10T18:20:00.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="678"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="682"/>
         <source>Cannot create the output folder %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="688"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="692"/>
         <source>ayzek live %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="689"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="693"/>
         <source>ayzek replay, %n file(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1389,17 +1405,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="694"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="698"/>
         <source>Running...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="702"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="706"/>
         <source>Started: %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="725"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="729"/>
         <source>%n alarm(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1407,17 +1423,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="727"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="731"/>
         <source>%1 matching a catalogue event, %2 without one</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="731"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="735"/>
         <source>%1 catalogue events: %2 detected (%3 before S), %4 missed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="738"/>
+        <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="742"/>
         <source> (exit %1; see the log)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1425,52 +1441,52 @@
 <context>
     <name>skg::EventsModel</name>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="97"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="99"/>
         <source>Time (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="99"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="101"/>
         <source>M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="101"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="103"/>
         <source>Depth (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="103"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="105"/>
         <source>Place</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="105"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="107"/>
         <source>Distance (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="107"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="109"/>
         <source>Direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="109"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="111"/>
         <source>Band</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="111"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="113"/>
         <source>Nearest fault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="113"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="115"/>
         <source>Fault (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="115"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="117"/>
         <source>Side of fault</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1478,12 +1494,12 @@
 <context>
     <name>skg::ExperimentsPane</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="277"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="279"/>
         <source>No experiments yet: set the project and run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/experimentspane.cpp" line="292"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="294"/>
         <source>%1: %n model(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1491,57 +1507,63 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="295"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="297"/>
         <source>; the project&apos;s settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="296"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="298"/>
         <source>; changed: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="331"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="333"/>
         <source>Cannot read %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="340"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="342"/>
         <source>Delete run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="341"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="343"/>
         <source>Delete the run &apos;%1&apos;: its folder and its rows in experiments.csv?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="357"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="359"/>
         <source>Report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="357"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="359"/>
         <source>Could not write the report.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="367"/>
-        <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="368"/>
-        <source>HTML report</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="369"/>
-        <source>Delete run…</source>
+        <source>No experiments yet.
+Choose a project folder and run the steps.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="371"/>
+        <source>HTML report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="372"/>
+        <source>Delete run…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="373"/>
         <source>Open folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1549,52 +1571,52 @@
 <context>
     <name>skg::FdsnPane</name>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="61"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="63"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="62"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="64"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="63"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="65"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="64"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="66"/>
         <source>Service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="65"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="67"/>
         <source>First day</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="66"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="68"/>
         <source>Day after the last</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="67"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="69"/>
         <source>Tries per day</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="99"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="101"/>
         <source>Days are recorded in %1 and filed under %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="124"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="126"/>
         <source>fdsn %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="125"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="127"/>
         <source>%n day(s) of %1 from %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1602,32 +1624,32 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="135"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="137"/>
         <source>%1: %2 day(s) added, %3 already on disk, %4 back to pending; %5 to fetch from %6 into %7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="172"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="174"/>
         <source>done: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="199"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="201"/>
         <source>only add the days, do not fetch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="200"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="202"/>
         <source>put this station&apos;s failed days back first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="201"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="203"/>
         <source>Fetch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="202"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="205"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1648,108 +1670,108 @@
 <context>
     <name>skg::FeaturesWidget</name>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="157"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="159"/>
         <source>Choose a calibration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="158"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="160"/>
         <source>Calibrations (*_calibration.json);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="190"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="192"/>
         <source>Choose a directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="203"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="205"/>
         <source>Load a config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="204"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="206"/>
         <source>Config files (*.json);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="209"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="214"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="236"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="432"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="211"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="216"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="238"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="434"/>
         <source>Config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="209"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="211"/>
         <source>Cannot read %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="215"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="217"/>
         <source>%1 is not a JSON object.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="221"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="223"/>
         <source>Loaded %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="229"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="231"/>
         <source>Save the config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="231"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="233"/>
         <source>Config files (*.json)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="236"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="238"/>
         <source>Cannot write %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="241"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="243"/>
         <source>Saved %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="271"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="276"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="284"/>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="316"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="273"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="278"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="286"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="318"/>
         <source>Features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="272"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="274"/>
         <source>Choose the data directory first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="277"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="279"/>
         <source>Choose the output directory first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="291"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="293"/>
         <source>band %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="293"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="295"/>
         <source>Invalid configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="298"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="300"/>
         <source>Warning: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/features/featuresmodule.cpp" line="300"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="302"/>
         <source>Dry run: %n run(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1757,27 +1779,27 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="304"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="306"/>
         <source>(single run)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="317"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="319"/>
         <source>A full run calibrates the chaos parameters on quiet periods, which needs the earthquake catalog (and the station list or position). Set them in the calibration group, or reuse a previous run&apos;s calibration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="327"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="329"/>
         <source>preprocess %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="327"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="329"/>
         <source>features %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/features/featuresmodule.cpp" line="329"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="331"/>
         <source>%n run(s) over %1 into %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1785,17 +1807,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="365"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="367"/>
         <source>stopped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="367"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="369"/>
         <source>wrote %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/features/featuresmodule.cpp" line="369"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="371"/>
         <source>wrote %1 (%n window(s))</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1803,107 +1825,112 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="372"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="374"/>
         <source>Pipeline error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="373"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="375"/>
         <source>run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="384"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="386"/>
         <source>Failed: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="414"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="416"/>
         <source>Run: calibrate on quiet periods, then extract features per band. Preprocess: filtered, decimated E/N/Z as float32 only. The log goes to the jobs panel and the Status tab.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="419"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="421"/>
         <source>Running. Stop finishes the window in progress and writes nothing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="430"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="432"/>
         <source>Data directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="431"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="433"/>
         <source>Output directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="433"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="435"/>
         <source>Load…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="434"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="436"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="435"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="437"/>
         <source>miniSEED files and zips of one station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="436"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="438"/>
         <source>where the results go</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="437"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="439"/>
         <source>config.json (Rust or Python layout)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="438"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="440"/>
         <source>reuse a previous run&apos;s calibration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="439"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="441"/>
         <source>Bands to run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="440"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="442"/>
         <source>comma-separated names; empty = all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="441"/>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="443"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="442"/>
-        <source>Preprocess only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="443"/>
-        <source>Dry run</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/featuresmodule.cpp" line="444"/>
-        <source>Stop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="445"/>
-        <source>Status</source>
+        <source>The run log appears here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="446"/>
+        <source>Preprocess only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="447"/>
+        <source>Dry run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="448"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="449"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/featuresmodule.cpp" line="450"/>
         <source>Results</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2062,52 +2089,52 @@
 <context>
     <name>skg::GridPane</name>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="54"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="56"/>
         <source>Column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="56"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="58"/>
         <source>At most</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="78"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="80"/>
         <source>Save the grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="80"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="82"/>
         <source>PNG (*.png)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="82"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="84"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="83"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="85"/>
         <source>Could not write %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="107"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="109"/>
         <source>Add feature tables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="109"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="111"/>
         <source>Feature tables (*.npy *.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="129"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="131"/>
         <source>grid %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/gridpane.cpp" line="130"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="132"/>
         <source>%n station(s), column %1</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2115,17 +2142,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="153"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="155"/>
         <source>%1: %2 (skipped)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="170"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="172"/>
         <source>the tables share no day</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/gridpane.cpp" line="215"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="217"/>
         <source>%n station(s) x %1 day(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2133,32 +2160,32 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="223"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="225"/>
         <source>Building the grid; progress is in the Jobs panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="233"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="235"/>
         <source>Add tables…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="234"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="236"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="235"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="237"/>
         <source>Build grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="236"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="239"/>
         <source>Save PNG…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/gridpane.cpp" line="237"/>
+        <location filename="../src/modules/analysis/gridpane.cpp" line="240"/>
         <source> days</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2166,17 +2193,17 @@
 <context>
     <name>skg::IndicatorTableModel</name>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="76"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="78"/>
         <source>Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="78"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="80"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="80"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="82"/>
         <source>End</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2197,22 +2224,28 @@
 <context>
     <name>skg::IndicatorsResultsPane</name>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="139"/>
-        <source>Open folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="140"/>
-        <source>Open an earlier run…</source>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="141"/>
+        <source>No results yet.
+Run the indicators, or open an earlier run&apos;s folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="142"/>
+        <source>Open folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="143"/>
+        <source>Open an earlier run…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="145"/>
         <source>No run yet. Run the indicators or open an earlier output folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/resultspane.cpp" line="175"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="190"/>
         <source>%1: %n window(s), %2 figure(s)%3</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2220,7 +2253,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="208"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="223"/>
         <source>Output folder of an indicators run</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2228,308 +2261,313 @@
 <context>
     <name>skg::IndicatorsWidget</name>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="214"/>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="525"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="216"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="529"/>
         <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="217"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="219"/>
         <source>GeoJSON (*.geojson *.json);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="220"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="222"/>
         <source>Magnitude conversion (*.json);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="253"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="255"/>
         <source>Catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="255"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="257"/>
         <source>AFAD export CSV: Date, Latitude, Longitude, Magnitude…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="256"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="258"/>
         <source>Describe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="257"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="259"/>
         <source>Loads the catalog, applies the selection and reports the events kept.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="259"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
         <source>Events</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="263"/>
         <source>Whole catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="261"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="263"/>
         <source>Near the East Anatolian Fault Zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="264"/>
         <source>Near a fault trace (GeoJSON file)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="262"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="264"/>
         <source>Within a circle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="265"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
         <source>Fault GeoJSON</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="267"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
         <source>FeatureCollection of LineString features; property &quot;strand&quot; optional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="269"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="271"/>
         <source>Strands</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="271"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="273"/>
         <source>comma-separated, empty = all (EAFZ: main, northern)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="272"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="274"/>
         <source>Buffer (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="273"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="275"/>
         <source>Centre lat, lon, radius (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="274"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="276"/>
         <source>From date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="275"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="277"/>
         <source>drop earlier events</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="276"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="278"/>
         <source>Homogenise magnitudes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="278"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="280"/>
         <source>Converts AFAD magnitudes before 2013-11-20 onto the 2014-2019 ML/Mw practice by rate matching. Empty file = the conversion shipped with the app.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="281"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="283"/>
         <source>conversion JSON (empty = shipped)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="282"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="284"/>
         <source>Fit…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="283"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="285"/>
         <source>Fits a conversion on a national AFAD catalog (declustered) and saves it as JSON.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="285"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="287"/>
         <source>Decluster (Gardner-Knopoff mainshocks only)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="286"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="288"/>
         <source>Completeness Mc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="287"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="289"/>
         <source>Estimate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="289"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="291"/>
         <source>Maximum curvature + 0.2 on the selected events.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="290"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="292"/>
         <source>Magnitude bin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="291"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
         <source>Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="292"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="294"/>
         <source>Step</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>weeks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>months</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="293"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="295"/>
         <source>years</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="298"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="300"/>
         <source>Half-Gauss σ</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="299"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="301"/>
         <source>Moving averages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="300"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="302"/>
         <source>window counts, e.g. 7,15,23</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="301"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="303"/>
         <source>on one figure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="302"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="304"/>
         <source>Bollinger bands</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="303"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="305"/>
         <source>window </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="304"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="306"/>
         <source>k </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="305"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="307"/>
         <source>Risk label</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="306"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="308"/>
         <source>M ≥ </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="307"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="309"/>
         <source> days before</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="308"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="310"/>
         <source>Output root</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="309"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="311"/>
         <source>Figures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="310"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="312"/>
         <source> dpi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="311"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="313"/>
         <source>write PNG figures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="312"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="314"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="313"/>
-        <source>Stop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="314"/>
-        <source>Settings and run</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="315"/>
-        <source>Results</source>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="316"/>
+        <source>The run log appears here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="317"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="318"/>
+        <source>Settings and run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="319"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="321"/>
         <source>Catalog and selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="320"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="324"/>
         <source>Indicators</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="396"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="400"/>
         <source>Choose a catalog file first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="404"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="408"/>
         <source>Choose the fault GeoJSON file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="435"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="439"/>
         <source>Moving averages: comma-separated positive counts, e.g. 7,15,23.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="449"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="453"/>
         <source>Choose the output root folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="486"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="490"/>
         <source>Catalog: %n event(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2537,7 +2575,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="489"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="493"/>
         <source>%n event(s) selected.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2545,12 +2583,12 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="505"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="509"/>
         <source>No event matches the selection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="511"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="515"/>
         <source>Mc by maximum curvature + 0.2: %1 (%n event(s))</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2558,52 +2596,52 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="523"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="527"/>
         <source>National AFAD catalog to calibrate on</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="529"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="533"/>
         <source>Save the conversion as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="531"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="535"/>
         <source>JSON (*.json)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="536"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="540"/>
         <source>Magnitude calibration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="537"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="541"/>
         <source>Rate matching on %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="587"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="591"/>
         <source>Indicators %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="589"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="593"/>
         <source>%1, window %2, step %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="620"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="624"/>
         <source>Done: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="621"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="625"/>
         <source>The run did not finish; see the log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="626"/>
+        <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="630"/>
         <source>Running…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2882,37 +2920,60 @@
 <context>
     <name>skg::MainWindow</name>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="76"/>
+        <location filename="../src/app/mainwindow.cpp" line="294"/>
         <source>About sismokaos-gui</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="77"/>
+        <location filename="../src/app/mainwindow.cpp" line="295"/>
         <source>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;A desktop front end for the sismokaos tools: feature extraction, classification and AFAD/TDVMS downloads.&lt;br&gt;Qt %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="82"/>
+        <location filename="../src/app/mainwindow.cpp" line="300"/>
         <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="96"/>
+        <location filename="../src/app/mainwindow.cpp" line="161"/>
         <source>Started: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="100"/>
+        <location filename="../src/app/mainwindow.cpp" line="166"/>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="121"/>
+        <location filename="../src/app/mainwindow.cpp" line="345"/>
+        <source>Jobs ▾</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="345"/>
+        <source>Jobs ▴</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/app/mainwindow.cpp" line="352"/>
+        <source>%n job(s) running</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="367"/>
+        <source>No jobs running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="403"/>
         <source>Jobs still running</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="122"/>
+        <location filename="../src/app/mainwindow.cpp" line="404"/>
         <source>%n job(s) are still running. Quit and stop them?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2920,47 +2981,82 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="143"/>
+        <location filename="../src/app/mainwindow.cpp" line="435"/>
+        <source>STUDY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="437"/>
+        <source>TOOLS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="438"/>
+        <source>Seismology toolkit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="443"/>
         <source>Jobs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="144"/>
+        <location filename="../src/app/mainwindow.cpp" line="446"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="145"/>
+        <location filename="../src/app/mainwindow.cpp" line="447"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="146"/>
+        <location filename="../src/app/mainwindow.cpp" line="448"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="147"/>
+        <location filename="../src/app/mainwindow.cpp" line="449"/>
         <source>&amp;Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="148"/>
+        <location filename="../src/app/mainwindow.cpp" line="450"/>
+        <source>&amp;Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="451"/>
+        <source>Follow the system</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="451"/>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="452"/>
+        <source>Dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="455"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="149"/>
+        <location filename="../src/app/mainwindow.cpp" line="456"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="150"/>
+        <location filename="../src/app/mainwindow.cpp" line="457"/>
         <source>Check for &amp;updates…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="151"/>
+        <location filename="../src/app/mainwindow.cpp" line="458"/>
         <source>Check for updates at start</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3051,118 +3147,118 @@
 <context>
     <name>skg::RegionsPane</name>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="109"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="115"/>
         <source>Methods</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="110"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="116"/>
         <source>Regions (SOM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="112"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="118"/>
         <source>Map before Mean Shift</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="114"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="120"/>
         <source>Mean Shift quantile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="115"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="121"/>
         <source>Training iterations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="116"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="122"/>
         <source>Random seed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="147"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="153"/>
         <source>Area name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="149"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="155"/>
         <source>Provinces</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="151"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="157"/>
         <source>Cities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="153"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="159"/>
         <source>Layers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="167"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="173"/>
         <source>Output folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="234"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="240"/>
         <source>Choose the province boundaries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="235"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="241"/>
         <source>Shapefiles (*.shp);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="241"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="247"/>
         <source>Choose a city list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="242"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="248"/>
         <source>City lists (*.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="248"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="254"/>
         <source>Choose the output folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="331"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="337"/>
         <source>Load an earthquake catalog at the top; its epicentres are what is split into regions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="333"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="339"/>
         <source>Catalog: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="361"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="367"/>
         <source>Load an earthquake catalog at the top first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="367"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="373"/>
         <source>Choose an output folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="450"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="456"/>
         <source>Regions %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="452"/>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="583"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="458"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="589"/>
         <source>SOM and SOM + Mean Shift</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/analysis/regionspane.cpp" line="453"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="459"/>
         <source>SOM, %n region(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -3170,204 +3266,205 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="454"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="460"/>
         <source>SOM + Mean Shift</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="485"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="491"/>
         <source>Running…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="492"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="498"/>
         <source>Done: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="493"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="499"/>
         <source>The run did not finish; see the log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="542"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="548"/>
         <source>Regions: SOM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="543"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="549"/>
         <source>Regions: SOM + Mean Shift</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="545"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="551"/>
         <source>Study area with faults and boundaries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="546"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="552"/>
         <source>Study area, events only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="581"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="587"/>
         <source>Regionalisation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="582"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="588"/>
         <source>Maps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="584"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="590"/>
         <source>SOM (a fixed number of regions)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="585"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="591"/>
         <source>SOM + Mean Shift (finds the number)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="586"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="592"/>
         <source>Units of the linear map; each becomes a region if events fall to it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="589"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="595"/>
         <source>The map that compresses the catalog before Mean Shift groups its units</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="593"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="599"/>
         <source>Share of the map&apos;s units used as neighbours for the bandwidth; larger gives fewer regions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="595"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="601"/>
         <source>The same seed gives the same regions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="597"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="603"/>
         <source>first line of the map titles, e.g. East Anatolian Fault Zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="598"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="604"/>
         <source>Marker</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="599"/>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="605"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="628"/>
         <source>Latitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="600"/>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="606"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="628"/>
         <source>Longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="601"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="607"/>
         <source>label</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="602"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="608"/>
         <source>province polygons (.shp), optional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="604"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="610"/>
         <source>CSV of lat, lon, name; empty: 16 cities around the East Anatolian Fault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="606"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="612"/>
         <source>countries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="607"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="613"/>
         <source>faults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="609"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="615"/>
         <source>The fault shapefile loaded at the top, or the shipped East Anatolian traces when none is loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="611"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="617"/>
         <source>cities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="612"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="618"/>
         <source>Write PNG maps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="613"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
         <source> dpi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="614"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="620"/>
         <source>and SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="615"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
         <source>An SVG beside every PNG; large for big catalogs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="616"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="622"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="617"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="625"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="618"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="626"/>
         <source>Open output folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="627"/>
         <source>Method</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="627"/>
         <source>Region</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="619"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="627"/>
         <source>Centre</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="629"/>
         <source>Events</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="621"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="629"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/regionspane.cpp" line="622"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="624"/>
+        <location filename="../src/modules/analysis/regionspane.cpp" line="630"/>
         <source>The run log appears here.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3442,42 +3539,42 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::RunsModel</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="93"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="93"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
         <source>Models</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="94"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
         <source>Best model</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="94"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
         <source>val F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="97"/>
         <source>test F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="97"/>
         <source>test acc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="98"/>
         <source>test AUC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="98"/>
         <source>Settings different from the project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3485,13 +3582,13 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::SettingsModule</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.h" line="17"/>
+        <location filename="../src/modules/settings/settingsmodule.h" line="18"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.h" line="19"/>
-        <source>Tool locations and language</source>
+        <location filename="../src/modules/settings/settingsmodule.h" line="20"/>
+        <source>Tool locations, language and theme</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3711,13 +3808,33 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::SettingsWidget</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="191"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="217"/>
         <source>Interface</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="192"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="218"/>
         <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="219"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="220"/>
+        <source>Follow the system</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="221"/>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="222"/>
+        <source>Dark</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3737,128 +3854,128 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::TdvmsWidget</name>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="86"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="88"/>
         <source> s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="98"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="100"/>
         <source>Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="99"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="101"/>
         <source>Slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="100"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="102"/>
         <source>Interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="180"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="415"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="576"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="182"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="417"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="581"/>
         <source>Reset to pending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="210"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="212"/>
         <source>Folder with the campaigns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="259"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="261"/>
         <source>%1 has no chunks yet. Plan a station.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="271"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="273"/>
         <source>A run holds %1: pid %2, ledger %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="282"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="296"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="284"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="298"/>
         <source>New campaign</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="283"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="285"/>
         <source>Name (lowercase letters, digits, - and _):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="289"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="291"/>
         <source>Where to keep the downloads (cancel for the campaign folder)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="313"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="315"/>
         <source>plan %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="314"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="316"/>
         <source>%1 from %2 to %3 in %4-day windows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="329"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="331"/>
         <source>the portal does not list &apos;%1&apos;. It lists %2 stations as bare codes. Closest by prefix: %3. Untick the check to plan it anyway.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="335"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="337"/>
         <source>(none)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="341"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="343"/>
         <source>%1 is network %2, instrument %3%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="344"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="346"/>
         <source> -- strong motion, an accelerometer rather than a broadband</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="348"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="350"/>
         <source>could not reach the station list (%1); planning %2 unverified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="360"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="362"/>
         <source>planned %1 new chunk(s) for %2; ledger holds %3 chunk(s), %4 pending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="386"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="388"/>
         <source>Archive to file against its window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="387"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="389"/>
         <source>Archives (*.zip *.part);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="394"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="400"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="396"/>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="402"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="404"/>
         <source>Ingest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="395"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="397"/>
         <source>%1
 Overwrite the existing archive?</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="416"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="418"/>
         <source>Put %n chunk(s) back to pending?
 %1</source>
         <translation type="unfinished">
@@ -3867,150 +3984,161 @@ Overwrite the existing archive?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="421"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="423"/>
         <source>reset by hand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="442"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="449"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="454"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="569"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="444"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="451"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="456"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="572"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="443"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="445"/>
         <source>A base address is needed (the mailbox user, usually).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="455"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="457"/>
         <source>No mailbox credentials are set, so links cannot be read and nothing will be downloaded. Submit anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="468"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="470"/>
         <source>run %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="470"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="472"/>
         <source>%1 slot(s) from %2 on %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="506"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="508"/>
         <source>catalog refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="507"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="509"/>
         <source>stations from the portal, M5+ events from USGS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="512"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="514"/>
         <source>%1: %2 stations; %3: %4 events</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="549"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="551"/>
         <source>Running. Progress and output are in the Jobs panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="551"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="553"/>
         <source>Mailbox: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="552"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="554"/>
         <source>No mailbox credentials set (Mailbox...).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="562"/>
-        <source>folder holding the campaigns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="563"/>
-        <source>Browse...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="564"/>
-        <source>New campaign...</source>
+        <source>No campaign open.
+Choose a data folder, then New campaign… to plan the stations and dates to download.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="565"/>
-        <source>Plan station...</source>
+        <source>folder holding the campaigns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="566"/>
-        <source>Ingest archive...</source>
+        <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="567"/>
-        <source>Refresh</source>
+        <source>New campaign...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="568"/>
-        <source>Refresh catalogs</source>
+        <source>Plan station...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="569"/>
+        <source>Ingest archive...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="570"/>
-        <source>stop when every chunk has an outcome</source>
+        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="571"/>
-        <source>one cycle only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="572"/>
-        <source>dry run (no mail flagged, no submissions)</source>
+        <source>Refresh catalogs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="573"/>
-        <source>Mailbox...</source>
+        <source>stop when every chunk has an outcome</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="574"/>
-        <source>Start</source>
+        <source>one cycle only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="575"/>
-        <source>Stop</source>
+        <source>dry run (no mail flagged, no submissions)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="576"/>
+        <source>Mailbox...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="577"/>
-        <source>Chunks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="578"/>
-        <source>Coverage</source>
+        <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="579"/>
-        <source>FDSN</source>
+        <source>The run log appears here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="580"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="582"/>
+        <source>Chunks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="583"/>
+        <source>Coverage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="584"/>
+        <source>FDSN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="588"/>
         <source>all states</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4018,58 +4146,58 @@ Overwrite the existing archive?</source>
 <context>
     <name>skg::ToolBox</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="70"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="73"/>
         <source>Executable of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="79"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="82"/>
         <source>Project directory of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="88"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="91"/>
         <source>asking %1 for its version...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="109"/>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="110"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="112"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="113"/>
         <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="111"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="114"/>
         <source>Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="112"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="115"/>
         <source>executable (optional; found on PATH or in the project&apos;s .venv otherwise)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="115"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="118"/>
         <source>project directory (the checkout with pyproject.toml)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="116"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="119"/>
         <source>Executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="117"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="120"/>
         <source>Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="118"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="121"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="128"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="131"/>
         <source>the configured path is not an executable file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4115,37 +4243,37 @@ Overwrite the existing archive?</source>
 <context>
     <name>skg::TrialsModel</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
         <source>Model</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
         <source>train F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="156"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
         <source>val F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
         <source>test F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
         <source>test acc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="157"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
         <source>test AUC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="160"/>
         <source>Parameters</source>
         <translation type="unfinished"></translation>
     </message>

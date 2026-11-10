@@ -1,5 +1,7 @@
 #include "modules/features/featuresmodule.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QDir>
 #include <QEvent>
@@ -439,6 +441,8 @@ void FeaturesWidget::retranslate() {
   bandsLabel_->setText(tr("Bands to run"));
   bandFilter_->setPlaceholderText(tr("comma-separated names; empty = all"));
   run_->setText(tr("Run"));
+  ui::setPrimary(run_);
+  status_->setPlaceholderText(tr("The run log appears here."));
   preprocess_->setText(tr("Preprocess only"));
   dryRun_->setText(tr("Dry run"));
   stop_->setText(tr("Stop"));

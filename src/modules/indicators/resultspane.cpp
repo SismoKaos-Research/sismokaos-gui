@@ -1,5 +1,7 @@
 #include "modules/indicators/resultspane.h"
 
+#include "core/ui.h"
+
 #include <QDesktopServices>
 #include <QDir>
 #include <QEvent>
@@ -136,6 +138,8 @@ void IndicatorsResultsPane::changeEvent(QEvent *e) {
 }
 
 void IndicatorsResultsPane::retranslate() {
+  ui::setEmptyHint(table_, tr("No results yet.\nRun the indicators, or open an "
+                              "earlier run's folder."));
   open_->setText(tr("Open folder"));
   choose_->setText(tr("Open an earlier run…"));
   if (dir_.isEmpty())
@@ -167,7 +171,19 @@ void IndicatorsResultsPane::showFolder(const QString &dir) {
   figures_->clear();
   for (const QString &png :
        d.entryList({QStringLiteral("*.png")}, QDir::Files, QDir::Name)) {
-    auto *item = new QListWidgetItem(png, figures_);
+    // The file name without the run's prefix: "b_value · MA 7".
+    QString label = QFileInfo(png).completeBaseName();
+    const QString prefix =
+        csvs.isEmpty()
+            ? QString()
+            : csvs.first().section(QStringLiteral("_pencereler"), 0, 0) +
+                  QLatin1Char('_');
+    if (!prefix.isEmpty() && label.startsWith(prefix))
+      label = label.mid(prefix.size());
+    label.replace(QStringLiteral("_MA"), QStringLiteral("  ·  MA "));
+    label.replace(QStringLiteral("_BB"), QStringLiteral("  ·  Bollinger "));
+    auto *item = new QListWidgetItem(label, figures_);
+    item->setToolTip(png);
     item->setData(Qt::UserRole, d.filePath(png));
   }
   view_->clearFigure();
