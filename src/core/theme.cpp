@@ -84,8 +84,20 @@ QPixmap renderIcon(const QString &id, const QColor &color) {
 
 } // namespace
 
+namespace {
+Theme *g_current = nullptr;
+}
+
+Theme *Theme::current() { return g_current; }
+
+Theme::~Theme() {
+  if (g_current == this)
+    g_current = nullptr;
+}
+
 Theme::Theme(QSettings *settings, QObject *parent)
     : QObject(parent), settings_(settings) {
+  g_current = this;
   const QString saved = settings_->value(kSettingMode).toString();
   if (saved == QLatin1String("light"))
     mode_ = Mode::Light;

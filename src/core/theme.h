@@ -21,6 +21,10 @@ public:
   Q_ENUM(Mode)
 
   explicit Theme(QSettings *settings, QObject *parent = nullptr);
+  ~Theme() override;
+  // The application's theme (the one made last), for a widget that is built
+  // where no AppContext reaches, such as a dialog; null before one exists.
+  static Theme *current();
 
   Mode mode() const { return mode_; }
   void setMode(Mode m);

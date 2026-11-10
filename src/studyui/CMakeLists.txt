@@ -3,6 +3,8 @@
 # study pages.
 qt_add_library(skg_studyui STATIC
   studyinputs.cpp studyinputs.h
+  geomap.cpp      geomap.h
+  coveragemap.cpp coveragemap.h
 )
 target_include_directories(skg_studyui PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_studyui PUBLIC skg_core skg_study PRIVATE skg_warnings)
