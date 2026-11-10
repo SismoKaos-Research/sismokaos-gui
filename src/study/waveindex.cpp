@@ -815,10 +815,13 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
   std::mutex mutex;
   std::condition_variable wake;
   std::deque<ScanResultOf> ready;
-  int running = std::clamp(options.workers, 1, std::max(1, total));
+  const int workers = std::clamp(options.workers, 1, std::max(1, total));
+  // Workers that have not finished; they count themselves out as they end,
+  // which may be while the later ones are still being started.
+  int running = workers;
   std::vector<std::thread> pool;
-  pool.reserve(size_t(running));
-  for (int w = 0; w < running; ++w)
+  pool.reserve(size_t(workers));
+  for (int w = 0; w < workers; ++w)
     pool.emplace_back([&] {
       for (;;) {
         const int i = next.fetch_add(1);

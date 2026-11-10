@@ -58,12 +58,15 @@ void WaveScan::start() {
     emit updated();
     return;
   }
+  stoppedByUser_ = false;
   run(ScanPass::Identity);
 }
 
 void WaveScan::cancel() {
-  if (job_)
+  if (job_) {
+    stoppedByUser_ = true;
     job_->cancel();
+  }
 }
 
 int WaveScan::workers(const QSettings *settings) {
@@ -229,7 +232,8 @@ void WaveScan::run(ScanPass pass) {
       return;
     job_.clear();
     if (st == Job::State::Done && pass == ScanPass::Identity) {
-      emit updated(); // the stations are usable before the coverage is read
+      // The stations are usable before the coverage is read: starting the
+      // second job says so (it emits `updated` with a scan running again).
       run(ScanPass::Coverage);
       return;
     }

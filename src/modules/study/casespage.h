@@ -3,6 +3,7 @@
 // what the waveform folders hold of each, its catalog zone and its span.
 #pragma once
 
+#include <QSet>
 #include <QWidget>
 
 #include <functional>
@@ -78,6 +79,7 @@ private:
 
   AppContext ctx_;
   WaveScan *scan_;
+  QSet<QString> resumed_; // studies whose cut-short scan was taken up again
   bool updating_ = false;
   QString stationsFrom_;
   std::vector<analysis::Station> stations_;

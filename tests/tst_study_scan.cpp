@@ -34,6 +34,7 @@
 #include "miniz.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/study/casedialogs.h"
+#include "modules/study/casespage.h"
 #include "modules/study/waveforms.h"
 #include "study/runs.h"
 #include "study/scancache.h"
@@ -200,6 +201,7 @@ private slots:
   void exactPassCorrectsANameThatLies();
   void anOlderIndexGetsItsEstimates();
   void parallelScanGivesTheSameIndex();
+  void manyShortScansEnd();
   void waitingStationsAreReadFirst();
   void stopInsideALargeMember();
   void featuresFilesUnderEstimates();
@@ -210,6 +212,7 @@ private slots:
   void twoScansShareTheCache();
   void waveScanUsesTheCache();
   void twoWaveScansAtOnce();
+  void casesPageTakesUpACutShortScan();
   void settingsPage();
   void scanBenchmark();
 
@@ -437,6 +440,29 @@ void TstStudyScan::parallelScanGivesTheSameIndex() {
   scanRoot(apart, "w1", data.path(), ScanPass::Coverage, {}, one);
   scanRoot(apart, "w2", other.path(), ScanPass::Coverage, {}, one);
   QCOMPARE(dump(both), dump(apart));
+}
+
+void TstStudyScan::manyShortScansEnd() {
+  // Scans that are over before all their workers have even started: the
+  // first workers finish the few files while the rest are being launched.
+  // Each must still end (a scan that waited for a worker that was never
+  // started would hang here until the test's own time limit).
+  QTemporaryDir data;
+  manyFiles(data.path(), 3);
+  ScanOptions options;
+  options.workers = 16;
+  WaveIndex reference;
+  scanBoth(reference, "w1", data.path());
+  for (int round = 0; round < 400; ++round) {
+    WaveIndex index;
+    const ScanStats st = scanRoot(
+        index, "w1", data.path(),
+        round % 2 ? ScanPass::Coverage : ScanPass::Identity, {}, options);
+    QCOMPARE(st.read, 3);
+    QVERIFY(!st.stopped);
+    if (round % 2)
+      QCOMPARE(dump(index), dump(reference));
+  }
 }
 
 void TstStudyScan::waitingStationsAreReadFirst() {
@@ -922,6 +948,82 @@ void TstStudyScan::twoWaveScansAtOnce() {
                .cached,
            30);
   QCOMPARE(contents(third), contents(reference));
+}
+
+void TstStudyScan::casesPageTakesUpACutShortScan() {
+  QTemporaryDir dir;
+  QSettings settings(dir.filePath("s.ini"), QSettings::IniFormat);
+  settings.setValue(Theme::kSettingMode, QStringLiteral("light"));
+  Theme theme(&settings);
+  theme.apply();
+  JobModel jobs;
+  ToolRegistry tools(&settings);
+  StudyStore store(&settings);
+  AppContext ctx;
+  ctx.jobs = &jobs;
+  ctx.tools = &tools;
+  ctx.settings = &settings;
+  ctx.theme = &theme;
+  ctx.study = &store;
+  QVERIFY(store.create(dir.filePath("study"), QStringLiteral("Resume")));
+  QVERIFY(store.update([this](Study &s) { s.addWaveRoot(root_); }));
+  const QString studyDir = store.study().dir;
+  const auto settled = [&] {
+    for (int row = 0; row < jobs.rowCount(); ++row)
+      if (jobs.jobAt(row)->state() == Job::State::Running ||
+          jobs.jobAt(row)->state() == Job::State::Queued)
+        return false;
+    const WaveIndex index = WaveIndex::load(studyDir);
+    return !index.isEmpty() && index.pendingCoverage() == 0;
+  };
+  // What the jobs said, for a failure message.
+  const auto told = [&] {
+    QString text = QStringLiteral("%1 job(s); index: %2 file(s), %3 pending")
+                       .arg(jobs.rowCount())
+                       .arg(WaveIndex::load(studyDir).fileCount())
+                       .arg(WaveIndex::load(studyDir).pendingCoverage());
+    for (int row = 0; row < jobs.rowCount(); ++row)
+      text += QStringLiteral("\n[%1] %2\n%3")
+                  .arg(row)
+                  .arg(stateName(jobs.jobAt(row)->state()),
+                       jobs.jobAt(row)->log().join(QLatin1Char('\n')));
+    return text;
+  };
+  {
+    // The page scans a folder it has no index of, by itself.
+    CasesPage page(ctx);
+    page.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&page));
+    QVERIFY2(QTest::qWaitFor(settled, 30000), qPrintable(told()));
+    QCOMPARE(jobs.rowCount(), 2);
+  }
+  // The application was closed while the exact pass ran: the index has the
+  // quick pass only. Nothing in the folders has changed since.
+  WaveIndex quick;
+  scanRoot(quick, store.study().waveRoots.first().id, root_,
+           ScanPass::Identity);
+  QVERIFY(quick.save(studyDir));
+  QCOMPARE(WaveIndex::load(studyDir).pendingCoverage(), 5);
+  {
+    CasesPage page(ctx);
+    page.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&page));
+    QVERIFY(QTest::qWaitFor(settled, 30000));
+    QCOMPARE(jobs.rowCount(), 4); // taken up again, once
+    // Showing the page again starts nothing more.
+    page.hide();
+    page.show();
+    QTest::qWait(100);
+    QCOMPARE(jobs.rowCount(), 4);
+  }
+  // With everything read, a new session scans nothing.
+  {
+    CasesPage page(ctx);
+    page.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&page));
+    QTest::qWait(100);
+    QCOMPARE(jobs.rowCount(), 4);
+  }
 }
 
 void TstStudyScan::settingsPage() {

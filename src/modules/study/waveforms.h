@@ -37,6 +37,9 @@ public:
   // Does nothing while a scan is running or no study is open.
   void start();
   void cancel();
+  // Whether the last scan was stopped with cancel(): such a scan is not
+  // taken up again behind the user's back.
+  bool stoppedByUser() const { return stoppedByUser_; }
   // "Reading coverage: 12%, about 9 min left" while running, or how the last
   // scan ended. `detail` is the same with the amounts and the speed.
   QString status() const { return status_; }
@@ -56,6 +59,7 @@ private:
   QPointer<Job> job_;
   QString status_, detail_;
   QElapsedTimer sinceUpdate_;
+  bool stoppedByUser_ = false;
 };
 
 class WaveformsDialog : public QDialog {

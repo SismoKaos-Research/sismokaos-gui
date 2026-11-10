@@ -800,8 +800,14 @@ void CasesPage::rescanIfChanged() {
   bool missing = false;
   for (const study::WaveRoot &r : s.waveRoots)
     missing = missing || !index->roots.contains(r.id);
-  if (!missing && ctx_.settings->value(key).toString() == stamp)
+  // An exact scan that was cut short (the application was closed while it
+  // ran) is taken up again: once per study in a session, and not against a
+  // Stop pressed in this one.
+  const bool resume = !missing && index->pendingCoverage() > 0 &&
+                      !scan_->stoppedByUser() && !resumed_.contains(s.dir);
+  if (!missing && ctx_.settings->value(key).toString() == stamp && !resume)
     return;
+  resumed_.insert(s.dir);
   ctx_.settings->setValue(key, stamp);
   scan_->start();
 }
