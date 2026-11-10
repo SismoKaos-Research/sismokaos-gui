@@ -19,13 +19,19 @@
 #include "modules/features/featuresmodule.h"
 #include "modules/indicators/indicatorsmodule.h"
 #include "modules/settings/settingsmodule.h"
+#include "modules/study/studymodule.h"
+#include "modules/study/studyswitcher.h"
 #include "modules/tdvms/tdvmsmodule.h"
+#include "study/store.h"
 #include "tools/toolregistry.h"
 
 using namespace skg;
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
+  // The station list and catalogs embedded in the tdvms library (a static
+  // library's resources are only linked in when something names them).
+  Q_INIT_RESOURCE(data);
   QCoreApplication::setOrganizationName(QStringLiteral("sismokaos"));
   QCoreApplication::setApplicationName(QStringLiteral("sismokaos-gui"));
   QCoreApplication::setApplicationVersion(QStringLiteral(SKG_VERSION));
@@ -56,11 +62,14 @@ int main(int argc, char *argv[]) {
   ToolRegistry tools(&settings);
   Theme theme(&settings);
   theme.apply();
-  AppContext ctx{&jobs, &tools, &settings, &theme};
+  study::StudyStore studies(&settings);
+  studies.reopenLast();
+  AppContext ctx{&jobs, &tools, &settings, &theme, &studies};
 
   // The pages, in order within their sidebar section. A new module is one
   // more line here.
   ModuleRegistry modules;
+  modules.emplace<CasesModule>();
   modules.emplace<TdvmsModule>();
   modules.emplace<FeaturesModule>();
   modules.emplace<ClassificationModule>();
@@ -70,6 +79,7 @@ int main(int argc, char *argv[]) {
   modules.emplace<SettingsModule>(&i18n, &theme);
 
   MainWindow w(ctx, modules, &i18n);
+  w.addHeaderWidget(new StudySwitcher(&studies, &w));
   w.show();
   if (cli.isSet(QStringLiteral("screenshots"))) {
     const QString dir = cli.value(QStringLiteral("screenshots"));

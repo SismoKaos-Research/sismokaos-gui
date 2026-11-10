@@ -142,3 +142,15 @@ QScrollBar::handle:horizontal { background: @border; border-radius: 3px;
 QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
 QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
 QSplitter::handle { background: transparent; }
+
+/* The study selector in the header */
+QToolButton#studySwitch { background: @surface; border: 1px solid @border;
+  border-radius: 6px; padding: 4px 12px; }
+QToolButton#studySwitch:hover { border-color: @muted; }
+QToolButton#studySwitch::menu-indicator { image: none; }
+QLabel#bigHint { color: @muted; font-size: 14px; }
+QLabel#caseTitle { font-size: 17px; font-weight: 700; }
+QTableView::indicator { width: 15px; height: 15px; border: 1px solid @muted;
+  border-radius: 4px; background: @field; }
+QTableView::indicator:checked { background: @accent; border-color: @accent;
+  image: url(:/theme/icons/check-@mode.svg); }

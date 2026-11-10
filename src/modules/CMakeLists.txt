@@ -8,6 +8,7 @@ add_subdirectory(analysis)
 add_subdirectory(classification)
 add_subdirectory(earlywarning)
 add_subdirectory(indicators)
+add_subdirectory(study)
 
 set(SKG_MODULE_TARGETS ${SKG_MODULE_TARGETS} PARENT_SCOPE)
 set(SKG_TRANSLATED_TARGETS ${SKG_TRANSLATED_TARGETS} PARENT_SCOPE)

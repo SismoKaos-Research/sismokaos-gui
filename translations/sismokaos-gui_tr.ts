@@ -80,6 +80,110 @@
     </message>
 </context>
 <context>
+    <name>skg::AddFromCatalogDialog</name>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="47"/>
+        <source> days before the event</source>
+        <translation> gün (olaydan önce)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="60"/>
+        <source>Use</source>
+        <translation>Kullan</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="61"/>
+        <source>Station</source>
+        <translation>İstasyon</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="62"/>
+        <source>Distance</source>
+        <translation>Uzaklık</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="63"/>
+        <source>Azimuth</source>
+        <translation>Azimut</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="77"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="214"/>
+        <source>%1 km</source>
+        <translation>%1 km</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="104"/>
+        <source>Add a case from the catalog</source>
+        <translation>Katalogdan vaka ekle</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="120"/>
+        <source>place contains…</source>
+        <translation>yer adı içerir…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="132"/>
+        <source>Origin time (UTC)</source>
+        <translation>Oluş zamanı (UTC)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="132"/>
+        <source>M</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="132"/>
+        <source>Depth</source>
+        <translation>Derinlik</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="132"/>
+        <source>Place</source>
+        <translation>Yer</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="143"/>
+        <source>stations within </source>
+        <translation>şu uzaklıktaki istasyonlar: </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="144"/>
+        <source> km</source>
+        <translation> km</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="151"/>
+        <source>Name</source>
+        <translation>Ad</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="152"/>
+        <source>Span</source>
+        <translation>Süre</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="153"/>
+        <source>Stations</source>
+        <translation>İstasyonlar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="157"/>
+        <source>Add case</source>
+        <translation>Vaka ekle</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="218"/>
+        <source>%1 earthquakes, the largest %2 shown</source>
+        <translation>%1 deprem, en büyük %2 tanesi gösteriliyor</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="221"/>
+        <source>%n earthquake(s)</source>
+        <translation><numerusform>%n deprem</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>skg::AnalysisModule</name>
     <message>
         <location filename="../src/modules/analysis/analysismodule.h" line="65"/>
@@ -355,6 +459,235 @@
     </message>
 </context>
 <context>
+    <name>skg::CaseMap</name>
+    <message>
+        <location filename="../src/modules/study/casemap.cpp" line="93"/>
+        <source>%1 km</source>
+        <translation>%1 km</translation>
+    </message>
+</context>
+<context>
+    <name>skg::CasesModule</name>
+    <message>
+        <location filename="../src/modules/study/studymodule.h" line="15"/>
+        <source>Cases</source>
+        <translation>Vakalar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studymodule.h" line="17"/>
+        <source>The earthquakes of this study and the places each one is studied from</source>
+        <translation>Bu çalışmanın depremleri ve her birinin incelendiği yerler</translation>
+    </message>
+</context>
+<context>
+    <name>skg::CasesPage</name>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="227"/>
+        <source>A study runs the same analyses on several earthquakes and puts the results side by side.
+Start a new study in an empty folder, or open an existing one.</source>
+        <translation>Bir çalışma, aynı analizleri birkaç depremde çalıştırır ve sonuçları yan yana koyar.
+Boş bir klasörde yeni bir çalışma başlatın ya da var olan birini açın.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="230"/>
+        <source>New study…</source>
+        <translation>Yeni çalışma…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="231"/>
+        <source>Open study…</source>
+        <translation>Çalışma aç…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="232"/>
+        <source>Study inputs</source>
+        <translation>Çalışma girdileri</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="233"/>
+        <location filename="../src/modules/study/casespage.cpp" line="448"/>
+        <location filename="../src/modules/study/casespage.cpp" line="491"/>
+        <source>Earthquake catalog</source>
+        <translation>Deprem kataloğu</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="234"/>
+        <location filename="../src/modules/study/casespage.cpp" line="500"/>
+        <source>Waveform folder</source>
+        <translation>Dalga formu klasörü</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="235"/>
+        <source>AFAD catalog export, CSV or .gz</source>
+        <translation>AFAD katalog dışa aktarımı, CSV ya da .gz</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="237"/>
+        <source>a folder with one sub-folder of miniSEED per station</source>
+        <translation>her istasyon için bir miniSEED alt klasörü içeren klasör</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="238"/>
+        <source>times in UTC</source>
+        <translation>zamanlar UTC</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="239"/>
+        <source>times in Turkey time (+3)</source>
+        <translation>zamanlar Türkiye saatiyle (+3)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="240"/>
+        <source>Add from catalog…</source>
+        <translation>Katalogdan ekle…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="241"/>
+        <source>Add reference date…</source>
+        <translation>Referans tarih ekle…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="242"/>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="243"/>
+        <source>Case</source>
+        <translation>Vaka</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="243"/>
+        <source>Type</source>
+        <translation>Tür</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="244"/>
+        <source>Origin time (UTC)</source>
+        <translation>Oluş zamanı (UTC)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="244"/>
+        <source>M</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="245"/>
+        <source>Depth</source>
+        <translation>Derinlik</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="245"/>
+        <source>Stations</source>
+        <translation>İstasyonlar</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="245"/>
+        <location filename="../src/modules/study/casespage.cpp" line="254"/>
+        <source>Span</source>
+        <translation>Süre</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="247"/>
+        <source>No cases yet.
+Choose the earthquake catalog above, then Add from catalog…</source>
+        <translation>Henüz vaka yok.
+Yukarıdan deprem kataloğunu seçin, ardından Katalogdan ekle…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="249"/>
+        <source>STATIONS NEAR THE EPICENTRE</source>
+        <translation>DIŞ MERKEZE YAKIN İSTASYONLAR</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="250"/>
+        <source>Catalog zone</source>
+        <translation>Katalog bölgesi</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="251"/>
+        <source>Circle around the epicentre, radius</source>
+        <translation>Dış merkez çevresinde daire, yarıçap</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="252"/>
+        <source>Fault zone (East Anatolian), buffer</source>
+        <translation>Fay zonu (Doğu Anadolu), tampon</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="253"/>
+        <source> km</source>
+        <translation> km</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="255"/>
+        <source> days</source>
+        <translation> gün</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="300"/>
+        <source>reference</source>
+        <translation>referans</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="300"/>
+        <source>earthquake</source>
+        <translation>deprem</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="305"/>
+        <source>%1 km</source>
+        <translation>%1 km</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="308"/>
+        <source>%n day(s)</source>
+        <translation><numerusform>%n gün</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="323"/>
+        <source>%1 cases · %2 station rows</source>
+        <translation>%1 vaka · %2 istasyon satırı</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="347"/>
+        <source> UTC</source>
+        <translation> UTC</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="352"/>
+        <source>Reference date · %1 · %2</source>
+        <translation>Referans tarih · %1 · %2</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="353"/>
+        <source>M %1 · %2 · depth %3 km · %4%5</source>
+        <translation>M %1 · %2 · derinlik %3 km · %4%5</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="423"/>
+        <location filename="../src/modules/study/casespage.cpp" line="441"/>
+        <location filename="../src/modules/study/casespage.cpp" line="466"/>
+        <source>Study</source>
+        <translation>Çalışma</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="480"/>
+        <source>Remove case</source>
+        <translation>Vakayı kaldır</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="481"/>
+        <source>Remove %1 from the study? Its result folders stay on disk.</source>
+        <translation>%1 çalışmadan kaldırılsın mı? Sonuç klasörleri diskte kalır.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="492"/>
+        <source>AFAD catalog (*.csv *.gz);;All files (*)</source>
+        <translation>AFAD kataloğu (*.csv *.gz);;Tüm dosyalar (*)</translation>
+    </message>
+</context>
+<context>
     <name>skg::CatalogPane</name>
     <message>
         <location filename="../src/modules/analysis/catalogpane.cpp" line="142"/>
@@ -458,22 +791,22 @@ Choose a catalog and a station at the top of the page.</source>
 Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="313"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="314"/>
         <source>show faults</source>
         <translation>fayları göster</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="314"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="315"/>
         <source>Map as PNG…</source>
         <translation>Harita PNG…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="315"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="316"/>
         <source>Map as SVG…</source>
         <translation>Harita SVG…</translation>
     </message>
     <message>
-        <location filename="../src/modules/analysis/catalogpane.cpp" line="316"/>
+        <location filename="../src/modules/analysis/catalogpane.cpp" line="317"/>
         <source>Events as CSV…</source>
         <translation>Depremler CSV…</translation>
     </message>
@@ -1564,29 +1897,29 @@ Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
         <translation>Rapor yazılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="369"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="371"/>
         <source>No experiments yet.
 Choose a project folder and run the steps.</source>
         <translation>Henüz deney yok.
 Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="372"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="371"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="373"/>
         <source>HTML report</source>
         <translation>HTML rapor</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="372"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="374"/>
         <source>Delete run…</source>
         <translation>Koşuyu sil…</translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="373"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="375"/>
         <source>Open folder</source>
         <translation>Klasörü aç</translation>
     </message>
@@ -2245,29 +2578,29 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
 Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü açın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="142"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="143"/>
         <source>Open folder</source>
         <translation>Klasörü aç</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="143"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="144"/>
         <source>Open an earlier run…</source>
         <translation>Önceki bir çalıştırmayı aç…</translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="145"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="146"/>
         <source>No run yet. Run the indicators or open an earlier output folder.</source>
         <translation>Henüz çalıştırma yok. Göstergeleri çalıştırın ya da önceki bir çıktı klasörünü açın.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/indicators/resultspane.cpp" line="190"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="191"/>
         <source>%1: %n window(s), %2 figure(s)%3</source>
         <translation>
             <numerusform>%1: %n pencere, %2 grafik%3</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/indicators/resultspane.cpp" line="223"/>
+        <location filename="../src/modules/indicators/resultspane.cpp" line="224"/>
         <source>Output folder of an indicators run</source>
         <translation>Bir gösterge çalıştırmasının çıktı klasörü</translation>
     </message>
@@ -2933,17 +3266,17 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
 <context>
     <name>skg::MainWindow</name>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="294"/>
+        <location filename="../src/app/mainwindow.cpp" line="293"/>
         <source>About sismokaos-gui</source>
         <translation>sismokaos-gui Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="295"/>
+        <location filename="../src/app/mainwindow.cpp" line="294"/>
         <source>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;A desktop front end for the sismokaos tools: feature extraction, classification and AFAD/TDVMS downloads.&lt;br&gt;Qt %2</source>
         <translation>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;sismokaos araçları için masaüstü arayüzü: öznitelik çıkarımı, sınıflandırma ve AFAD/TDVMS indirmeleri.&lt;br&gt;Qt %2</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="300"/>
+        <location filename="../src/app/mainwindow.cpp" line="299"/>
         <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
         <translation>&lt;br&gt;&lt;br&gt;Telif hakkı (C) 2026 H. Oğuz Bolat.&lt;br&gt;Bu program HİÇBİR GARANTİ verilmeden sunulur. Özgür bir yazılımdır; GNU Genel Kamu Lisansı&apos;nın 3. sürümü veya (tercihinize bağlı olarak) sonraki bir sürümünün koşulları altında yeniden dağıtabilirsiniz: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Kaynak kod: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</translation>
     </message>
@@ -2958,114 +3291,116 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="345"/>
+        <location filename="../src/app/mainwindow.cpp" line="344"/>
         <source>Jobs ▾</source>
         <translation>İşler ▾</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="345"/>
+        <location filename="../src/app/mainwindow.cpp" line="344"/>
         <source>Jobs ▴</source>
         <translation>İşler ▴</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="352"/>
+        <location filename="../src/app/mainwindow.cpp" line="351"/>
         <source>%n job(s) running</source>
-        <translation><numerusform>%n iş çalışıyor</numerusform></translation>
+        <translation>
+            <numerusform>%n iş çalışıyor</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="367"/>
+        <location filename="../src/app/mainwindow.cpp" line="366"/>
         <source>No jobs running</source>
         <translation>Çalışan iş yok</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="403"/>
+        <location filename="../src/app/mainwindow.cpp" line="402"/>
         <source>Jobs still running</source>
         <translation>İşler hâlâ çalışıyor</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="404"/>
+        <location filename="../src/app/mainwindow.cpp" line="403"/>
         <source>%n job(s) are still running. Quit and stop them?</source>
         <translation>
             <numerusform>%n iş hâlâ çalışıyor. Çıkıp durdurulsun mu?</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="435"/>
+        <location filename="../src/app/mainwindow.cpp" line="434"/>
         <source>STUDY</source>
         <translation>ÇALIŞMA</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="437"/>
+        <location filename="../src/app/mainwindow.cpp" line="436"/>
         <source>TOOLS</source>
         <translation>ARAÇLAR</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="438"/>
+        <location filename="../src/app/mainwindow.cpp" line="437"/>
         <source>Seismology toolkit</source>
         <translation>Sismoloji araçları</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="443"/>
+        <location filename="../src/app/mainwindow.cpp" line="442"/>
         <source>Jobs</source>
         <translation>İşler</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="446"/>
+        <location filename="../src/app/mainwindow.cpp" line="445"/>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="447"/>
+        <location filename="../src/app/mainwindow.cpp" line="446"/>
         <source>&amp;Quit</source>
         <translation>&amp;Çık</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="448"/>
+        <location filename="../src/app/mainwindow.cpp" line="447"/>
         <source>&amp;View</source>
         <translation>&amp;Görünüm</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="449"/>
+        <location filename="../src/app/mainwindow.cpp" line="448"/>
         <source>&amp;Language</source>
         <translation>&amp;Dil</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="450"/>
+        <location filename="../src/app/mainwindow.cpp" line="449"/>
         <source>&amp;Theme</source>
         <translation>&amp;Tema</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="451"/>
+        <location filename="../src/app/mainwindow.cpp" line="450"/>
         <source>Follow the system</source>
         <translation>Sistemi izle</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="451"/>
+        <location filename="../src/app/mainwindow.cpp" line="450"/>
         <source>Light</source>
         <translation>Açık</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="452"/>
+        <location filename="../src/app/mainwindow.cpp" line="451"/>
         <source>Dark</source>
         <translation>Koyu</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="455"/>
+        <location filename="../src/app/mainwindow.cpp" line="454"/>
         <source>&amp;Help</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="456"/>
+        <location filename="../src/app/mainwindow.cpp" line="455"/>
         <source>&amp;About</source>
         <translation>&amp;Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="457"/>
+        <location filename="../src/app/mainwindow.cpp" line="456"/>
         <source>Check for &amp;updates…</source>
         <translation>G&amp;üncellemeleri denetle…</translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="458"/>
+        <location filename="../src/app/mainwindow.cpp" line="457"/>
         <source>Check for updates at start</source>
         <translation>Başlangıçta güncellemeleri denetle</translation>
     </message>
@@ -3150,6 +3485,65 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
         <location filename="../src/jobs/processjob.cpp" line="87"/>
         <source>could not start %1: %2</source>
         <translation>%1 başlatılamadı: %2</translation>
+    </message>
+</context>
+<context>
+    <name>skg::ReferenceDateDialog</name>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="265"/>
+        <source>Add a reference date</source>
+        <translation>Referans tarih ekle</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="267"/>
+        <source>A reference date is a case with no earthquake: the same recipes run on the span before it, so it can be read beside the earthquakes.</source>
+        <translation>Referans tarih, depremi olmayan bir vakadır: aynı tarifler bu tarihten önceki sürede çalıştırılır, böylece depremlerin yanında okunabilir.</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="272"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="325"/>
+        <source>Reference</source>
+        <translation>Referans</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="281"/>
+        <source>the place and stations of %1</source>
+        <translation>%1 vakasının yeri ve istasyonları</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="282"/>
+        <source>these coordinates, no stations yet</source>
+        <translation>bu koordinatlar, henüz istasyon yok</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="304"/>
+        <source>Name</source>
+        <translation>Ad</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="305"/>
+        <source>Date (UTC)</source>
+        <translation>Tarih (UTC)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="306"/>
+        <source>Place</source>
+        <translation>Yer</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="307"/>
+        <source>Latitude, longitude</source>
+        <translation>Enlem, boylam</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="308"/>
+        <source>Span</source>
+        <translation>Süre</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="311"/>
+        <source>Add case</source>
+        <translation>Vaka ekle</translation>
     </message>
 </context>
 <context>
@@ -3819,34 +4213,93 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::SettingsWidget</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="217"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="215"/>
         <source>Interface</source>
         <translation>Arayüz</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="218"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="216"/>
         <source>Language</source>
         <translation>Dil</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="219"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="217"/>
         <source>Theme</source>
         <translation>Tema</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="220"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="218"/>
         <source>Follow the system</source>
         <translation>Sistemi izle</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="221"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="219"/>
         <source>Light</source>
         <translation>Açık</translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="222"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="220"/>
         <source>Dark</source>
         <translation>Koyu</translation>
+    </message>
+</context>
+<context>
+    <name>skg::StudySwitcher</name>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="34"/>
+        <source>Study: %1  ▾</source>
+        <translation>Çalışma: %1  ▾</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="35"/>
+        <source>No study open  ▾</source>
+        <translation>Açık çalışma yok  ▾</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="50"/>
+        <source>Study</source>
+        <translation>Çalışma</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="55"/>
+        <source>New study…</source>
+        <translation>Yeni çalışma…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="56"/>
+        <source>Open study…</source>
+        <translation>Çalışma aç…</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="58"/>
+        <source>Close study</source>
+        <translation>Çalışmayı kapat</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="64"/>
+        <source>Folder for the new study (its results are written here)</source>
+        <translation>Yeni çalışmanın klasörü (sonuçları buraya yazılır)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="69"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="75"/>
+        <source>New study</source>
+        <translation>Yeni çalışma</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="69"/>
+        <source>Name</source>
+        <translation>Ad</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="80"/>
+        <source>Open a study folder (the one holding study.toml)</source>
+        <translation>Bir çalışma klasörü açın (study.toml dosyasını içeren)</translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="85"/>
+        <source>Open study</source>
+        <translation>Çalışma aç</translation>
     </message>
 </context>
 <context>
@@ -3887,7 +4340,7 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="182"/>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="417"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="581"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="583"/>
         <source>Reset to pending</source>
         <translation>Beklemeye al</translation>
     </message>
@@ -4004,7 +4457,7 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="444"/>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="451"/>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="456"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="572"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="574"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
@@ -4059,99 +4512,99 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
         <translation>Posta kutusu kimlik bilgisi yok (Posta kutusu...).</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="564"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="565"/>
         <source>No campaign open.
 Choose a data folder, then New campaign… to plan the stations and dates to download.</source>
         <translation>Açık kampanya yok.
 Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak için Yeni kampanya… düğmesini kullanın.</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="565"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="567"/>
         <source>folder holding the campaigns</source>
         <translation>kampanyaların bulunduğu klasör</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="566"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="568"/>
         <source>Browse...</source>
         <translation>Gözat...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="567"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="569"/>
         <source>New campaign...</source>
         <translation>Yeni kampanya...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="568"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="570"/>
         <source>Plan station...</source>
         <translation>İstasyon planla...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="569"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="571"/>
         <source>Ingest archive...</source>
         <translation>Arşiv içe al...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="570"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="572"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="571"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="573"/>
         <source>Refresh catalogs</source>
         <translation>Katalogları yenile</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="573"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="575"/>
         <source>stop when every chunk has an outcome</source>
         <translation>her parça sonuçlanınca dur</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="574"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="576"/>
         <source>one cycle only</source>
         <translation>yalnızca bir döngü</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="575"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="577"/>
         <source>dry run (no mail flagged, no submissions)</source>
         <translation>deneme (posta işaretlenmez, istek gönderilmez)</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="576"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="578"/>
         <source>Mailbox...</source>
         <translation>Posta kutusu...</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="577"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="579"/>
         <source>Start</source>
         <translation>Başlangıç</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="579"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="581"/>
         <source>The run log appears here.</source>
         <translation>Çalıştırma günlüğü burada görünür.</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="580"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="582"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="582"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="584"/>
         <source>Chunks</source>
         <translation>Parçalar</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="583"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="585"/>
         <source>Coverage</source>
         <translation>Kapsam</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="584"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="586"/>
         <source>FDSN</source>
         <translation>FDSN</translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="588"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="590"/>
         <source>all states</source>
         <translation>tüm durumlar</translation>
     </message>
@@ -4359,6 +4812,19 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
         <location filename="../src/app/updatecheck.cpp" line="166"/>
         <source>The updater could not be started: %1</source>
         <translation>Güncelleyici başlatılamadı: %1</translation>
+    </message>
+</context>
+<context>
+    <name>skg::study::StudyStore</name>
+    <message>
+        <location filename="../src/study/store.cpp" line="34"/>
+        <source>%1 already holds a study</source>
+        <translation>%1 klasöründe zaten bir çalışma var</translation>
+    </message>
+    <message>
+        <location filename="../src/study/store.cpp" line="67"/>
+        <source>No study is open</source>
+        <translation>Açık çalışma yok</translation>
     </message>
 </context>
 </TS>
