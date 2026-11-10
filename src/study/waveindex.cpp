@@ -1,5 +1,6 @@
 #include "study/waveindex.h"
 
+#include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
@@ -29,6 +30,11 @@ const QString WaveIndex::kFileName = QStringLiteral("waveforms.index.json");
 
 namespace {
 
+
+// The texts a person reads when the file cannot be used; translated.
+class WaveText {
+  Q_DECLARE_TR_FUNCTIONS(skg::study::WaveText)
+};
 constexpr double kDay = 86400.0;
 constexpr int kMaxDepth = 8;
 
@@ -510,7 +516,7 @@ ScanStats scanRoot(WaveIndex &index, const QString &rootId,
   const QDir root(rootPath);
   if (rootPath.isEmpty() || !root.exists())
     throw std::runtime_error(
-        QStringLiteral("the folder %1 does not exist").arg(rootPath)
+        WaveText::tr("the folder %1 does not exist").arg(rootPath)
             .toStdString());
   ScanStats stats;
   QStringList listed;
@@ -670,7 +676,7 @@ QList<ExtraStation> readStationXml(const QString &path) {
   QFile f(path);
   if (!f.open(QIODevice::ReadOnly))
     throw std::runtime_error(
-        QStringLiteral("cannot open %1").arg(path).toStdString());
+        WaveText::tr("cannot open %1").arg(path).toStdString());
   QXmlStreamReader xml(&f);
   QList<ExtraStation> out;
   QString network;
@@ -713,7 +719,7 @@ QList<ExtraStation> readStationXml(const QString &path) {
                                  .toStdString());
   if (out.isEmpty())
     throw std::runtime_error(
-        QStringLiteral("%1 names no station with coordinates")
+        WaveText::tr("%1 names no station with coordinates")
             .arg(path)
             .toStdString());
   return out;

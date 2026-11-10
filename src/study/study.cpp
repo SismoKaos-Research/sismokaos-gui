@@ -1,5 +1,6 @@
 #include "study/study.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -23,6 +24,11 @@ namespace {
 
 const QString kBuiltInStations = QStringLiteral(":/tdvms/data/stations.csv");
 
+
+// The texts a person reads when the file cannot be used; translated.
+class StudyText {
+  Q_DECLARE_TR_FUNCTIONS(skg::study::StudyText)
+};
 [[noreturn]] void fail(const QString &what) {
   throw std::runtime_error(what.toStdString());
 }
@@ -195,9 +201,9 @@ Study Study::load(const QString &dir) {
 
 void Study::save() const {
   if (dir.isEmpty())
-    fail(QStringLiteral("the study has no folder"));
+    fail(StudyText::tr("the study has no folder"));
   if (!QDir().mkpath(dir))
-    fail(QStringLiteral("cannot create %1").arg(dir));
+    fail(StudyText::tr("cannot create %1").arg(dir));
   QSaveFile f(QDir(dir).filePath(kFileName));
   if (!f.open(QIODevice::WriteOnly) || f.write(toToml().toUtf8()) < 0 ||
       !f.commit())
@@ -545,14 +551,14 @@ Study Study::fromToml(const QString &text, const QString &dir) {
   try {
     tbl = toml::parse(text.toStdString());
   } catch (const toml::parse_error &e) {
-    fail(QStringLiteral("study.toml, line %1: %2")
+    fail(StudyText::tr("study.toml, line %1: %2")
              .arg(e.source().begin.line)
              .arg(QString::fromUtf8(e.description().data(),
                                     qsizetype(e.description().size()))));
   }
   const auto schema = tbl["schema"].value<int64_t>().value_or(1);
   if (schema != 1)
-    fail(QStringLiteral("study.toml has schema %1; this version reads 1")
+    fail(StudyText::tr("study.toml has schema %1; this version reads 1")
              .arg(schema));
   Study s;
   s.dir = QDir(dir).absolutePath();
@@ -598,13 +604,13 @@ Study Study::fromToml(const QString &text, const QString &dir) {
       c.id = str(*t, "id");
       c.name = str(*t, "name", c.id);
       if (c.id.isEmpty())
-        fail(QStringLiteral("study.toml: a case has no id"));
+        fail(StudyText::tr("study.toml: a case has no id"));
       if (s.findCase(c.id))
-        fail(QStringLiteral("study.toml: two cases have the id %1").arg(c.id));
+        fail(StudyText::tr("study.toml: two cases have the id %1").arg(c.id));
       c.reference = str(*t, "kind") == QLatin1String("reference");
       c.time = QDateTime::fromString(str(*t, "time"), Qt::ISODate);
       if (!c.time.isValid())
-        fail(QStringLiteral("study.toml: case %1 has no valid time").arg(c.id));
+        fail(StudyText::tr("study.toml: case %1 has no valid time").arg(c.id));
       c.time = c.time.toUTC();
       c.lat = num(*t, "latitude", 0);
       c.lon = num(*t, "longitude", 0);
@@ -648,10 +654,10 @@ Study Study::fromToml(const QString &text, const QString &dir) {
       r.name = str(*t, "name", r.id);
       r.tool = str(*t, "tool");
       if (r.id.isEmpty() || r.tool.isEmpty())
-        fail(QStringLiteral("study.toml: a recipe has no id or no tool"));
+        fail(StudyText::tr("study.toml: a recipe has no id or no tool"));
       if (s.findRecipe(r.id))
         fail(
-            QStringLiteral("study.toml: two recipes have the id %1").arg(r.id));
+            StudyText::tr("study.toml: two recipes have the id %1").arg(r.id));
       r.revision = int(num(*t, "revision", 1));
       r.fitted = strings(*t, "fitted");
       if (const toml::table *st = (*t)["settings"].as_table())
