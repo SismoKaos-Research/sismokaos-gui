@@ -39,6 +39,10 @@ struct RegionRunOptions {
   std::shared_ptr<const ShapeLayer> countries, provinces;
   std::shared_ptr<const std::vector<FaultLine>> faults;
   QString countriesSource, provincesSource, faultsSource, citiesSource;
+  // Set when `faults` is the shipped fault-source layer and not an active
+  // fault map: the legend name of its lines and the attribution printed
+  // under the maps that draw it (both in `lang`).
+  QString faultsLabel, faultsCredit;
 };
 
 struct RegionRunHooks {

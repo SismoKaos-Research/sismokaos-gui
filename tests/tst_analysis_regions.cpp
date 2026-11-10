@@ -66,6 +66,7 @@ private slots:
   void regionFiles();
   void citiesAndLayers();
   void mapDraws();
+  void faultSourcesAreNotDrawnAsActiveFaults();
   void wholeRun();
   void runRefusesNothingToDo();
 };
@@ -513,6 +514,47 @@ void TstAnalysisRegions::runRefusesNothingToDo() {
   hooks.shouldStop = [] { return true; };
   o.catalogPath = kCatalog;
   QVERIFY_THROWS_EXCEPTION(std::runtime_error, runRegions(o, hooks));
+}
+
+// A fault layer with a legend name of its own (the shipped EFSM20 fault
+// sources) is drawn muted and titled as sources, never as active faults.
+void TstAnalysisRegions::faultSourcesAreNotDrawnAsActiveFaults() {
+  const PointTable t = loadPointTable(kCatalog);
+  const std::vector<FaultLine> faults{
+      {{QPointF(38.0, 38.0), QPointF(40.5, 39.0)}, QString()}};
+  const auto has = [&](const QString &label, QRgb colour) {
+    RegionMapSpec spec;
+    spec.lang = QStringLiteral("en");
+    spec.points = &t.points;
+    spec.faults = &faults;
+    spec.faultsLabel = label;
+    spec.credit = label.isEmpty() ? QString() : QStringLiteral("Credit line");
+    const QImage img =
+        renderImage(regionMapSize(100), [&](QPainter &p, const QRectF &rect) {
+          drawRegionMap(p, rect, spec);
+        });
+    for (int y = 0; y < img.height(); ++y)
+      for (int x = 0; x < img.width(); ++x)
+        if ((img.pixel(x, y) & 0xFFFFFF) == colour)
+          return true;
+    return false;
+  };
+  const QRgb red = 0xD32F2F, muted = 0x8C6D5E;
+  QVERIFY(has(QString(), red));
+  QVERIFY(!has(QString(), muted));
+  QVERIFY(has(QStringLiteral("Fault sources"), muted));
+  QVERIFY(!has(QStringLiteral("Fault sources"), red));
+
+  const QString sources = regionMapTitle(QStringLiteral("geographic-sources"),
+                                         QString(), QStringLiteral("en"));
+  QVERIFY(sources.contains(QLatin1String("Fault Sources")));
+  QVERIFY(!sources.contains(QLatin1String("Active")));
+  QVERIFY(regionMapTitle(QStringLiteral("geographic"), QString(),
+                         QStringLiteral("en"))
+              .contains(QLatin1String("Active Fault Lines")));
+  QVERIFY(regionMapTitle(QStringLiteral("geographic-sources"), QString(),
+                         QStringLiteral("tr"))
+              .contains(QString::fromUtf8("Fay Kaynakları")));
 }
 
 QTEST_MAIN(TstAnalysisRegions)

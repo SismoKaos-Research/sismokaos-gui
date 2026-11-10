@@ -48,15 +48,17 @@ QString key(const char *name) {
   return QStringLiteral("analysis/regions/") + QLatin1String(name);
 }
 
-// The GEM traces shipped with the indicators library, as map lines.
+// The shipped fault layer (EFSM20 fault sources, a data file beside the
+// program) as map lines. Throws when the file is not installed.
 std::shared_ptr<const std::vector<FaultLine>> shippedFaults() {
-  static const auto lines = [] {
+  static std::shared_ptr<const std::vector<FaultLine>> lines;
+  if (!lines) {
     auto out = std::make_shared<std::vector<FaultLine>>();
-    for (const cbi::FaultZone::Segment &s : cbi::eafz().segments)
+    for (const cbi::FaultZone::Segment &s : cbi::shippedFaults().segments)
       out->push_back(
           {{QPointF(s.lon0, s.lat0), QPointF(s.lon1, s.lat1)}, QString()});
-    return std::shared_ptr<const std::vector<FaultLine>>(out);
-  }();
+    lines = out;
+  }
   return lines;
 }
 } // namespace
@@ -430,8 +432,21 @@ bool RegionsPane::options(RegionRunOptions *o, QString *error) {
           std::make_shared<const std::vector<FaultLine>>(faultLines(s.faults));
       o->faultsSource = s.faultsPath;
     } else {
-      o->faults = shippedFaults();
-      o->faultsSource = QStringLiteral("shipped (GEM GAF-DB, EAFZ)");
+      // Not an active fault map: the maps say so in the legend and carry
+      // the attribution. A missing file stops the run with the reason.
+      try {
+        o->faults = shippedFaults();
+      } catch (const std::exception &e) {
+        *error = tr("The shipped fault layer could not be read: %1. Untick "
+                    "\"faults\" to run without it.")
+                     .arg(QString::fromUtf8(e.what()));
+        return false;
+      }
+      o->faultsSource = QStringLiteral(
+          "shipped (EFSM20 seismogenic fault sources, CC BY 4.0, "
+          "doi:10.13127/efsm20)");
+      o->faultsLabel = cbi::shippedFaultsLabel(o->lang);
+      o->faultsCredit = cbi::shippedFaultsCredit(o->lang);
     }
   }
   return true;
@@ -659,8 +674,10 @@ void RegionsPane::retranslate() {
   showFaults_->setText(tr("faults"));
   ui::setHelp(showFaults_,
               tr("Draws the faults: the shapefile loaded at the top of the "
-                 "page, or the shipped East Anatolian traces when none is "
-                 "loaded."));
+                 "page, or, when none is loaded, the shipped seismogenic "
+                 "fault sources of EFSM20. Those are simplified sources of a "
+                 "hazard model, not an active fault map; load the MTA "
+                 "shapefile for detailed traces."));
   showCities_->setText(tr("cities"));
   maps_->setText(tr("Write PNG maps"));
   dpi_->setSuffix(tr(" dpi"));

@@ -58,6 +58,9 @@ const std::array<FaultStyle, 5> kFaultStyles{{
      "Quaternary Fault (Q)"},
 }};
 const QColor kFaultPlain(0xD3, 0x2F, 0x2F);
+// Fault sources of a hazard model: muted, so they do not read as mapped
+// active faults.
+const QColor kFaultSource(0x8C, 0x6D, 0x5E);
 
 const FaultStyle *faultStyle(const QString &activity) {
   for (const FaultStyle &s : kFaultStyles)
@@ -402,7 +405,9 @@ void drawRegionMap(QPainter &p, const QRectF &rect, const RegionMapSpec &spec) {
       if (x1 < extent.left() || x0 > extent.right() || y1 < extent.top() ||
           y0 > extent.bottom())
         continue;
-      p.setPen(QPen(style ? style->color : kFaultPlain,
+      const QColor plain =
+          spec.faultsLabel.isEmpty() ? kFaultPlain : kFaultSource;
+      p.setPen(QPen(style ? style->color : plain,
                     (style ? style->width : 1.2) * 1.3 * u, Qt::SolidLine,
                     Qt::RoundCap, Qt::RoundJoin));
       p.drawPolyline(poly);
@@ -557,8 +562,11 @@ void drawRegionMap(QPainter &p, const QRectF &rect, const RegionMapSpec &spec) {
                         std::max(kFaultStyles[i].width, 1.2),
                         tr(lang, kFaultStyles[i].tr, kFaultStyles[i].en)});
     if (plainFaultSeen)
-      rows.push_back({K::Line, kFaultPlain, QColor(), 1.4,
-                      tr(lang, "Diri Fay", "Active Fault")});
+      rows.push_back(
+          {K::Line, spec.faultsLabel.isEmpty() ? kFaultPlain : kFaultSource,
+           QColor(), 1.4,
+           spec.faultsLabel.isEmpty() ? tr(lang, "Diri Fay", "Active Fault")
+                                      : spec.faultsLabel});
     if (turkeyDrawn)
       rows.push_back({K::Patch, QColor(0xFF, 0xF8, 0xE7),
                       QColor(0x44, 0x44, 0x44), 1,
@@ -665,6 +673,20 @@ void drawRegionMap(QPainter &p, const QRectF &rect, const RegionMapSpec &spec) {
                       afm.height()),
                Qt::AlignCenter, tr(lang, "Enlem (°K)", "Latitude (°N)"));
     p.restore();
+    if (!spec.credit.isEmpty()) {
+      // Beside the axis title, at the right edge of the map.
+      const QFont cf = font(10.5, false, true);
+      p.setFont(cf);
+      p.setPen(QColor(0x44, 0x44, 0x44));
+      const QFontMetricsF cfm(cf);
+      const double half =
+          afm.horizontalAdvance(tr(lang, "Boylam (°D)", "Longitude (°E)")) / 2;
+      const QRectF box(area.center().x() + half + 12 * u, axisY,
+                       area.width() / 2 - half - 12 * u, afm.height());
+      p.drawText(box, Qt::AlignRight | Qt::AlignVCenter,
+                 cfm.elidedText(spec.credit, Qt::ElideRight, box.width()));
+      p.setPen(Qt::black);
+    }
     if (boundaries) {
       p.setFont(font(11.5, false, true));
       p.setPen(QColor(0x44, 0x44, 0x44));

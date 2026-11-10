@@ -1,5 +1,6 @@
 // The small map of one case: the epicentre (or the reference point), the
-// stations around it, distance rings and the fault traces.
+// stations around it, distance rings, the shipped fault layer and, for a
+// case whose catalog zone is a fault zone, the traces that define it.
 #pragma once
 
 #include <QWidget>
@@ -31,7 +32,12 @@ private:
   study::Case case_;
   QList<study::StationRef> candidates_;
   QColor color_;
-  cbi::FaultZone faults_;
+  // The shipped fault layer (EFSM20) is the backdrop; a fault zone of the
+  // case is drawn over it. A layer that could not be read is named on the
+  // map instead of being left out silently.
+  const cbi::FaultZone *faults_ = nullptr;
+  cbi::FaultZone zoneTraces_;
+  QString faultNote_;
 };
 
 } // namespace skg

@@ -60,6 +60,12 @@ struct RegionMapSpec {
   const ShapeLayer *countries = nullptr;
   const ShapeLayer *provinces = nullptr;
   const std::vector<FaultLine> *faults = nullptr;
+  // For a fault layer that is not an active fault map (the shipped EFSM20
+  // fault sources): what the legend calls its lines, in the map's language.
+  // Such lines are drawn muted. Empty: "Active Fault".
+  QString faultsLabel;
+  // The attribution a layer's licence asks for, printed under the map.
+  QString credit;
   std::vector<City> cities;
   std::optional<MapMarker> marker;
   double padDeg = 0.4; // around the events

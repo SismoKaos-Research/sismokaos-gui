@@ -77,6 +77,11 @@ QString regionMapTitle(const QString &kind, const QString &areaName,
   if (kind == QLatin1String("plain"))
     return (area.isEmpty() ? QString() : area + QLatin1Char('\n')) +
            pick("Sismik Etkinlik", "Seismic Activity");
+  if (kind == QLatin1String("geographic-sources"))
+    return (area.isEmpty() ? QString() : area + QLatin1Char('\n')) +
+           pick("Sismik Etkinlik  |  Fay Kaynakları ve İdari Sınırlar",
+                "Seismic Activity  |  Fault Sources & Administrative "
+                "Boundaries");
   if (kind == QLatin1String("geographic"))
     return (area.isEmpty() ? QString() : area + QLatin1Char('\n')) +
            pick("Sismik Etkinlik  |  Diri Fay Hatları ve İdari Sınırlar",
@@ -105,9 +110,16 @@ RegionMapSpec regionMapSpec(const RegionRunOptions &o, const PointTable &table,
     spec.countries = o.countries.get();
     spec.provinces = o.provinces.get();
     spec.faults = o.faults.get();
+    if (spec.faults) {
+      spec.faultsLabel = o.faultsLabel;
+      spec.credit = o.faultsCredit;
+    }
   }
   spec.title = regionMapTitle(regions      ? methodPrefix(regions->method)
-                              : geographic ? QStringLiteral("geographic")
+                              : geographic
+                                  ? (spec.faultsLabel.isEmpty()
+                                         ? QStringLiteral("geographic")
+                                         : QStringLiteral("geographic-sources"))
                                            : QStringLiteral("plain"),
                               o.areaName, o.lang);
   return spec;
