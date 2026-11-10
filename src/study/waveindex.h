@@ -72,9 +72,9 @@ struct WaveStation {
   // Not all exact yet, but every file still waiting has an estimate: `last`
   // and `days` are then "about"; without it they are a lower bound.
   bool extentEstimated = false;
-  bool mixedRates = false;    // one channel at more than one sample rate
-  bool sharedFiles = false;   // some file also holds another station
-  QStringList otherFolders;   // folders named differently from the code
+  bool mixedRates = false;  // one channel at more than one sample rate
+  bool sharedFiles = false; // some file also holds another station
+  QStringList otherFolders; // folders named differently from the code
 };
 
 struct SkippedFile {

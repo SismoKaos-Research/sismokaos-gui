@@ -122,8 +122,7 @@ void zipWith(const QString &path, const QMap<QString, QByteArray> &members,
   for (auto it = members.begin(); it != members.end(); ++it)
     QVERIFY(mz_zip_writer_add_mem(&zip, it.key().toUtf8().constData(),
                                   it.value().constData(),
-                                  size_t(it.value().size()),
-                                  mz_uint(level)));
+                                  size_t(it.value().size()), mz_uint(level)));
   QVERIFY(mz_zip_writer_finalize_archive(&zip));
   mz_zip_writer_end(&zip);
 }
@@ -183,8 +182,9 @@ void manyFiles(const QString &root, int count) {
                        day.toString(QStringLiteral("yyyy-MM-dd"))),
               {{name, data}});
     else
-      write(QStringLiteral("%1/%2/%3").arg(root, QString::fromLatin1(sta), name),
-            data);
+      write(
+          QStringLiteral("%1/%2/%3").arg(root, QString::fromLatin1(sta), name),
+          data);
   }
 }
 
@@ -260,7 +260,8 @@ void TstStudyScan::periodInNames() {
                             &a, &b));
   QVERIFY(!periodInFileName("TU_FRT_99992020_000000_18072020_000000_HH.mseed",
                             &a, &b));
-  QVERIFY(!periodInFileName("a_12345678_123456_12345678_1234567.mseed", &a, &b));
+  QVERIFY(
+      !periodInFileName("a_12345678_123456_12345678_1234567.mseed", &a, &b));
   QVERIFY(!periodInFileName("", &a, &b));
 }
 
@@ -333,7 +334,8 @@ void TstStudyScan::exactPassCorrectsANameThatLies() {
   QVERIFY(!approx);
   QCOMPARE(index.daysCovered("EST", utc(2021, 3, 1), utc(2021, 4, 1)), 11);
   const QList<WaveStation> all = index.stations();
-  QVERIFY(find(all, "LIE")->coverageKnown && !find(all, "LIE")->extentEstimated);
+  QVERIFY(find(all, "LIE")->coverageKnown &&
+          !find(all, "LIE")->extentEstimated);
   QCOMPARE(find(all, "LIE")->days, 3);
   QCOMPARE(find(all, "ODD")->days, 2);
   // No estimate outlives the exact pass.
@@ -425,11 +427,11 @@ void TstStudyScan::parallelScanGivesTheSameIndex() {
   QTemporaryDir other;
   manyFiles(other.path(), 12);
   WaveIndex both, apart;
-  ScanStats st = scanRoots(both,
-                           {ScanFolder{"w1", data.path()},
-                            ScanFolder{"w2", other.path()},
-                            ScanFolder{"w3", other.filePath("nowhere")}},
-                           ScanPass::Coverage, {}, six);
+  ScanStats st =
+      scanRoots(both,
+                {ScanFolder{"w1", data.path()}, ScanFolder{"w2", other.path()},
+                 ScanFolder{"w3", other.filePath("nowhere")}},
+                ScanPass::Coverage, {}, six);
   QCOMPARE(st.read, 57);
   QCOMPARE(st.missing, QStringList{other.filePath("nowhere")});
   scanRoot(apart, "w1", data.path(), ScanPass::Coverage, {}, one);
@@ -497,7 +499,8 @@ void TstStudyScan::stopInsideALargeMember() {
   // Progress is in bytes on disk and ends at the total.
   QCOMPARE(total, full.bytes);
   QCOMPARE(seen, full.bytes);
-  QCOMPARE(full.bytes, 2 * QFileInfo(data.filePath("BIG/BIG_2021-01-01.zip")).size());
+  QCOMPARE(full.bytes,
+           2 * QFileInfo(data.filePath("BIG/BIG_2021-01-01.zip")).size());
 
   // The same again, stopped as soon as the readers are inside the members.
   WaveIndex part = quick;
@@ -514,8 +517,9 @@ void TstStudyScan::stopInsideALargeMember() {
   QVERIFY(st.stopped);
   QCOMPARE(st.read, 0);
   // Well before the end of the members, not at it.
-  QVERIFY2(stoppedMs * 2 < wholeMs || stoppedMs < 150,
-           qPrintable(QStringLiteral("%1 ms of %2").arg(stoppedMs).arg(wholeMs)));
+  QVERIFY2(
+      stoppedMs * 2 < wholeMs || stoppedMs < 150,
+      qPrintable(QStringLiteral("%1 ms of %2").arg(stoppedMs).arg(wholeMs)));
   // The index is as it was: nothing half-read got in.
   QCOMPARE(dump(part), dump(quick));
   QTemporaryDir studyDir;
@@ -543,14 +547,16 @@ void TstStudyScan::featuresFilesUnderEstimates() {
   WaveIndex index;
   scanRoot(index, id, root_, ScanPass::Identity);
   // Inside the archive's period: the archive, on its estimate.
-  WaveChoice c = chooseWaveFiles(s, index, est, utc(2021, 3, 3), utc(2021, 3, 5));
+  WaveChoice c =
+      chooseWaveFiles(s, index, est, utc(2021, 3, 3), utc(2021, 3, 5));
   QCOMPARE(c.files, QStringList{zip});
   QCOMPARE(c.uncertain, QStringList{zip});
   QVERIFY(c.how.contains("estimate"));
   // A span that ends where the archive's estimate ends and stops short of
   // the day file: a day of margin takes both, so that an estimate that is a
   // little off drops nothing.
-  c = chooseWaveFiles(s, index, est, utc(2021, 3, 10, 12), utc(2021, 3, 11, 12));
+  c = chooseWaveFiles(s, index, est, utc(2021, 3, 10, 12),
+                      utc(2021, 3, 11, 12));
   QCOMPARE(c.files, (QStringList{zip, day}));
   QCOMPARE(c.uncertain.size(), 2);
   // Far from both: neither.
@@ -564,11 +570,13 @@ void TstStudyScan::featuresFilesUnderEstimates() {
   QString how;
   QCOMPARE(waveFilesFor(s, index, est, utc(2021, 3, 3), utc(2021, 3, 5), &how),
            QStringList{zip});
-  QCOMPARE(how, chooseWaveFiles(s, index, est, utc(2021, 3, 3), utc(2021, 3, 5))
-                    .how);
+  QCOMPARE(
+      how,
+      chooseWaveFiles(s, index, est, utc(2021, 3, 3), utc(2021, 3, 5)).how);
 
   scanRoot(index, id, root_, ScanPass::Coverage);
-  c = chooseWaveFiles(s, index, est, utc(2021, 3, 10, 12), utc(2021, 3, 11, 12));
+  c = chooseWaveFiles(s, index, est, utc(2021, 3, 10, 12),
+                      utc(2021, 3, 11, 12));
   QCOMPARE(c.files, QStringList{zip}); // the day file starts on the 12th
   QVERIFY(c.uncertain.isEmpty());
   QVERIFY(!c.how.contains("estimate"));
@@ -633,10 +641,12 @@ void TstStudyScan::cacheSparesASecondStudy() {
   options.cache = &cache;
 
   WaveIndex first;
-  const ScanStats q = scanRoot(first, "w1", root_, ScanPass::Identity, {}, options);
+  const ScanStats q =
+      scanRoot(first, "w1", root_, ScanPass::Identity, {}, options);
   QCOMPARE(q.cached, 0);
   QCOMPARE(cache.usage().files, 0); // the quick pass files nothing
-  const ScanStats c = scanRoot(first, "w1", root_, ScanPass::Coverage, {}, options);
+  const ScanStats c =
+      scanRoot(first, "w1", root_, ScanPass::Coverage, {}, options);
   QCOMPARE(c.read, 5);
   QCOMPARE(c.cached, 0);
   QCOMPARE(cache.usage().files, 5);
@@ -696,18 +706,21 @@ void TstStudyScan::cacheFollowsAMovedFolder() {
   QCOMPARE(cache.usage().files, 18);
 
   // A file that changed is read, not taken from the cache.
-  const QString changed =
-      after + "/S1/" +
-      QDir(after + "/S1").entryList({QStringLiteral("TU_*")}, QDir::Files).first();
+  const QString changed = after + "/S1/" +
+                          QDir(after + "/S1")
+                              .entryList({QStringLiteral("TU_*")}, QDir::Files)
+                              .first();
   {
     QFile f(changed);
     QVERIFY(f.open(QIODevice::Append));
     f.write(record(utc(2022, 1, 1), "S1"));
   }
   WaveIndex fresh;
-  const ScanStats q = scanRoot(fresh, "w1", after, ScanPass::Identity, {}, options);
+  const ScanStats q =
+      scanRoot(fresh, "w1", after, ScanPass::Identity, {}, options);
   QCOMPARE(q.cached, 8);
-  const ScanStats c = scanRoot(fresh, "w1", after, ScanPass::Coverage, {}, options);
+  const ScanStats c =
+      scanRoot(fresh, "w1", after, ScanPass::Coverage, {}, options);
   QCOMPARE(c.read, 1);
   QCOMPARE(fresh.pendingCoverage(), 0);
 }
@@ -721,7 +734,8 @@ void TstStudyScan::cacheIsNotFooledByALookAlike() {
   write(a.filePath("day.mseed"), days("AAA", utc(2021, 1, 1), 1));
   write(b.filePath("day.mseed"), days("AAA", utc(2021, 7, 1), 1));
   const QDateTime when = utc(2022, 2, 2, 2);
-  for (const QString &path : {a.filePath("day.mseed"), b.filePath("day.mseed")}) {
+  for (const QString &path :
+       {a.filePath("day.mseed"), b.filePath("day.mseed")}) {
     QFile f(path);
     QVERIFY(f.open(QIODevice::ReadWrite));
     QVERIFY(f.setFileTime(when, QFileDevice::FileModificationTime));
@@ -731,9 +745,11 @@ void TstStudyScan::cacheIsNotFooledByALookAlike() {
 
   WaveIndex one, two;
   scanBoth(one, "w1", a.path(), options);
-  const ScanStats q = scanRoot(two, "w1", b.path(), ScanPass::Identity, {}, options);
+  const ScanStats q =
+      scanRoot(two, "w1", b.path(), ScanPass::Identity, {}, options);
   QCOMPARE(q.cached, 0); // its first record is not the one the result is from
-  const ScanStats c = scanRoot(two, "w1", b.path(), ScanPass::Coverage, {}, options);
+  const ScanStats c =
+      scanRoot(two, "w1", b.path(), ScanPass::Coverage, {}, options);
   QCOMPARE(c.read, 1);
   QCOMPARE(two.daysCovered("AAA", utc(2021, 7, 1), utc(2021, 7, 2)), 1);
   QCOMPARE(two.daysCovered("AAA", utc(2021, 1, 1), utc(2021, 1, 2)), 0);
@@ -747,8 +763,9 @@ void TstStudyScan::cacheIsNotFooledByALookAlike() {
     QVERIFY(f.setFileTime(when.addSecs(1), QFileDevice::FileModificationTime));
   }
   WaveIndex three;
-  QCOMPARE(scanRoot(three, "w1", c2.path(), ScanPass::Identity, {}, options).cached,
-           1);
+  QCOMPARE(
+      scanRoot(three, "w1", c2.path(), ScanPass::Identity, {}, options).cached,
+      1);
   QCOMPARE(three.daysCovered("AAA", utc(2021, 1, 1), utc(2021, 1, 2)), 1);
 }
 
@@ -831,8 +848,7 @@ void TstStudyScan::waveScanUsesTheCache() {
     const QString studyDir = store.study().dir;
     return QTest::qWaitFor(
         [&] {
-          return !scan.running() &&
-                 !WaveIndex::load(studyDir).isEmpty() &&
+          return !scan.running() && !WaveIndex::load(studyDir).isEmpty() &&
                  WaveIndex::load(studyDir).pendingCoverage() == 0;
         },
         30000);
@@ -850,7 +866,8 @@ void TstStudyScan::waveScanUsesTheCache() {
   QCOMPARE(contents(second), contents(first));
   // Its quick pass took the five from the cache; its exact pass read none.
   QCOMPARE(jobs.rowCount(), 4);
-  const QString quickLog = jobs.jobAt(jobsBefore)->log().join(QLatin1Char('\n'));
+  const QString quickLog =
+      jobs.jobAt(jobsBefore)->log().join(QLatin1Char('\n'));
   const QString exactLog =
       jobs.jobAt(jobsBefore + 1)->log().join(QLatin1Char('\n'));
   QVERIFY2(quickLog.contains("5 from the scan cache"), qPrintable(quickLog));
@@ -874,8 +891,8 @@ void TstStudyScan::twoWaveScansAtOnce() {
   ctxB.study = &storeB;
   WaveScan scanA(ctxA), scanB(ctxB);
   for (StudyStore *store : {&storeA, &storeB}) {
-    QVERIFY(store->create(
-        dir.filePath(store == &storeA ? "a" : "b"), QStringLiteral("x")));
+    QVERIFY(store->create(dir.filePath(store == &storeA ? "a" : "b"),
+                          QStringLiteral("x")));
     QVERIFY(store->update([&data](Study &s) { s.addWaveRoot(data.path()); }));
   }
   scanA.start();
@@ -933,7 +950,8 @@ void TstStudyScan::settingsPage() {
   QVERIFY(QTest::qWaitForWindowExposed(page.get()));
   auto *workers = page->findChild<QSpinBox *>(QStringLiteral("scanWorkers"));
   auto *usage = page->findChild<QLabel *>(QStringLiteral("scanCacheUsage"));
-  auto *clear = page->findChild<QPushButton *>(QStringLiteral("clearScanCache"));
+  auto *clear =
+      page->findChild<QPushButton *>(QStringLiteral("clearScanCache"));
   QVERIFY(workers && usage && clear);
 
   // Automatic unless set; the setting is what the scan uses.
@@ -1056,7 +1074,8 @@ void TstStudyScan::scanBenchmark() {
   WaveIndex again;
   ScanOptions options;
   options.cache = &cache;
-  const ScanStats c = scanRoot(again, "w1", data, ScanPass::Identity, {}, options);
+  const ScanStats c =
+      scanRoot(again, "w1", data, ScanPass::Identity, {}, options);
   qInfo("a second study, from the cache: %d of %d file(s) in %.3f s, %d left "
         "to read",
         c.cached, c.listed, seconds(), again.pendingCoverage());

@@ -41,7 +41,6 @@ const QString WaveIndex::kFileName = QStringLiteral("waveforms.index.json");
 
 namespace {
 
-
 // The texts a person reads when the file cannot be used; translated.
 class WaveText {
   Q_DECLARE_TR_FUNCTIONS(skg::study::WaveText)
@@ -103,8 +102,8 @@ void noteHeader(WaveFile &f, const fx::RecordHeader &h, const QString &name) {
   double from = 0, to = 0;
   if (periodInFileName(name, &from, &to) && h.startEpoch < to &&
       h.startEpoch >= from - kDay)
-    it->estimate = tdvms::mergeSpans(
-        it->estimate + tdvms::Spans{{h.startEpoch, to}}, 0.0);
+    it->estimate =
+        tdvms::mergeSpans(it->estimate + tdvms::Spans{{h.startEpoch, to}}, 0.0);
 }
 
 // What a reader in a worker thread shares with the scan: the stop request,
@@ -508,10 +507,9 @@ QList<WaveStation> WaveIndex::stations() const {
       if (!f->skipped.isEmpty())
         continue;
       const QStringList codes = f->stationCodes();
-      const QString folder =
-          f.key().contains(QLatin1Char('/'))
-              ? f.key().section(QLatin1Char('/'), -2, -2)
-              : QString();
+      const QString folder = f.key().contains(QLatin1Char('/'))
+                                 ? f.key().section(QLatin1Char('/'), -2, -2)
+                                 : QString();
       QSet<QString> counted;
       for (auto c = f->channels.begin(); c != f->channels.end(); ++c) {
         const QString key =
@@ -528,9 +526,9 @@ QList<WaveStation> WaveIndex::stations() const {
         a.ratesByChannel[label].insert(qint64(std::llround(c->rate * 1000)));
         // Until the file has been read, its estimate stands in for its spans.
         const tdvms::Spans &have = f->exact() ? c->spans : c->estimate;
-        const double start =
-            have.isEmpty() ? c->firstStart
-                           : std::min(c->firstStart, have.first().first);
+        const double start = have.isEmpty()
+                                 ? c->firstStart
+                                 : std::min(c->firstStart, have.first().first);
         const double end = have.isEmpty() ? c->firstStart : have.last().second;
         if (!a.any || start < st.first)
           st.first = start;
@@ -652,7 +650,7 @@ struct ScanJob {
   QString rootId, rel, path;
   qint64 size = 0;
   double mtime = 0;
-  WaveFile known;   // its entry so far, when the file has not changed
+  WaveFile known; // its entry so far, when the file has not changed
   bool hasKnown = false;
   bool first = false; // of a station that is read before the others
   QString station;    // what the order goes by
@@ -712,9 +710,8 @@ ScanResultOf scanOne(int jobIndex, const ScanJob &job, ScanPass pass,
   }
   if (!identity.skipped.isEmpty())
     return finish(identity, false);
-  if (cache &&
-      cache->lookupMoved(QFileInfo(job.path).fileName(), job.size, job.mtime,
-                         identity, &out.file)) {
+  if (cache && cache->lookupMoved(QFileInfo(job.path).fileName(), job.size,
+                                  job.mtime, identity, &out.file)) {
     cache->store(job.path, job.size, job.mtime, out.file, identity);
     return finish(out.file, true);
   }
@@ -784,28 +781,25 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
       // folder the file is in.
       const QStringList codes =
           job.hasKnown ? job.known.stationCodes() : QStringList();
-      job.station = !codes.isEmpty()
-                        ? codes.first()
-                        : rel.contains(QLatin1Char('/'))
-                              ? rel.section(QLatin1Char('/'), -2, -2)
-                              : QString();
+      job.station = !codes.isEmpty() ? codes.first()
+                    : rel.contains(QLatin1Char('/'))
+                        ? rel.section(QLatin1Char('/'), -2, -2)
+                        : QString();
       for (const QString &code : options.firstStations)
         job.first = job.first || sameCode(code, job.station);
       stats.bytes += job.size;
       jobs.push_back(job);
     }
   }
-  std::stable_sort(jobs.begin(), jobs.end(),
-                   [](const ScanJob &a, const ScanJob &b) {
-                     if (a.first != b.first)
-                       return a.first;
-                     const int c =
-                         a.station.compare(b.station, Qt::CaseInsensitive);
-                     if (c != 0)
-                       return c < 0;
-                     return a.rootId != b.rootId ? a.rootId < b.rootId
-                                                 : a.rel < b.rel;
-                   });
+  std::stable_sort(
+      jobs.begin(), jobs.end(), [](const ScanJob &a, const ScanJob &b) {
+        if (a.first != b.first)
+          return a.first;
+        const int c = a.station.compare(b.station, Qt::CaseInsensitive);
+        if (c != 0)
+          return c < 0;
+        return a.rootId != b.rootId ? a.rootId < b.rootId : a.rel < b.rel;
+      });
   const int total = int(jobs.size());
   if (total == 0) {
     if (hooks.progress)
@@ -852,51 +846,63 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
   int done = 0, sinceCheckpoint = 0;
   QElapsedTimer sinceSave;
   sinceSave.start();
-  for (;;) {
-    std::deque<ScanResultOf> got;
-    bool finished = false;
-    {
-      std::unique_lock<std::mutex> lock(mutex);
-      wake.wait_for(lock, std::chrono::milliseconds(std::max(1, options.pollMs)),
-                    [&] { return !ready.empty() || running == 0; });
-      got.swap(ready);
-      finished = running == 0;
+  // Whatever a hook throws, the workers are stopped and joined first.
+  const auto joinAll = [&] {
+    for (std::thread &t : pool)
+      if (t.joinable())
+        t.join();
+  };
+  try {
+    for (;;) {
+      std::deque<ScanResultOf> got;
+      bool finished = false;
+      {
+        std::unique_lock<std::mutex> lock(mutex);
+        wake.wait_for(lock,
+                      std::chrono::milliseconds(std::max(1, options.pollMs)),
+                      [&] { return !ready.empty() || running == 0; });
+        got.swap(ready);
+        finished = running == 0;
+      }
+      for (ScanResultOf &r : got) {
+        if (r.aborted)
+          continue;
+        const ScanJob &job = jobs[size_t(r.job)];
+        if (!r.file.skipped.isEmpty())
+          ++stats.skipped;
+        if (r.fromCache)
+          ++stats.cached;
+        else
+          ++stats.read;
+        index.roots[job.rootId].insert(job.rel, r.file);
+        ++done;
+        ++sinceCheckpoint;
+        if (hooks.progress)
+          hooks.progress(done, total, job.rel);
+      }
+      if (hooks.bytes)
+        hooks.bytes(std::min(bytes.load(), stats.bytes), stats.bytes, done,
+                    total);
+      if (!stop.load() && stopAsked()) {
+        stats.stopped = true;
+        stop.store(true);
+      }
+      if (finished && got.empty())
+        break;
+      if (hooks.checkpoint && sinceCheckpoint > 0 &&
+          (sinceCheckpoint >= options.checkpointFiles ||
+           double(sinceSave.elapsed()) >= options.checkpointSeconds * 1000.0)) {
+        sinceCheckpoint = 0;
+        sinceSave.restart();
+        hooks.checkpoint();
+      }
     }
-    for (ScanResultOf &r : got) {
-      if (r.aborted)
-        continue;
-      const ScanJob &job = jobs[size_t(r.job)];
-      if (!r.file.skipped.isEmpty())
-        ++stats.skipped;
-      if (r.fromCache)
-        ++stats.cached;
-      else
-        ++stats.read;
-      index.roots[job.rootId].insert(job.rel, r.file);
-      ++done;
-      ++sinceCheckpoint;
-      if (hooks.progress)
-        hooks.progress(done, total, job.rel);
-    }
-    if (hooks.bytes)
-      hooks.bytes(std::min(bytes.load(), stats.bytes), stats.bytes, done,
-                  total);
-    if (!stop.load() && stopAsked()) {
-      stats.stopped = true;
-      stop.store(true);
-    }
-    if (finished && got.empty())
-      break;
-    if (hooks.checkpoint && sinceCheckpoint > 0 &&
-        (sinceCheckpoint >= options.checkpointFiles ||
-         double(sinceSave.elapsed()) >= options.checkpointSeconds * 1000.0)) {
-      sinceCheckpoint = 0;
-      sinceSave.restart();
-      hooks.checkpoint();
-    }
+  } catch (...) {
+    stop.store(true);
+    joinAll();
+    throw;
   }
-  for (std::thread &t : pool)
-    t.join();
+  joinAll();
   if (done < total)
     stats.stopped = true;
   if (hooks.progress)
@@ -908,9 +914,9 @@ ScanStats scanRoot(WaveIndex &index, const QString &rootId,
                    const QString &rootPath, ScanPass pass,
                    const ScanHooks &hooks, const ScanOptions &options) {
   if (rootPath.isEmpty() || !QDir(rootPath).exists())
-    throw std::runtime_error(
-        WaveText::tr("the folder %1 does not exist").arg(rootPath)
-            .toStdString());
+    throw std::runtime_error(WaveText::tr("the folder %1 does not exist")
+                                 .arg(rootPath)
+                                 .toStdString());
   return scanRoots(index, {ScanFolder{rootId, rootPath}}, pass, hooks, options);
 }
 
@@ -1042,8 +1048,7 @@ QStringList waveFilesFor(const Study &study, const WaveIndex &index,
                          const QDateTime &to, QString *how) {
   QStringList out;
   if (station.dataDir.isEmpty() && index.hasStation(station.code)) {
-    const WaveChoice choice =
-        chooseWaveFiles(study, index, station, from, to);
+    const WaveChoice choice = chooseWaveFiles(study, index, station, from, to);
     if (how)
       *how = choice.how;
     return choice.files;
@@ -1118,9 +1123,8 @@ QList<ExtraStation> readStationXml(const QString &path) {
     }
   }
   if (xml.hasError())
-    throw std::runtime_error(QStringLiteral("%1: %2")
-                                 .arg(path, xml.errorString())
-                                 .toStdString());
+    throw std::runtime_error(
+        QStringLiteral("%1: %2").arg(path, xml.errorString()).toStdString());
   if (out.isEmpty())
     throw std::runtime_error(
         WaveText::tr("%1 names no station with coordinates")

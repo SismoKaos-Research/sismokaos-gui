@@ -96,6 +96,10 @@ translations).
 |---|---|---|
 | folder | klasör | |
 | scan / scan again | tara / yeniden tara | |
+| exact scan | kesin tarama | the pass that reads every record header |
+| estimate (of a file's coverage, from its name) | tahmin; "yaklaşık" before a number | ? not "kestir", which is kept for estimating Mc |
+| scan cache | tarama önbelleği | |
+| files read at once | aynı anda okunan dosya | |
 | skipped files | atlanan dosyalar | |
 | Moved… | Taşındı… | |
 | export (noun, AFAD export) | dışa aktarım | |

@@ -67,9 +67,8 @@ QJsonObject firstsOf(const WaveFile &identity) {
 QString firstsLine(const WaveFile &identity) {
   QString line;
   for (auto it = identity.channels.begin(); it != identity.channels.end(); ++it)
-    line += QStringLiteral("%1=%2;")
-                .arg(it.key())
-                .arg(qint64(std::llround(it->firstStart * 1000.0)));
+    line += QStringLiteral("%1=%2;").arg(it.key()).arg(
+        qint64(std::llround(it->firstStart * 1000.0)));
   return line;
 }
 
@@ -153,8 +152,8 @@ bool ScanCache::lookupMoved(const QString &fileName, qint64 size, double mtime,
   const QJsonObject now = firstsOf(identity);
   const qint64 bucket = bucketOf(mtime);
   for (qint64 b : {bucket, bucket - 1, bucket + 1}) {
-    const QJsonObject shard =
-        readShard(shardPath(dir_, "name", nameKey(fileName, size, b, identity)));
+    const QJsonObject shard = readShard(
+        shardPath(dir_, "name", nameKey(fileName, size, b, identity)));
     if (shard.isEmpty())
       continue;
     // The same first record(s), to the millisecond.
@@ -185,9 +184,9 @@ void ScanCache::store(const QString &absolutePath, qint64 size, double mtime,
                 {"file", waveFileToJson(exact)}};
   writeShard(shardPath(dir_, "path", pathKey(absolutePath, size, mtime)), o);
   if (!identity.channels.isEmpty())
-    writeShard(shardPath(dir_, "name",
-                         nameKey(name, size, bucketOf(mtime), identity)),
-               o);
+    writeShard(
+        shardPath(dir_, "name", nameKey(name, size, bucketOf(mtime), identity)),
+        o);
 }
 
 ScanCache::Usage ScanCache::usage() const {
