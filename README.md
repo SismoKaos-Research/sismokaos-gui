@@ -1,31 +1,36 @@
 # sismokaos-gui
 
-A desktop application for the SismoKaos workflow: downloading continuous
-seismic data from AFAD/TDVMS and FDSN services, extracting statistical and
-chaotic features from it, relating them to the earthquake catalog and the
-active faults around a station with publication figures, and classifying
-the windows by their time to an earthquake with tuned models, experiment
-tracking and reports. Everything
-runs inside the application; no Python, Qt or other installation is needed.
-Turkish and English, switchable while running. Linux, Windows and macOS.
+A desktop application for the SismoKaos workflow. Its centre is the
+**study**: the same analyses run on several earthquakes, from the stations
+around each one, with the results side by side. Around that it downloads
+continuous seismic data from AFAD/TDVMS and FDSN services, reads the
+waveforms you already have, extracts statistical and chaotic features,
+computes catalog-based seismicity indicators, classifies time windows by
+their time to an earthquake, splits a catalog into seismic regions, and runs
+the ayzek early-warning pipeline. Everything runs inside the application; no
+Python, Qt or other installation is needed. Turkish and English, switchable
+while running. Linux, Windows and macOS.
 
-For building from source, the code layout and how to add a tab, see
+For building from source, the code layout and how to add a page, see
 [DEVELOPING.md](DEVELOPING.md).
 
 ## Contents
 
 1. [Install and update](#install-and-update)
 2. [The window](#the-window)
-3. [Studies: the same analysis on several earthquakes](#studies-the-same-analysis-on-several-earthquakes)
-4. [Data tab: TDVMS campaigns and FDSN pulls](#data-tab-tdvms-campaigns-and-fdsn-pulls)
-5. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
-6. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
-7. [Analysis tab: earthquakes, faults, labels, figures and regions](#analysis-tab-earthquakes-faults-labels-figures-and-regions)
-8. [Indicators tab: catalog-based seismicity indicators](#indicators-tab-catalog-based-seismicity-indicators)
-9. [Early warning tab: ayzek](#early-warning-tab-ayzek)
-10. [Settings tab](#settings-tab)
-11. [Where files live](#where-files-live)
-12. [Troubleshooting](#troubleshooting)
+3. [First study in ten minutes](#first-study-in-ten-minutes)
+4. [Studies: the same analysis on several earthquakes](#studies-the-same-analysis-on-several-earthquakes)
+5. [Data page: TDVMS campaigns and FDSN pulls](#data-page-tdvms-campaigns-and-fdsn-pulls)
+6. [Features page: preprocessing and feature extraction](#features-page-preprocessing-and-feature-extraction)
+7. [Classification page: models and experiments](#classification-page-models-and-experiments)
+8. [Analysis page: earthquakes, faults, labels, figures and regions](#analysis-page-earthquakes-faults-labels-figures-and-regions)
+9. [Indicators page: catalog-based seismicity indicators](#indicators-page-catalog-based-seismicity-indicators)
+10. [Early warning page: ayzek](#early-warning-page-ayzek)
+11. [Settings page](#settings-page)
+12. [Where files live](#where-files-live)
+13. [Known limits](#known-limits)
+14. [Troubleshooting](#troubleshooting)
+15. [Licence](#licence)
 
 ## Install and update
 
@@ -79,42 +84,209 @@ has the AppImage, the Windows zip (unpack anywhere, run
 
 ## The window
 
-The **sidebar** on the left lists the pages. Under *Study* are **Cases**,
-**Runs** and **Compare** (the next section). Under *Tools* are **Data**,
-**Features**, **Classification**, **Analysis**, **Indicators** and **Early
-warning**; **Settings** is at the bottom. Alt+1 … Alt+9 jump to a page. The
-header above each page gives its name and one line on what it is for. The
-sections below still call the pages "tabs".
+The **sidebar** on the left lists the pages. Under *Study* are the four
+steps of a study, numbered in the order they are done: **1 · Cases**,
+**2 · Data**, **3 · Runs**, **4 · Compare**. Under *Tools* are **Features**,
+**Classification**, **Analysis**, **Indicators** and **Early warning**, which
+also work on their own; **Settings** is at the bottom. Alt+1 … Alt+9 jump to
+a page. The header above each page gives its name and one line on what it is
+for, and holds the **study selector** and the language switch.
+
+While no study is open, the study pages show a bar with *New study…* and
+*Open study…*.
 
 On every page the one filled button is the page's main action (*Run*,
-*Start*). An empty table or log says what to do to fill it. Every option
-explains itself: rest the pointer on a field, its label or a button and a
-box says what it does, its unit and, where there is one, the default.
+*Fetch*, *Add from catalog…*). An empty table or log says what to do to fill
+it.
+
+**Hover help.** Every option explains itself: rest the pointer on a field,
+its label or a button and a box says what it does, its unit and, where there
+is one, the default.
 
 **Jobs.** The strip at the bottom says what is running and how far it is.
 Click *Jobs* on its right (or *View → Jobs*, Ctrl+J) to open the jobs panel,
-which lists everything the application runs: a download campaign, a
-calibration, a feature extraction. Each job shows its state, progress,
-elapsed time and, when selected, its live log. *Cancel* stops a job
-cooperatively: it finishes the step it is on and writes nothing half-done.
-*Copy log* puts the log on the clipboard for a bug report.
+which lists everything the application runs: a download campaign, a scan of
+your waveform folders, a recipe on a case. Each job shows its state,
+progress, elapsed time and, when selected, its live log. *Cancel* stops a job
+cooperatively. *Copy log* puts the log on the clipboard for a bug report.
+When a job fails, the strip says so and becomes a link (*show what went
+wrong*) that opens the panel on that job.
 
 **Language.** The *EN / TR* switch in the header (or *View → Language*)
 changes the language immediately; the choice is remembered.
 
 **Theme.** *View → Theme* or the Settings page chooses a light or a dark
-look, or follows the system. Figures stay on a white background in both.
+look, or follows the system. Figures written to files stay on a white
+background in both.
+
+**Maps.** Every map in the application is the same widget: drag to pan, turn
+the wheel to zoom, double-click to fit everything, rest the pointer on a
+marker to read what it is, click a marker to select it. See
+[Maps and fault lines](#maps-and-fault-lines).
 
 Closing the window while jobs run asks first; confirming cancels them.
+
+## First study in ten minutes
+
+This is the shortest path from nothing to a comparison. Each step is
+described in full in the next section.
+
+1. **New study.** Click the study selector in the header (*No study open ▾*)
+   and *New study…*. Choose an empty folder and give the study a name. All
+   results of the study are written under this folder.
+2. **Set up the study.** The dialog that follows has two parts, and both can
+   be left for later (*Not now*):
+   - *Earthquake catalog*: *Start with the built-in list* (large earthquakes
+     around Türkiye, enough to pick the earthquakes of the study) or *Use my
+     own file* (an AFAD export, needed later for the Indicators and for the
+     Features calibration).
+   - *Waveform folders*: *Add folders…* and pick the folder or folders that
+     hold the miniSEED you already have. A folder of station folders, such
+     as `stations/ELZG/…`, is added once, as `stations`. Skip this if you
+     will download the data with the Data page.
+
+   *Done* lands on **1 · Cases**. Folders you added are scanned in the
+   background.
+3. **Add a case.** *Add from catalog…* lists the earthquakes, largest first,
+   with a map beside them. Either pick an earthquake and tick the stations
+   near it, or start from your data: *Stations I have data for* limits the
+   list to earthquakes close to the stations found in your folders. Set the
+   **span** (the days before the earthquake that are studied) and *Add
+   case*. Repeat for the other earthquakes; *Add reference date…* adds a
+   date with no earthquake for comparison.
+4. **Waveforms.** The station table of the selected case says for each
+   ticked station whether waveforms were found for the span. If some are
+   missing, either add the folder that holds them (*Waveforms…*) or press
+   *Next: get waveforms →*: it opens **2 · Data** with the case's stations
+   and span filled in, ready to request from AFAD or pull from an FDSN
+   service. Downloads made while a study is open are added to its waveform
+   folders by themselves.
+5. **Runs.** On **3 · Runs**, *New recipe* saves one tool's settings under a
+   name: Indicators, Features or Classification. The matrix then has a row
+   per case and station and a column per recipe. *Run missing and stale*
+   runs everything that can run; a cell that cannot says why and offers a
+   button that goes to where it is put right. *Stop* ends the batch. Select
+   a cell and *Show log* to read what its run wrote.
+6. **Compare.** **4 · Compare** lists the scores of a classification recipe
+   for every case, with a baseline beside each, draws any indicator or
+   feature of all cases on one axis of days before the event, and shows the
+   cases on a map.
+
+With only the built-in list, the Indicators and Features cells of step 5
+wait for a full catalog, and Classification waits for Features. See
+[The earthquake catalog](#the-earthquake-catalog).
 
 ## Studies: the same analysis on several earthquakes
 
 A **study** runs the same analyses on several earthquakes and puts the
 results side by side. It is a folder: one file, `study.toml`, says what the
 study is, and every result is written under the folder in a fixed place.
-The study selector in the header starts a new study in a folder you choose,
-opens an existing one, and lists the recent ones. The tools pages keep
-working on their own, with or without a study.
+
+The **study selector** in the header starts a new study in a folder you
+choose, opens an existing one (the folder holding `study.toml`), lists the
+recent ones and closes the open one. *New study…* on a folder that already
+holds a study offers to open it instead, and warns before using a folder
+that is not empty. The last study is opened again at the next start; if it
+cannot be, the window says why.
+
+After *New study…* the **Set up the study** dialog asks for the catalog and
+the waveform folders. The same dialog is reached later with *Study inputs…*
+on the Cases page.
+
+### The earthquake catalog
+
+A study uses an earthquake catalog for two different things, and they need
+different catalogs.
+
+**Picking the earthquakes** works from the start, with no file: the
+application ships a **built-in list** of the earthquakes of magnitude 5 and
+above since 1990 around Türkiye (from USGS). The *Study inputs* row of the
+Cases page says which list is in use and to what date. *Update…* brings the
+built-in lists up to date over the network (the station list from the TDVMS
+portal, the earthquakes from USGS) and keeps the newer copies in your
+configuration folder.
+
+**The Indicators and the Features calibration** count small earthquakes, so
+the built-in list is far too sparse for them. While the study has no catalog
+of its own, their cells on the Runs page wait and say so. Give the study a
+full catalog in one of two ways:
+
+- *Use my own file…*: an AFAD export as CSV, plain or `.gz`, with the choice
+  of whether its times are UTC or Turkey time (*another offset…* takes any
+  number of hours; AFAD exports are UTC). This is the route for AFAD data.
+  At the time of writing, AFAD's public event web service returns only the
+  latest 1,000 earthquakes, so the application cannot download a historic
+  AFAD catalog for you: export the period from AFAD's website
+  (deprem.afad.gov.tr) and choose the file.
+- *Get the catalog…*: downloads the earthquakes around the study's cases
+  from an FDSN event service into `<study>/catalog/`, with a record of the
+  request beside the file, and makes it the study's catalog. The area and
+  the period are proposed from the cases and can be changed. The service is
+  USGS, or *Another FDSN event service…* whose address you give; check that
+  service's terms yourself. The file is your own download: it is not shipped
+  with the application. How far down in magnitude a service goes differs,
+  and the dialog reports what the download holds when it ends. A catalog
+  that stops near magnitude 4 is still too sparse for b-values.
+
+When you use AFAD data, cite the Disaster and Emergency Management
+Presidency (AFAD), Earthquake Department, as the source, as AFAD asks.
+
+Changing the time offset after cases exist asks first, then reads the times
+of the earthquake cases again from the catalog; a case that is not found in
+the catalog keeps its time, and a banner says so. If the catalog file is not
+where the study says it is, the row shows the path in red and *Add from
+catalog…* is disabled with the reason.
+
+### Waveforms
+
+The Features recipes read continuous waveforms. A study gets them in two
+ways, and both can be used together.
+
+**Importing what you have.** *Waveforms…* on the Cases page (or the setup
+dialog) lists the study's waveform folders. *Add folders…* picks one or
+several folders at once (hold Ctrl or Shift); folders can also be dropped
+onto the list from the file manager.
+
+- Any layout works. A folder is scanned through its sub-folders, so a folder
+  of station folders is added once, as the parent. Folders whose name starts
+  with `_` or `.` are not entered.
+- Accepted: **miniSEED 2**, as plain files or as zip archives of them. Other
+  files are listed under *Skipped files…* with the reason, and are not used.
+- **The file headers decide** which station and channels a file belongs to
+  and which times it covers. Folder and file names are not trusted for that;
+  a folder named differently from the station in its files is flagged.
+- The scan runs as two jobs. The first reads one record per file and shows
+  which stations are there; the second reads every record header and gives
+  the exact days covered. Both can be stopped, and what was read is kept. A
+  file that has not changed is not read again. The second pass has to read
+  through whole zip archives, so the first scan of a large archive takes
+  time.
+- The dialog then has one row per station: network, channels, sample rate,
+  first and last day, days with data, files, and where its **coordinates**
+  come from: the station list, a StationXML file (*Load StationXML…*) or
+  typed in (*Type coordinates…*). A station with no coordinates, mixed
+  sample rates, or files shared with other stations is flagged.
+- A folder that is already listed, or lies inside a listed one, is not added
+  twice. Adding a parent of a listed folder replaces the listed one.
+- New files in a listed folder are picked up when the Cases page is next
+  shown; *Scan again* looks at once. A file rewritten in place under the
+  same name is only noticed by *Scan again*.
+- **The data moved** (another drive, another folder): select the folder and
+  *Moved…*, and show where it is now. Nothing is scanned again.
+- *Find earthquakes near these…* opens the add-case dialog limited to the
+  selected stations; *Station coverage…* shows them on a map (below).
+
+**Pulling with the Data page.** A TDVMS campaign or an FDSN pull started
+while a study is open adds its download folder to the study's waveform
+folders, and the page says so. *Next: get waveforms →* on the Cases page
+opens the Data page with the case's stations and span filled in.
+
+**How Features uses them.** A Features run reads only the files that overlap
+the case's span, chosen by what the scan found in the headers. If the folders
+have not been scanned for a station, the run falls back to a sub-folder named
+by the station code and to the dates in the file names. For one station of
+one case, *Choose folder…* on the Cases page names a folder outright; *Use
+the study's folders* drops that choice.
 
 ### Cases
 
@@ -122,24 +294,39 @@ A **case** is one earthquake and the place it is studied from, or a
 **reference date**: a date with no earthquake, studied the same way so it
 can be read beside the earthquakes.
 
-1. Under *Study inputs* choose the **earthquake catalog** (an AFAD export,
-   CSV or .gz, and whether its times are UTC or Turkey time) and, for the
-   waveform tools, the **waveform folder**: a folder with one sub-folder of
-   miniSEED per station, named by the station code.
-2. *Add from catalog…* lists the catalog's earthquakes, largest first, with
-   a magnitude threshold and a place filter. Pick one; the stations of the
-   built-in AFAD list within the distance you set appear below with their
-   distance and azimuth. Tick the ones to use, set the **span** (how many
-   days before the event are studied) and *Add case*.
-3. *Add reference date…* takes a name, a date, and either the place and
-   stations of an existing case or coordinates of its own.
+The page has the study's inputs at the top, the table of cases with the
+**map** beside it, and the selected case below.
 
-The selected case shows on the right: a map (epicentre, the stations in use
-and the other candidates, distance rings, the shipped East Anatolian fault
-traces), the station list to tick, the **catalog zone** the catalog tools
-use (a circle around the epicentre, or a buffer around the fault zone) and
-the span. Every change is saved at once. *Remove* takes a case out of the
-study; its result folders stay on disk.
+- *Add from catalog…* lists the earthquakes of the study's catalog (or of
+  the built-in list), largest first. Filters: a magnitude threshold, a text
+  the place name must contain, and **only near station(s)**: station codes
+  separated by commas (with completion as you type) and a distance, which
+  keep the earthquakes close to at least one of them and show the nearest
+  one with its distance. *Stations I have data for* fills that filter from
+  your waveform folders. Selecting an earthquake lists the stations within
+  the distance you set, with distance and azimuth and, for each, whether
+  waveforms were found for the span; the nearest three that have waveforms
+  start ticked, or simply the nearest three when none has. Set the **span** and *Add case*. The dialog warns when no station
+  is ticked (only the Indicators recipes will then run for the case), when
+  the earthquake is already a case, and when the span starts before the
+  catalog does.
+- *Add reference date…* takes a name, a date, and either the place and
+  stations of an existing case or coordinates of its own.
+- *Remove* takes the selected case out of the study; its result folders stay
+  on disk.
+- *Station coverage…* opens a map of what a set of stations covers (below).
+
+The selected case shows below the table: its name, the **catalog zone** the
+Indicators use (a circle around the epicentre, or a buffer around the East
+Anatolian fault zone), the span, and the stations near the epicentre to tick,
+each with a *Waveforms* column such as "found: 340 of 365 days in span" or
+"not found". A change that would make finished runs of the case stale asks
+first and says how many. If the study file cannot be saved, a banner says so
+and the page goes back to what is saved.
+
+The button at the bottom right is the next step: *Next: get waveforms →*
+while a ticked station has no waveforms, *Next: recipes →* once they all
+have.
 
 ### Runs
 
@@ -147,92 +334,199 @@ A **recipe** is one tool's saved settings under a name. The same recipe on
 every case is the same analysis. *New recipe* makes one for:
 
 - **Indicators** (one run per case): the catalog events of the case's zone,
-  from one window before the span up to, but not including, the event;
-  then the indicator table and figures of the Indicators tab. With
-  `estimate_mc` the completeness magnitude is estimated for each case
-  (maximum curvature) and recorded.
-- **Features** (one run per station): the feature extraction of the
-  Features tab on the station's waveform folder, with the chaos parameters
-  calibrated for that station. `config_json` takes a `config.json` saved on
-  the Features tab; empty uses the defaults. The whole folder is processed,
-  so keep in it the days the span needs.
-- **Classification** (one run per station): the models of the
-  Classification tab on the feature table of a features recipe
-  (`features_recipe`). `classes` are ranges of days before the event, such
-  as `1-30, 31-90`; each case's class table is made from them and its own
-  event time, so one recipe fits every case, reference dates included.
-  `models` lists what to train (`logistic`, `svm_linear`, `svm_poly`,
-  `svm_rbf`, `ann`, `random_forest`, `gradient_boosting`, `xgboost`);
-  `quick` uses one small setting per model for a first look; `sfc_toml`
-  takes anything else in the Classification tab's own settings layout.
+  from one window before the span up to, but not including, the earthquake;
+  then the indicator table and figures of the Indicators page. The
+  earthquake is looked up in the catalog, so it stays out of its own span
+  even when the catalog's times are offset. With the completeness magnitude
+  set to be estimated, it is estimated for each case (maximum curvature) and
+  recorded.
+- **Features** (one run per station): the feature extraction of the Features
+  page on the station's waveform files of the case's span, with the chaos
+  parameters calibrated for that station on the study's catalog. The
+  settings come from a `config.json` saved on the Features page; empty uses
+  the defaults. If such a configuration names a calibration catalog of its
+  own, the dialog asks which to use and the Runs page shows the override.
+- **Classification** (one run per station): the models of the Classification
+  page on the feature table of a Features recipe, chosen from a list. The
+  classes are ranges of days before the event, such as `1-30, 31-90`; each
+  case's class table is made from them and its own event time, so one recipe
+  fits every case, reference dates included. Creating a Classification
+  recipe when the study has no Features recipe offers to add one first.
 
-The table of settings under the matrix says for each setting whether it is
-**fixed** across cases or **fitted per case**. *Edit recipe…* changes them;
-a changed setting raises the recipe's revision.
+Recipes can also be saved from the tool pages: see
+[Tool pages and the open study](#tool-pages-and-the-open-study).
+
+The table under the matrix lists the selected recipe's settings by readable
+name (the key used in `study.toml` is in the tooltip) and says for each
+whether it is **fixed** across cases or **fitted per case**. *Edit recipe…*
+changes them; a changed setting raises the recipe's revision, and the dialog
+says first how many finished runs that makes stale. *Remove recipe* names
+the recipes that depend on it before it goes.
 
 The **matrix** has a row per case and station and a column per recipe. Each
 cell is one of:
 
 | cell | meaning |
 |---|---|
-| ✓ Done | run, for the recipe and the case as they are now |
+| ✓ Done | run, for the recipe, the case and the inputs as they are now |
 | ○ Missing | not run yet |
-| ↻ Stale | run, but the recipe or the case has changed since |
-| ✕ Failed | the last run ended with an error (click the cell to read it) |
-| ⏸ Waiting | cannot run yet: no catalog, no waveform folder for the station, or the features it needs are not done |
+| ↻ Stale | run, but something it depended on has changed since (see below) |
+| ✕ Failed | the last run ended with an error |
+| ⏸ Waiting | cannot run yet; the reason names what is missing and where to put it right |
 | ◔ Running | a job is on it; the percentage is the job's progress |
 
-*Run missing and stale* queues those cells as jobs, two at a time, and goes
-on to the cells they unblock (a classification after its features). *Run
-the selected cell* runs one. Click a cell to see why it waits and *Open
-folder* to see its files.
+Select a cell to read its reason under the matrix. A waiting cell has a
+button that goes to the fix: *Go to Cases* (no catalog, no stations, no
+waveforms), *Edit recipe…*, or *Select the cell it needs* (a classification
+waiting for its features).
+
+- *Run missing and stale* queues those cells as jobs, two at a time, and
+  goes on to the cells they unblock.
+- *Run the selected cell* runs one. For a cell that already has a finished
+  run it asks first.
+- *Stop* cancels the runs this page started and starts no further ones.
+- *Show log* opens what the cell's last run wrote; *Open folder* shows its
+  files.
+
+**A run never damages a finished one.** It works in a folder beside the
+result, `<folder>.tmp`, and takes the result's place only when it finishes.
+A stopped run leaves nothing. A failed run is kept as `<folder>.failed` with
+its log and the error, until the next attempt; the earlier finished run stays
+valid, with a note that a later run failed.
+
+**What makes a run stale:**
+
+| | goes stale when |
+|---|---|
+| every tool | its recipe is edited |
+| Indicators | the case's time, place, span or zone changes; the catalog's time offset changes; the catalog file changes |
+| Features | the case's time or span, or the station, changes; the catalog's time offset changes; the catalog file changes (the calibration reads it); the waveform files for the span change (new or replaced files) |
+| Classification | the case's time or the station changes; the features it was trained on are run again or are no longer current |
+
+A change of the zone does not touch Features or Classification. A run made
+with an earlier version of the application, which recorded less about a run,
+reads as stale and says so: run it again.
+
+**Keyboard.** In the matrix the arrow keys, Home and End move the selection,
+Enter or Space runs the cell (or does its fix), and a double-click opens its
+folder.
 
 ### Compare
 
-**Scores** (top): for a classification recipe, one row per case and
-station with the magnitude, the station's distance, the **best model** (the
-one with the highest F1 on the validation days), and its **F1 and AUC on
-the test days**. Beside each is the same number for the **baseline**: the
-best of the Classification tab's baseline step (logistic regression and the
-SVMs), chosen on the validation days the same way; and the difference. The
-upper bar is the model, the lower the baseline. Click a column heading to
-sort. A row whose run is missing, stale or failed says so and shows no
-number. *Export table…* writes the rows as CSV.
+**Scores** (top): for a classification recipe, one row per case and station
+with the magnitude, the station's distance, the **best model** (the one with
+the highest F1 on the validation days), and its **F1 and AUC on the test
+days**. Beside each is the same number for the **baseline**: the best of the
+Classification page's baseline step (logistic regression and the SVMs),
+chosen on the validation days the same way; and the difference. The upper
+bar is the model, the lower the baseline. Click a column heading to sort. A
+row whose run is missing, stale or failed says so and shows no number.
+*Export table…* writes the rows as CSV.
 
 **Series** (bottom left): choose an indicators or a features recipe and a
 column. Every case is drawn on one axis of **days before its event**, the
 event at zero on the right; reference dates are dashed. An indicator window
-is placed at its end; a feature column is the median of each day. The
-legend is always there; with four series or fewer the names also stand at
-the line ends. More than eight series are not drawn (the legend says how
-many). *Export figure…* writes a PNG or an SVG.
+is placed at its end; a feature column is the median of each day. The legend
+is always there; with four series or fewer the names also stand at the line
+ends. At most eight series are drawn; with more, the *Series* button chooses
+which. A finished run that cannot be drawn is named with the reason.
+*Export figure…* writes a PNG or an SVG, always on a white background.
 
-**Fitted per case** (bottom right): what each case fitted for itself in the
-chosen series recipe (the estimated completeness magnitude, the number of
-events in the zone, the calibrated chaos parameters), so differences in
-setup are in view next to the results.
+**Where** (right): a map of the cases, each in the colour of its series. The
+panel folds away and stays folded.
+
+**Fitted per case** (right): what each case fitted for itself in the chosen
+series recipe (the estimated completeness magnitude, the number of events in
+the zone, the calibrated chaos parameters), so differences in setup are in
+view next to the results.
+
+Exports go to `<study>/exports/` unless you choose another place.
+
+**Keyboard.** In the score table Left and Right choose the column to sort
+by, Space reverses the order, Up and Down move the row, and Enter or a
+double-click opens the row's run folder.
+
+### Maps and fault lines
+
+| where | what it shows |
+|---|---|
+| Cases page | every case; the selected one in colour with its catalog zone and labelled stations, the others dimmed. A row and its marker select each other. *All cases* and *This case* set the view. A ticked station outside the zone is marked "!" |
+| *Add from catalog…* | before a choice, the listed earthquakes (click one to select it); with the station filter on, the area those stations cover; after a choice, the epicentre, the zone and the candidate stations with distances (click one to tick it) |
+| Compare, *Where* | the cases in their series colours |
+| *Station coverage…* (Cases page, Waveforms dialog) | the area within a distance of a set of stations, and which earthquakes of at least a magnitude fall inside it, with the count in a sentence. The stations are those with waveforms in the study's folders, those ticked in the cases, or those selected in the Waveforms dialog |
+| Data page, *Map* tab | every station the TDVMS portal lists as a dot, the ones chosen for download as labelled triangles, and, when the page was opened from a case, its epicentre and zone. Click a station to choose it or take it out |
+
+Stations are told apart by shape as well as colour: filled (in use), hollow
+(a candidate), hollow with a core (a candidate with waveforms), struck
+through (in use, no waveforms), and a warning triangle with "!" (in use,
+outside the zone). The legend under each map says which is which.
+
+**The fault lines are not an active fault map.** They are the crustal fault
+sources of the European Fault-Source Model 2020 (EFSM20), a simplified set
+of sources made for seismic hazard models; the maps label them *Seismogenic
+fault sources, EFSM20 (hazard model)*. They carry no fault names and are
+sparse in places (the central Anatolian interior, for one). For detail, load
+your own fault shapefile on the Analysis page; the maps of that page then
+draw it. The MTA active fault map is not
+shipped: MTA reserves all rights to it and sells the data. Country outlines
+are from Natural Earth and do not necessarily depict accepted national
+boundaries.
+
+### Tool pages and the open study
+
+Features, Indicators, Classification and Analysis keep their own inputs, so
+they can be used with no study. When a study is open, a bar at the top of
+each offers *Use the inputs of the study*: ticked, the page takes the
+earthquake catalog and its time offset from the study and, for the case and
+station chosen in the bar, the place, the station and its waveform folder.
+The fields are filled again when the study changes or another one is opened.
+
+*Save as study recipe…* on Features, Indicators and Classification saves the
+page's current settings under a name as a recipe of the study, to be run on
+every case from the Runs page. The Early warning page does not follow the
+study.
+
+### Moving a study
+
+Paths inside the study folder, and paths beside it under a common folder,
+are stored relative, so a study and its data can move together to another
+disk. Other paths are stored as they are. When a study is opened and one of
+its inputs is not where it was (the catalog, the station list, a waveform
+folder, a fault file), the application asks once, with *Locate…* and *Skip*:
+show where it is now, and everything else that moved with it is found from
+that one answer. Waveform folders keep their index, so nothing is scanned
+again.
 
 ### What a study writes
 
 ```
 <study>/study.toml
-<study>/<case>/_case/indicators/<recipe>/        catalog.csv, Deprem_Analiz_Grafikleri_*/, run.json
-<study>/<case>/<STATION>/features/<recipe>/      the Features tab's outputs, run.json
-<study>/<case>/<STATION>/classification/<recipe>/ results/…/models/experiments.csv, run.json
+<study>/waveforms.index.json                      what the waveform folders hold
+<study>/catalog/                                  catalogs downloaded with "Get the catalog…", each with a .provenance.json
+<study>/exports/                                  tables and figures exported from Compare
+<study>/<case>/_case/indicators/<recipe>/         catalog.csv, Deprem_Analiz_Grafikleri_*/, run.json, run.log
+<study>/<case>/<STATION>/features/<recipe>/       the Features page's outputs, run.json, run.log
+<study>/<case>/<STATION>/classification/<recipe>/ results/…/models/experiments.csv, run.json, run.log
 ```
 
-The tools' own files are unchanged. `run.json` records the recipe revision
-and settings, the case as it was, the inputs with their SHA-256, the
-application version, start and end times, how the run ended, and the values
-the case fitted. `study.toml` can be edited by hand; its layout is described
-at the top of `src/study/study.h`.
+A run folder may have a `.tmp` (a run at work) or a `.failed` (the last
+failed attempt) beside it. The tools' own files are unchanged. `run.json`
+records the recipe revision and settings, what of the case the run depended
+on, the inputs with their SHA-256, the application version, start and end
+times, how the run ended, and the values the case fitted.
 
-## Data tab: TDVMS campaigns and FDSN pulls
+`study.toml` can be edited by hand while the study is closed; its layout is
+described at the top of `src/study/study.h`. Comments and keys the
+application does not know are not kept when it next saves the file.
 
-This tab is the AFAD/TDVMS download tool (the former `tdvms` command line)
+## Data page: TDVMS campaigns and FDSN pulls
+
+This page is the AFAD/TDVMS download tool (the former `tdvms` command line)
 with the same files, so a campaign started on the command line can be
 continued here and the other way round, as long as the two do not run at the
-same time.
+same time. It is step 2 of a study, but works without one. With a study
+open, the folder a campaign or an FDSN pull downloads into becomes one of
+the study's waveform folders, and the page says so.
 
 ### How TDVMS downloads work
 
@@ -263,7 +557,7 @@ open requests per address. The application turns this into a campaign:
 ### Setting up
 
 1. **Folder with the campaigns.** Choose or type the folder that holds your
-   campaigns (*Browse…*). Each campaign is a sub-folder under `campaigns/`;
+   campaigns (the *…* button). Each campaign is a sub-folder under `campaigns/`;
    old flat layouts (`<name>_ledger.jsonl` beside `<name>_raw/`) are found
    too.
 2. **Mailbox…** Enter the IMAP host, user and password of the mailbox the
@@ -294,8 +588,9 @@ the M5+ events from USGS, used by the plan dialog and the coverage view.
 ### Running
 
 Set the **Address** (the mailbox user, usually), the number of **Slots** and
-the **Interval** between cycles, then *Start*. The run appears in the Jobs
-panel and the status area shows each cycle. Options:
+the **Interval** between cycles, then *Fetch*. The run appears in the Jobs
+panel (*Show in the Jobs panel* opens it) and the status area shows each
+cycle. Options:
 
 - *stop when every chunk has an outcome*: the run ends by itself when
   nothing is pending or submitted.
@@ -332,24 +627,45 @@ and *Fetch*. Each day is a row in its own ledger (`fdsn.jsonl` in the
 campaign) with the same states; days already on disk are adopted, failed
 days can be put back with *put this station's failed days back first*, and
 *only add the days, do not fetch* plans without downloading. Files are named
-like TDVMS archive members so the Features tab reads them the same way.
+like TDVMS archive members so the Features page reads them the same way.
+While the station is empty or the period ends before it starts, *Fetch* is
+disabled and a line under the form says why.
 
-## Features tab: preprocessing and feature extraction
+### From a case, and the station map
 
-This tab turns a folder of miniSEED for one station into a table of
+*Next: get waveforms →* on the Cases page opens this page with a bar at the
+top: *Waveforms wanted for* the case, its stations and the period of its
+span. Choose the station to do next in the bar, then *Plan from AFAD…*
+(opens the plan dialog on that station and period) or *Fill the FDSN form*.
+*Dismiss* closes the bar.
+
+The **Map** tab shows every station the TDVMS portal lists as a dot; rest
+the pointer on one to read its network and instruments. The stations chosen
+for download are labelled triangles, and a case the page was opened from is
+drawn with its catalog zone. Click a station to choose it or take it out;
+the bar and the FDSN form follow. A station typed in the FDSN form or picked
+in the plan dialog shows as chosen. Codes the portal does not list are named
+under the map.
+
+## Features page: preprocessing and feature extraction
+
+This page turns a folder of miniSEED for one station into a table of
 features per time window, the input of the classification. It follows the
 design of `sismokaos-cli` (the current chaos parameters) and writes the file
-formats of the Python tool.
+formats of the Python tool. With a study open, the bar at the top can fill
+the inputs from a case and station of the study, and *Save as study recipe…*
+turns the settings shown into a recipe (see [Tool pages and the open
+study](#tool-pages-and-the-open-study)).
 
 ### Inputs
 
-- **Data directory**: the miniSEED files of one station, E, N and Z
+- **Waveform folder**: the miniSEED files of one station, E, N and Z
   components, any mix of files; zip archives in the folder are unpacked for
   the run. Files that are not miniSEED (catalogs, notes) are skipped.
   A TDVMS campaign's `raw/<STATION>` folder or an FDSN day folder works
   directly.
 - **Output directory**: where the results go; defaults to `results` under
-  the data directory when left empty.
+  the waveform folder when left empty.
 - **Config**: a `config.json`. *Load…* reads one in either layout (the Rust
   tool's keys or the Python tool's upper-case keys), *Save* writes the
   settings currently shown. Without a config file the defaults are used.
@@ -414,7 +730,7 @@ output (a non-positive rate, duplicate band names) stop it with a message.
 
 ### Outputs
 
-For a data directory `<dir>`, in the output directory (or its band
+For a waveform folder `<dir>`, in the output directory (or its band
 sub-folder):
 
 | file | content |
@@ -439,9 +755,9 @@ w = np.memmap("ELZG_preprocessed.f32", dtype="<f4", mode="r").reshape(-1, 3)
 Windows that cover a gap carry an `*_INTERP_FRAC` above zero; filter on it
 before trusting a chaos measurement there.
 
-## Classification tab: models and experiments
+## Classification page: models and experiments
 
-This tab is the `sfc` tool: it labels the windows of a station by how many
+This page is the `sfc` tool: it labels the windows of a station by how many
 days before an earthquake they were recorded, splits them by day, trains and
 tunes several classifiers and keeps every experiment comparable. It reads
 and writes `sfc`'s own files (`project.toml`, `results/.../models/<run>/`,
@@ -449,7 +765,9 @@ and writes `sfc`'s own files (`project.toml`, `results/.../models/<run>/`,
 here. The models themselves come from XGBoost, libsvm and a small neural
 network built into the application; numbers differ slightly from the Python
 tool's (different random streams and solvers), so keep a paper's tables with
-the implementation that produced them.
+the implementation that produced them. With a study open, the bar at the
+top can take the feature table of a finished Features run of the study, and
+*Save as study recipe…* turns the settings into a recipe.
 
 ### Project and data
 
@@ -457,7 +775,7 @@ the implementation that produced them.
   `results/<station>/<event>/N/` inside it. A new folder starts from the
   defaults; *Save project.toml* writes the settings.
 - **Labelled windows**: either `sfc`'s `<STATION>_N_features_labeled.csv`,
-  or a feature table from the Features tab. For the latter the **class
+  or a feature table from the Features page. For the latter the **class
   table** labels the days: label 0 for the days 1 to 30 before the event,
   every day; label 1 for days 31 to 90, every second day; and so on, with
   the planned days moved to the nearest day that has data when one is
@@ -509,18 +827,18 @@ comparison), the reports and the settings snapshot. *HTML report* writes
 one self-contained page with every run's metrics, confusion matrices and
 figures and opens it. *Delete run…* removes a run's folder and rows.
 
-## Analysis tab: earthquakes, faults, labels, figures and regions
+## Analysis page: earthquakes, faults, labels, figures and regions
 
-This tab takes a feature table and puts it next to the earthquake catalog
+This page takes a feature table and puts it next to the earthquake catalog
 and the active faults, the way the SCAP platform did: which events happened
 near the station and when, which fault is closest, a label per window, and
 the figures. Its last pane, *Regions*, needs only the catalog: it splits the
 epicentres into seismic regions.
 
-### Inputs (top of the tab)
+### Inputs (top of the page)
 
 - **Feature table**: a `<name>_features.npy` or `.csv` from the Features
-  tab. The run metadata beside it supplies the station code and the window
+  page. The run metadata beside it supplies the station code and the window
   length. SCAP's own result CSVs (`YYYY_MM_DD_HH_wNN` window ids) load too.
 - **Earthquake catalog**: the AFAD export, CSV or `.gz`, with the time zone
   its times are in (AFAD exports are UTC; SCAP kept a copy in Turkey time).
@@ -529,7 +847,12 @@ epicentres into seismic regions.
   latitude and longitude instead.
 - **Fault lines**: the MTA active fault shapefile (`.shp` with its `.dbf`),
   optional. MTA sells this data and does not allow redistribution, so it is
-  not shipped with the application; any polyline shapefile works.
+  not shipped with the application; any polyline shapefile works. Without
+  one, the Regions maps draw the shipped EFSM20 fault sources, which are a
+  hazard model's simplified sources and not an active fault map.
+
+With a study open, the bar above these fields can fill them from the study
+and one of its cases and stations.
 
 Everything below updates as soon as these are set.
 
@@ -599,8 +922,9 @@ coordinates are skipped.
 - **Maps**: *Area name* is the first line of the map titles. *Marker* adds a
   labelled point (a station, a city). The layers are the country outlines
   shipped with the application, the faults (the shapefile loaded at the top
-  of the tab, or the shipped East Anatolian Fault traces when none is
-  loaded), a *Provinces* polygon shapefile if you give one, and the
+  of the page, or, when none is loaded, the shipped fault sources, labelled
+  *Seismogenic fault sources, EFSM20 (hazard model)* with their attribution
+  under the map), a *Provinces* polygon shapefile if you give one, and the
   *Cities* labels: the sixteen cities around the East Anatolian Fault by
   default, or your own CSV of `lat, lon, name` (an optional `align` column
   with `right` puts the label left of the point). Maps are 12 × 10 inches at
@@ -629,9 +953,9 @@ tables with the implementation that produced them. Map lines come from
 Natural Earth and do not necessarily depict accepted national boundaries;
 the maps say so.
 
-## Indicators tab: catalog-based seismicity indicators
+## Indicators page: catalog-based seismicity indicators
 
-This tab works on the earthquake catalog alone, the way the
+This page works on the earthquake catalog alone, the way the
 Catalog-Based-Indicators tool did: it slides a time window over the events
 of a region and computes, for every window, the Gutenberg-Richter b- and
 a-value, the magnitude deficit, the square-root energy release rate, η (the
@@ -639,16 +963,20 @@ scatter around the Gutenberg-Richter line), μ (the mean interval between
 characteristic events), the mean magnitude and the elapsed time, then
 smooths them and plots them with the M5+ events marked. It follows the
 tested fork of that tool, so undefined values are blank rather than zero.
+With a study open, the bar at the top can take the catalog and a case's
+place from the study, and *Save as study recipe…* turns the settings into a
+recipe (its window and step must be in months).
 
 ### Catalog and selection
 
-- **Catalog**: an AFAD export (CSV or `.gz`) with `Date` in
+- **Earthquake catalog**: an AFAD export (CSV or `.gz`) with `Date` in
   `dd/mm/YYYY HH:MM:SS`, `Latitude`, `Longitude` and `Magnitude`. *Describe*
   loads it, applies the selection below and reports what is left.
 - **Events**: the *whole catalog*, the events within a *buffer* of the
   **East Anatolian Fault Zone** (its main strand from Karlıova to Antakya
   and the northern Sürgü-Çardak strand, from the GEM Global Active Faults
-  Database, CC BY-SA 4.0, shipped with the application), the events near
+  Database, CC BY-SA 4.0, shipped beside the application as a separate data
+  file under its own licence), the events near
   the traces of your own **GeoJSON** file (LineString features; a `strand`
   property lets you pick strands), or the events **within a circle**. The
   default is the EAFZ with a 30 km buffer.
@@ -707,9 +1035,9 @@ The figures mark the window in which each M5-6 (purple star) and M6+
 (orange star) event first appears. The table is readable by the Python
 tools; numbers are written as pandas writes them.
 
-## Early warning tab: ayzek
+## Early warning page: ayzek
 
-This tab runs **ayzek**, the earthquake early-warning pipeline: it reads
+This page runs **ayzek**, the earthquake early-warning pipeline: it reads
 continuous three-component waveforms from several stations, detects an
 earthquake at each station with a learned detector, declares an event when
 the stations agree within the P travel time, estimates the magnitude from the
@@ -717,7 +1045,7 @@ peak P displacement and locates the event. ayzek is a separate program
 (GPL-3.0-or-later, by H. Oğuz Bolat, Sibel Çimen, Bülent Bolat and Tülay
 Yıldırım, Yıldız Technical University; <https://doi.org/10.5281/zenodo.23672495>),
 frozen at its version 1.0.0 and shipped beside the application with its
-model weights, its licence and its source (`third_party/ayzek`). The tab
+model weights, its licence and its source (`third_party/ayzek`). The page
 builds its command line and shows what it prints; nothing of the method is
 reimplemented here. Please cite ayzek when you use its results.
 
@@ -774,24 +1102,25 @@ alarms, how many match a catalogue event, catalogue events detected (and
 detected before the S wave) and missed. *Open output folder* opens the
 working directory of the run.
 
-## Settings tab
+## Settings page
 
-**Interface** chooses the language. The **tools** section locates the
+**Interface** chooses the language and the theme. The **tools** section locates the
 original command-line tools (`sismokaos`, `sfc`, `tdvms`) for anyone who
 wants to run them beside the application: give the executable or the
 project directory (a checkout with its `pyproject.toml`), and *Check* asks
-the tool for its version. Nothing in the other tabs needs this; every tool
+the tool for its version. Nothing in the other pages needs this; every tool
 is built into the application. The `ayzek` entry is the exception: it is a
 separate program, shown here as *shipped with the application*, and the
-Early warning tab runs it.
+Early warning page runs it.
 
 ## Where files live
 
 | what | Linux | macOS | Windows |
 |---|---|---|---|
-| application settings (window layout, language, last folders) | `~/.config/sismokaos/sismokaos-gui.conf` | `~/Library/Preferences/com.sismokaos.sismokaos-gui.plist` | registry, `HKCU\Software\sismokaos\sismokaos-gui` |
-| mailbox and defaults (`mailbox.env`, `settings.env`) | `~/.config/tdvms/` | `~/.config/tdvms/` | `%APPDATA%\tdvms\` |
-| a study (`study.toml`, every run's results and `run.json`) | the study folder you chose | | |
+| application settings (window layout, language, last folders, last study) | `~/.config/sismokaos/sismokaos-gui.conf` | `~/Library/Preferences/com.sismokaos.sismokaos-gui.plist` | registry, `HKCU\Software\sismokaos\sismokaos-gui` |
+| mailbox and defaults (`mailbox.env`, `settings.env`), and the built-in lists once updated (`stations.csv`, `events.csv`) | `~/.config/tdvms/` | `~/.config/tdvms/` | `%APPDATA%\tdvms\` |
+| a study (`study.toml`, `waveforms.index.json`, downloaded catalogs, exports, every run's results, `run.json` and `run.log`) | the study folder you chose | | |
+| your waveforms | wherever they are; the study only records the folders | | |
 | campaigns, ledgers, downloaded archives | the campaigns folder you chose | | |
 | feature extraction results, labelled tables | the output directory you chose | | |
 | classification projects (`project.toml`, `results/`) | the project folder you chose | | |
@@ -799,13 +1128,65 @@ Early warning tab runs it.
 | region maps, per-region catalogs, `regions_run.json` | the output folder you chose (`~/regions` by default) | | |
 | ayzek's assessment table and scores | the output folder you chose (your home folder when empty) | | |
 | the shipped ayzek (executable, `models/`, licence) | inside the AppImage, `usr/share/sismokaos-gui/ayzek` | `sismokaos-gui.app/Contents/Resources/ayzek` | `ayzek\` beside the executable |
+| the shipped fault data files (with their licences and provenance) | inside the AppImage, `usr/share/sismokaos-gui/data` | `sismokaos-gui.app/Contents/Resources/data` | `data\` beside the executable |
 
 Campaign files are shared with the command-line `tdvms` tool, which uses the
 same ledger and env files but a different lock file: never run both on the
 same campaign at the same time.
 
+## Known limits
+
+Stated plainly, so that nobody finds them the hard way:
+
+- **Real waveform archives at scale.** The waveform import, the coverage it
+  reports and the Features runs of a study have been exercised on small test
+  data only, not on a real archive of hundreds of gigabytes. The second scan
+  pass reads through whole zip archives and will be slow the first time on a
+  large one. Treat the first study on real data as a trial and check the
+  reported coverage against what you know you have.
+- **The catalog download** (*Get the catalog…*) has been tested against a
+  simulated service, not against the live one.
+- **Windows and macOS packages.** The steps that put the fault data files
+  into the Windows and macOS packages, and the check that fails a package
+  without them, have not run on those systems yet; they first run in the
+  project's automated builds. The dialog that picks several folders at once
+  is Qt's own, not the system's, and has only been used on Linux.
+- **Turkish wording.** The Turkish texts of the study pages, the maps and
+  the hover help are under review and may still change.
+- **Early warning** does not follow the open study; it keeps its own inputs.
+- **Fault lines** are hazard-model fault sources, not an active fault map
+  (see [Maps and fault lines](#maps-and-fault-lines)).
+- **The built-in earthquake list** is for picking earthquakes only (see
+  [The earthquake catalog](#the-earthquake-catalog)).
+- **Numbers against the Python tools.** Clustering, model training and the chaos
+  features use the application's own implementations; see the notes in the
+  Classification and Regions sections before comparing numbers with the
+  original Python tools.
+
 ## Troubleshooting
 
+- **A cell on the Runs page waits.** Select it: the line under the matrix
+  says what is missing and the button beside it goes there. The usual causes
+  are a study with only the built-in earthquake list (Indicators and
+  Features need a full catalog), a case with no ticked station, and a
+  station with no waveforms for the span.
+- **Every finished run turned stale.** Something they all depend on changed:
+  the catalog file was replaced, its time offset was changed, or the runs
+  were made with an earlier version of the application. The reason is on
+  each cell.
+- **A station shows "not found" although the data is there.** Open
+  *Waveforms…* and check that the folder is listed and scanned, that the
+  station appears in the table (the name in the file headers counts, not the
+  folder's), and whether its files are under *Skipped files…*. Only miniSEED
+  2 is read.
+- **The data is on another drive now.** Open the study and answer the
+  *Locate…* question, or use *Moved…* in the Waveforms dialog.
+- **A station has no coordinates.** In the Waveforms dialog select its row
+  and *Type coordinates…* or *Load StationXML…*.
+- **A map shows no fault lines, or a run stops saying a data file was not
+  found.** The fault data files are missing from the installation; the
+  message lists the places searched. Install again, or set `SKG_DATA_DIR` to
+  a folder holding `eafz.geojson` and `faults_tr.geojson`.
 - **A run says the ledger is held by another process.** Another copy of the
   application or the command-line tool has it. Stop that one; if it crashed,
   the lock clears itself after a while or can be removed (`.qlock` beside the
@@ -819,13 +1200,15 @@ same campaign at the same time.
 - **The station is not in the embedded list.** Type its latitude and
   longitude (*set the station position directly*) or point to your own
   station list CSV with code, latitude and longitude columns.
-- **Mixed sample rates in the data directory.** One run handles one native
+- **Mixed sample rates in the waveform folder.** One run handles one native
   rate; split the files by rate.
 - **The update check cannot reach GitHub.** It needs outgoing HTTPS; behind a
   proxy or offline, update with the install command when you can.
 - **Something else.** Copy the job's log (*Copy log* in the Jobs panel) and
   open an issue at
-  <https://github.com/SismoKaos-Research/sismokaos-gui/issues>.
+  <https://github.com/SismoKaos-Research/sismokaos-gui/issues>. Before
+  attaching a screenshot, check that it shows no mailbox address or personal
+  folder.
 
 ## Licence
 
@@ -855,7 +1238,9 @@ Third-party parts, each with a provenance note:
 | Seismogenic fault sources of Turkey and its neighbours (EFSM20, clipped and simplified; a separate data file) | CC BY 4.0 | `data/faults/PROVENANCE.md` |
 | East Anatolian Fault Zone strands (GEM GAF-DB; a separate data file, distributed alongside, not as part of, the program; remains CC BY-SA 4.0) | CC BY-SA 4.0 | `data/faults/PROVENANCE.md` |
 | Country outlines (Natural Earth 5.1.1, clipped and simplified) | public domain | `src/analysis/data/PROVENANCE.md` |
-| ayzek (a separate program run by the Early warning tab) | GPL-3.0-or-later | `third_party/AYZEK-PROVENANCE.md` |
+| Built-in earthquake list (M 5+ since 1990 around Türkiye, from the USGS FDSN event service) | public domain | `src/tdvms/data/PROVENANCE.md` |
+| Built-in station list (the stations the AFAD TDVMS portal lists: code, network, position, instruments) | no licence stated by the source | `src/tdvms/data/PROVENANCE.md` |
+| ayzek (a separate program run by the Early warning page) | GPL-3.0-or-later | `third_party/AYZEK-PROVENANCE.md` |
 
 ayzek is not linked into the application: it is shipped beside it with its
 licence, and its source is the `third_party/ayzek` submodule.
@@ -876,3 +1261,8 @@ and `PROVENANCE.md`) and keep their own licences:
   <https://github.com/GEMScienceTools/gem-global-active-faults>), CC BY-SA
   4.0. A modified copy of this file that you pass on stays under CC BY-SA
   4.0.
+
+Catalogs you load or download yourself are not part of the application and
+are not redistributed by it. AFAD asks that the Disaster and Emergency
+Management Presidency (AFAD), Earthquake Department, be cited as the source
+when its data is used. The MTA active fault map is not shipped.
