@@ -141,7 +141,15 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   catalogTime_->addItem(QString(), QVariant()); // "Other…"
   auto *grid = new QGridLayout(inputs_);
   grid->addWidget(catalogLabel_, 0, 0);
-  grid->addWidget(catalog_, 0, 1);
+  catalogFacts_ = new QLabel(inputs_);
+  catalogFacts_->setObjectName(QStringLiteral("catalogFacts"));
+  catalogFacts_->setProperty("role", QStringLiteral("hint"));
+  catalogFacts_->setWordWrap(true);
+  auto *catalogColumn = new QVBoxLayout;
+  catalogColumn->setSpacing(2);
+  catalogColumn->addWidget(catalog_);
+  catalogColumn->addWidget(catalogFacts_);
+  grid->addLayout(catalogColumn, 0, 1);
   auto *catalogButtons = new QHBoxLayout;
   catalogButtons->addWidget(catalogUpdate_);
   catalogButtons->addWidget(catalogBrowse_);
@@ -574,6 +582,27 @@ void CasesPage::refresh() {
     catalog_->setText(s.catalogPath());
   }
   catalog_->setCursorPosition(0);
+  // What the catalog holds, and whether that is enough for the tools.
+  QString facts;
+  if (!noCatalog && !lostCatalog) {
+    const study::CatalogSummary cs =
+        study::catalogSummary(s.catalogPath(), s.catalogUtcOffsetHours);
+    if (cs.ok) {
+      facts = tr("%1 events, %2 to %3, magnitudes from about %4")
+                  .arg(cs.events)
+                  .arg(cs.first.toString(Qt::ISODate),
+                       cs.last.toString(Qt::ISODate))
+                  .arg(cs.floor, 0, 'f', 1);
+      if (cs.floor > defaults::kSparseCatalogMag)
+        facts += QStringLiteral("\n") +
+                 tr("⚠ Sparse: fine for choosing cases. The calibration of "
+                    "the features only avoids earthquakes of that size and "
+                    "larger, and the indicators need the small ones too: use "
+                    "a full catalog (an AFAD export) for those.");
+    }
+  }
+  catalogFacts_->setText(facts);
+  catalogFacts_->setVisible(!facts.isEmpty());
   catalogUpdate_->setVisible(noCatalog);
   // The built-in list is in UTC; there is nothing to choose.
   catalogTime_->setVisible(!noCatalog);
@@ -699,7 +728,7 @@ void CasesPage::showCase() {
   const QDateTime from = c->spanStart(), to = c->time;
   fillStationTable(stationTable_, candidates_, ticked,
                    [&s, from, to](const study::StationRef &st) {
-                     return waveformNote(s, st, from, to);
+                     return waveformCell(s, st, from, to);
                    });
   stationTable_->resizeColumnToContents(4);
   for (int i = 0; i < stationTable_->rowCount(); ++i)
@@ -707,20 +736,27 @@ void CasesPage::showCase() {
       const QSignalBlocker block(stationTable_);
       stationTable_->selectRow(i);
     }
-  int without = 0;
-  for (const study::StationRef &st : c->stations)
+  int without = 0, outside = 0;
+  for (const study::StationRef &st : c->stations) {
     if (!hasWaveformsOf(s, st))
       ++without;
-  stationHint_->setText(
-      c->stations.isEmpty()
-          ? tr("⚠ No station is ticked: only the Indicators recipes run for "
-               "this case. Tick the stations it is studied from.")
-          : without > 0
-                ? tr("⚠ %n ticked station(s) have no waveforms in the "
-                     "study's folders. Add the folder under Waveforms…, or "
-                     "get the data.",
-                     nullptr, without)
-                : QString());
+    else if (!hasWaveformsIn(s, st, from, to))
+      ++outside;
+  }
+  QStringList hints;
+  if (c->stations.isEmpty())
+    hints << tr("⚠ No station is ticked: only the Indicators recipes run for "
+                "this case. Tick the stations it is studied from.");
+  if (without > 0)
+    hints << tr("⚠ %n ticked station(s) have no waveforms in the study's "
+                "folders. Add the folder under Waveforms…, or get the data.",
+                nullptr, without);
+  if (outside > 0)
+    hints << tr("⚠ %n ticked station(s) have waveforms, but none in this "
+                "case's span: a run on them cannot start. Untick them, or "
+                "get their data for the span.",
+                nullptr, outside);
+  stationHint_->setText(hints.join(QLatin1Char('\n')));
   stationHint_->setVisible(!stationHint_->text().isEmpty());
   zone_->setCurrentIndex(c->zone.kind == study::Zone::Kind::Fault ? 1 : 0);
   radius_->setValue(c->zone.kind == study::Zone::Kind::Fault
@@ -772,7 +808,8 @@ void CasesPage::updateStationButtons() {
   bool lacking = false;
   if (c)
     for (const study::StationRef &x : c->stations)
-      lacking = lacking || !hasWaveformsOf(ctx_.study->study(), x);
+      lacking = lacking || !hasWaveformsIn(ctx_.study->study(), x,
+                                           c->spanStart(), c->time);
   getWave_->setText(lacking ? tr("Next: get waveforms →")
                             : tr("Get more waveforms…"));
   next_->setText(lacking || !c ? tr("Go on to recipes →")

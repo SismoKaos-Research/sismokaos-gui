@@ -38,8 +38,18 @@ void fillStationTable(QTableWidget *table,
 // carries no period; or "not found".
 QString waveformNote(const study::Study &study, const study::StationRef &s,
                      const QDateTime &from, const QDateTime &to);
+// The same as the tables show it: with "⚠ little of the span" added when
+// the station has data on less than a tenth of the span's days (it is then
+// used with a warning, runs.h).
+QString waveformCell(const study::Study &study, const study::StationRef &s,
+                     const QDateTime &from, const QDateTime &to);
 // Whether the study's waveform folders hold anything of the station.
 bool hasWaveformsOf(const study::Study &study, const study::StationRef &s);
+// Whether they hold anything of it in [from, to): what a Features run of a
+// case with that span would read. False for a station whose data lies
+// entirely outside the span (it started recording later, say).
+bool hasWaveformsIn(const study::Study &study, const study::StationRef &s,
+                    const QDateTime &from, const QDateTime &to);
 // The codes of the stations the study's waveform folders hold, sorted.
 QStringList stationsWithWaveforms(const study::Study &study);
 QList<study::StationRef> tickedStations(const QTableWidget *table,

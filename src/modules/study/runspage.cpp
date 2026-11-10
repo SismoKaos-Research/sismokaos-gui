@@ -15,6 +15,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QHelpEvent>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -32,6 +33,7 @@
 #include <QTableWidget>
 #include <QTimer>
 #include <QToolButton>
+#include <QToolTip>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -40,6 +42,7 @@
 #include <iterator>
 
 #include "core/theme.h"
+#include "core/defaults.h"
 #include "core/ui.h"
 #include "jobs/jobmodel.h"
 #include "jobs/taskjob.h"
@@ -56,7 +59,6 @@ using study::Study;
 namespace {
 
 constexpr double kLabelWidth = 250, kHeaderHeight = 58, kRowHeight = 44;
-constexpr int kMaxAtOnce = 2;
 
 QString toolName(const QString &tool) {
   if (tool == study::kToolIndicators)
@@ -214,9 +216,13 @@ QString RunMatrix::stateText(const MatrixCell &c) {
   if (c.running)
     return c.fraction >= 0 ? tr("◔  Running %1%").arg(qRound(c.fraction * 100))
                            : tr("◔  Running");
+  // Asked for and waiting its turn: said as that, whatever the cell was
+  // before (missing, stale, failed).
+  if (c.queued)
+    return c.place > 0 ? tr("⋯  Queued %1").arg(c.place) : tr("⋯  Queued");
   switch (c.state) {
   case CellState::Done:
-    return tr("✓  Done");
+    return c.warnings.isEmpty() ? tr("✓  Done") : tr("✓  Done  ⚠");
   case CellState::Missing:
     return tr("○  Missing");
   case CellState::Stale:
@@ -295,6 +301,8 @@ void RunMatrix::paintEvent(QPaintEvent *) {
       bool dashed = false;
       if (cell.running)
         tone = col("accent");
+      else if (cell.queued)
+        tone = col("muted"); // a full outline, where a missing cell is dashed
       else if (cell.state == CellState::Done)
         tone = theme_->statusColor(QStringLiteral("good"));
       else if (cell.state == CellState::Stale)
@@ -324,6 +332,45 @@ void RunMatrix::paintEvent(QPaintEvent *) {
       p.drawText(chip.adjusted(12, 0, -6, 0), Qt::AlignVCenter, text);
     }
   }
+}
+
+// What a cell says on hover: its state in words, the place in the queue and
+// what it waits for, why it waits or failed, and what to know about its run.
+QString RunMatrix::cellTip(const MatrixCell &c) {
+  QStringList lines;
+  if (c.queued && !c.running) {
+    lines << (!c.waitsFor.isEmpty()
+                  ? tr("Queued: waiting for %1, which it is run after")
+                        .arg(c.waitsFor)
+                  : tr("Queued, number %1 in the queue").arg(c.place));
+  } else {
+    lines << stateText(c).trimmed();
+    if (c.running && !c.doing.isEmpty())
+      lines << c.doing; // "2/3 Calibrating … · about 4 min left"
+    if (!c.running && !c.why.isEmpty())
+      lines << c.why;
+  }
+  for (const QString &w : c.warnings)
+    lines << QStringLiteral("⚠  ") + w;
+  return lines.join(QLatin1Char('\n'));
+}
+
+bool RunMatrix::event(QEvent *e) {
+  if (e->type() == QEvent::ToolTip) {
+    const auto *help = static_cast<QHelpEvent *>(e);
+    for (int i = 0; i < int(rows_.size()); ++i)
+      for (int c = 0; c < int(columns_.size()); ++c)
+        if (cellRect(i, c).contains(help->pos()) &&
+            cells_[i][c].state != CellState::NotApplicable) {
+          QToolTip::showText(help->globalPos(),
+                             ui::helpText(cellTip(cells_[i][c])), this);
+          return true;
+        }
+    QToolTip::hideText();
+    e->ignore();
+    return true;
+  }
+  return QWidget::event(e);
 }
 
 void RunMatrix::mousePressEvent(QMouseEvent *e) {
@@ -719,6 +766,10 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
   bar->addWidget(run_);
   bar->addWidget(stop_);
   bar->addWidget(runOne_);
+  recal_ = new QPushButton(main);
+  recal_->setObjectName(QStringLiteral("recalibrate"));
+  recal_->hide();
+  bar->addWidget(recal_);
   bar->addSpacing(12);
   bar->addWidget(new_);
   bar->addWidget(edit_);
@@ -796,14 +847,17 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
   connect(tick_, &QTimer::timeout, this, [this] {
     const qsizetype before = working_.size();
     render(false);
-    if (working_.size() != before)
-      reload(); // a worker has left its run: its cell can be run again
-    if (running_.isEmpty() && working_.isEmpty())
+    if (working_.size() != before) {
+      reload(); // a worker has left its run: its cell can be run again,
+      pump();   // and its slot is free for the next in the queue
+    }
+    if (running_.isEmpty() && working_.isEmpty() && queue_.isEmpty())
       tick_->stop();
   });
   connect(run_, &QPushButton::clicked, this, &RunsPage::runAll);
   connect(stop_, &QPushButton::clicked, this, &RunsPage::stopBatch);
-  connect(runOne_, &QPushButton::clicked, this, &RunsPage::runSelected);
+  connect(runOne_, &QPushButton::clicked, this, [this] { runSelected(); });
+  connect(recal_, &QPushButton::clicked, this, [this] { runSelected(true); });
   connect(edit_, &QPushButton::clicked, this, &RunsPage::editRecipe);
   connect(remove_, &QPushButton::clicked, this, &RunsPage::removeRecipe);
   connect(fix_, &QPushButton::clicked, this, &RunsPage::fixSelected);
@@ -850,7 +904,22 @@ void RunsPage::retranslate() {
                        "the cases, the recipes and every result. Start or "
                        "open one with the buttons above."));
   stop_->setText(tr("Stop"));
+  recal_->setText(tr("Recalibrate"));
+  recal_->setToolTip(ui::helpText(
+      tr("Runs the selected features cell with a new calibration. A "
+         "features run keeps its calibration (the chaos parameters fitted "
+         "on the station's quiet periods) and a later run of the same cell "
+         "uses it again as long as the data, the catalog, the station, the "
+         "span and the calibration settings are the same; this button makes "
+         "it afresh all the same.")));
   runOne_->setText(tr("Run the selected cell"));
+  // Wide enough for either of its two labels (see showSelection).
+  runOne_->setMinimumWidth(
+      std::max(runOne_->fontMetrics().horizontalAdvance(
+                   tr("Run the selected cell")),
+               runOne_->fontMetrics().horizontalAdvance(
+                   tr("Take out of the queue"))) +
+      40);
   new_->setText(tr("New recipe  ▾"));
   edit_->setText(tr("Edit recipe…"));
   remove_->setText(tr("Remove recipe"));
@@ -859,13 +928,14 @@ void RunsPage::retranslate() {
   hint_->setText(tr("A recipe is one tool's saved settings; the same recipe "
                     "on every case is the same analysis."));
   run_->setToolTip(ui::helpText(
-      tr("Queues every cell that is missing or stale as a job, two at a "
-         "time, and goes on to the cells they unblock (a classification "
-         "after its features).")));
+      tr("Queues every cell that is missing or stale. A few run at a time "
+         "(the number is on the Settings page), the others show Queued; "
+         "it goes on to the cells they unblock (a classification after its "
+         "features).")));
   stop_->setToolTip(ui::helpText(
-      tr("Stops the runs this page started and starts no further ones. A "
-         "stopped run leaves nothing behind; what was finished before stays "
-         "as it was.")));
+      tr("Stops the runs this page started and empties the queue: the "
+         "waiting cells are what they were before. A stopped run leaves "
+         "nothing behind; what was finished before stays as it was.")));
   runOne_->setToolTip(ui::helpText(
       tr("Runs the recipe of the selected cell on its case and station. A "
          "cell that is already done is run again only after you confirm; "
@@ -968,7 +1038,8 @@ void RunsPage::render(bool selection) {
   for (const Recipe &r : s.recipes)
     columns << qMakePair(r.name, r.tool);
   QList<QList<MatrixCell>> cells;
-  int waiting = 0, done = 0;
+  const QStringList places = queued();
+  int waiting = 0, done = 0, waitingOnCells = 0;
   for (int i = 0; i < int(rows_.size()); ++i) {
     QList<MatrixCell> line;
     for (int j = 0; j < int(s.recipes.size()); ++j) {
@@ -979,10 +1050,33 @@ void RunsPage::render(bool selection) {
         waiting += cell->state == CellState::Blocked ? 1 : 0;
         done += cell->state == CellState::Done ? 1 : 0;
       }
-      if (const Job *job = running_.value(keyOf(i, s.recipes[j]))) {
+      const QString k = keyOf(i, s.recipes[j]);
+      if (const Job *job = running_.value(k)) {
         m.running = true;
         m.fraction = job->progress().fraction;
+        m.doing = job->progress().text;
+      } else if (const int at = int(places.indexOf(k)); at >= 0) {
+        m.queued = true;
+        m.place = at + 1;
+      } else if (const Cell *cell = cellAt(i, j);
+                 runAll_ && cell && cell->state == CellState::Blocked &&
+                 cell->fix == study::Fix::RunFirst) {
+        // In a batch, a classification follows its features by itself: it
+        // is in the queue too, behind the cell it stands on.
+        const Recipe *f = s.findRecipe(
+            s.recipes[j].settings.value(kFeaturesKey).toString());
+        const QString up =
+            f ? key(rows_[i].caseId, rows_[i].station, f->id) : QString();
+        if (f && (places.contains(up) || busy(up))) {
+          m.queued = true;
+          m.waitsFor = rows_[i].station.isEmpty()
+                           ? f->name
+                           : f->name + QStringLiteral(" · ") + rows_[i].station;
+        }
       }
+      if (const Cell *cell = cellAt(i, j))
+        m.warnings = cell->warnings;
+      waitingOnCells += m.queued && !m.waitsFor.isEmpty() ? 1 : 0;
       line << m;
     }
     cells << line;
@@ -991,11 +1085,19 @@ void RunsPage::render(bool selection) {
   const int todo = int(runnable().size());
   run_->setText(tr("Run missing and stale (%1)").arg(todo));
   run_->setEnabled(todo > 0);
-  stop_->setEnabled(runAll_ || !running_.isEmpty());
+  stop_->setEnabled(runAll_ || !running_.isEmpty() || !queue_.isEmpty());
 
   // The next step, in words, with the page that it is done on.
   QString guide, page, go;
-  if (s.cases.isEmpty()) {
+  const int inQueue = int(queue_.size()) + waitingOnCells;
+  if (!running_.isEmpty() || inQueue > 0) {
+    // What is going on: how many run, how many wait their turn.
+    guide = tr("%1 running, %2 queued (%3 at a time; the number is on the "
+               "Settings page).")
+                .arg(running_.size())
+                .arg(inQueue)
+                .arg(atOnce());
+  } else if (s.cases.isEmpty()) {
     guide = tr("This study has no cases yet. A case is an earthquake (or a "
                "reference date) and the stations it is studied from.");
     page = QStringLiteral("cases");
@@ -1026,6 +1128,7 @@ QList<QPair<RunsPage::Row, QString>> RunsPage::runnable() const {
   if (!ctx_.study->isOpen())
     return out;
   const Study &s = ctx_.study->study();
+  const QStringList places = queued();
   QSet<QString> seen; // a per-case tool appears on every station row once
   for (int i = 0; i < int(rows_.size()); ++i)
     for (int j = 0; j < int(s.recipes.size()); ++j) {
@@ -1033,7 +1136,7 @@ QList<QPair<RunsPage::Row, QString>> RunsPage::runnable() const {
       if (!cell)
         continue;
       const QString k = keyOf(i, s.recipes[j]);
-      if (seen.contains(k) || busy(k))
+      if (seen.contains(k) || busy(k) || places.contains(k))
         continue;
       seen.insert(k);
       if (cell->state == CellState::Missing ||
@@ -1054,16 +1157,34 @@ void RunsPage::showSelection() {
   remove_->setEnabled(r != nullptr);
   QString info, dir, log, fixText, fixHelp;
   study::Fix fix = study::Fix::None;
-  bool canRun = false;
+  bool canRun = false, isQueued = false;
   const Cell *cell = r ? cellAt(row, col) : nullptr;
   if (cell) {
     const QString k = keyOf(row, *r);
     MatrixCell m;
     m.state = cell->state;
     m.running = running_.contains(k);
+    if (const Job *job = running_.value(k)) {
+      m.fraction = job->progress().fraction;
+      m.doing = job->progress().text;
+    }
+    const int at = int(queued().indexOf(k));
+    m.queued = !m.running && at >= 0;
+    m.place = at + 1;
+    isQueued = m.queued;
     info = RunMatrix::stateText(m).trimmed();
-    if (!m.running && !cell->why.isEmpty())
+    if (m.queued)
+      info = tr("⋯  Queued, number %1 of %2: it starts when a run before it "
+                "has ended (%3 run at a time)")
+                 .arg(m.place)
+                 .arg(queue_.size())
+                 .arg(atOnce());
+    else if (m.running && !m.doing.isEmpty())
+      info += QStringLiteral(" — ") + m.doing;
+    else if (!m.running && !cell->why.isEmpty())
       info += QStringLiteral(" — ") + cell->why;
+    for (const QString &w : cell->warnings)
+      info += QStringLiteral("\n⚠  ") + w;
     if (cell->record && cell->record->finished.isValid())
       info +=
           QStringLiteral(" · ") + tr("last run %1 UTC")
@@ -1077,10 +1198,13 @@ void RunsPage::showSelection() {
              QDir(study::runFailedDir(cell->dir)).exists())
       dir = study::runFailedDir(cell->dir); // what the failed run left
     log = cell->log;
-    if (!m.running && cell->state == CellState::Blocked)
+    // Where a waiting cell is put right; also a failed one with a known
+    // remedy (too little data: Cases; the catalog's events: the recipe).
+    if (!m.running && !m.queued &&
+        (cell->state == CellState::Blocked || cell->state == CellState::Failed))
       fix = cell->fix;
-    canRun = cell->state != CellState::Blocked &&
-             cell->state != CellState::NotApplicable && !busy(k);
+    canRun = m.queued || (cell->state != CellState::Blocked &&
+                          cell->state != CellState::NotApplicable && !busy(k));
   } else if (s.recipes.isEmpty()) {
     info = tr("No recipes yet. Use New recipe to add one.");
   } else if (rows_.isEmpty()) {
@@ -1111,6 +1235,16 @@ void RunsPage::showSelection() {
   }
   cellInfo_->setText(info);
   runOne_->setEnabled(canRun);
+  runOne_->setText(isQueued ? tr("Take out of the queue")
+                            : tr("Run the selected cell"));
+  // A features cell that has a calibration kept: it can be made anew.
+  const bool hasKept =
+      cell && r && r->tool == study::kToolFeatures && !cell->dir.isEmpty() &&
+      !QDir(study::runCalibrationDir(cell->dir))
+           .entryList({QStringLiteral("*.json")}, QDir::Files)
+           .isEmpty();
+  recal_->setVisible(hasKept);
+  recal_->setEnabled(hasKept && canRun && !isQueued);
   fix_->setText(fixText);
   fix_->setToolTip(fixHelp.isEmpty() ? QString() : ui::helpText(fixHelp));
   fix_->setProperty("fix", int(fix));
@@ -1305,7 +1439,7 @@ void RunsPage::removeRecipe() {
     QMessageBox::warning(this, tr("Recipe"), error);
 }
 
-bool RunsPage::start(const Row &row, const Recipe &recipe) {
+bool RunsPage::start(const Row &row, const Recipe &recipe, bool fresh) {
   const Study study = ctx_.study->study(); // a snapshot for the worker
   const Case *found = study.findCase(row.caseId);
   if (!found)
@@ -1326,7 +1460,8 @@ bool RunsPage::start(const Row &row, const Recipe &recipe) {
   const auto working = std::make_shared<std::atomic<bool>>(true);
   auto *job = new TaskJob(
       name, recipe.tool, tr("recipe %1 on %2").arg(recipe.id, c.id),
-      [study, c, station, recipe, version, working](TaskContext &t) -> int {
+      [study, c, station, recipe, version, working,
+       fresh](TaskContext &t) -> int {
         struct Leave {
           std::shared_ptr<std::atomic<bool>> flag;
           ~Leave() { flag->store(false); }
@@ -1337,6 +1472,7 @@ bool RunsPage::start(const Row &row, const Recipe &recipe) {
         hooks.progress = [&t](double f, const QString &what) {
           t.progress(f, what);
         };
+        hooks.freshCalibration = fresh;
         try {
           return study::runCell(study, c, station, recipe, version, hooks) ? 0
                                                                            : 1;
@@ -1355,8 +1491,10 @@ bool RunsPage::start(const Row &row, const Recipe &recipe) {
       return;
     // Cancelling a run, here or in the Jobs panel, ends the batch: the next
     // cell is not started behind the user's back.
-    if (added->state() == Job::State::Cancelled)
+    if (added->state() == Job::State::Cancelled) {
       runAll_ = false;
+      queue_.clear();
+    }
     // After the job has settled: show the new state, start what is next.
     QTimer::singleShot(0, this, [this] {
       reload();
@@ -1374,7 +1512,7 @@ void RunsPage::runAll() {
   render();
 }
 
-void RunsPage::runSelected() {
+void RunsPage::runSelected(bool fresh) {
   if (!ctx_.study->isOpen())
     return;
   const Study &s = ctx_.study->study();
@@ -1383,6 +1521,12 @@ void RunsPage::runSelected() {
   if (!cell || col >= s.recipes.size())
     return;
   const Recipe &r = s.recipes[col];
+  // A queued cell: the button takes it out again, and the cell is what it
+  // was before.
+  if (dequeue(keyOf(row, r))) {
+    render();
+    return;
+  }
   if (cell->state == CellState::Done) {
     const Case *c = s.findCase(rows_[row].caseId);
     if (!confirm(tr("Run again"),
@@ -1393,12 +1537,16 @@ void RunsPage::runSelected() {
                      .arg(r.name, c ? c->name : rows_[row].caseId)))
       return;
   }
-  start(rows_[row], r);
+  // Through the same queue as a batch: a cell asked for while every slot
+  // is taken waits its turn instead of running beside the others.
+  enqueue(rows_[row], r, fresh);
+  pump();
   render();
 }
 
 void RunsPage::stopBatch() {
   runAll_ = false;
+  queue_.clear(); // the waiting cells are what they were before
   const auto jobs = running_.values();
   for (const QPointer<Job> &job : jobs)
     if (job)
@@ -1481,29 +1629,91 @@ void RunsPage::showLog() {
   dialog->show();
 }
 
-void RunsPage::pump() {
-  if (!runAll_ || !ctx_.study->isOpen())
+QStringList RunsPage::queued() const {
+  QStringList keys;
+  for (const Queued &q : queue_)
+    keys << q.key;
+  return keys;
+}
+
+int RunsPage::atOnce() const {
+  const int n = ctx_.settings
+                    ? ctx_.settings
+                          ->value(QLatin1String(defaults::kRunsAtOnceSetting),
+                                  defaults::kRunsAtOnce)
+                          .toInt()
+                    : defaults::kRunsAtOnce;
+  return std::clamp(n, 1, 16);
+}
+
+void RunsPage::enqueue(const Row &row, const Recipe &r, bool fresh) {
+  const QString k =
+      key(row.caseId, study::perStation(r.tool) ? row.station : QString(), r.id);
+  if (busy(k) || queued().contains(k))
     return;
+  queue_ << Queued{row, r.id, k, fresh};
+}
+
+bool RunsPage::dequeue(const QString &k) {
+  for (int i = 0; i < int(queue_.size()); ++i)
+    if (queue_[i].key == k) {
+      queue_.removeAt(i);
+      return true;
+    }
+  return false;
+}
+
+void RunsPage::pump() {
+  if (!ctx_.study->isOpen()) {
+    queue_.clear();
+    runAll_ = false;
+    return;
+  }
   const Study &s = ctx_.study->study();
-  int active = int(running_.size());
-  bool started = false;
-  for (const auto &item : runnable()) {
-    if (active >= kMaxAtOnce)
-      break;
-    const Recipe *r = s.findRecipe(item.second);
-    if (!r)
-      continue;
-    const QString k =
-        key(item.first.caseId,
-            study::perStation(r->tool) ? item.first.station : QString(), r->id);
-    if (attempted_.contains(k))
-      continue; // tried in this batch already (it failed): do not loop
-    if (start(item.first, *r)) {
-      ++active;
-      started = true;
+  if (runAll_) {
+    // What is missing or stale now, and was not tried in this batch (a cell
+    // that failed is not run in a loop), joins the queue: this is how a
+    // classification follows the features it was waiting for.
+    for (const auto &item : runnable()) {
+      const Recipe *r = s.findRecipe(item.second);
+      if (!r)
+        continue;
+      const QString k =
+          key(item.first.caseId,
+              study::perStation(r->tool) ? item.first.station : QString(),
+              r->id);
+      if (!attempted_.contains(k))
+        enqueue(item.first, *r);
     }
   }
-  if (active == 0 && !started)
+  // A worker that is still leaving a cancelled run holds its slot too.
+  int active = 0;
+  for (auto it = working_.constBegin(); it != working_.constEnd(); ++it)
+    active += it.value()->load() ? 1 : 0;
+  active = std::max(active, int(running_.size()));
+  const int limit = atOnce();
+  for (int i = 0; i < int(queue_.size()) && active < limit;) {
+    const Queued q = queue_[i];
+    const Recipe *r = s.findRecipe(q.recipeId);
+    const Case *c = s.findCase(q.row.caseId);
+    // The study may have changed while the cell waited: what can no longer
+    // run (its case or recipe is gone, or it now waits for something)
+    // leaves the queue.
+    const Cell now = r && c ? study::cellOf(s, *c, q.row.station, *r) : Cell();
+    if (!r || !c || now.state == CellState::Blocked ||
+        now.state == CellState::NotApplicable) {
+      queue_.removeAt(i);
+      continue;
+    }
+    if (busy(q.key)) { // its earlier run is still winding down: later
+      ++i;
+      continue;
+    }
+    queue_.removeAt(i);
+    if (start(q.row, *r, q.fresh))
+      ++active;
+  }
+  if (runAll_ && queue_.isEmpty() && active == 0)
     runAll_ = false;
   render();
 }

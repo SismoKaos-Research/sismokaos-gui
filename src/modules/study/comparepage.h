@@ -45,6 +45,7 @@ signals:
   void rowActivated(const study::ScoreRow &row);
 
 protected:
+  bool event(QEvent *e) override; // a row's warnings on hover
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *e) override;
   void mouseDoubleClickEvent(QMouseEvent *e) override;

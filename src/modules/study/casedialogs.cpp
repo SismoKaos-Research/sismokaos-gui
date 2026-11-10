@@ -32,6 +32,7 @@
 #include "core/defaults.h"
 #include "core/ui.h"
 #include "study/catalogs.h"
+#include "study/runs.h"
 #include "study/waveindex.h"
 
 namespace skg {
@@ -131,6 +132,15 @@ bool hasWaveformsOf(const study::Study &study, const study::StationRef &s) {
   return study::hasWaveforms(study, s);
 }
 
+bool hasWaveformsIn(const study::Study &study, const study::StationRef &s,
+                    const QDateTime &from, const QDateTime &to) {
+  if (!study::hasWaveforms(study, s))
+    return false;
+  return !study::chooseWaveFiles(study, *study::WaveIndex::shared(study.dir), s,
+                                 from, to)
+              .files.isEmpty();
+}
+
 QString waveformNote(const study::Study &study, const study::StationRef &s,
                      const QDateTime &from, const QDateTime &to) {
   const int total = int(std::max<qint64>(1, from.daysTo(to)));
@@ -145,6 +155,16 @@ QString waveformNote(const study::Study &study, const study::StationRef &s,
   if (index->hasStation(s.code)) {
     bool approx = false, atLeast = false;
     const int days = index->daysCovered(s.code, from, to, &approx, &atLeast);
+    const study::SpanData span = study::spanData(*index, s.code, from, to);
+    // The station has data, but none of it in the span: not the same as a
+    // station nothing is known of, and not one to run a case on.
+    if (days == 0 && !atLeast && span.first.isValid() &&
+        !hasWaveformsIn(study, s, from, to))
+      return QCoreApplication::translate(
+                 "skg::AddFromCatalogDialog",
+                 "⚠ data, but none in the span (it has %1 to %2)")
+          .arg(span.first.toString(Qt::ISODate),
+               span.last.toString(Qt::ISODate));
     // Exact once the scan has read the station's files; "about" while some
     // of the days are estimated from the periods in the file names; "at
     // least" when some file's name says nothing about its period.
@@ -167,6 +187,19 @@ QString waveformNote(const study::Study &study, const study::StationRef &s,
   if (study::hasWaveforms(study, s))
     return QCoreApplication::translate("skg::AddFromCatalogDialog", "folder found, not scanned yet");
   return QCoreApplication::translate("skg::AddFromCatalogDialog", "not found");
+}
+
+QString waveformCell(const study::Study &study, const study::StationRef &s,
+                     const QDateTime &from, const QDateTime &to) {
+  QString text = waveformNote(study, s, from, to);
+  // Little of the span: usable, and marked.
+  if (s.dataDir.isEmpty() &&
+      study::spanData(*study::WaveIndex::shared(study.dir), s.code, from, to)
+          .thin())
+    text += QStringLiteral("  ") +
+            QCoreApplication::translate("skg::AddFromCatalogDialog",
+                                        "⚠ little of the span");
+  return text;
 }
 
 void fillStationTable(QTableWidget *table,
@@ -576,22 +609,25 @@ void AddFromCatalogDialog::eventChosen() {
   for (const study::StationRef &s : all.mid(study::kStationCandidates))
     if (keep.contains(s.code))
       near_ << s;
-  // Nothing chosen yet: start with the nearest stations that have
-  // waveforms, or just the nearest when none has.
-  if (keep.isEmpty()) {
-    for (const study::StationRef &s : std::as_const(near_))
-      if (keep.size() < 3 && hasWaveformsOf(study_, s))
-        keep << s.code;
-    if (keep.isEmpty())
-      for (const study::StationRef &s : near_.mid(0, 3))
-        keep << s.code;
-  }
   const QDateTime t1 = QDateTime::fromSecsSinceEpoch(
       qint64(std::floor(e.epoch)), QTimeZone::UTC);
   const QDateTime t0 = t1.addDays(-span_->value());
+  // Nothing chosen yet: start with the nearest stations that have waveforms
+  // in the span. When none has, the nearest ones nothing is known of (their
+  // data is still to be got); never a station whose data lies outside the
+  // span, since a run on it could only fail.
+  if (keep.isEmpty()) {
+    for (const study::StationRef &s : std::as_const(near_))
+      if (keep.size() < 3 && hasWaveformsIn(study_, s, t0, t1))
+        keep << s.code;
+    if (keep.isEmpty())
+      for (const study::StationRef &s : std::as_const(near_))
+        if (keep.size() < 3 && !hasWaveformsOf(study_, s))
+          keep << s.code;
+  }
   fillStationTable(stationTable_, near_, keep,
                    [this, t0, t1](const study::StationRef &s) {
-                     return waveformNote(study_, s, t0, t1);
+                     return waveformCell(study_, s, t0, t1);
                    });
   stationTable_->resizeColumnToContents(4);
   stationNote_->setText(

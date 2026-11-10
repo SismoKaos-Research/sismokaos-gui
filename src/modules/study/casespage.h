@@ -92,6 +92,7 @@ private:
   QGroupBox *inputs_;
   QLabel *catalogLabel_, *dataLabel_, *waveSummary_;
   QLineEdit *catalog_;
+  QLabel *catalogFacts_; // how many events, how far down the magnitudes go
   QPushButton *catalogBrowse_, *waveButton_;
   QPushButton *catalogGet_, *catalogUpdate_, *setup_;
   QComboBox *catalogTime_;

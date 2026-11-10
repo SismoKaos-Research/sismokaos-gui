@@ -41,6 +41,14 @@ struct MatrixCell {
   QString why;
   bool running = false;
   double fraction = -1;
+  QString doing; // running: the phase the run is in, as its job says it
+  // Waiting for a free slot, or for the cell it stands on: place in the
+  // queue (1 is next), and what it waits for when that is another cell.
+  bool queued = false;
+  int place = 0;
+  QString waitsFor;
+  // Something to know about the run (Cell::warnings), one sentence a line.
+  QStringList warnings;
 };
 
 // Mouse: a click selects a cell (or a column, on its heading), a double
@@ -54,6 +62,8 @@ public:
   void setContents(const QStringList &rowLabels,
                    const QList<QPair<QString, QString>> &columns, // name, tool
                    const QList<QList<MatrixCell>> &cells);
+  // The tooltip of a cell: state, queue place, reason, warnings.
+  static QString cellTip(const MatrixCell &c);
   int selectedRow() const { return row_; }
   int selectedColumn() const { return column_; }
   void select(int row, int column);
@@ -72,6 +82,7 @@ protected:
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *e) override;
   void mouseDoubleClickEvent(QMouseEvent *e) override;
+  bool event(QEvent *e) override; // the cell's tooltip
   void keyPressEvent(QKeyEvent *e) override;
   void focusInEvent(QFocusEvent *e) override;
   void focusOutEvent(QFocusEvent *e) override;
@@ -129,6 +140,10 @@ public:
   std::function<bool(const QString &title, const QString &text)> confirm;
   // Whether a batch ("Run missing and stale") is going on.
   bool batchRunning() const { return runAll_; }
+  // The cells waiting for a free slot, in order ("case|station|recipe").
+  QStringList queued() const;
+  // How many cells run at the same time (the setting, at least 1).
+  int atOnce() const;
 
 protected:
   void changeEvent(QEvent *e) override;
@@ -148,13 +163,18 @@ private:
   void editRecipe();
   void removeRecipe();
   void runAll();
-  void runSelected();
+  // `fresh`: a features cell computes its calibration anew.
+  void runSelected(bool fresh = false);
   void stopBatch();
   void fixSelected();
   void showLog();
   void openSelectedFolder();
+  // Starts queued cells while slots are free; in a batch, first queues what
+  // has become runnable.
   void pump();
-  bool start(const Row &row, const study::Recipe &r);
+  void enqueue(const Row &row, const study::Recipe &r, bool fresh = false);
+  bool dequeue(const QString &key);
+  bool start(const Row &row, const study::Recipe &r, bool fresh = false);
   static QString key(const QString &caseId, const QString &station,
                      const QString &recipeId);
   QString keyOf(int row, const study::Recipe &r) const;
@@ -171,10 +191,17 @@ private:
   QHash<QString, std::shared_ptr<std::atomic<bool>>> working_;
   QSet<QString> attempted_;
   bool runAll_ = false;
+  // Cells asked for, one by one or by a batch, that wait for a free slot.
+  struct Queued {
+    Row row;
+    QString recipeId, key;
+    bool fresh = false; // features: with a new calibration
+  };
+  QList<Queued> queue_;
 
   QStackedWidget *stack_;
   QLabel *noStudy_;
-  QPushButton *run_, *stop_, *runOne_, *edit_, *remove_;
+  QPushButton *run_, *stop_, *runOne_, *recal_, *edit_, *remove_;
   QPushButton *fix_, *showLog_, *openFolder_;
   QToolButton *new_;
   QLabel *hint_;

@@ -1,5 +1,6 @@
 #include "modules/settings/settingsmodule.h"
 
+#include "core/defaults.h"
 #include "core/ui.h"
 
 #include "core/theme.h"
@@ -252,8 +253,31 @@ public:
     scanLayout->addWidget(cacheLabel_, 1);
     scanLayout->addWidget(clearCache_);
 
+    // Study runs: how many cells of the Runs page run at the same time.
+    runsBox_ = new QGroupBox(this);
+    atOnceLabel_ = new QLabel(runsBox_);
+    atOnce_ = new QSpinBox(runsBox_);
+    atOnce_->setObjectName(QStringLiteral("runsAtOnce"));
+    atOnce_->setRange(1, 16);
+    atOnce_->setValue(
+        settings_
+            ? settings_
+                  ->value(QLatin1String(defaults::kRunsAtOnceSetting),
+                          defaults::kRunsAtOnce)
+                  .toInt()
+            : defaults::kRunsAtOnce);
+    connect(atOnce_, &QSpinBox::valueChanged, this, [this](int n) {
+      if (settings_)
+        settings_->setValue(QLatin1String(defaults::kRunsAtOnceSetting), n);
+    });
+    auto *runsLayout = new QHBoxLayout(runsBox_);
+    runsLayout->addWidget(atOnceLabel_);
+    runsLayout->addWidget(atOnce_);
+    runsLayout->addStretch(1);
+
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(langBox_);
+    layout->addWidget(runsBox_);
     layout->addWidget(scanBox_);
     for (const ToolDesc &d : ctx.tools->tools())
       layout->addWidget(new ToolBox(ctx.tools, d, this));
@@ -307,6 +331,17 @@ private:
   }
 
   void retranslate() {
+    runsBox_->setTitle(tr("Study runs"));
+    atOnceLabel_->setText(tr("Runs at the same time"));
+    ui::setHelp({atOnceLabel_, atOnce_},
+                tr("How many cells of the Runs page run at the same time; "
+                   "the others wait in the queue and show Queued. Default "
+                   "%1. A feature extraction uses several processor cores "
+                   "and unpacks its waveform files, so more at once is not "
+                   "always faster: raise it on a machine with many cores "
+                   "and a fast disk, lower it if the computer gets "
+                   "sluggish. It takes effect when the next cell starts.")
+                    .arg(defaults::kRunsAtOnce));
     scanBox_->setTitle(tr("Waveform scan"));
     workersLabel_->setText(tr("Files read at once"));
     workers_->setSpecialValueText(
@@ -345,6 +380,9 @@ private:
   QGroupBox *langBox_;
   QLabel *langLabel_;
   QSettings *settings_;
+  QGroupBox *runsBox_;
+  QLabel *atOnceLabel_;
+  QSpinBox *atOnce_;
   QGroupBox *scanBox_;
   QLabel *workersLabel_;
   QSpinBox *workers_;

@@ -407,12 +407,16 @@ void FeaturesWidget::start(Mode mode) {
           hooks.shouldStop = [&] { return ctx.cancelled(); };
           hooks.phase = [&](const QString &p) {
             ctx.log(QStringLiteral(" %1").arg(p));
-            ctx.progress(0.0, p);
           };
-          hooks.progress = [&](int done, int all) {
-            if (all > 0)
-              ctx.progress(double(done) / all,
-                           QStringLiteral("%1/%2").arg(done).arg(all));
+          // One bar over the phases of every band; it never goes back.
+          hooks.overall = [&, i](const fx::RunProgress &p) {
+            const QString band =
+                total > 1 ? QStringLiteral("%1 (%2/%3) · ")
+                                .arg(run.band)
+                                .arg(i + 1)
+                                .arg(total)
+                          : QString();
+            ctx.progress((i + p.fraction) / double(total), band + p.text);
           };
           try {
             const fx::RunResult r = preprocessOnly

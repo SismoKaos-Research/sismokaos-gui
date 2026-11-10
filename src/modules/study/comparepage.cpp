@@ -12,6 +12,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QHelpEvent>
 #include <QImage>
 #include <QKeyEvent>
 #include <QLabel>
@@ -29,6 +30,7 @@
 #include <QTableWidget>
 #include <QThreadPool>
 #include <QToolButton>
+#include <QToolTip>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -181,6 +183,25 @@ void ScoreTable::sortBy(int column) {
   update();
 }
 
+// Scores made under a warning carry a ⚠ beside the model; hovering the row
+// says what it is.
+bool ScoreTable::event(QEvent *e) {
+  if (e->type() == QEvent::ToolTip) {
+    const auto *help = static_cast<QHelpEvent *>(e);
+    const int row = help->pos().y() > kHead ? rowAt(help->pos()) : -1;
+    if (row >= 0 && row < rows_.size() && !rows_[row].warnings.isEmpty()) {
+      QStringList lines{tr("These scores were made with:")};
+      for (const QString &w : rows_[row].warnings)
+        lines << QStringLiteral("⚠  ") + w;
+      QToolTip::showText(help->globalPos(),
+                         ui::helpText(lines.join(QLatin1Char('\n'))), this);
+      return true;
+    }
+    // Otherwise the table's own help.
+  }
+  return QWidget::event(e);
+}
+
 void ScoreTable::mousePressEvent(QMouseEvent *e) {
   if (e->position().y() > kHead) {
     current_ = rowAt(e->position());
@@ -331,7 +352,9 @@ void ScoreTable::paintEvent(QPaintEvent *) {
                                   : QString::number(row.magnitude, 'f', 1),
         std::isnan(row.distanceKm) ? dash
                                    : QString::number(row.distanceKm, 'f', 0),
-        done ? (row.bestModel.isEmpty() ? dash : row.bestModel)
+        done ? (row.bestModel.isEmpty() ? dash : row.bestModel) +
+                   (row.warnings.isEmpty() ? QString()
+                                           : QStringLiteral("  ⚠"))
              : RunMatrix::stateText(state)};
     for (int k = 0; k < 4; ++k) {
       p.setPen(k == 3 && !done ? col("muted") : col("text"));
@@ -968,6 +991,15 @@ void ComparePage::apply(const study::CompareData &d) {
               "sort; double-click a row to open its folder.")
                .arg(done)
                .arg(d.scores.size());
+    int warned = 0;
+    for (const study::ScoreRow &r : d.scores)
+      warned += r.warnings.isEmpty() ? 0 : 1;
+    if (warned > 0)
+      hint += QLatin1Char(' ') +
+              tr("⚠ marks %n row(s) whose scores were made under a warning "
+                 "(a sparse catalog, little data): point at the row to read "
+                 "it.",
+                 nullptr, warned);
     if (done < d.scores.size()) {
       page = QStringLiteral("runs");
       go = tr("Go to Runs");
