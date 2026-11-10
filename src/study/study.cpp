@@ -283,6 +283,54 @@ QString Study::addWaveRoot(const QString &absolutePath) {
   return waveRoots.last().id;
 }
 
+Study::RootsAdded Study::addWaveRoots(const QStringList &absolutePaths) {
+  RootsAdded out;
+  const auto inside = [](const QString &child, const QString &parent) {
+    return child == parent ||
+           child.startsWith(parent.endsWith('/') ? parent : parent + '/');
+  };
+  QStringList wanted;
+  for (const QString &p : absolutePaths) {
+    const QString clean = QDir::cleanPath(QDir(p).absolutePath());
+    if (!clean.isEmpty() && !wanted.contains(clean))
+      wanted << clean;
+  }
+  // Parents before their sub-folders, so a sub-folder given in the same go
+  // is seen as covered.
+  std::sort(wanted.begin(), wanted.end(),
+            [](const QString &a, const QString &b) {
+              return a.size() != b.size() ? a.size() < b.size() : a < b;
+            });
+  // A folder that leaves the list must not hand its id to a new one: the
+  // index still holds its files under that id until the next scan.
+  int lastId = 0;
+  for (const WaveRoot &r : waveRoots)
+    if (r.id.startsWith(QLatin1Char('w')))
+      lastId = std::max(lastId, r.id.mid(1).toInt());
+  for (const QString &path : wanted) {
+    bool isCovered = false;
+    for (const WaveRoot &r : waveRoots)
+      if (inside(path, QDir::cleanPath(resolved(r.path)))) {
+        isCovered = true;
+        break;
+      }
+    if (isCovered) {
+      out.covered << path;
+      continue;
+    }
+    for (int i = int(waveRoots.size()) - 1; i >= 0; --i) {
+      const QString have = QDir::cleanPath(resolved(waveRoots[i].path));
+      if (inside(have, path)) {
+        out.replaced << have;
+        waveRoots.removeAt(i);
+      }
+    }
+    waveRoots << WaveRoot{QStringLiteral("w%1").arg(++lastId), stored(path)};
+    out.added << path;
+  }
+  return out;
+}
+
 QString Study::waveRootPath(const QString &id) const {
   for (const WaveRoot &r : waveRoots)
     if (r.id == id)

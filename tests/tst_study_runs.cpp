@@ -274,7 +274,7 @@ void TstStudyRuns::blockedCellsSayWhy() {
   cell = cellOf(noCatalog, c, QString(), indicators_);
   QCOMPARE(cell.state, CellState::Blocked);
   QCOMPARE(cell.fix, Fix::Cases);
-  QVERIFY(cell.why.contains(QStringLiteral("no earthquake catalog")));
+  QVERIFY(cell.why.contains(QStringLiteral("no earthquake catalog of its own")));
 }
 
 void TstStudyRuns::classificationOnAFabricatedTable() {

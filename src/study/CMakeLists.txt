@@ -8,6 +8,7 @@ qt_add_library(skg_study STATIC
   runs.cpp    runs.h
   compare.cpp compare.h
   waveindex.cpp waveindex.h
+  catalogs.cpp catalogs.h
 )
 target_include_directories(skg_study PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_study PUBLIC Qt6::Core Qt6::Gui skg_analysis skg_cbi skg_sfc skg_fx skg_tdvms

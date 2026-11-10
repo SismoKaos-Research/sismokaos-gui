@@ -124,8 +124,11 @@ int writeEvents(const std::vector<analysis::Event> &events, double t0,
 // study says it is); empty when it can.
 QString catalogProblem(const Study &s) {
   if (s.catalog.isEmpty())
-    return RunText::tr("the study has no earthquake catalog: choose one on "
-                       "the Cases page");
+    return RunText::tr("the study has no earthquake catalog of its own: the "
+                       "built-in list holds only the large earthquakes "
+                       "(magnitude 5 and above), too few for this analysis. "
+                       "Choose a full catalog or download one on the Cases "
+                       "page");
   if (!QFileInfo::exists(s.catalogPath()))
     return RunText::tr("catalog not found: %1 (choose it again on the Cases "
                        "page)")
@@ -804,6 +807,19 @@ eventOfCase(const Case &c, const std::vector<analysis::Event> &events) {
         std::abs(e.lon - c.lon) > 1e-3 || std::abs(e.mag - c.magnitude) > 0.051)
       continue;
     if (!best || std::abs(e.epoch - t) < std::abs(best->epoch - t))
+      best = &e;
+  }
+  if (best)
+    return best;
+  // A case picked from another catalog than the one in use (the built-in
+  // list, then a denser catalog of another agency) differs a little in time,
+  // place and magnitude. The same earthquake is then the largest event within
+  // two minutes and about a degree of the case.
+  for (const analysis::Event &e : events) {
+    if (std::abs(e.epoch - t) > 120.0 || std::abs(e.lat - c.lat) > 1.0 ||
+        std::abs(e.lon - c.lon) > 1.0 || std::abs(e.mag - c.magnitude) > 1.0)
+      continue;
+    if (!best || e.mag > best->mag)
       best = &e;
   }
   return best;

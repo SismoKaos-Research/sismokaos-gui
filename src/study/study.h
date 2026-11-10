@@ -17,7 +17,10 @@
 //
 //   schema = 1
 //   name = "East Anatolian comparison"
-//   catalog = "catalog_afad.csv"       # relative to the folder, or absolute
+//   catalog = "catalog_afad.csv"       # relative to the folder, or absolute;
+//                                      # empty: no catalog of its own, cases
+//                                      # are picked from the built-in list
+//                                      # (study/catalogs.h)
 //   catalog_utc_offset_hours = 0.0
 //   station_list = ""                  # empty: the built-in AFAD list
 //   data_root = ""                     # old files only: read, not written
@@ -193,6 +196,14 @@ public:
   // The same, returning the folder's id (also when it was already listed).
   QString addWaveRoot(const QString &absolutePath);
   QString waveRootPath(const QString &id) const; // absolute, or empty
+  // Adds several waveform folders at once, so that no file ends up under two
+  // of them: a folder already listed, or lying inside a listed one, is not
+  // added (`covered`); a listed folder lying inside a new one leaves the
+  // list (`replaced`), since the new one holds all of it.
+  struct RootsAdded {
+    QStringList added, covered, replaced; // absolute paths
+  };
+  RootsAdded addWaveRoots(const QStringList &absolutePaths);
   // The station list with the study's extra stations appended. Throws when
   // the list cannot be read and there are no extras.
   std::vector<analysis::Station> stations() const;
