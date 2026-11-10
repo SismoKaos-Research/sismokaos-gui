@@ -39,8 +39,9 @@ QPushButton#lang:checked { background: @accent; border-color: @accent;
 
 /* Status strip */
 QFrame#statusStrip { background: @surface; border-top: 1px solid @border; }
-QFrame#studyBar, QFrame#noticeBar { background: @surface;
+QFrame#studyBar, QFrame#noticeBar, QFrame#firstRunCard { background: @surface;
   border-bottom: 1px solid @border; }
+QLabel#firstRunText { color: @text; }
 QLabel#statusText { color: @muted; font-size: 12px; }
 QLabel#statusDot { color: @accent; font-size: 12px; }
 QLabel#statusDot[idle="true"] { color: @border; }

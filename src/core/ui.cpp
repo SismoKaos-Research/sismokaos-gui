@@ -1,7 +1,15 @@
 #include "core/ui.h"
 
+#include "core/appsettings.h"
+
+#include <QDir>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QLocale>
 #include <QSplitter>
 #include <QSettings>
+
+#include <clocale>
 #include <QAbstractButton>
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -191,6 +199,65 @@ void persistSplitter(QSplitter *splitter, QSettings *settings,
                    [splitter, settings, key] {
                      settings->setValue(key, splitter->saveState());
                    });
+}
+
+QString dialogFolder(QSettings *settings, const QString &key,
+                     const QString &fallback) {
+  const QString saved =
+      settings ? settings
+                     ->value(QLatin1String(appsettings::kDialogFolderPrefix) +
+                             key)
+                     .toString()
+               : QString();
+  if (!saved.isEmpty() && QFileInfo(saved).isDir())
+    return saved;
+  if (!fallback.isEmpty() && QFileInfo(fallback).isDir())
+    return fallback;
+  return QDir::homePath();
+}
+
+void rememberDialogFolder(QSettings *settings, const QString &key,
+                          const QString &chosenPath) {
+  if (!settings || chosenPath.isEmpty())
+    return;
+  // A chosen folder is remembered by its parent, so the dialog next opens
+  // beside it and not inside it; a chosen file by the folder it is in.
+  const QFileInfo fi(chosenPath);
+  settings->setValue(QLatin1String(appsettings::kDialogFolderPrefix) + key,
+                     fi.absolutePath());
+}
+
+QString pickFolder(QWidget *parent, QSettings *settings, const QString &key,
+                   const QString &title, const QString &fallback) {
+  const QString dir = QFileDialog::getExistingDirectory(
+      parent, title, dialogFolder(settings, key, fallback));
+  rememberDialogFolder(settings, key, dir);
+  return dir;
+}
+
+QString pickFile(QWidget *parent, QSettings *settings, const QString &key,
+                 const QString &title, const QString &filter,
+                 const QString &fallback) {
+  const QString file = QFileDialog::getOpenFileName(
+      parent, title, dialogFolder(settings, key, fallback), filter);
+  rememberDialogFolder(settings, key, file);
+  return file;
+}
+
+QString pickSaveFile(QWidget *parent, QSettings *settings, const QString &key,
+                     const QString &title, const QString &suggestedName,
+                     const QString &filter, const QString &fallback) {
+  const QString file = QFileDialog::getSaveFileName(
+      parent, title,
+      QDir(dialogFolder(settings, key, fallback)).filePath(suggestedName),
+      filter);
+  rememberDialogFolder(settings, key, file);
+  return file;
+}
+
+void pinNumberFormat() {
+  QLocale::setDefault(QLocale::c());
+  std::setlocale(LC_NUMERIC, "C");
 }
 
 void polishPage(QWidget *page) {

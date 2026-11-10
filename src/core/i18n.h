@@ -17,6 +17,9 @@ public:
 
   // "tr", "en"; the list is what the build embedded.
   static QStringList available();
+  // Where the build embedded Qt's own translation for `code`, when the Qt it
+  // was built with has one (src/core/CMakeLists.txt); the file may not exist.
+  static QString qtTranslationResource(const QString &code);
   QString current() const { return current_; }
   // Applies the saved language, or the system one when nothing is saved.
   void applySaved();

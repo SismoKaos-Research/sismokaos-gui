@@ -66,6 +66,33 @@ QString helpText(const QString &text);
 void persistSplitter(QSplitter *splitter, QSettings *settings,
                      const QString &key);
 
+// File dialogs that open where the same dialog was last used. `key` names the
+// dialog ("study/open", "cases/catalog"); the folder is kept in `settings`
+// under dialogs/<key>. `fallback` is where a first use starts (empty: the
+// home folder). They return an empty string when the user cancels.
+QString pickFolder(QWidget *parent, QSettings *settings, const QString &key,
+                   const QString &title, const QString &fallback = {});
+QString pickFile(QWidget *parent, QSettings *settings, const QString &key,
+                 const QString &title, const QString &filter = {},
+                 const QString &fallback = {});
+QString pickSaveFile(QWidget *parent, QSettings *settings, const QString &key,
+                     const QString &title, const QString &suggestedName,
+                     const QString &filter = {}, const QString &fallback = {});
+// Where the dialog `key` starts, and remembering where it ended (for dialogs
+// that are not one of the three above, and for tests).
+QString dialogFolder(QSettings *settings, const QString &key,
+                     const QString &fallback = {});
+void rememberDialogFolder(QSettings *settings, const QString &key,
+                          const QString &chosenPath);
+
+// One number format in the whole application: a decimal point and no digit
+// grouping, whatever the language and whatever the system is set to, in the
+// fields, the tables and every file written or read. Called once at start,
+// before any widget exists. It also resets the C library's number format,
+// which Qt switches to the system's at start-up (a decimal comma on a
+// Turkish system would otherwise reach the libraries that parse with it).
+void pinNumberFormat();
+
 // Applied once to each page by the main window: "..." buttons become
 // compact, spin boxes get a text margin, tables lose their grid and get
 // alternating rows, and a scrolling form column is given the width its

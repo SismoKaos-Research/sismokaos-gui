@@ -150,6 +150,11 @@ jobs:
               throw "MISSING from the package: $p"
             }
           }
+          # Qt's own Turkish translation is embedded by the build, not copied
+          # here (see packaging/check_package.sh): say so when it is not.
+          if (-not (Test-Path "build\src\core\qt-i18n\qtbase_tr.qm")) {
+            Write-Warning "Qt's own Turkish translation was NOT embedded: the standard buttons stay English in Turkish"
+          }
           # The MSVC runtime, so no separate redistributable is needed.
           $redist = Get-ChildItem "$env:VCToolsRedistDir\x64\Microsoft.VC*.CRT\*.dll" -ErrorAction SilentlyContinue
           if ($redist) { Copy-Item $redist "dist\$name\" }

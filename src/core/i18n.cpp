@@ -26,6 +26,10 @@ QStringList I18n::available() {
   return out;
 }
 
+QString I18n::qtTranslationResource(const QString &code) {
+  return QStringLiteral(":/qt-i18n/qtbase_") + code + QStringLiteral(".qm");
+}
+
 void I18n::applySaved() {
   QString code = settings_->value(QStringLiteral("ui/language")).toString();
   if (code.isEmpty()) {
@@ -41,7 +45,11 @@ void I18n::setLanguage(const QString &code) {
   if (code != QLatin1String("en")) {
     if (app_.load(QStringLiteral(":/i18n/sismokaos-gui_") + code))
       QCoreApplication::installTranslator(&app_);
-    if (qt_.load(QLocale(code), QStringLiteral("qtbase"), QStringLiteral("_"),
+    // Qt's own texts (the standard buttons, the file dialog): the copy the
+    // build embedded, so a package needs no deployment step to have it; a
+    // Qt installation's own copy otherwise.
+    if (qt_.load(qtTranslationResource(code)) ||
+        qt_.load(QLocale(code), QStringLiteral("qtbase"), QStringLiteral("_"),
                  QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
       QCoreApplication::installTranslator(&qt_);
   }
