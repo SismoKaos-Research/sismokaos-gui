@@ -40,6 +40,7 @@
 #include "modules/settings/settingsmodule.h"
 #include "modules/study/casedialogs.h"
 #include "modules/study/studysetup.h"
+#include "modules/study/coveragedialog.h"
 #include "modules/study/waveforms.h"
 #include "modules/study/runspage.h"
 #include "modules/study/studymodule.h"
@@ -260,6 +261,12 @@ void TstHelp::everyOptionHasHelp() {
     WaveformsDialog d(ctx_, &scan);
     qInfo() << "waveforms options:"
             << audit(&d, QStringLiteral("waveforms"), &missing);
+  }
+  {
+    CoverageDialog d(ctx_);
+    const int n = audit(&d, QStringLiteral("coverage"), &missing);
+    qInfo() << "coverage options:" << n;
+    QVERIFY(n >= 3); // which stations, the radius, the magnitude
   }
   {
     MailboxDialog d(jobs_.get());
