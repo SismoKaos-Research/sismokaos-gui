@@ -52,8 +52,29 @@ double meanFrequency(const std::vector<double> &x, double fs);
 
 using ProgressFn = std::function<void(int done, int total)>;
 
-// Runs the calibration pass over the data. Throws std::runtime_error with
-// the reason when it cannot (no station position, too few quiet windows...).
+// Why a calibration found too few quiet windows, for whoever has to say
+// what to do about it. what() is the full sentence.
+class CalibrationError : public std::runtime_error {
+public:
+  enum class Reason {
+    NoData,     // nothing could be read for the station in the files given
+    LittleData, // some data, but not enough of it for the windows needed
+    GappyData,  // enough windows, most of them with gaps
+    Events,     // enough clean windows, the catalog's events exclude them
+  };
+  CalibrationError(Reason reason, const QString &message)
+      : std::runtime_error(message.toStdString()), reason_(reason) {}
+  Reason reason() const { return reason_; }
+  // "no_data", "little_data", "gappy_data", "events": as run records keep it.
+  static QString code(Reason reason);
+
+private:
+  Reason reason_;
+};
+
+// Runs the calibration pass over the data. Throws CalibrationError when the
+// quiet windows are too few, std::runtime_error with the reason for anything
+// else (no station position, no catalog...).
 Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
                       const ProgressFn &progress = {});
 

@@ -1,6 +1,7 @@
 #include "fx/engine.h"
 
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonArray>
@@ -248,6 +249,113 @@ QString outputStem(const Config &cfg) {
   return name.isEmpty() ? QStringLiteral("output") : name;
 }
 
+namespace {
+
+// The shares of the bar. A guess at the cost of each phase on real station
+// data: unpacking is the quickest, the calibration reads everything but
+// measures a few hundred windows only, the extraction reads everything again
+// and measures every window.
+constexpr double kWeightUnpack = 5, kWeightCalibrate = 10,
+                 kWeightExtract = 85;
+
+// One bar over the phases of a run.
+class Phases {
+public:
+  Phases(const RunHooks &hooks) : hooks_(hooks) {}
+  void add(const QString &name, double weight) {
+    names_ << name;
+    weights_.push_back(weight);
+    total_ += weight;
+  }
+  // The phase begins: announced, and the bar stands at its start.
+  void begin(int index) {
+    current_ = index;
+    before_ = 0;
+    for (int i = 0; i < index; ++i)
+      before_ += weights_[size_t(i)];
+    clock_.start();
+    if (hooks_.phase)
+      hooks_.phase(names_[index]);
+    report(0.0, QString());
+  }
+  // `within`: how far the phase is, 0..1; `detail`: its own count.
+  void report(double within, const QString &detail) {
+    if (!hooks_.overall || current_ < 0 || total_ <= 0)
+      return;
+    within = std::clamp(within, 0.0, 1.0);
+    RunProgress p;
+    p.phase = current_ + 1;
+    p.phases = int(names_.size());
+    p.name = names_[current_];
+    // Never back: a phase that reports less than it did (a count that was
+    // revised) leaves the bar where it was.
+    best_ = std::max(
+        best_, (before_ + weights_[size_t(current_)] * within) / total_);
+    p.fraction = std::min(1.0, best_);
+    p.text = QStringLiteral("%1/%2 %3").arg(p.phase).arg(p.phases).arg(p.name);
+    if (!detail.isEmpty())
+      p.text += QStringLiteral(" · ") + detail;
+    // The time the phase has left, from its own pace, once that is steady.
+    const double elapsed = double(clock_.elapsed()) / 1000.0;
+    if (within > 0.05 && within < 1.0 && elapsed > 10.0) {
+      const double left = elapsed * (1.0 - within) / within;
+      p.text += left < 90
+                    ? QStringLiteral(" · under 2 min left in this phase")
+                    : QStringLiteral(" · about %1 min left in this phase")
+                          .arg(qRound(left / 60.0));
+    }
+    hooks_.overall(p);
+  }
+  void finish() {
+    if (!hooks_.overall || names_.isEmpty())
+      return;
+    best_ = 1.0;
+    RunProgress p;
+    p.fraction = 1.0;
+    p.phase = p.phases = int(names_.size());
+    p.name = names_.last();
+    p.text = QStringLiteral("%1/%2 %3").arg(p.phase).arg(p.phases).arg(p.name);
+    hooks_.overall(p);
+  }
+
+private:
+  const RunHooks &hooks_;
+  QStringList names_;
+  std::vector<double> weights_;
+  double total_ = 0, before_ = 0, best_ = 0;
+  int current_ = -1;
+  QElapsedTimer clock_;
+};
+
+QString megabytes(qint64 bytes) {
+  return QString::number(double(bytes) / (1024.0 * 1024.0), 'f', 0);
+}
+
+// The archives of the run unpacked once, for every pass over the data.
+// Returns false when stopped.
+bool unpackOnce(const Config &cfg, PreprocessOptions &popt, Phases &phases,
+                int phase, Inputs &inputs) {
+  phases.begin(phase);
+  popt.unpacking = [&phases](qint64 done, qint64 total) {
+    phases.report(total > 0 ? double(done) / double(total) : 0.0,
+                  QStringLiteral("%1 of %2 MB")
+                      .arg(megabytes(done), megabytes(total)));
+  };
+  try {
+    inputs = prepareInputs(cfg.dataDir, cfg, popt);
+  } catch (const std::runtime_error &e) {
+    if (popt.shouldStop && popt.shouldStop() &&
+        QByteArray(e.what()) == "stopped")
+      return false;
+    throw;
+  }
+  popt.unpacking = {};
+  popt.prepared = &inputs;
+  return true;
+}
+
+} // namespace
+
 RunResult runPipeline(Config cfg, const RunHooks &hooks) {
   if (!QFileInfo::exists(cfg.dataDir))
     throw std::runtime_error(
@@ -264,7 +372,33 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
   popt.stagingRoot = cfg.outputRoot;
   QDir().mkpath(cfg.outputRoot);
 
+  // The phases of this run, for one progress bar over all of them: the
+  // archives are unpacked first and once, when there are any; the
+  // calibration is left out when its result is reused.
+  const bool calibrating = cfg.calibrationFile.isEmpty();
+  const bool archives = hasArchives(listInputs(cfg.dataDir, cfg));
+  Phases phases(hooks);
+  int unpackPhase = -1, calibratePhase = -1, extractPhase = 0;
+  if (archives) {
+    unpackPhase = extractPhase++;
+    phases.add(QStringLiteral("Unpacking the archives"), kWeightUnpack);
+  }
+  if (calibrating) {
+    calibratePhase = extractPhase++;
+    phases.add(QStringLiteral("Calibrating chaos parameters on quiet periods"),
+               kWeightCalibrate);
+  }
+  phases.add(QStringLiteral("Extracting features"), kWeightExtract);
+  const auto records = [](int done, int total) {
+    return QStringLiteral("%1/%2 records").arg(done).arg(total);
+  };
+
   RunResult result;
+  Inputs unpacked; // removed when the run ends, however it ends
+  if (archives && !unpackOnce(cfg, popt, phases, unpackPhase, unpacked)) {
+    result.stopped = true;
+    return result;
+  }
   Calibration cal;
   if (!cfg.calibrationFile.isEmpty()) {
     cal = Calibration::load(cfg.calibrationFile);
@@ -280,10 +414,13 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
     say(hooks, QStringLiteral(" Chaos parameters from %1 (station %2)")
                    .arg(cfg.calibrationFile, cal.station));
   } else {
-    if (hooks.phase)
-      hooks.phase(
-          QStringLiteral("Calibrating chaos parameters on quiet periods"));
-    cal = calibrate(cfg, popt, hooks.progress);
+    phases.begin(calibratePhase);
+    cal = calibrate(cfg, popt, [&](int done, int total) {
+      if (hooks.progress)
+        hooks.progress(done, total);
+      phases.report(total > 0 ? double(done) / total : 0.0,
+                    records(done, total));
+    });
   }
   for (const QString &line : cal.describe())
     say(hooks, line);
@@ -293,12 +430,13 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
   if (!cal.save(result.calibration))
     throw std::runtime_error(
         ("cannot write " + result.calibration).toStdString());
+  if (calibrating && hooks.calibrated)
+    hooks.calibrated(result.calibration);
   if (stopping(hooks)) {
     result.stopped = true;
     return result;
   }
-  if (hooks.phase)
-    hooks.phase(QStringLiteral("Extracting features"));
+  phases.begin(extractPhase);
 
   std::array<std::vector<double>, 3> buf;
   std::array<std::vector<bool>, 3> mask;
@@ -373,6 +511,10 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
         }
         if (hooks.progress)
           hooks.progress(chunk.recordsDone, chunk.recordsTotal);
+        phases.report(chunk.recordsTotal > 0 ? double(chunk.recordsDone) /
+                                                   chunk.recordsTotal
+                                             : 0.0,
+                      records(chunk.recordsDone, chunk.recordsTotal));
       });
 
   result.windows = windowIdx;
@@ -394,6 +536,7 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
   result.metadata = QDir(cfg.outputRoot)
                         .filePath(stem + QStringLiteral("_run_metadata.json"));
   say(hooks, QStringLiteral(" Windows processed: %1").arg(windowIdx));
+  phases.finish();
   return result;
 }
 
@@ -411,7 +554,18 @@ RunResult runPreprocessOnly(const Config &cfg, const RunHooks &hooks) {
   popt.shouldStop = hooks.shouldStop;
   popt.stagingRoot = cfg.outputRoot;
 
+  const bool archives = hasArchives(listInputs(cfg.dataDir, cfg));
+  Phases phases(hooks);
+  if (archives)
+    phases.add(QStringLiteral("Unpacking the archives"), kWeightUnpack);
+  phases.add(QStringLiteral("Preprocessing"), kWeightExtract);
   RunResult result;
+  Inputs unpacked;
+  if (archives && !unpackOnce(cfg, popt, phases, 0, unpacked)) {
+    result.stopped = true;
+    return result;
+  }
+  phases.begin(archives ? 1 : 0);
   RawBinaryWriter writer(base);
   const bool complete =
       preprocessDirectory(cfg.dataDir, cfg, popt, [&](ChannelChunk &&chunk) {
@@ -426,7 +580,15 @@ RunResult runPreprocessOnly(const Config &cfg, const RunHooks &hooks) {
                           chunk.startEpoch);
         if (hooks.progress)
           hooks.progress(chunk.recordsDone, chunk.recordsTotal);
+        phases.report(chunk.recordsTotal > 0 ? double(chunk.recordsDone) /
+                                                   chunk.recordsTotal
+                                             : 0.0,
+                      QStringLiteral("%1/%2 records")
+                          .arg(chunk.recordsDone)
+                          .arg(chunk.recordsTotal));
       });
+  if (complete)
+    phases.finish();
   result.samples = writer.finish(cfg);
   result.rawF32 = writer.path();
   result.rawSidecar = writer.path() + QStringLiteral(".json");

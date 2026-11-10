@@ -64,6 +64,10 @@ TaskJob::~TaskJob() {
     thread_.quit();
     thread_.wait(5000);
   }
+  // The context is the job's to delete (see start()). Its thread has ended,
+  // so nothing is delivered to it any more.
+  if (!thread_.isRunning())
+    delete context_;
 }
 
 void TaskJob::start() {
@@ -92,7 +96,10 @@ void TaskJob::start() {
       worker, &Worker::finished, this, [this](int rc) { finish(rc); },
       Qt::QueuedConnection);
   connect(&thread_, &QThread::finished, worker, &QObject::deleteLater);
-  connect(&thread_, &QThread::finished, context_, &QObject::deleteLater);
+  // The context is not deleted with the thread: a task can have returned,
+  // and its thread ended, before the job has heard of it and left the
+  // Running state. cancel() in that moment (Stop pressed just as a short
+  // run ends) must still find the context. The job deletes it.
   connect(&thread_, &QThread::started, worker, &Worker::run);
   begin();
   thread_.start();

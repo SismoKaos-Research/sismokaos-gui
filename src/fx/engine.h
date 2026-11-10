@@ -76,11 +76,35 @@ private:
   std::array<qint64, 3> nanCounts_{};
 };
 
+// A run goes through phases (unpacking the archives, calibrating, extracting
+// the features); which ones depends on the run. `overall` gives one bar for
+// all of them: a fraction of the whole run that never goes back, the phase
+// it is in ("2/3 Calibrating chaos parameters"), and a line to show beside
+// the bar (the phase, how far it is, and the time it has left when that can
+// be told). The share of the bar each phase gets is fixed (kPhaseWeights in
+// engine.cpp): it is a guess at their cost, not a measurement of this run.
+struct RunProgress {
+  double fraction = 0; // of the whole run, 0..1, never decreasing
+  int phase = 0;       // 1-based
+  int phases = 0;
+  QString name;        // "Calibrating chaos parameters"
+  QString text;        // "2/3 Calibrating chaos parameters · 40% · about 3 min left"
+};
+
 struct RunHooks {
   LogFn log;
   StopFn shouldStop;
+  // Called when a phase starts, with its name alone (also logged by most
+  // callers).
   std::function<void(const QString &phase)> phase;
+  // The current phase alone, in its own units (records); starts again from
+  // zero with each phase. Use `overall` for a progress bar.
   std::function<void(int done, int total)> progress;
+  std::function<void(const RunProgress &)> overall;
+  // A calibration was computed (not loaded from `calibrationFile`) and
+  // written to this path, before the extraction starts: a caller that wants
+  // to keep it whatever becomes of the run copies it now.
+  std::function<void(const QString &calibrationPath)> calibrated;
 };
 
 struct RunResult {

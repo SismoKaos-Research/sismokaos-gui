@@ -36,7 +36,71 @@ Inputs::~Inputs() {
     QDir(stagingDir).removeRecursively();
 }
 
-Inputs expandInputs(const QStringList &listed, const QString &stagingRoot) {
+bool hasArchives(const QStringList &listed) {
+  for (const QString &p : listed)
+    if (p.endsWith(QLatin1String(".zip"), Qt::CaseInsensitive))
+      return true;
+  return false;
+}
+
+QStringList listInputs(const QString &dataDir, const Config &cfg) {
+  QStringList listed;
+  const QFileInfo info(dataDir);
+  if (!cfg.inputFiles.isEmpty())
+    listed = cfg.inputFiles;
+  else if (info.isFile())
+    listed << dataDir;
+  else
+    for (const QFileInfo &f :
+         QDir(dataDir).entryInfoList(QDir::Files, QDir::Name))
+      listed << f.filePath();
+  if (listed.isEmpty())
+    throw std::runtime_error(("no files found in " + dataDir).toStdString());
+  return listed;
+}
+
+Inputs prepareInputs(const QString &dataDir, const Config &cfg,
+                     const PreprocessOptions &opt) {
+  Inputs inputs = expandInputs(
+      listInputs(dataDir, cfg),
+      opt.stagingRoot.isEmpty() ? cfg.outputRoot : opt.stagingRoot,
+      opt.unpacking, opt.shouldStop);
+  inputs.files.sort();
+  return inputs;
+}
+
+namespace {
+// One archive member written to a file as it is inflated, so that the
+// unpacking can report how far it is and be stopped.
+struct Unpack {
+  QFile out;
+  qint64 done = 0, total = 0;
+  const std::function<void(qint64, qint64)> *progress = nullptr;
+  const StopFn *stop = nullptr;
+  qint64 sinceReport = 0;
+  bool stopped = false;
+};
+size_t writeUnpacked(void *opaque, mz_uint64, const void *buf, size_t n) {
+  auto *u = static_cast<Unpack *>(opaque);
+  if (u->stop && *u->stop && (*u->stop)()) {
+    u->stopped = true;
+    return 0;
+  }
+  if (u->out.write(static_cast<const char *>(buf), qint64(n)) != qint64(n))
+    return 0;
+  u->done += qint64(n);
+  u->sinceReport += qint64(n);
+  if (u->sinceReport >= (8 << 20) && u->progress && *u->progress) {
+    u->sinceReport = 0;
+    (*u->progress)(u->done, u->total);
+  }
+  return n;
+}
+} // namespace
+
+Inputs expandInputs(const QStringList &listed, const QString &stagingRoot,
+                    const std::function<void(qint64, qint64)> &unpacking,
+                    const StopFn &shouldStop) {
   Inputs in;
   QStringList zips;
   for (const QString &p : listed)
@@ -55,6 +119,26 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot) {
   in.stagingDir = root.filePath(
       QStringLiteral(".unzipped-%1").arg(QCoreApplication::applicationPid()));
   QDir().mkpath(in.stagingDir);
+  // How much there is to write, for the progress: the archives' directories
+  // say it without reading the members.
+  Unpack unpack;
+  unpack.progress = &unpacking;
+  unpack.stop = &shouldStop;
+  for (const QString &zipPath : zips) {
+    mz_zip_archive zip{};
+    if (!mz_zip_reader_init_file(&zip, zipPath.toLocal8Bit().constData(), 0))
+      throw std::runtime_error(("failed to read zip " + zipPath).toStdString());
+    const mz_uint count = mz_zip_reader_get_num_files(&zip);
+    for (mz_uint i = 0; i < count; ++i) {
+      mz_zip_archive_file_stat st{};
+      if (!mz_zip_reader_is_file_a_directory(&zip, i) &&
+          mz_zip_reader_file_stat(&zip, i, &st))
+        unpack.total += qint64(st.m_uncomp_size);
+    }
+    mz_zip_reader_end(&zip);
+  }
+  if (unpacking)
+    unpacking(0, unpack.total);
   for (const QString &zipPath : zips) {
     mz_zip_archive zip{};
     if (!mz_zip_reader_init_file(&zip, zipPath.toLocal8Bit().constData(), 0))
@@ -68,9 +152,16 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot) {
       mz_zip_reader_get_filename(&zip, i, nameBuf, sizeof nameBuf);
       const QString name = QFileInfo(QString::fromUtf8(nameBuf)).fileName();
       const QString dest = in.stagingDir + '/' + stem + "__" + name;
-      if (!mz_zip_reader_extract_to_file(&zip, i,
-                                         dest.toLocal8Bit().constData(), 0)) {
+      unpack.out.setFileName(dest);
+      const bool opened = unpack.out.open(QIODevice::WriteOnly);
+      const bool ok =
+          opened && mz_zip_reader_extract_to_callback(&zip, i, writeUnpacked,
+                                                      &unpack, 0);
+      unpack.out.close();
+      if (!ok) {
         mz_zip_reader_end(&zip);
+        if (unpack.stopped)
+          throw std::runtime_error("stopped");
         throw std::runtime_error(
             ("failed to inflate " + name + " from " + zipPath).toStdString());
       }
@@ -78,6 +169,8 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot) {
     }
     mz_zip_reader_end(&zip);
   }
+  if (unpacking)
+    unpacking(unpack.total, unpack.total);
   if (in.files.isEmpty())
     throw std::runtime_error("the input zips contain no files");
   return in;
@@ -207,22 +300,20 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
       opt.log(m);
   };
   auto stopping = [&] { return opt.shouldStop && opt.shouldStop(); };
-  QStringList listed;
-  const QFileInfo info(dataDir);
   const bool chosen = !cfg.inputFiles.isEmpty();
-  if (chosen)
-    listed = cfg.inputFiles;
-  else if (info.isFile())
-    listed << dataDir;
-  else
-    for (const QFileInfo &f :
-         QDir(dataDir).entryInfoList(QDir::Files, QDir::Name))
-      listed << f.filePath();
-  if (listed.isEmpty())
-    throw std::runtime_error(("no files found in " + dataDir).toStdString());
-  Inputs inputs = expandInputs(
-      listed, opt.stagingRoot.isEmpty() ? cfg.outputRoot : opt.stagingRoot);
-  inputs.files.sort();
+  // The caller's files when it has prepared them (and keeps them for
+  // another pass); otherwise listed and unpacked here, for this pass alone.
+  Inputs own;
+  if (!opt.prepared) {
+    try {
+      own = prepareInputs(dataDir, cfg, opt);
+    } catch (const std::runtime_error &e) {
+      if (stopping() && QByteArray(e.what()) == "stopped")
+        return false;
+      throw;
+    }
+  }
+  const Inputs &inputs = opt.prepared ? *opt.prepared : own;
 
   // Index every record before any is read.
   QList<RecordRef> index;

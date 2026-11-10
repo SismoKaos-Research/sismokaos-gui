@@ -78,6 +78,20 @@ std::array<double, 2> iqr(const std::vector<double> &v) {
 }
 } // namespace
 
+QString CalibrationError::code(Reason reason) {
+  switch (reason) {
+  case Reason::NoData:
+    return QStringLiteral("no_data");
+  case Reason::LittleData:
+    return QStringLiteral("little_data");
+  case Reason::GappyData:
+    return QStringLiteral("gappy_data");
+  case Reason::Events:
+    return QStringLiteral("events");
+  }
+  return {};
+}
+
 double percentile(std::vector<double> v, double q) {
   if (v.empty())
     return kNaN;
@@ -277,11 +291,29 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
   std::array<std::vector<double>, 3> buf;
   std::array<std::vector<bool>, 3> interp;
   double bufEpoch = kNaN;
+  double secondsRead = 0;
+  std::array<double, 3> secondsGood{};
+  int windowsGaps = 0, windowsEvents = 0;
 
   preprocessDirectory(cfg.dataDir, cfg, opt, [&](ChannelChunk &&chunk) {
     fs = chunk.fs;
     if (progress)
       progress(chunk.recordsDone, chunk.recordsTotal);
+    // How much was read, and how much of it is real (not missing, not
+    // filled in), for the message when it turns out to be too little.
+    if (chunk.fs > 0) {
+      secondsRead += double(chunk.e.size()) / chunk.fs;
+      const std::vector<double> *comp[3] = {&chunk.e, &chunk.n, &chunk.z};
+      const std::vector<bool> *fill[3] = {&chunk.eInterp, &chunk.nInterp,
+                                          &chunk.zInterp};
+      for (int c = 0; c < 3; ++c) {
+        size_t good = 0;
+        for (size_t i = 0; i < comp[c]->size(); ++i)
+          good += std::isfinite((*comp[c])[i]) &&
+                  !(i < fill[c]->size() && (*fill[c])[i]);
+        secondsGood[c] += double(good) / chunk.fs;
+      }
+    }
     const double expected = bufEpoch + double(buf[0].size()) / fs;
     if (std::isnan(bufEpoch) || buf[0].empty() ||
         std::abs(chunk.startEpoch - expected) > 1.5 / fs) {
@@ -313,8 +345,14 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
       for (int c = 0; c < 3 && clean; ++c)
         for (size_t i = from; i < from + size_t(win) && clean; ++i)
           clean = std::isfinite(buf[c][i]) && !interp[c][i];
-      if (!clean || exclusions.overlaps(t0, t1))
+      if (!clean) {
+        ++windowsGaps;
         continue;
+      }
+      if (exclusions.overlaps(t0, t1)) {
+        ++windowsEvents;
+        continue;
+      }
       ++cal.windowsQuiet;
       auto window = [&] {
         std::array<std::vector<double>, 3> w;
@@ -344,15 +382,76 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
     say(QStringLiteral(" Warning: no catalog event near the station falls "
                        "within the data; check that the "
                        "catalog covers these dates"));
-  if (int(reservoir.size()) < kMinQuietWindows)
-    throw std::runtime_error(
-        QStringLiteral("only %1 quiet windows of %2 found (need %3); raise "
-                       "min_mag or lower max_dist_km, "
-                       "or reuse another run's calibration")
+  if (int(reservoir.size()) < kMinQuietWindows) {
+    // Say which of the three things it was: no data to speak of, data full
+    // of gaps, or data the catalog's earthquakes rule out. The advice differs.
+    const double winSeconds = fs > 0 ? double(win) / fs : 0.0;
+    const auto hours = [](double seconds) {
+      return QString::number(seconds / 3600.0, 'f', seconds < 36000 ? 1 : 0);
+    };
+    const QString read =
+        QStringLiteral("%1 h of data were read for %2 from %3 file(s) (E %4 h, "
+                       "N %5 h, Z %6 h)")
+            .arg(hours(secondsRead), cfg.station)
+            .arg(cfg.inputFiles.isEmpty() ? 1 : int(cfg.inputFiles.size()))
+            .arg(hours(secondsGood[0]), hours(secondsGood[1]),
+                 hours(secondsGood[2]));
+    if (cal.windowsTotal < kMinQuietWindows) {
+      const bool none = secondsRead <= 0.0;
+      throw CalibrationError(
+          none ? CalibrationError::Reason::NoData
+               : CalibrationError::Reason::LittleData,
+          none ? QStringLiteral(
+                     "no waveform data could be read for %1 from the %2 "
+                     "file(s) given: the station has no usable data in the "
+                     "period, so there is nothing to calibrate on. Check the "
+                     "station's coverage, or get its waveforms for the period")
+                     .arg(cfg.station)
+                     .arg(cfg.inputFiles.isEmpty() ? 1
+                                                   : int(cfg.inputFiles.size()))
+               : QStringLiteral(
+                     "too little waveform data to calibrate on: %1, which "
+                     "gives %2 window(s) of %3 s where at least %4 quiet ones "
+                     "are needed. The period has too little data for this "
+                     "station; get more of its waveforms, or reuse another "
+                     "run's calibration")
+                     .arg(read)
+                     .arg(cal.windowsTotal)
+                     .arg(winSeconds, 0, 'f', 0)
+                     .arg(kMinQuietWindows));
+    }
+    if (windowsGaps >= windowsEvents)
+      throw CalibrationError(
+          CalibrationError::Reason::GappyData,
+          QStringLiteral(
+              "only %1 quiet windows found (need %2): of %3 windows, %4 hold "
+              "gaps or interpolated samples and %5 fall near a catalog "
+              "earthquake (%6). The data of the period is too broken up for "
+              "this station; get more of its waveforms, or reuse another "
+              "run's calibration")
+              .arg(reservoir.size())
+              .arg(kMinQuietWindows)
+              .arg(cal.windowsTotal)
+              .arg(windowsGaps)
+              .arg(windowsEvents)
+              .arg(read));
+    throw CalibrationError(
+        CalibrationError::Reason::Events,
+        QStringLiteral(
+            "only %1 quiet windows found (need %2): of %3 windows, %4 fall "
+            "near a catalog earthquake (%5 exclusion intervals within %6 km, "
+            "M >= %7) and %8 hold gaps. Raise min_mag or lower max_dist_km in "
+            "the recipe's calibration settings, or reuse another run's "
+            "calibration")
             .arg(reservoir.size())
-            .arg(cal.windowsTotal)
             .arg(kMinQuietWindows)
-            .toStdString());
+            .arg(cal.windowsTotal)
+            .arg(windowsEvents)
+            .arg(exclusions.size())
+            .arg(opts.maxDistKm)
+            .arg(opts.minMag)
+            .arg(windowsGaps));
+  }
 
   // Loudness screening per component: one channel can glitch alone.
   std::vector<std::array<double, 3>> stds;

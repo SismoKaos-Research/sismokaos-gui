@@ -954,8 +954,26 @@ std::vector<StepOutcome> runSteps(const QString &projectDir, const Settings &s,
     if (hooks.log)
       hooks.log(
           QStringLiteral("\n%1\nSTEP: %2\n%1").arg(QString(60, '='), step));
+    // One scale for the whole run: every step has an equal share of it, and
+    // a step that trains several models moves through its share model by
+    // model. (Reported in thousandths, so the callers' done/total stays.)
+    constexpr int kScale = 1000;
+    const int stepCount = int(steps.size());
+    const QString stepLabel =
+        QStringLiteral("%1/%2 %3").arg(i + 1).arg(stepCount).arg(step);
     if (hooks.progress)
-      hooks.progress(i, steps.size(), step);
+      hooks.progress(i * kScale, stepCount * kScale, stepLabel);
+    RunHooks inStep = hooks;
+    inStep.progress = [&hooks, i, stepCount, stepLabel](int done, int total,
+                                                        const QString &what) {
+      if (!hooks.progress || total <= 0)
+        return;
+      const int within = int(double(std::clamp(done, 0, total)) / total * kScale);
+      hooks.progress(i * kScale + std::min(within, kScale - 1),
+                     stepCount * kScale,
+                     what.isEmpty() ? stepLabel
+                                    : stepLabel + QStringLiteral(" · ") + what);
+    };
     QElapsedTimer timer;
     timer.start();
     StepOutcome o{step, QStringLiteral("OK"), 0, {}};
@@ -967,7 +985,7 @@ std::vector<StepOutcome> runSteps(const QString &projectDir, const Settings &s,
       else if (step == "split_visualization")
         stepSplitVisualization(dir, s, d, hooks.log, hooks.shouldStop);
       else if (step == "baseline" || step == "ann" || step == "trees")
-        stepModels(projectDir, s, d, step, hooks);
+        stepModels(projectDir, s, d, step, inStep);
       else if (step == "error_timeline")
         stepErrorTimeline(projectDir, s, d, hooks.log);
       else if (step == "compare")
@@ -983,6 +1001,9 @@ std::vector<StepOutcome> runSteps(const QString &projectDir, const Settings &s,
     if (o.status == "FAILED" && s.stopOnError)
       break;
   }
+  if (hooks.progress && !steps.isEmpty() &&
+      !(hooks.shouldStop && hooks.shouldStop()))
+    hooks.progress(int(steps.size()), int(steps.size()), QString());
   if (hooks.log) {
     hooks.log(QStringLiteral("\n%1\nSUMMARY (%2)\n%1")
                   .arg(QString(60, '='), s.runName));
