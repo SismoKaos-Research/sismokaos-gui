@@ -3,6 +3,8 @@
 // test_coverage.py.
 #include <QtTest>
 
+#include <QRandomGenerator>
+
 #include "miniz.h"
 #include "tdvms/coverage.h"
 #include "tdvms/fetch.h"
@@ -192,6 +194,185 @@ private slots:
              (QList<QPair<double, double>>{{0, 3}}));
     QCOMPARE(relative(scanBytes(stream({0, 1}, "HHZ", false)))["TU.ELBA..HHZ"],
              (QList<QPair<double, double>>{{0, 2}}));
+  }
+
+  // --- corrupt and cut-short input ---------------------------------------
+  void recordLengthOutsideWhatMiniseedHasIsRefused() {
+    // Byte 54 is the record-length exponent of blockette 1000. 1 << 31 is
+    // negative and 1 << 0 is one byte: neither may steer the scan.
+    for (int exponent : {0, 1, 7, 21, 30, 31, 32, 200, 255}) {
+      QByteArray bad = stream({0, 1, 2});
+      bad[54] = char(exponent);
+      QVERIFY_THROWS_EXCEPTION(std::runtime_error, scanBytes(bad));
+      // Also when it is not the first record that is corrupt.
+      QByteArray later = stream({0, 1, 2});
+      later[512 + 54] = char(exponent);
+      QVERIFY_THROWS_EXCEPTION(std::runtime_error, scanBytes(later));
+    }
+    // The smallest and a large legal length are read.
+    QByteArray small = record(T0).left(256) + record(T0.addSecs(1)).left(256);
+    small[54] = char(8);
+    small[256 + 54] = char(8);
+    QCOMPARE(relative(scanBytes(small))["TU.ELBA..HHZ"],
+             (QList<QPair<double, double>>{{0, 2}}));
+    QByteArray large = record(T0).leftJustified(1 << 12, '\0');
+    large[54] = char(12);
+    QCOMPARE(relative(scanBytes(large + large))["TU.ELBA..HHZ"].size(), 1);
+  }
+
+  void aBrokenBlocketteChainIsRefused() {
+    // The first blockette points back at itself, and is not a 1000.
+    QByteArray loop = stream({0});
+    loop[48] = char(0);
+    loop[49] = char(100); // kind 100
+    loop[50] = char(0);
+    loop[51] = char(48); // next: itself
+    loop[39] = char(200); // "200 blockettes follow"
+    QVERIFY_THROWS_EXCEPTION(std::runtime_error, scanBytes(loop));
+    // A first blockette inside the fixed header.
+    QByteArray inside = stream({0});
+    inside[46] = char(0);
+    inside[47] = char(8);
+    QVERIFY_THROWS_EXCEPTION(std::runtime_error, scanBytes(inside));
+  }
+
+  void aFileCutAnywhereIsReadAsFarAsItGoes() {
+    const QByteArray all = stream({0, 1, 2});
+    for (int cut = 0; cut <= all.size(); ++cut) {
+      const auto got = relative(scanBytes(all.left(cut)));
+      const int whole = cut / 512;
+      if (whole == 0)
+        QVERIFY2(got.isEmpty(), qPrintable(QString::number(cut)));
+      else
+        QCOMPARE(got["TU.ELBA..HHZ"],
+                 (QList<QPair<double, double>>{{0, double(whole)}}));
+    }
+  }
+
+  void aRecordSplitAtEveryOffsetIsTheSameRecord() {
+    const QByteArray all = stream({0, 1});
+    const auto whole = relative(scanBytes(all));
+    for (int split = 1; split < all.size(); ++split) {
+      MseedScanner s;
+      s.feed(all.left(split));
+      s.feed(all.mid(split));
+      QCOMPARE(relative(s.finish()), whole);
+    }
+    // In three pieces, the middle one a single byte.
+    for (int split = 1; split + 1 < all.size(); split += 5) {
+      MseedScanner s;
+      s.feed(all.left(split));
+      s.feed(all.mid(split, 1));
+      s.feed(all.mid(split + 1));
+      QCOMPARE(relative(s.finish()), whole);
+    }
+  }
+
+  void aBlocketteBeyondTheBytesInHandIsWaitedFor() {
+    // Blockette 1000 need not sit right after the header. Here it is at
+    // byte 128; a read that ends before it must not call the record
+    // length-less.
+    QByteArray rec = record(T0);
+    const QByteArray blockette = rec.mid(48, 8);
+    for (int i = 48; i < 56; ++i)
+      rec[i] = '\0';
+    rec.replace(128, 8, blockette);
+    rec[46] = char(0);
+    rec[47] = char(128);
+    QByteArray two = rec;
+    QByteArray second = record(T0.addSecs(1));
+    two += second;
+    const auto whole = relative(scanBytes(two));
+    QCOMPARE(whole["TU.ELBA..HHZ"],
+             (QList<QPair<double, double>>{{0, 2}}));
+    for (int split = 1; split < two.size(); ++split) {
+      MseedScanner s;
+      s.feed(two.left(split));
+      s.feed(two.mid(split));
+      QCOMPARE(relative(s.finish()), whole);
+    }
+  }
+
+  void randomBytesNeverReadOutOfBounds() {
+    // Nothing to compare: the scan must end, with a result or a refusal.
+    // (Run under a sanitizer, an out-of-bounds read would show here.)
+    QRandomGenerator rng(20261111);
+    int refused = 0, read = 0;
+    const QByteArray good = stream({0, 1, 2, 3});
+    for (int round = 0; round < 600; ++round) {
+      QByteArray data;
+      if (round % 3 == 0) {
+        data.resize(int(rng.bounded(1, 5000)));
+        for (char &c : data)
+          c = char(rng.bounded(256));
+      } else {
+        // A real stream with a few bytes changed, most of them in headers.
+        data = good;
+        for (int k = 0, n = int(rng.bounded(1, 6)); k < n; ++k) {
+          const int rec = int(rng.bounded(4));
+          const int at = rec * 512 + int(rng.bounded(round % 3 == 1 ? 64 : 512));
+          data[at] = char(rng.bounded(256));
+        }
+        data.truncate(int(rng.bounded(1, int(good.size()) + 1)));
+      }
+      MseedScanner s;
+      try {
+        for (int off = 0; off < data.size();) {
+          const int step = int(rng.bounded(1, 900));
+          s.feed(data.mid(off, step));
+          off += step;
+        }
+        s.finish();
+        ++read;
+      } catch (const std::runtime_error &) {
+        ++refused;
+      }
+    }
+    QCOMPARE(read + refused, 600);
+    QVERIFY(refused > 0);
+    QVERIFY(read > 0);
+  }
+
+  // --- a transfer that broke is not an archive ---------------------------
+  void aBrokenTransferIsATransferErrorNotAnExpiredLink() {
+    // The server said 200 and the connection dropped half way: the bytes
+    // are a cut-short zip. That is a transfer to try again, with the link
+    // and the request slot kept, not an expired link to ask for anew.
+    class Half : public Http {
+    public:
+      HttpResult get(const QUrl &, int) override { return {}; }
+      HttpResult postJson(const QUrl &, const QByteArray &, int,
+                          const QMap<QString, QString> &) override {
+        return {};
+      }
+      HttpResult postBody(const QUrl &, const QByteArray &, int,
+                          const QMap<QString, QString> &) override {
+        return {};
+      }
+      HttpResult getToDevice(const QUrl &, QIODevice *sink, int,
+                             const std::function<bool()> &) override {
+        sink->write(QByteArray(4096, 'P'));
+        HttpResult r;
+        r.status = 200;
+        r.contentType = "application/zip";
+        r.error = "Connection closed";
+        return r;
+      }
+    } http;
+    const QString out = path("half");
+    const DownloadOutcome dl = download(http, "http://x.invalid/a.zip", out);
+    QVERIFY(!dl.ok());
+    QVERIFY(!dl.expired);
+    QVERIFY(!dl.diskFull);
+    QCOMPARE(dl.error, QString("Connection closed"));
+    QVERIFY(QDir(out).entryList(QDir::Files).isEmpty());
+    // The status alone no longer makes an answer complete.
+    HttpResult r;
+    r.status = 200;
+    QVERIFY(r.ok());
+    r.error = "Connection closed";
+    QVERIFY(!r.ok());
+    QVERIFY(!r.connectionError()); // there was an answer; it broke off
   }
 
   void notMiniseedIsRefused() {

@@ -57,19 +57,59 @@ template <typename T> T readAt(const QByteArray &d, int off, bool big) {
 }
 
 // Blockette 1000 gives the record length; every TDVMS record carries one.
-std::optional<int> recordLength(const QByteArray &d, int off,
-                                int firstBlockette, int count, bool big) {
+// The chain of blockettes is followed as far as the bytes in hand go.
+struct RecordLength {
+  enum class Kind {
+    Found,   // `length` is the record length
+    More,    // the chain runs past the bytes in hand: read on, then ask again
+    Missing, // the chain ends without a blockette 1000
+    Bad      // a length exponent no miniSEED record has, or a broken chain
+  } kind = Kind::Missing;
+  int length = 0;
+  int exponent = 0;
+};
+
+// Record lengths from 256 bytes to 1 MiB. Anything else is a corrupt
+// header: 1 << 31 would be negative, and a few bytes of length would make
+// the scan walk off its buffer.
+constexpr int kMinExponent = 8;
+constexpr int kMaxExponent = 20;
+
+RecordLength recordLength(const QByteArray &d, int off, int firstBlockette,
+                          int count, bool big) {
+  RecordLength out;
   int b = firstBlockette;
   for (int i = 0; i < count; ++i) {
-    if (b == 0 || off + b + 7 > d.size())
+    if (b == 0)
       break;
+    // A blockette lies after the 48-byte header and inside the record.
+    if (b < 48 || b + 8 > (1 << kMaxExponent)) {
+      out.kind = RecordLength::Kind::Bad;
+      return out;
+    }
+    if (off + b + 7 > d.size()) {
+      out.kind = RecordLength::Kind::More;
+      return out;
+    }
     const quint16 kind = readAt<quint16>(d, off + b, big);
     const quint16 next = readAt<quint16>(d, off + b + 2, big);
-    if (kind == 1000)
-      return 1 << static_cast<uchar>(d[off + b + 6]);
+    if (kind == 1000) {
+      out.exponent = static_cast<uchar>(d[off + b + 6]);
+      if (out.exponent < kMinExponent || out.exponent > kMaxExponent) {
+        out.kind = RecordLength::Kind::Bad;
+        return out;
+      }
+      out.kind = RecordLength::Kind::Found;
+      out.length = 1 << out.exponent;
+      return out;
+    }
+    if (next != 0 && next <= b) { // a chain that does not move forward
+      out.kind = RecordLength::Kind::Bad;
+      return out;
+    }
     b = next;
   }
-  return std::nullopt;
+  return out;
 }
 
 void addSpan(ScanResult &out, const QString &cid, double rate, double start,
@@ -124,13 +164,21 @@ void MseedScanner::feed(const QByteArray &bytes) {
     const uchar nblk = static_cast<uchar>(data[off + 39]);
     const qint32 corr = readAt<qint32>(data, off + 40, big);
     const quint16 blk = readAt<quint16>(data, off + 46, big);
-    const auto reclen = recordLength(data, off, blk, nblk, big);
-    if (!reclen) {
-      if (n - off < 64)
-        break; // the blockette may be in the next read
+    const RecordLength found = recordLength(data, off, blk, nblk, big);
+    if (found.kind == RecordLength::Kind::More)
+      break; // the blockette is in a later read
+    if (found.kind == RecordLength::Kind::Bad)
+      throw std::runtime_error(
+          QStringLiteral("a corrupt record header at byte %1 (record length "
+                         "2^%2, or a broken blockette chain); the file is "
+                         "not readable miniSEED")
+              .arg(off)
+              .arg(found.exponent)
+              .toStdString());
+    if (found.kind == RecordLength::Kind::Missing)
       throw std::runtime_error(
           "a record without blockette 1000; length unknown");
-    }
+    const int *reclen = &found.length;
     if (n - off < *reclen)
       break;
     const double rate = sampleRate(factor, mult);

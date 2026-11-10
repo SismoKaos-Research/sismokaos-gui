@@ -198,6 +198,12 @@ Outcome TdvmsPortal::submit(const QString &station, const QDateTime &start,
   if (r.timedOut || r.connectionError())
     return Outcome::unconfirmed(
         QStringLiteral("%1 -- no answer, usually accepted").arg(r.error));
+  // The portal answered 200 and the answer broke off: it has the request,
+  // we do not know what it said. The same as no answer.
+  if (r.status == 200 && !r.error.isEmpty())
+    return Outcome::unconfirmed(
+        QStringLiteral("%1 -- the answer broke off, usually accepted")
+            .arg(r.error));
   if (r.status != 200)
     return Outcome::rejected(QStringLiteral("HTTP %1: %2")
                                  .arg(r.status)

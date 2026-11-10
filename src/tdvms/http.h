@@ -17,10 +17,15 @@ struct HttpResult {
   int status = 0;  // HTTP status, 0 when no answer
   QByteArray body; // for post/get without a sink
   QString contentType;
-  QString error; // transport error text, empty on success
+  // Transport error text, empty on success. It is also set when the
+  // connection broke after a 2xx/3xx status line, or the body is shorter
+  // than its Content-Length: the body is then incomplete, whatever the
+  // status says. An HTTP error status (4xx, 5xx) alone leaves it empty.
+  QString error;
   bool timedOut = false;
   bool connectionError() const { return status == 0 && !error.isEmpty(); }
-  bool ok() const { return status >= 200 && status < 300; }
+  // A complete answer with a 2xx status.
+  bool ok() const { return status >= 200 && status < 300 && error.isEmpty(); }
 };
 
 class Http {

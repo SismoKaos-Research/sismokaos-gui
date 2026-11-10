@@ -53,6 +53,7 @@ private:
     QTimer timer;
     timer.setSingleShot(true);
     bool timedOut = false, stopped = false;
+    qint64 received = 0;
     QObject::connect(&timer, &QTimer::timeout, &loop, [&] {
       timedOut = true;
       reply->abort();
@@ -61,7 +62,9 @@ private:
     QObject::connect(reply, &QNetworkReply::readyRead, &loop, [&] {
       timer.start(timeoutMs);
       if (sink) {
-        sink->write(reply->readAll());
+        const QByteArray part = reply->readAll();
+        received += part.size();
+        sink->write(part);
         if (shouldStop && shouldStop()) {
           stopped = true;
           reply->abort();
@@ -73,10 +76,14 @@ private:
     if (!reply->isFinished())
       loop.exec();
     timer.stop();
-    if (sink)
-      sink->write(reply->readAll());
-    else
+    if (sink) {
+      const QByteArray rest = reply->readAll();
+      received += rest.size();
+      sink->write(rest);
+    } else {
       out.body = reply->readAll();
+      received = out.body.size();
+    }
     out.status =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     out.contentType =
@@ -86,8 +93,24 @@ private:
       out.error = QStringLiteral("stopped");
     else if (timedOut)
       out.error = QStringLiteral("timed out after %1 s").arg(timeoutMs / 1000);
-    else if (reply->error() != QNetworkReply::NoError && out.status == 0)
+    else if (reply->error() != QNetworkReply::NoError && out.status < 400)
+      // No answer at all, or one that broke off after its status line: a
+      // 200 whose connection dropped half way is not a complete body.
       out.error = reply->errorString();
+    else if (out.status >= 200 && out.status < 300) {
+      // The length the server announced, when the body comes as it was sent
+      // (Qt inflates a compressed one, whose announced length is then not
+      // the one received).
+      bool known = false;
+      const qint64 announced =
+          reply->header(QNetworkRequest::ContentLengthHeader)
+              .toLongLong(&known);
+      if (known && announced >= 0 && received != announced &&
+          !reply->hasRawHeader("Content-Encoding"))
+        out.error = QStringLiteral("incomplete: %1 of %2 bytes arrived")
+                        .arg(received)
+                        .arg(announced);
+    }
     reply->deleteLater();
     return out;
   }

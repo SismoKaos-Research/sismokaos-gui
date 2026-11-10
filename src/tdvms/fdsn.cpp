@@ -10,6 +10,7 @@
 #include <QUrlQuery>
 
 #include <algorithm>
+#include <exception>
 
 #include "tdvms/coverage.h"
 #include <cmath>
@@ -121,11 +122,34 @@ int fdsnAdopt(Ledger &ledger, const QString &outDir) {
     if (!f.exists() || !f.open(QIODevice::ReadOnly))
       continue;
     const QByteArray data = f.readAll();
+    f.close();
     const QDate day = QDate::fromString(str(r, "start").left(10), Qt::ISODate);
+    QMap<QString, double> hours;
+    try {
+      hours = dayHours(data, day);
+    } catch (const std::exception &e) {
+      // A file that is there but is not miniSEED (a broken earlier pull, or
+      // something else under that name): set it aside under another name
+      // and say so on its day. The other days are not held up by it.
+      const QString aside = path + QStringLiteral(".unreadable");
+      QFile::remove(aside);
+      const bool moved = QFile::rename(path, aside);
+      ledger.update(
+          chunkId(r),
+          {{"state", "failed"},
+           {"fetched_at", nowStamp()},
+           {"note",
+            QStringLiteral("the file on disk is not readable miniSEED (%1)%2")
+                .arg(QString::fromUtf8(e.what()).left(120),
+                     moved ? QStringLiteral("; kept as ") +
+                                 QFileInfo(aside).fileName()
+                           : QString())}});
+      continue;
+    }
     ledger.update(chunkId(r), {{"state", "fetched"},
                                {"path", path},
                                {"bytes", double(data.size())},
-                               {"hours", hoursJson(dayHours(data, day))},
+                               {"hours", hoursJson(hours)},
                                {"fetched_at", nowStamp()},
                                {"note", kAdoptedNote}});
     ++adopted;
@@ -247,25 +271,48 @@ QMap<QString, int> fdsnWork(Ledger &ledger, const QString &outDir, Http &http,
                           {"note", "no data at source"}});
       say(QStringLiteral("[NODATA] %1").arg(cid));
     } else {
-      const QString path = dayFile(outDir, r);
-      QDir().mkpath(QFileInfo(path).absolutePath());
-      QSaveFile f(path);
-      if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        f.write(data);
-        f.commit();
+      // What arrived is looked at before it is kept: a body that is not
+      // miniSEED (an error page sent with a 200) is not a day of data.
+      QMap<QString, double> hours;
+      QString problem;
+      try {
+        hours = dayHours(data, day);
+      } catch (const std::exception &e) {
+        problem = QStringLiteral("the service answered with something that "
+                                 "is not miniSEED (%1)")
+                      .arg(QString::fromUtf8(e.what()).left(120));
       }
-      const auto hours = dayHours(data, day);
-      ledger.update(cid, {{"state", "fetched"},
-                          {"fetched_at", nowStamp()},
-                          {"path", path},
-                          {"bytes", double(data.size())},
-                          {"hours", hoursJson(hours)},
-                          {"note", QJsonValue::Null}});
-      QStringList bits;
-      for (auto it = hours.begin(); it != hours.end(); ++it)
-        bits << QStringLiteral("%1 %2 h").arg(it.key()).arg(it.value(), 0, 'f',
-                                                            1);
-      say(QStringLiteral("[OK] %1  %2").arg(cid, bits.join("  ")));
+      const QString path = dayFile(outDir, r);
+      if (problem.isEmpty()) {
+        // "Fetched" means the file is on disk, whole.
+        QDir().mkpath(QFileInfo(path).absolutePath());
+        QSaveFile f(path);
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+          problem = QStringLiteral("cannot write %1: %2")
+                        .arg(path, f.errorString());
+        else if (f.write(data) != data.size() || !f.commit())
+          problem = QStringLiteral("could not save %1: %2 (is the disk full?)")
+                        .arg(path, f.errorString());
+      }
+      if (!problem.isEmpty()) {
+        ledger.update(cid, {{"state", "failed"},
+                            {"fetched_at", nowStamp()},
+                            {"note", problem.left(300)}});
+        say(QStringLiteral("[FAILED] %1  %2").arg(cid, problem));
+      } else {
+        ledger.update(cid, {{"state", "fetched"},
+                            {"fetched_at", nowStamp()},
+                            {"path", path},
+                            {"bytes", double(data.size())},
+                            {"hours", hoursJson(hours)},
+                            {"note", QJsonValue::Null}});
+        QStringList bits;
+        for (auto it = hours.begin(); it != hours.end(); ++it)
+          bits << QStringLiteral("%1 %2 h")
+                      .arg(it.key())
+                      .arg(it.value(), 0, 'f', 1);
+        say(QStringLiteral("[OK] %1  %2").arg(cid, bits.join("  ")));
+      }
     }
     const auto now = ledger.byId(cid);
     if (now)

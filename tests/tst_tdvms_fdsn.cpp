@@ -181,6 +181,145 @@ private slots:
              QString("pending"));
   }
 
+  // A 200 whose connection dropped is not a day of data: it is tried again,
+  // and when it never completes the day is failed, with nothing on disk.
+  void aCutShortAnswerIsNotKept() {
+    Ledger led(path("cut_fdsn.jsonl"));
+    fdsnPlan(led, "SVRC", {QDate(2015, 7, 1), QDate(2015, 7, 2)}, "KO", "BH?",
+             kKoeri);
+    FakeHttp http;
+    HttpResult cut;
+    cut.status = 200;
+    cut.body = dayData(2).left(700); // a record and a bit
+    cut.error = "Connection closed";
+    HttpResult whole;
+    whole.status = 200;
+    whole.body = dayData(2);
+    // day 1: cut, then whole on the second try; day 2: cut twice.
+    http.answers << cut << whole << cut << cut;
+    FdsnOptions opt;
+    opt.retries = 2;
+    opt.pauseMs = 1;
+    const QString out = path("cut_raw");
+    const auto counts = fdsnWork(led, out, http, opt);
+    QCOMPARE(counts.value("fetched"), 1);
+    QCOMPARE(counts.value("failed"), 1);
+    const Row first = *led.byId("SVRC:2015-07-01T00:00:00");
+    QCOMPARE(str(first, "state"), QString("fetched"));
+    QCOMPARE(qint64(first.value("bytes").toDouble()), qint64(whole.body.size()));
+    QCOMPARE(QFileInfo(str(first, "path")).size(), qint64(whole.body.size()));
+    const Row second = *led.byId("SVRC:2015-07-02T00:00:00");
+    QCOMPARE(str(second, "state"), QString("failed"));
+    QVERIFY(str(second, "note").contains("Connection closed"));
+    QVERIFY(!QFileInfo::exists(
+        out + "/SVRC/" + fdsnFileName("KO", "SVRC", QDate(2015, 7, 2), "BH?")));
+  }
+
+  // A 200 with something that is not miniSEED (an error page): the day is
+  // failed with the reason, no file is kept, and the days after it are
+  // fetched. Before, the scan threw, the day stayed claimed, and every
+  // later start threw again before fetching anything.
+  void anAnswerThatIsNotMiniseedFailsItsDayOnly() {
+    Ledger led(path("html_fdsn.jsonl"));
+    fdsnPlan(led, "SVRC", {QDate(2015, 7, 1), QDate(2015, 7, 2)}, "KO", "BH?",
+             kKoeri);
+    FakeHttp http;
+    HttpResult page;
+    page.status = 200;
+    page.body = QByteArray("<html><body>Service temporarily unavailable"
+                           "</body></html>")
+                    .leftJustified(600, ' ');
+    http.answers << page; // day 1; day 2 gets the default good answer
+    FdsnOptions opt;
+    opt.retries = 1;
+    opt.pauseMs = 1;
+    const QString out = path("html_raw");
+    QMap<QString, int> counts;
+    QVERIFY_THROWS_NO_EXCEPTION(counts = fdsnWork(led, out, http, opt));
+    QCOMPARE(counts.value("failed"), 1);
+    QCOMPARE(counts.value("fetched"), 1);
+    const Row bad = *led.byId("SVRC:2015-07-01T00:00:00");
+    QCOMPARE(str(bad, "state"), QString("failed"));
+    QVERIFY2(str(bad, "note").contains("not miniSEED"),
+             qPrintable(str(bad, "note")));
+    QVERIFY(!QFileInfo::exists(
+        out + "/SVRC/" + fdsnFileName("KO", "SVRC", QDate(2015, 7, 1), "BH?")));
+    QVERIFY(led.inState({"claimed"}).isEmpty());
+    // A later start is not held up by it.
+    QVERIFY_THROWS_NO_EXCEPTION(fdsnAdopt(led, out));
+    QCOMPARE(fdsnRetryFailed(led, "SVRC"), 1);
+    QVERIFY_THROWS_NO_EXCEPTION(counts = fdsnWork(led, out, http, opt));
+    QCOMPARE(counts.value("fetched"), 1);
+    QVERIFY(led.complete());
+  }
+
+  // "Fetched" means the file is on disk. Here the station's folder cannot
+  // be made (a file is in its place), as a full disk would refuse the write.
+  void aDayThatCannotBeSavedIsNotFetched() {
+    Ledger led(path("full_fdsn.jsonl"));
+    fdsnPlan(led, "SVRC", {QDate(2015, 7, 1)}, "KO", "BH?", kKoeri);
+    const QString out = path("full_raw");
+    QDir().mkpath(out);
+    QFile block(out + "/SVRC");
+    QVERIFY(block.open(QIODevice::WriteOnly));
+    block.close();
+    FakeHttp http;
+    FdsnOptions opt;
+    opt.retries = 1;
+    opt.pauseMs = 1;
+    const auto counts = fdsnWork(led, out, http, opt);
+    QCOMPARE(counts.value("fetched"), 0);
+    QCOMPARE(counts.value("failed"), 1);
+    const Row r = *led.byId("SVRC:2015-07-01T00:00:00");
+    QVERIFY2(str(r, "note").contains("cannot write") ||
+                 str(r, "note").contains("could not save"),
+             qPrintable(str(r, "note")));
+    QVERIFY(str(r, "path").isEmpty());
+  }
+
+  // One unreadable file under a day's name does not stop the others from
+  // being adopted, and is not deleted: it is set aside.
+  void adoptSetsABadFileAsideAndGoesOn() {
+    Ledger led(path("adopt_fdsn.jsonl"));
+    fdsnPlan(led, "SVRC", {QDate(2015, 7, 1), QDate(2015, 7, 2)}, "KO", "BH?",
+             kKoeri);
+    const QString out = path("adopt_raw");
+    QDir().mkpath(out + "/SVRC");
+    const QString bad =
+        out + "/SVRC/" + fdsnFileName("KO", "SVRC", QDate(2015, 7, 1), "BH?");
+    const QString good =
+        out + "/SVRC/" + fdsnFileName("KO", "SVRC", QDate(2015, 7, 2), "BH?");
+    {
+      QFile f(bad);
+      QVERIFY(f.open(QIODevice::WriteOnly));
+      f.write(QByteArray("this is not a waveform").leftJustified(2048, '.'));
+      QFile g(good);
+      QVERIFY(g.open(QIODevice::WriteOnly));
+      g.write(dayData(1));
+    }
+    int adopted = -1;
+    QVERIFY_THROWS_NO_EXCEPTION(adopted = fdsnAdopt(led, out));
+    QCOMPARE(adopted, 1);
+    QCOMPARE(str(*led.byId("SVRC:2015-07-02T00:00:00"), "state"),
+             QString("fetched"));
+    const Row r = *led.byId("SVRC:2015-07-01T00:00:00");
+    QCOMPARE(str(r, "state"), QString("failed"));
+    QVERIFY2(str(r, "note").contains("not readable miniSEED"),
+             qPrintable(str(r, "note")));
+    QVERIFY(!QFileInfo::exists(bad));
+    QVERIFY(QFileInfo::exists(bad + ".unreadable"));
+    // Asked again, the day is fetched fresh; the file set aside stays.
+    QCOMPARE(fdsnRetryFailed(led, "SVRC"), 1);
+    QCOMPARE(fdsnAdopt(led, out), 0);
+    FakeHttp http;
+    FdsnOptions opt;
+    opt.retries = 1;
+    opt.pauseMs = 1;
+    QCOMPARE(fdsnWork(led, out, http, opt).value("fetched"), 1);
+    QVERIFY(QFileInfo::exists(bad));
+    QVERIFY(QFileInfo::exists(bad + ".unreadable"));
+  }
+
   void stopRequestLeavesTheDayPending() {
     Ledger led(path("z_fdsn.jsonl"));
     fdsnPlan(led, "SVRC", {QDate(2015, 7, 1)}, "KO", "BH?", kKoeri);
