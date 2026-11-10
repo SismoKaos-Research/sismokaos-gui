@@ -76,6 +76,14 @@ QString baseAddress(
     const QString &cli = QString(),
     const QProcessEnvironment &env = QProcessEnvironment::systemEnvironment(),
     const QString &path = QString());
+// An address fit for a screen that may be photographed: the first letter of
+// the local part and the domain, "o•••@example.org". Text that is not an
+// address comes back with only its first letter. A plus-tag, which names a
+// request slot and nothing about the person, is kept: "o•••+a3@example.org".
+QString maskAddress(const QString &address);
+// The same for every address inside a longer text (a status report).
+QString maskAddresses(const QString &text);
+
 QStringList notifyTargets(
     const QStringList &cli = {},
     const QProcessEnvironment &env = QProcessEnvironment::systemEnvironment(),

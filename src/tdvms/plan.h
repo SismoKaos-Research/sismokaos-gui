@@ -29,4 +29,9 @@ int enumerateChunks(Ledger &ledger, const QString &station,
                     const QString &startIso, const QString &endIso,
                     int chunkDays, int everyDays = -1);
 
+// Appends the given windows (ISO start and end) for a station, skipping the
+// ones the ledger already holds; returns how many were added.
+int addChunks(Ledger &ledger, const QString &station,
+              const QList<QPair<QString, QString>> &windows);
+
 } // namespace skg::tdvms

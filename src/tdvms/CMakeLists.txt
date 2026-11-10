@@ -20,6 +20,7 @@ qt_add_library(skg_tdvms STATIC
   fdsn.cpp      fdsn.h
   runner.cpp    runner.h
   catalog.cpp   catalog.h
+  guide.cpp     guide.h
   data/data.qrc
 )
 target_include_directories(skg_tdvms PUBLIC ${CMAKE_SOURCE_DIR}/src)

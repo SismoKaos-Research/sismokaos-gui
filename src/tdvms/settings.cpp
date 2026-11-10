@@ -238,4 +238,31 @@ QStringList notifyTargets(const QStringList &cli,
   return out;
 }
 
+QString maskAddress(const QString &address) {
+  const QString a = address.trimmed();
+  if (a.isEmpty())
+    return a;
+  const int at = a.lastIndexOf(QLatin1Char('@'));
+  const QString dots = QStringLiteral("\u2022\u2022\u2022");
+  if (at <= 0)
+    return a.left(1) + dots;
+  const int plus = a.indexOf(QLatin1Char('+'));
+  const QString tag = plus > 0 && plus < at ? a.mid(plus, at - plus) : QString();
+  return a.left(1) + dots + tag + a.mid(at);
+}
+
+QString maskAddresses(const QString &text) {
+  static const QRegularExpression address(
+      QStringLiteral("[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)+"));
+  QString out;
+  int from = 0;
+  auto it = address.globalMatch(text);
+  while (it.hasNext()) {
+    const QRegularExpressionMatch m = it.next();
+    out += text.mid(from, m.capturedStart() - from) + maskAddress(m.captured());
+    from = int(m.capturedEnd());
+  }
+  return out + text.mid(from);
+}
+
 } // namespace skg::tdvms

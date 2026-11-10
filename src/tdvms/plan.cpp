@@ -60,7 +60,12 @@ QList<QPair<QString, QString>> planWindows(const QString &startIso,
 int enumerateChunks(Ledger &ledger, const QString &station,
                     const QString &startIso, const QString &endIso,
                     int chunkDays, int everyDays) {
-  const auto spans = planWindows(startIso, endIso, chunkDays, everyDays);
+  return addChunks(ledger, station,
+                   planWindows(startIso, endIso, chunkDays, everyDays));
+}
+
+int addChunks(Ledger &ledger, const QString &station,
+              const QList<QPair<QString, QString>> &spans) {
   int added = 0;
   ledger.edit([&](QList<Row> &rows) {
     QSet<QString> have;
