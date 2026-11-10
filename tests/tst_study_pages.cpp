@@ -570,6 +570,127 @@ void TstStudyPages::runsPageGuards() {
   QCOMPARE(again.state, CellState::Done);
   QCOMPARE(again.record->finished, first.record->finished);
 
+  // One job cancelled as from the Jobs panel while the other goes on: the
+  // batch ends there, the other run finishes and counts, the third cell is
+  // not started behind the user's back.
+  QVERIFY(store_->update([&ind](Study &st) {
+    for (Recipe &r : st.recipes)
+      if (r.id == ind)
+        r.revision += 1;
+  }));
+  const int jobsThen = jobs_->rowCount();
+  runAll->click();
+  QCOMPARE(jobs_->rowCount(), jobsThen + 2);
+  jobs_->jobAt(jobsThen)->cancel();
+  QTRY_VERIFY(!page.batchRunning());
+  QTRY_COMPARE_WITH_TIMEOUT(jobs_->jobAt(jobsThen + 1)->state(),
+                            Job::State::Done, 120000);
+  waitForWorkers();
+  QCOMPARE(jobs_->rowCount(), jobsThen + 2);
+  QCOMPARE(jobs_->jobAt(jobsThen)->state(), Job::State::Cancelled);
+  int doneNow = 0, staleNow = 0;
+  for (const Case &c : store_->study().cases) {
+    const Cell cell = cellOf(store_->study(), c, QString(),
+                             *store_->study().findRecipe(ind));
+    doneNow += cell.state == CellState::Done ? 1 : 0;
+    staleNow += cell.state == CellState::Stale ? 1 : 0;
+    QVERIFY(!QDir(runTmpDir(cell.dir)).exists());
+  }
+  QCOMPARE(doneNow, 1);
+  QCOMPARE(staleNow, 2);
+  QVERIFY(runAll->text().contains(QStringLiteral("(2)")));
+  // The rest of the batch, to the end this time.
+  runAll->click();
+  QTRY_COMPARE_WITH_TIMEOUT(jobs_->rowCount(), jobsThen + 4, 60000);
+  QTRY_VERIFY_WITH_TIMEOUT(!page.batchRunning(), 240000);
+  waitForWorkers();
+  for (const Case &c : store_->study().cases)
+    QCOMPARE(cellOf(store_->study(), c, QString(),
+                    *store_->study().findRecipe(ind))
+                 .state,
+             CellState::Done);
+
+  // Editing a recipe: the page says how many finished runs the change makes
+  // stale and asks. A no goes back to the dialog with what was typed; a yes
+  // saves it.
+  matrix->select(0, 0);
+  QPushButton *edit = nullptr;
+  for (QPushButton *b : page.findChildren<QPushButton *>())
+    if (b->text().startsWith(QLatin1String("Edit recipe")))
+      edit = b;
+  QVERIFY(edit && edit->isEnabled());
+  const int revisionBefore = store_->study().findRecipe(ind)->revision;
+  const auto typeNine = [] {
+    auto *dialog =
+        qobject_cast<RecipeDialog *>(QApplication::activeModalWidget());
+    if (!dialog)
+      return;
+    auto *t = dialog->findChild<QTableWidget *>(QStringLiteral("settingsTable"));
+    for (int i = 0; i < t->rowCount(); ++i)
+      if (t->item(i, 0)->data(Qt::UserRole).toString() ==
+          QLatin1String("window_months"))
+        t->item(i, 1)->setText(QStringLiteral("9"));
+    dialog->accept();
+  };
+  QString shownAgain;
+  asked.clear();
+  page.confirm = [&](const QString &, const QString &text) {
+    asked << text;
+    // The dialog comes back: note what it shows, then give up.
+    QTimer::singleShot(200, &page, [&shownAgain] {
+      auto *dialog =
+          qobject_cast<RecipeDialog *>(QApplication::activeModalWidget());
+      if (!dialog)
+        return;
+      auto *t =
+          dialog->findChild<QTableWidget *>(QStringLiteral("settingsTable"));
+      for (int i = 0; i < t->rowCount(); ++i)
+        if (t->item(i, 0)->data(Qt::UserRole).toString() ==
+            QLatin1String("window_months"))
+          shownAgain = t->item(i, 1)->text();
+      dialog->reject();
+    });
+    return false;
+  };
+  QTimer::singleShot(200, &page, typeNine);
+  edit->click();
+  QCOMPARE(asked.size(), 1);
+  QVERIFY2(asked[0].contains(QStringLiteral("3 finished run(s)")),
+           qPrintable(asked[0]));
+  QCOMPARE(shownAgain, QStringLiteral("9"));
+  QCOMPARE(store_->study().findRecipe(ind)->revision, revisionBefore);
+  QCOMPARE(store_->study().findRecipe(ind)->settings.value("window_months").toInt(),
+           6);
+  page.confirm = [&](const QString &, const QString &text) {
+    asked << text;
+    return true;
+  };
+  QTimer::singleShot(200, &page, typeNine);
+  edit->click();
+  QCOMPARE(asked.size(), 2);
+  QCOMPARE(store_->study().findRecipe(ind)->revision, revisionBefore + 1);
+  QCOMPARE(store_->study().findRecipe(ind)->settings.value("window_months").toInt(),
+           9);
+  QCOMPARE(cellOf(store_->study(), store_->study().cases[0], QString(),
+                  *store_->study().findRecipe(ind))
+               .state,
+           CellState::Stale);
+  QVERIFY(store_->update([&ind](Study &st) {
+    for (Recipe &r : st.recipes)
+      if (r.id == ind) {
+        r.settings.insert(QStringLiteral("window_months"), 6);
+        r.revision -= 1;
+      }
+  }));
+  QCOMPARE(cellOf(store_->study(), store_->study().cases[0], QString(),
+                  *store_->study().findRecipe(ind))
+               .state,
+           CellState::Done);
+  page.confirm = [&asked, &answer](const QString &, const QString &text) {
+    asked << text;
+    return answer;
+  };
+
   // A case without stations: its per-station cells wait, say for what, and
   // the button goes to the page where stations are ticked.
   QVERIFY(store_->update([](Study &st) {
@@ -615,16 +736,16 @@ void TstStudyPages::runsPageFromNothing() {
   page.show();
   QVERIFY(QTest::qWaitForWindowExposed(&page));
   // No study: the two ways on are buttons, not only words.
-  auto *newStudy = page.findChild<QPushButton *>(QStringLiteral("newStudy"));
-  auto *openStudy = page.findChild<QPushButton *>(QStringLiteral("openStudy"));
-  QVERIFY(newStudy && newStudy->isVisible());
-  QVERIFY(openStudy && openStudy->isVisible());
+  // No study: the page says so (the window's bar has New and Open).
+  auto *stack = page.findChild<QStackedWidget *>();
+  QVERIFY(stack);
+  QCOMPARE(stack->currentIndex(), 0);
   shot(page, QStringLiteral("runs_no_study"));
 
   QVERIFY(store.create(dir_.filePath("fresh"), QStringLiteral("Fresh")));
   auto *guide = page.findChild<QLabel *>(QStringLiteral("runsGuide"));
   auto *guideGo = page.findChild<QPushButton *>(QStringLiteral("runsGuideGo"));
-  QVERIFY(!newStudy->isVisible());
+  QCOMPARE(stack->currentIndex(), 1);
   QVERIFY(guide->isVisible());
   QVERIFY(guide->text().contains(QStringLiteral("no cases")));
   QVERIFY(guideGo->isVisible());
@@ -685,7 +806,7 @@ void TstStudyPages::runsPageFromNothing() {
            qPrintable(asked[1]));
   QCOMPARE(store.study().recipes.size(), 2);
   store.close();
-  QVERIFY(newStudy->isVisible());
+  QCOMPARE(stack->currentIndex(), 0);
 }
 
 void TstStudyPages::recipeDialog() {
@@ -1162,9 +1283,9 @@ void TstStudyPages::compareManySeriesAndEmptyStates() {
   page.resize(1100, 800);
   page.show();
   QVERIFY(QTest::qWaitForWindowExposed(&page));
-  auto *newStudy = page.findChild<QPushButton *>(QStringLiteral("newStudy"));
-  QVERIFY(newStudy && newStudy->isVisible());
-  QVERIFY(page.findChild<QPushButton *>(QStringLiteral("openStudy")));
+  auto *stack = page.findChild<QStackedWidget *>();
+  QVERIFY(stack);
+  QCOMPARE(stack->currentIndex(), 0);
 
   // A study with nothing to score yet: the page says what is missing and
   // has a button to the page where it is done.
@@ -1269,7 +1390,7 @@ void TstStudyPages::compareManySeriesAndEmptyStates() {
   bare.setSeries(twelve, QStringLiteral("x"), 10, {});
   QCOMPARE(bare.seriesCount(), 8);
   store.close();
-  QVERIFY(newStudy->isVisible());
+  QCOMPARE(stack->currentIndex(), 0);
 }
 
 void TstStudyPages::cleanupTestCase() {

@@ -83,6 +83,15 @@ SettingInfo indicators(const QString &key) {
   if (key == QLatin1String("figure_dpi"))
     return {Help::tr("Figure resolution (dpi)"),
             Help::tr("Resolution of the PNG figures in dots per inch.")};
+  if (key == QLatin1String("label_mag"))
+    return {Help::tr("Risk label: magnitude"),
+            Help::tr("The table's risk column is 1 for the windows that end "
+                     "shortly before an earthquake of at least this "
+                     "magnitude, and 0 otherwise. Default 6.0.")};
+  if (key == QLatin1String("label_days"))
+    return {Help::tr("Risk label: days before"),
+            Help::tr("How many days before such an earthquake a window may "
+                     "end and still get the risk label 1. Default 90.")};
   if (key == QLatin1String("figure_language"))
     return {Help::tr("Figure language"),
             Help::tr("Language of the titles and axis labels in the "

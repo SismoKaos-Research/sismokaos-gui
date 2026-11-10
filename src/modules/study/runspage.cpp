@@ -43,7 +43,6 @@
 #include "core/ui.h"
 #include "jobs/jobmodel.h"
 #include "jobs/taskjob.h"
-#include "modules/study/studyswitcher.h"
 #include "study/store.h"
 
 namespace skg {
@@ -687,28 +686,12 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
   };
   stack_ = new QStackedWidget(this);
 
-  // No study open: say so, and offer the two ways on.
-  auto *none = new QWidget(this);
-  noStudy_ = new QLabel(none);
+  // No study open: the window's own bar above offers New and Open.
+  noStudy_ = new QLabel(this);
   noStudy_->setObjectName(QStringLiteral("bigHint"));
   noStudy_->setAlignment(Qt::AlignCenter);
   noStudy_->setWordWrap(true);
-  newStudy_ = new QPushButton(none);
-  newStudy_->setObjectName(QStringLiteral("newStudy"));
-  ui::setPrimary(newStudy_);
-  openStudy_ = new QPushButton(none);
-  openStudy_->setObjectName(QStringLiteral("openStudy"));
-  auto *noneButtons = new QHBoxLayout;
-  noneButtons->addStretch(1);
-  noneButtons->addWidget(newStudy_);
-  noneButtons->addWidget(openStudy_);
-  noneButtons->addStretch(1);
-  auto *noneLayout = new QVBoxLayout(none);
-  noneLayout->addStretch(1);
-  noneLayout->addWidget(noStudy_);
-  noneLayout->addLayout(noneButtons);
-  noneLayout->addStretch(1);
-  stack_->addWidget(none);
+  stack_->addWidget(noStudy_);
 
   auto *main = new QWidget(this);
   run_ = new QPushButton(main);
@@ -818,10 +801,6 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
     if (running_.isEmpty() && working_.isEmpty())
       tick_->stop();
   });
-  connect(newStudy_, &QPushButton::clicked, this,
-          [this] { StudySwitcher::newStudy(this, ctx_.study); });
-  connect(openStudy_, &QPushButton::clicked, this,
-          [this] { StudySwitcher::openStudy(this, ctx_.study); });
   connect(run_, &QPushButton::clicked, this, &RunsPage::runAll);
   connect(stop_, &QPushButton::clicked, this, &RunsPage::stopBatch);
   connect(runOne_, &QPushButton::clicked, this, &RunsPage::runSelected);
@@ -868,9 +847,8 @@ void RunsPage::showEvent(QShowEvent *e) {
 
 void RunsPage::retranslate() {
   noStudy_->setText(tr("No study is open.\nA study is a folder that holds "
-                       "the cases, the recipes and every result."));
-  newStudy_->setText(tr("New study…"));
-  openStudy_->setText(tr("Open study…"));
+                       "the cases, the recipes and every result. Start or "
+                       "open one with the buttons above."));
   stop_->setText(tr("Stop"));
   runOne_->setText(tr("Run the selected cell"));
   new_->setText(tr("New recipe  ▾"));
@@ -880,11 +858,6 @@ void RunsPage::retranslate() {
   openFolder_->setText(tr("Open folder"));
   hint_->setText(tr("A recipe is one tool's saved settings; the same recipe "
                     "on every case is the same analysis."));
-  newStudy_->setToolTip(ui::helpText(
-      tr("Starts a study in a folder you choose; its results are written "
-         "there.")));
-  openStudy_->setToolTip(ui::helpText(
-      tr("Opens a study folder (the one that holds study.toml).")));
   run_->setToolTip(ui::helpText(
       tr("Queues every cell that is missing or stale as a job, two at a "
          "time, and goes on to the cells they unblock (a classification "

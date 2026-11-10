@@ -41,7 +41,6 @@
 #include "jobs/job.h"
 #include "jobs/jobmodel.h"
 #include "modules/study/runspage.h"
-#include "modules/study/studyswitcher.h"
 #include "study/store.h"
 
 namespace skg {
@@ -586,28 +585,12 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
     : QWidget(parent), ctx_(ctx) {
   stack_ = new QStackedWidget(this);
 
-  // No study open: say so, and offer the two ways on.
-  auto *none = new QWidget(this);
-  noStudy_ = new QLabel(none);
+  // No study open: the window's own bar above offers New and Open.
+  noStudy_ = new QLabel(this);
   noStudy_->setObjectName(QStringLiteral("bigHint"));
   noStudy_->setAlignment(Qt::AlignCenter);
   noStudy_->setWordWrap(true);
-  newStudy_ = new QPushButton(none);
-  newStudy_->setObjectName(QStringLiteral("newStudy"));
-  ui::setPrimary(newStudy_);
-  openStudy_ = new QPushButton(none);
-  openStudy_->setObjectName(QStringLiteral("openStudy"));
-  auto *noneButtons = new QHBoxLayout;
-  noneButtons->addStretch(1);
-  noneButtons->addWidget(newStudy_);
-  noneButtons->addWidget(openStudy_);
-  noneButtons->addStretch(1);
-  auto *noneLayout = new QVBoxLayout(none);
-  noneLayout->addStretch(1);
-  noneLayout->addWidget(noStudy_);
-  noneLayout->addLayout(noneButtons);
-  noneLayout->addStretch(1);
-  stack_->addWidget(none);
+  stack_->addWidget(noStudy_);
 
   auto *main = new QWidget(this);
   recipeLabel_ = new QLabel(main);
@@ -718,10 +701,6 @@ ComparePage::ComparePage(AppContext &ctx, QWidget *parent)
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(stack_);
 
-  connect(newStudy_, &QPushButton::clicked, this,
-          [this] { StudySwitcher::newStudy(this, ctx_.study); });
-  connect(openStudy_, &QPushButton::clicked, this,
-          [this] { StudySwitcher::openStudy(this, ctx_.study); });
   connect(recipe_, &QComboBox::activated, this, &ComparePage::load);
   connect(seriesRecipe_, &QComboBox::activated, this, [this] {
     column_->clear(); // the other recipe has other columns
@@ -792,9 +771,8 @@ void ComparePage::showEvent(QShowEvent *e) {
 
 void ComparePage::retranslate() {
   noStudy_->setText(tr("No study is open.\nA study is a folder that holds "
-                       "the cases, the recipes and every result."));
-  newStudy_->setText(tr("New study…"));
-  openStudy_->setText(tr("Open study…"));
+                       "the cases, the recipes and every result. Start or "
+                       "open one with the buttons above."));
   recipeLabel_->setText(tr("Scores of"));
   headline_->setText(
       tr("Test days. The model is the one that did best on the validation "
@@ -808,11 +786,6 @@ void ComparePage::retranslate() {
   fittedTitle_->setText(tr("FITTED PER CASE"));
   fittedNote_->setText(tr("What each case fitted for itself in this recipe; "
                           "everything else in the recipe is identical."));
-  newStudy_->setToolTip(ui::helpText(
-      tr("Starts a study in a folder you choose; its results are written "
-         "there.")));
-  openStudy_->setToolTip(ui::helpText(
-      tr("Opens a study folder (the one that holds study.toml).")));
   ui::setHelp({recipeLabel_, recipe_},
               tr("The classification recipe whose scores are listed: one "
                  "row per case and station, with the baseline beside the "

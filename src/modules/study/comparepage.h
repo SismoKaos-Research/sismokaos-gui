@@ -134,7 +134,6 @@ private:
 
   QStackedWidget *stack_;
   QLabel *noStudy_;
-  QPushButton *newStudy_, *openStudy_;
   QLabel *recipeLabel_, *headline_, *seriesLabel_, *columnLabel_, *aligned_;
   QComboBox *recipe_, *seriesRecipe_, *column_;
   QPushButton *exportTable_, *exportFigure_;

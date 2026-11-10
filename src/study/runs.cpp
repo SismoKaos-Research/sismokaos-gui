@@ -985,7 +985,9 @@ bool runCell(const Study &s, const Case &c, const QString &station,
 
   // Everything the tool says also goes to run.log, from whichever thread.
   QFile logFile(QDir(tmp).filePath(kRunLogName));
-  logFile.open(QIODevice::WriteOnly | QIODevice::Text);
+  if (!logFile.open(QIODevice::WriteOnly | QIODevice::Text) && hooks.log)
+    hooks.log(RunText::tr("warning: the run log cannot be written: %1")
+                  .arg(logFile.errorString()));
   QMutex logMutex;
   const auto toFile = [&logFile, &logMutex](const QString &line) {
     const QMutexLocker lock(&logMutex);

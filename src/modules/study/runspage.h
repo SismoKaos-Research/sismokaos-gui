@@ -174,7 +174,6 @@ private:
 
   QStackedWidget *stack_;
   QLabel *noStudy_;
-  QPushButton *newStudy_, *openStudy_;
   QPushButton *run_, *stop_, *runOne_, *edit_, *remove_;
   QPushButton *fix_, *showLog_, *openFolder_;
   QToolButton *new_;

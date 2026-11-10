@@ -169,6 +169,9 @@ void TstStudyRuns::layoutAndDefaults() {
            3);
   QCOMPARE(again.findRecipe(indicators_.id)->settings.value("estimate_mc"),
            QVariant(true));
+  // The risk label is a recipe setting, with the shared defaults.
+  QCOMPARE(indicators_.settings.value("label_mag").toDouble(), 6.0);
+  QCOMPARE(indicators_.settings.value("label_days").toInt(), 90);
   QVERIFY(runSignature(s_, c, QStringLiteral("SYN1"), kToolFeatures) !=
           runSignature(s_, c, QString(), kToolFeatures));
   QCOMPARE(runTmpDir(QStringLiteral("/a/b")), QStringLiteral("/a/b.tmp"));
@@ -249,7 +252,7 @@ void TstStudyRuns::blockedCellsSayWhy() {
   QCOMPARE(cell.fix, Fix::Cases);
   // A folder that is named but is not there is named in the reason.
   Study withRoot = s_;
-  withRoot.dataRoot = dir_.filePath("no-such-waveforms");
+  withRoot.addWaveformRoot(dir_.filePath("no-such-waveforms"));
   cell = cellOf(withRoot, c, QStringLiteral("SYN1"), features_);
   QCOMPARE(cell.state, CellState::Blocked);
   QVERIFY2(cell.why.contains(QStringLiteral("no-such-waveforms")),
@@ -678,7 +681,7 @@ void TstStudyRuns::featuresOnASmallStation() {
   QVERIFY(QFile::copy(QDir(data).filePath("catalog.csv"),
                       QDir(s.dir).filePath("catalog.csv")));
   s.catalog = QStringLiteral("catalog.csv");
-  s.dataRoot = QStringLiteral("waves");
+  QVERIFY(s.addWaveformRoot(QDir(s.dir).filePath("waves")));
   // A reference date just after the data (2024-03-05).
   Case c = referenceCase(QStringLiteral("After the data"),
                          QDateTime(QDate(2024, 3, 6), QTime(0, 0), QTimeZone::UTC),
@@ -722,6 +725,38 @@ void TstStudyRuns::featuresOnASmallStation() {
   QVERIFY2(QFileInfo::exists(table), qPrintable(table));
   QVERIFY(QFileInfo::exists(cell.log));
   QVERIFY(!QFileInfo::exists(QDir(cell.dir).filePath("catalog_utc.csv")));
+  // Which waveform files were read is noted (names, sizes, times). A file
+  // of another station changes nothing; a new file for this station and
+  // span makes the run stale, and says so.
+  QVERIFY(!cell.record->waveStamp.isEmpty());
+  QVERIFY(QDir().mkpath(QDir(s.dir).filePath("waves/OTHER")));
+  const QString anMseed = QDir(data).entryList({QStringLiteral("*.mseed")}).first();
+  QVERIFY(QFile::copy(QDir(data).filePath(anMseed),
+                      QDir(s.dir).filePath("waves/OTHER/" + anMseed)));
+  QCOMPARE(cellOf(s, c, station, features).state, CellState::Done);
+  const QString added = QDir(s.dir).filePath("waves/" + station + "/added.mseed");
+  QVERIFY(QFile::copy(QDir(data).filePath(anMseed), added));
+  Cell newer = cellOf(s, c, station, features);
+  QCOMPARE(newer.state, CellState::Stale);
+  QVERIFY2(newer.why.contains(QStringLiteral("waveform files")),
+           qPrintable(newer.why));
+  QVERIFY(QFile::remove(added));
+  QCOMPARE(cellOf(s, c, station, features).state, CellState::Done);
+  // A record from before each tool had its own signature says why it is
+  // stale.
+  {
+    RunRecord old = *cell.record;
+    const QString kept = old.caseSignature;
+    old.caseSignature = QStringLiteral("2024-03-06T00:00:00Z|38.60000|39.30000|30|c");
+    QVERIFY(old.write(cell.dir));
+    newer = cellOf(s, c, station, features);
+    QCOMPARE(newer.state, CellState::Stale);
+    QVERIFY2(newer.why.contains(QStringLiteral("earlier version")),
+             qPrintable(newer.why));
+    old.caseSignature = kept;
+    QVERIFY(old.write(cell.dir));
+    QCOMPARE(cellOf(s, c, station, features).state, CellState::Done);
+  }
   // The zone is none of its business; the span is.
   Study changed = s;
   changed.cases[0].zone.radiusKm = 55;
