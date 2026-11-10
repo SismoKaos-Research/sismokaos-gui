@@ -185,6 +185,12 @@ void WaveScan::run(ScanPass pass) {
                   .arg(s.cached)
                   .arg(s.skipped)
                   .arg(s.dropped));
+        if (s.unfiled > 0)
+          t.log(QStringLiteral("  note: %1 result(s) could not be written to "
+                               "the scan cache in %2; the scan itself is "
+                               "complete")
+                    .arg(s.unfiled)
+                    .arg(cacheDir));
         if (!identity && s.read > 0 && seconds > 0)
           t.log(QStringLiteral("  %1 MB in %2 s with %3 worker(s): %4 MB/s")
                     .arg(double(s.bytes) / 1048576.0, 0, 'f', 0)

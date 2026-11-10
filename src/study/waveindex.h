@@ -166,6 +166,7 @@ struct ScanStats {
   int listed = 0;      // files found under the folders
   int read = 0;        // files read in this call
   int cached = 0;      // files whose exact coverage came from the cache
+  int unfiled = 0;     // exact results the cache could not be given
   int skipped = 0;     // files that are not miniSEED (or unreadable)
   int dropped = 0;     // index entries whose file is gone
   qint64 bytes = 0;    // sizes on disk of the files this call had to read

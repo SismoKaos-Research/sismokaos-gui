@@ -19,6 +19,7 @@
 #include <QToolButton>
 #include <QtTest>
 #include <memory>
+#include <utility>
 
 #include "analysis/geo.h"
 #include "core/module.h"
@@ -493,12 +494,53 @@ void TstMaps::casesPageAndMapSelectEachOther() {
   auto *one = child<QPushButton>(page, "mapFitCase");
   auto *all = child<QPushButton>(page, "mapFitAll");
   QVERIFY(one && all);
+  // How much closer depends on the shape the layout gives the map (the
+  // cases lie east to west, so a wide, low map gains less than a tall one),
+  // and that shape depends on the platform's fonts. What must hold whatever
+  // the shape: the view is closer, centred on the selected case, and still
+  // holds the case's 100 km zone.
+  QVERIFY(one->isEnabled() && all->isEnabled());
+  QTRY_VERIFY(map->width() > 200 && map->height() > 120);
+  all->click();
   const double wide = map->widthKm();
   one->click();
-  QVERIFY(map->widthKm() < wide / 2);
+  QTRY_VERIFY2(map->widthKm() < wide * 0.75,
+               qPrintable(QStringLiteral("%1 km of %2 km, map %3x%4")
+                              .arg(map->widthKm())
+                              .arg(wide)
+                              .arg(map->width())
+                              .arg(map->height())));
+  const double tallKm = map->widthKm() * map->height() / map->width();
+  QVERIFY2(map->widthKm() >= 200.0 && tallKm >= 200.0,
+           qPrintable(QStringLiteral("%1 x %2 km").arg(map->widthKm()).arg(tallKm)));
+  const QPointF at = map->toPx(38.12, 38.56); // case a
+  QVERIFY2(std::abs(at.x() - map->width() / 2.0) < map->width() * 0.2 &&
+               std::abs(at.y() - map->height() / 2.0) < map->height() * 0.2,
+           qPrintable(QStringLiteral("%1,%2 in %3x%4")
+                          .arg(at.x())
+                          .arg(at.y())
+                          .arg(map->width())
+                          .arg(map->height())));
   shot(page, QStringLiteral("cases_this_case"));
   all->click();
-  QVERIFY(std::abs(map->widthKm() - wide) < wide * 0.05);
+  QTRY_VERIFY(std::abs(map->widthKm() - wide) < wide * 0.05);
+  // Every case is in view again.
+  for (const auto &[lat, lon] : {std::pair{38.12, 38.56}, std::pair{39.47, 35.35},
+                                 std::pair{38.40, 29.10}}) {
+    const QPointF px = map->toPx(lat, lon);
+    QVERIFY(map->rect().contains(px.toPoint()));
+  }
+  // The same on a low, wide map, where the height decides the scale and
+  // the gain is smaller: 0.57 of the width here, which an earlier "less
+  // than half" did not allow (it failed on the Windows test machine, whose
+  // fonts presumably lay the page out with a lower map).
+  map->setFixedHeight(220);
+  QTRY_COMPARE(map->height(), 220);
+  all->click();
+  const double low = map->widthKm();
+  one->click();
+  QTRY_VERIFY(map->widthKm() < low * 0.75);
+  QVERIFY(map->widthKm() * map->height() / map->width() >= 200.0);
 }
 
 void TstMaps::addDialogPreview() {

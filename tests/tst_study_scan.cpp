@@ -25,6 +25,7 @@
 #include <cstring>
 #include <memory>
 #include <thread>
+#include <utility>
 
 #include "core/i18n.h"
 #include "core/module.h"
@@ -209,6 +210,9 @@ private slots:
   void cacheSparesASecondStudy();
   void cacheFollowsAMovedFolder();
   void cacheIsNotFooledByALookAlike();
+  void cacheTellsTwinsApart();
+  void cacheThatCannotBeWritten();
+  void firstResultsOfManyWorkersAreAllFiled();
   void twoScansShareTheCache();
   void waveScanUsesTheCache();
   void twoWaveScansAtOnce();
@@ -795,6 +799,137 @@ void TstStudyScan::cacheIsNotFooledByALookAlike() {
   QCOMPARE(three.daysCovered("AAA", utc(2021, 1, 1), utc(2021, 1, 2)), 1);
 }
 
+void TstStudyScan::cacheTellsTwinsApart() {
+  // The worst look-alikes: two files in different folders with the same
+  // name, size, time and first record, whose later records differ. Neither
+  // may ever be given the other's coverage, and neither's result may push
+  // the other's out of the cache.
+  QTemporaryDir cacheDir, a, b;
+  ScanCache cache(cacheDir.filePath("deep/er/cache"));
+  ScanOptions options;
+  options.workers = 4;
+  options.cache = &cache;
+  const QByteArray first = days("AAA", utc(2021, 1, 1), 1);
+  const QByteArray third = first + days("AAA", utc(2021, 1, 3), 1);
+  const QByteArray fifth = first + days("AAA", utc(2021, 1, 5), 1);
+  QCOMPARE(third.size(), fifth.size());
+  const QDateTime when = utc(2022, 2, 2, 2);
+  const auto put = [&when](const QString &path, const QByteArray &bytes) {
+    write(path, bytes);
+    QFile f(path);
+    return f.open(QIODevice::ReadWrite) &&
+           f.setFileTime(when, QFileDevice::FileModificationTime);
+  };
+  QVERIFY(put(a.filePath("day.mseed"), third));
+  QVERIFY(put(b.filePath("day.mseed"), fifth));
+  QVERIFY(ScanCache::fingerprint(a.filePath("day.mseed")) !=
+          ScanCache::fingerprint(b.filePath("day.mseed")));
+  QVERIFY(ScanCache::fingerprint(a.filePath("nothing.mseed")).isEmpty());
+  const auto has = [](const WaveIndex &index, int day) {
+    return index.daysCovered("AAA", utc(2021, 1, day), utc(2021, 1, day + 1));
+  };
+
+  WaveIndex one, two;
+  ScanStats st = scanRoot(one, "w1", a.path(), ScanPass::Identity, {}, options);
+  st = scanRoot(one, "w1", a.path(), ScanPass::Coverage, {}, options);
+  QCOMPARE(st.read, 1);
+  QCOMPARE(st.unfiled, 0);
+  QCOMPARE(cache.usage().files, 1);
+  // The twin: same key by name, other content. It is read, not served.
+  st = scanRoot(two, "w1", b.path(), ScanPass::Identity, {}, options);
+  QCOMPARE(st.cached, 0);
+  st = scanRoot(two, "w1", b.path(), ScanPass::Coverage, {}, options);
+  QCOMPARE(st.read, 1);
+  QCOMPARE(st.unfiled, 0);
+  QCOMPARE(has(one, 3), 1);
+  QCOMPARE(has(one, 5), 0);
+  QCOMPARE(has(two, 3), 0);
+  QCOMPARE(has(two, 5), 1);
+  QCOMPARE(cache.usage().files, 2);
+
+  // Each is still in the cache as itself: at its place, and as a copy
+  // somewhere else.
+  QTemporaryDir c, d;
+  QVERIFY(put(c.filePath("day.mseed"), third));
+  QVERIFY(put(d.filePath("day.mseed"), fifth));
+  for (const auto &[folder, day] :
+       {std::pair{a.path(), 3}, std::pair{b.path(), 5}, std::pair{c.path(), 3},
+        std::pair{d.path(), 5}}) {
+    WaveIndex index;
+    st = scanRoot(index, "w1", folder, ScanPass::Identity, {}, options);
+    QCOMPARE(st.cached, 1);
+    QCOMPARE(has(index, day), 1);
+    QCOMPARE(has(index, day == 3 ? 5 : 3), 0);
+  }
+
+  // A file rewritten in place under the same size and time is not given
+  // what stood there before.
+  QVERIFY(put(a.filePath("day.mseed"), fifth));
+  WaveIndex rewritten;
+  scanBoth(rewritten, "w1", a.path(), options);
+  QCOMPARE(has(rewritten, 5), 1);
+  QCOMPARE(has(rewritten, 3), 0);
+  // Nor is it when no other file happens to hold the new content.
+  const QByteArray seventh = first + days("AAA", utc(2021, 1, 7), 1);
+  QVERIFY(put(b.filePath("day.mseed"), seventh));
+  WaveIndex again;
+  st = scanRoot(again, "w1", b.path(), ScanPass::Identity, {}, options);
+  QCOMPARE(st.cached, 0);
+  scanRoot(again, "w1", b.path(), ScanPass::Coverage, {}, options);
+  QCOMPARE(has(again, 7), 1);
+  QCOMPARE(has(again, 5), 0);
+}
+
+void TstStudyScan::cacheThatCannotBeWritten() {
+  // The cache folder cannot be made (its parent is a file): the scan is
+  // whole all the same, and says how many results it could not file.
+  QTemporaryDir dir;
+  write(dir.filePath("file"), "not a folder\n");
+  ScanCache cache(dir.filePath("file/cache"));
+  ScanOptions options;
+  options.workers = 3;
+  options.cache = &cache;
+  QTest::ignoreMessage(QtWarningMsg,
+                       QRegularExpression(QStringLiteral("scan cache: .*")));
+  QTest::ignoreMessage(QtWarningMsg,
+                       QRegularExpression(QStringLiteral("scan cache: .*")));
+  QTemporaryDir data;
+  manyFiles(data.path(), 2);
+  WaveIndex index, reference;
+  scanRoot(index, "w1", data.path(), ScanPass::Identity, {}, options);
+  const ScanStats st =
+      scanRoot(index, "w1", data.path(), ScanPass::Coverage, {}, options);
+  QCOMPARE(st.read, 2);
+  QCOMPARE(st.unfiled, 2);
+  QCOMPARE(cache.writeFailures(), 2);
+  scanBoth(reference, "w1", data.path());
+  QCOMPARE(dump(index), dump(reference));
+  QCOMPARE(cache.usage().files, 0);
+}
+
+void TstStudyScan::firstResultsOfManyWorkersAreAllFiled() {
+  // Many workers file their first results at the same moment into a cache
+  // folder none of whose levels exists yet. Every one must be there
+  // afterwards (on Windows some were lost while the folders were made).
+  QTemporaryDir data;
+  manyFiles(data.path(), 24);
+  WaveIndex quick;
+  scanRoot(quick, "w1", data.path(), ScanPass::Identity);
+  for (int round = 0; round < 25; ++round) {
+    QTemporaryDir dir;
+    ScanCache cache(dir.filePath(QStringLiteral("a/b/c/cache-%1").arg(round)));
+    ScanOptions options;
+    options.workers = 12;
+    options.cache = &cache;
+    WaveIndex index = quick;
+    const ScanStats st =
+        scanRoot(index, "w1", data.path(), ScanPass::Coverage, {}, options);
+    QCOMPARE(st.read, 24);
+    QCOMPARE(st.unfiled, 0);
+    QCOMPARE(cache.usage().files, 24);
+  }
+}
+
 void TstStudyScan::twoScansShareTheCache() {
   // Two applications scanning the same folder at once, each for its own
   // study, with one cache between them.
@@ -825,7 +960,8 @@ void TstStudyScan::twoScansShareTheCache() {
     QFile f(it.next());
     QVERIFY(f.open(QIODevice::ReadOnly));
     const QJsonObject o = QJsonDocument::fromJson(f.readAll()).object();
-    QVERIFY2(o.value("file").isObject() && o.value("first").isObject(),
+    QVERIFY2(o.value("file").isObject() && o.value("first").isObject() &&
+                 o.value("print").toString().size() == 40,
              qPrintable(f.fileName()));
     ++shards;
   }

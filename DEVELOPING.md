@@ -126,6 +126,17 @@ decompression library: the zips go through miniz.
   and mtime) and `<cache>/name/` (name, size, mtime to two seconds, and the
   first record of the file, for data that moved), each written with
   `QSaveFile`, so several running applications share it without a lock.
+  Every result carries `ScanCache::fingerprint()` of the file it was made
+  from (the whole file up to 1 MiB, else its two ends and six blocks; the
+  end of a zip is its directory with every member's checksum), and is only
+  handed out for a file with the same fingerprint, so a file rewritten in
+  place or a look-alike elsewhere is scanned, not served. Results by name
+  are one file per fingerprint (`<key>-<print>.json`). The folders are made
+  one thread at a time with retries and a rename is retried: on the
+  Windows CI the first results of several workers were lost, most likely
+  while they made the same missing parent folders at once. A result
+  that still cannot be written is counted (`ScanStats::unfiled`, a line in
+  the job log, a `qWarning`); the scan does not depend on it.
   `scanRoots()` asks it before reading a file, in either pass, and files
   what the exact pass read. It is off (`ScanCache::sharedDir()` empty) until
   `main()` sets it, so tests do not touch the user's cache; a test that

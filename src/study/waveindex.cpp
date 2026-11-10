@@ -710,8 +710,8 @@ ScanResultOf scanOne(int jobIndex, const ScanJob &job, ScanPass pass,
   }
   if (!identity.skipped.isEmpty())
     return finish(identity, false);
-  if (cache && cache->lookupMoved(QFileInfo(job.path).fileName(), job.size,
-                                  job.mtime, identity, &out.file)) {
+  if (cache && cache->lookupMoved(job.path, job.size, job.mtime, identity,
+                                  &out.file)) {
     cache->store(job.path, job.size, job.mtime, out.file, identity);
     return finish(out.file, true);
   }
@@ -801,6 +801,7 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
         return a.rootId != b.rootId ? a.rootId < b.rootId : a.rel < b.rel;
       });
   const int total = int(jobs.size());
+  const int unfiledBefore = options.cache ? options.cache->writeFailures() : 0;
   if (total == 0) {
     if (hooks.progress)
       hooks.progress(0, 0, QString());
@@ -906,6 +907,8 @@ ScanStats scanRoots(WaveIndex &index, const QList<ScanFolder> &folders,
     throw;
   }
   joinAll();
+  if (options.cache)
+    stats.unfiled = options.cache->writeFailures() - unfiledBefore;
   if (done < total)
     stats.stopped = true;
   if (hooks.progress)
