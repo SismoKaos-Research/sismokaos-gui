@@ -33,6 +33,7 @@
 #include <QtTest>
 #include <memory>
 
+#include "core/defaults.h"
 #include "core/module.h"
 #include "core/theme.h"
 #include "fx/npy.h"
@@ -136,6 +137,7 @@ private slots:
   void waveformsOnCases();
   void stationsWithData();
   void catalogOffsetRereadsCaseTimes();
+  void runsQueue();
   void cleanupTestCase();
 
 private:
@@ -537,8 +539,13 @@ void TstStudyPages::runsPageGuards() {
   const QString ind = s.recipes[0].id;
   QVERIFY(store_->update([&ind](Study &st) {
     for (Recipe &r : st.recipes)
-      if (r.id == ind)
+      if (r.id == ind) {
         r.revision += 1;
+        // With its figures the run takes seconds, not milliseconds: there
+        // is something to stop. (An optimised build finishes the bare
+        // tables before Stop can be pressed.)
+        r.settings.insert(QStringLiteral("figures"), true);
+      }
   }));
   QVERIFY(runAll->isEnabled());
   QVERIFY(runAll->text().contains(QStringLiteral("(3)")));
@@ -564,8 +571,10 @@ void TstStudyPages::runsPageGuards() {
   QVERIFY(runOne->isEnabled()); // the worker has left: it can be run again
   QVERIFY(store_->update([&ind](Study &st) {
     for (Recipe &r : st.recipes)
-      if (r.id == ind)
+      if (r.id == ind) {
         r.revision -= 1;
+        r.settings.insert(QStringLiteral("figures"), false);
+      }
   }));
   const Cell again = cellOf(s, s.cases[0], QString(), s.recipes[0]);
   QCOMPARE(again.state, CellState::Done);
@@ -576,8 +585,13 @@ void TstStudyPages::runsPageGuards() {
   // not started behind the user's back.
   QVERIFY(store_->update([&ind](Study &st) {
     for (Recipe &r : st.recipes)
-      if (r.id == ind)
+      if (r.id == ind) {
         r.revision += 1;
+        // With its figures the run takes seconds, not milliseconds: there
+        // is something to stop. (An optimised build finishes the bare
+        // tables before Stop can be pressed.)
+        r.settings.insert(QStringLiteral("figures"), true);
+      }
   }));
   const int jobsThen = jobs_->rowCount();
   runAll->click();
@@ -974,7 +988,7 @@ void TstStudyPages::waveformsOnCases() {
   QVERIFY(rowOf("SYN1") >= 0);
   QCOMPARE(stations->columnCount(), 5);
   QTRY_COMPARE(stations->item(rowOf("SYN1"), 4)->text(),
-               QStringLiteral("found: 3 of 270 days in span"));
+               QStringLiteral("found: 3 of 270 days in span  ⚠ little of the span"));
   QTRY_VERIFY2(summary->text().contains(QStringLiteral("2 station")),
                qPrintable(summary->text()));
   QVERIFY2(summary->text().contains(QStringLiteral("1 file")),
@@ -997,7 +1011,7 @@ void TstStudyPages::waveformsOnCases() {
   writeDays(root + "/SYN1/later.mseed", "SYN1", inA.addDays(9), 2);
   QVERIFY(store_->update([&root](Study &st) { st.addWaveformRoot(root); }));
   QTRY_COMPARE_WITH_TIMEOUT(stations->item(rowOf("SYN1"), 4)->text(),
-                            QStringLiteral("found: 5 of 270 days in span"),
+                            QStringLiteral("found: 5 of 270 days in span  ⚠ little of the span"),
                             20000);
   // Every station of the case has waveforms: recipes are the next step.
   QCOMPARE(page.findChild<QPushButton *>(QStringLiteral("nextRecipes"))->text(),
@@ -1047,7 +1061,7 @@ void TstStudyPages::waveformsOnCases() {
   QCOMPARE(asked, 2);
   QCOMPARE(store_->study().cases[0].spanDays, 200);
   QTRY_COMPARE(stations->item(rowOf("SYN1"), 4)->text(),
-               QStringLiteral("found: 5 of 200 days in span"));
+               QStringLiteral("found: 5 of 200 days in span  ⚠ little of the span"));
   // Leaving a field without changing it saves nothing and asks nothing.
   emit span->editingFinished();
   QCOMPARE(asked, 2);
@@ -1100,7 +1114,7 @@ void TstStudyPages::waveformsOnCases() {
   writeDays(root + "/SYN1/last.mseed", "SYN1", inA.addDays(20), 2);
   QVERIFY(store_->update([&root](Study &st) { st.addWaveformRoot(root); }));
   QTRY_COMPARE_WITH_TIMEOUT(stations->item(rowOf("SYN1"), 4)->text(),
-                            QStringLiteral("found: 7 of 200 days in span"),
+                            QStringLiteral("found: 7 of 200 days in span  ⚠ little of the span"),
                             20000);
 }
 
@@ -1473,6 +1487,143 @@ void TstStudyPages::compareManySeriesAndEmptyStates() {
   QCOMPARE(bare.seriesCount(), 8);
   store.close();
   QCOMPARE(stack->currentIndex(), 0);
+}
+
+// Cells asked for while every slot is taken wait in a queue and say so,
+// whether they were started one by one or by "Run missing and stale"; a
+// queued cell can be taken out again, and Stop empties the queue.
+void TstStudyPages::runsQueue() {
+  StudyStore store(settings_.get());
+  const QString folder = dir_.filePath("queue-study");
+  QVERIFY(store.create(folder, QStringLiteral("Queue")));
+  QVERIFY(
+      QFile::copy(QStringLiteral(SKG_TEST_DATA "/cbi/synthetic_catalog.csv"),
+                  QDir(folder).filePath("catalog.csv")));
+  QVERIFY(store.update([](Study &s) {
+    s.catalog = QStringLiteral("catalog.csv");
+    const char *names[] = {"One", "Two", "Three", "Four"};
+    for (int i = 0; i < 4; ++i) {
+      Case r = referenceCase(
+          QString::fromLatin1(names[i]),
+          QDateTime(QDate(2019 + i % 2, 3 + i, 1), QTime(0, 0), QTimeZone::UTC),
+          38.1228, 38.5626);
+      r.id = s.freeCaseId(r.name);
+      r.spanDays = 270;
+      s.cases << r;
+    }
+    // With figures: a run that takes a while.
+    Recipe ind = defaultRecipe(kToolIndicators);
+    ind.name = QStringLiteral("Indicators");
+    ind.id = s.freeRecipeId(ind.name);
+    ind.settings.insert(QStringLiteral("window_months"), 6);
+    s.recipes << ind;
+  }));
+  const Study &s = store.study();
+  const Recipe &ind = s.recipes[0];
+  AppContext ctx = ctx_;
+  ctx.study = &store;
+  // One at a time, as the Settings page would set it.
+  settings_->setValue(QLatin1String(defaults::kRunsAtOnceSetting), 1);
+  const auto key = [&](int i) {
+    return s.cases[i].id + QStringLiteral("||") + ind.id;
+  };
+
+  RunsPage page(ctx);
+  page.resize(1100, 760);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  QCOMPARE(page.atOnce(), 1);
+  auto *matrix = page.findChild<RunMatrix *>();
+  auto *runAll = page.findChild<QPushButton *>(QStringLiteral("runAll"));
+  auto *stop = page.findChild<QPushButton *>(QStringLiteral("stopBatch"));
+  auto *runOne = page.findChild<QPushButton *>(QStringLiteral("runOne"));
+  auto *info = page.findChild<QLabel *>(QStringLiteral("cellInfo"));
+  auto *guide = page.findChild<QLabel *>(QStringLiteral("runsGuide"));
+  QVERIFY(matrix && runAll && stop && runOne && info && guide);
+  const int jobsBefore = jobs_->rowCount();
+  QTRY_COMPARE_WITH_TIMEOUT(jobs_->runningCount(), 0, 120000);
+
+  // Three cells started one by one: the first runs, the others wait their
+  // turn, and say so (not "Missing").
+  for (int i = 0; i < 3; ++i) {
+    matrix->select(i, 0);
+    QVERIFY(runOne->isEnabled());
+    runOne->click();
+  }
+  QCOMPARE(jobs_->rowCount(), jobsBefore + 1);
+  QCOMPARE(page.queued(), (QStringList{key(1), key(2)}));
+  matrix->select(1, 0);
+  QVERIFY2(info->text().contains(QStringLiteral("Queued, number 1 of 2")),
+           qPrintable(info->text()));
+  QVERIFY(!info->text().contains(QStringLiteral("Missing")));
+  QCOMPARE(runOne->text(), QStringLiteral("Take out of the queue"));
+  matrix->select(2, 0);
+  QVERIFY2(info->text().contains(QStringLiteral("Queued, number 2 of 2")),
+           qPrintable(info->text()));
+  QVERIFY2(guide->isVisible() &&
+               guide->text().contains(QStringLiteral("1 running, 2 queued")),
+           qPrintable(guide->text()));
+  QVERIFY(stop->isEnabled());
+  // What the matrix draws and says on hover.
+  MatrixCell drawn;
+  drawn.state = CellState::Missing;
+  drawn.queued = true;
+  drawn.place = 2;
+  QVERIFY(RunMatrix::stateText(drawn).contains(QStringLiteral("Queued")));
+  QVERIFY(RunMatrix::cellTip(drawn).contains(
+      QStringLiteral("Queued, number 2 in the queue")));
+  drawn.place = 0;
+  drawn.waitsFor = QStringLiteral("Features · SVRC");
+  QVERIFY(RunMatrix::cellTip(drawn).contains(
+      QStringLiteral("waiting for Features · SVRC")));
+  shot(page, QStringLiteral("runs_queued"));
+
+  // A queued cell taken out again is what it was before.
+  matrix->select(1, 0);
+  runOne->click();
+  QCOMPARE(page.queued(), QStringList{key(2)});
+  QVERIFY2(info->text().contains(QStringLiteral("Missing")),
+           qPrintable(info->text()));
+  QCOMPARE(runOne->text(), QStringLiteral("Run the selected cell"));
+
+  // Stop: the queue is emptied, the running cell is cancelled, and none of
+  // them has a run.
+  stop->click();
+  QVERIFY(page.queued().isEmpty());
+  QTRY_COMPARE_WITH_TIMEOUT(jobs_->runningCount(), 0, 120000);
+  QTest::qWait(300);
+  QCOMPARE(jobs_->rowCount(), jobsBefore + 1); // nothing started behind it
+  for (int i = 0; i < 4; ++i)
+    QCOMPARE(cellOf(s, s.cases[i], QString(), ind).state, CellState::Missing);
+  matrix->select(2, 0);
+  QVERIFY2(info->text().contains(QStringLiteral("Missing")),
+           qPrintable(info->text()));
+
+  // "Run missing and stale" with two at a time: two run, two are queued,
+  // and each starts as a slot comes free.
+  settings_->setValue(QLatin1String(defaults::kRunsAtOnceSetting), 2);
+  QCOMPARE(page.atOnce(), 2);
+  QTRY_VERIFY_WITH_TIMEOUT(runAll->isEnabled() &&
+                               runAll->text().contains(QStringLiteral("(4)")),
+                           20000);
+  runAll->click();
+  QCOMPARE(jobs_->rowCount(), jobsBefore + 3);
+  QCOMPARE(page.queued(), (QStringList{key(2), key(3)}));
+  QVERIFY2(guide->text().contains(QStringLiteral("2 running, 2 queued")),
+           qPrintable(guide->text()));
+  int most = 0;
+  while (jobs_->runningCount() > 0 || !page.queued().isEmpty()) {
+    most = std::max(most, jobs_->runningCount());
+    QTest::qWait(50);
+    QVERIFY(most <= 2);
+  }
+  QCOMPARE(jobs_->rowCount(), jobsBefore + 5);
+  QTest::qWait(300);
+  for (int i = 0; i < 4; ++i)
+    QCOMPARE(cellOf(s, s.cases[i], QString(), ind).state, CellState::Done);
+  QVERIFY(!page.batchRunning());
+  settings_->remove(QLatin1String(defaults::kRunsAtOnceSetting));
+  QCOMPARE(page.atOnce(), defaults::kRunsAtOnce);
 }
 
 void TstStudyPages::cleanupTestCase() {

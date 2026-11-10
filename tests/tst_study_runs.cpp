@@ -308,12 +308,36 @@ void TstStudyRuns::classificationOnAFabricatedTable() {
   RunHooks hooks;
   hooks.log = [&log](const QString &l) { log << l; };
   double lastFraction = -1;
-  hooks.progress = [&lastFraction](double f, const QString &) {
+  // The steps of the run and the models inside a step are on one scale: the
+  // bar never goes back when a step starts on its models (it used to run
+  // through each step's models from nothing to full).
+  QList<double> fractions;
+  QStringList said;
+  hooks.progress = [&](double f, const QString &what) {
     lastFraction = f;
+    fractions << f;
+    said << what;
   };
   for (const Case &c : s_.cases) {
+    fractions.clear();
+    said.clear();
     QVERIFY(runCell(s_, c, QStringLiteral("SYN1"), classification_,
                     QStringLiteral("test"), hooks));
+    QVERIFY(fractions.size() > 3);
+    for (int i = 1; i < fractions.size(); ++i)
+      QVERIFY2(fractions[i] + 1e-12 >= fractions[i - 1],
+               qPrintable(QStringLiteral("%1 after %2 (%3)")
+                              .arg(fractions[i])
+                              .arg(fractions[i - 1])
+                              .arg(said[i])));
+    QCOMPARE(fractions.last(), 1.0);
+    // A model inside a step is named with the step it belongs to.
+    bool modelInStep = false;
+    for (const QString &w : std::as_const(said))
+      modelInStep = modelInStep ||
+                    (w.contains(QStringLiteral(" baseline · ")) ||
+                     w.contains(QStringLiteral(" trees · ")));
+    QVERIFY2(modelInStep, qPrintable(said.join(QStringLiteral(" | "))));
     const Cell cell = cellOf(s_, c, QStringLiteral("SYN1"), classification_);
     QCOMPARE(cell.state, CellState::Done);
     QVERIFY(QFileInfo::exists(QDir(cell.dir).filePath(
@@ -368,7 +392,7 @@ void TstStudyRuns::comparisonReadsTheRuns() {
   QVERIFY(withMissing[3].bestModel.isEmpty());
   QVERIFY(scoresCsv(withMissing)
               .contains(QStringLiteral(
-                  "Not run;SYN1;earthquake;5.0;24.0;;;;;;;;\n")));
+                  "Not run;SYN1;earthquake;5.0;24.0;;;;;;;;;\n")));
 
   // Series: indicators per case, on days before the event.
   const QStringList columns = seriesColumns(s_, indicators_);

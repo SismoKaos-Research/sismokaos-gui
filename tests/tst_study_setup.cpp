@@ -548,10 +548,26 @@ void TstStudySetup::fetchAsJobBecomesTheCatalog() {
   QVERIFY(s.catalog.startsWith(QStringLiteral("catalog/catalog_usgs_")));
   QCOMPARE(s.catalogUtcOffsetHours, 0.0);
   QCOMPARE(pickingEvents(s).size(), size_t(13));
-  // The indicators are no longer held back by the catalog.
-  const Cell ind =
-      cellOf(s, s.cases.first(), QString(), *s.findRecipe(QStringLiteral("ind")));
-  QVERIFY(ind.state != CellState::Blocked);
+  // The indicators are no longer held back for want of a catalog. This
+  // little list starts at magnitude 2.4, so a recipe that counts from 1.3
+  // still waits, for that reason and with the recipe as where to put it
+  // right; one that lets the completeness magnitude be estimated runs.
+  Recipe counted = *s.findRecipe(QStringLiteral("ind"));
+  counted.settings.insert(QStringLiteral("estimate_mc"), false);
+  counted.settings.insert(QStringLiteral("mc"), 1.3);
+  const Cell ind = cellOf(s, s.cases.first(), QString(), counted);
+  QVERIFY(!ind.why.contains(QStringLiteral("no earthquake catalog of its own")));
+  QCOMPARE(ind.state, CellState::Blocked);
+  QCOMPARE(ind.fix, Fix::Recipe);
+  QVERIFY2(ind.why.contains(QStringLiteral("from about magnitude 2.4 up")),
+           qPrintable(ind.why));
+  counted.settings.insert(QStringLiteral("estimate_mc"), true);
+  QVERIFY(cellOf(s, s.cases.first(), QString(), counted).state !=
+          CellState::Blocked);
+  counted.settings.insert(QStringLiteral("estimate_mc"), false);
+  counted.settings.insert(QStringLiteral("mc"), 2.0);
+  QVERIFY(cellOf(s, s.cases.first(), QString(), counted).state !=
+          CellState::Blocked);
 
   // A failing service says so and leaves the study as it was.
   told = false;

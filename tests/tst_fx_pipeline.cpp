@@ -330,7 +330,12 @@ private slots:
     hooks.phase = [&](const QString &p) { phases << p; };
     const RunResult r = runPipeline(cfg, hooks);
     QVERIFY(!r.stopped);
-    QCOMPARE(phases.size(), 2);
+    // The folder holds an archive, so it is unpacked first, once.
+    QCOMPARE(phases,
+             (QStringList{QStringLiteral("Unpacking the archives"),
+                          QStringLiteral("Calibrating chaos parameters on "
+                                         "quiet periods"),
+                          QStringLiteral("Extracting features")}));
     // 7800 s of data at 5 Hz, 200 s windows every 200 s.
     QCOMPARE(r.windows, (7800 - 200) / 200 + 1);
     QVERIFY(r.featuresCsv.endsWith(QStringLiteral("/enz_features.csv")));
@@ -384,7 +389,8 @@ private slots:
     cfg2.calibrationFile = r.calibration;
     phases.clear();
     const RunResult r2 = runPipeline(cfg2, hooks);
-    QCOMPARE(phases, QStringList{QStringLiteral("Extracting features")});
+    QCOMPARE(phases, (QStringList{QStringLiteral("Unpacking the archives"),
+                                  QStringLiteral("Extracting features")}));
     QCOMPARE(r2.windows, r.windows);
     const QStringList a = csvLines(r.featuresCsv), b = csvLines(r2.featuresCsv);
     QCOMPARE(a, b);
