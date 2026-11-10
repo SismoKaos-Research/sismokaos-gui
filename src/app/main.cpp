@@ -70,6 +70,8 @@ int main(int argc, char *argv[]) {
   // more line here.
   ModuleRegistry modules;
   modules.emplace<CasesModule>();
+  modules.emplace<RunsModule>();
+  modules.emplace<CompareModule>();
   modules.emplace<TdvmsModule>();
   modules.emplace<FeaturesModule>();
   modules.emplace<ClassificationModule>();

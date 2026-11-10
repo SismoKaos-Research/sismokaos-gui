@@ -21,4 +21,31 @@ public:
   QWidget *createWidget(AppContext &ctx, QWidget *parent) override;
 };
 
+class RunsModule : public Module {
+  Q_OBJECT
+public:
+  using Module::Module;
+  QString id() const override { return QStringLiteral("runs"); }
+  QString title() const override { return tr("Runs"); }
+  QString description() const override {
+    return tr("Which recipe has been run on which case, and what is missing");
+  }
+  Section section() const override { return Section::Study; }
+  QWidget *createWidget(AppContext &ctx, QWidget *parent) override;
+};
+
+class CompareModule : public Module {
+  Q_OBJECT
+public:
+  using Module::Module;
+  QString id() const override { return QStringLiteral("compare"); }
+  QString title() const override { return tr("Compare"); }
+  QString description() const override {
+    return tr("One recipe across every case: scores first, then any series "
+              "aligned on the event");
+  }
+  Section section() const override { return Section::Study; }
+  QWidget *createWidget(AppContext &ctx, QWidget *parent) override;
+};
+
 } // namespace skg

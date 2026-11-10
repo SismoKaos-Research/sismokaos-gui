@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <exception>
 #include <numeric>
 
 #include "core/ui.h"
