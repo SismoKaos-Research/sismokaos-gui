@@ -2,7 +2,10 @@
 
 #include "modules/study/settinghelp.h"
 
+#include <QApplication>
+#include <QClipboard>
 #include <QComboBox>
+#include <QContextMenuEvent>
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
@@ -16,6 +19,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QHelpEvent>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -30,6 +34,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QStackedWidget>
+#include <QTabWidget>
 #include <QTableWidget>
 #include <QTimer>
 #include <QToolButton>
@@ -46,6 +51,10 @@
 #include "core/ui.h"
 #include "jobs/jobmodel.h"
 #include "jobs/taskjob.h"
+#include "modules/study/runlog.h"
+#include "modules/study/runtext.h"
+#include "modules/study/studydisk.h"
+#include "study/runinfo.h"
 #include "study/store.h"
 
 namespace skg {
@@ -178,13 +187,87 @@ void RunMatrix::setContents(const QStringList &rowLabels,
     column_ = columns_.isEmpty() ? -1 : 0;
   if (column_ < 0 && !columns_.isEmpty())
     column_ = 0;
+  for (auto it = more_.begin(); it != more_.end();)
+    it = (*it / 65536 >= rows_.size() || *it % 65536 >= columns_.size())
+             ? more_.erase(it)
+             : std::next(it);
   updateGeometry();
   update();
 }
 
-void RunMatrix::select(int row, int column) {
-  if (row == row_ && column == column_)
+QList<QPair<int, int>> RunMatrix::selectedCells() const {
+  QList<QPair<int, int>> out;
+  if (row_ >= 0 && column_ >= 0)
+    out << qMakePair(row_, column_);
+  QList<qint64> rest(more_.begin(), more_.end());
+  std::sort(rest.begin(), rest.end());
+  for (const qint64 v : rest) {
+    const auto cell = qMakePair(int(v / 65536), int(v % 65536));
+    if (!out.contains(cell))
+      out << cell;
+  }
+  return out;
+}
+
+void RunMatrix::toggle(int row, int column) {
+  if (row < 0 || column < 0 || row >= rows_.size() ||
+      column >= columns_.size())
     return;
+  const qint64 v = qint64(row) * 65536 + column;
+  if (row == row_ && column == column_) {
+    // The main cell leaves: another selected one takes its place.
+    more_.remove(v);
+    if (more_.isEmpty()) {
+      row_ = -1;
+    } else {
+      const qint64 next = *std::min_element(more_.begin(), more_.end());
+      more_.remove(next);
+      row_ = int(next / 65536);
+      column_ = int(next % 65536);
+    }
+  } else if (more_.contains(v)) {
+    more_.remove(v);
+  } else if (row_ < 0) {
+    row_ = row;
+    column_ = column;
+  } else {
+    more_.insert(v);
+  }
+  update();
+  emit selectionChanged();
+}
+
+bool RunMatrix::hit(const QPointF &pos, int *row, int *column) const {
+  *row = *column = -1;
+  if (pos.y() >= kHeaderHeight) {
+    const int r = int((pos.y() - kHeaderHeight) / kRowHeight);
+    if (r < rows_.size())
+      *row = r;
+  }
+  if (pos.x() >= kLabelWidth)
+    for (int c = 0; c < int(columns_.size()); ++c)
+      if (pos.x() >= cellRect(0, c).left() && pos.x() < cellRect(0, c).right())
+        *column = c;
+  if (pos.y() >= kHeaderHeight && *row < 0)
+    return false; // under the last row
+  if (pos.x() >= kLabelWidth && *column < 0)
+    return false; // right of the last column
+  return *row >= 0 || *column >= 0;
+}
+
+QString RunMatrix::labelTip(int row, int column) const {
+  if (row >= 0 && column < 0 && row < rows_.size())
+    return rows_[row];
+  if (row < 0 && column >= 0 && column < columns_.size())
+    return tr("%1 (%2)").arg(columns_[column].first,
+                             toolName(columns_[column].second));
+  return {};
+}
+
+void RunMatrix::select(int row, int column) {
+  if (row == row_ && column == column_ && more_.isEmpty())
+    return;
+  more_.clear();
   row_ = row;
   column_ = column;
   update();
@@ -317,12 +400,13 @@ void RunMatrix::paintEvent(QPaintEvent *) {
                     dashed ? Qt::DashLine : Qt::SolidLine));
       p.setBrush(fill);
       p.drawRoundedRect(chip, 13, 13);
-      if (i == row_ && c == column_) {
-        // The selected cell; a second, dotted ring while the keys act on it.
+      const bool main = i == row_ && c == column_;
+      if (main || more_.contains(qint64(i) * 65536 + c)) {
+        // A selected cell; a second, dotted ring on the one the keys act on.
         p.setPen(QPen(col("accent"), 2));
         p.setBrush(Qt::NoBrush);
         p.drawRoundedRect(chip.adjusted(-3, -3, 3, 3), 15, 15);
-        if (hasFocus()) {
+        if (main && hasFocus()) {
           p.setPen(QPen(col("text"), 1, Qt::DotLine));
           p.drawRoundedRect(chip.adjusted(-6, -6, 6, 6), 18, 18);
         }
@@ -345,6 +429,8 @@ QString RunMatrix::cellTip(const MatrixCell &c) {
                   : tr("Queued, number %1 in the queue").arg(c.place));
   } else {
     lines << stateText(c).trimmed();
+    if (c.running && c.elapsedMs >= 0)
+      lines << tr("running for %1").arg(RunWords::duration(c.elapsedMs / 1000));
     if (c.running && !c.doing.isEmpty())
       lines << c.doing; // "2/3 Calibrating … · about 4 min left"
     if (!c.running && !c.why.isEmpty())
@@ -366,6 +452,12 @@ bool RunMatrix::event(QEvent *e) {
                              ui::helpText(cellTip(cells_[i][c])), this);
           return true;
         }
+    // The full name where a row's name or a heading is cut short.
+    int row = -1, column = -1;
+    if (hit(help->pos(), &row, &column) && (row < 0 || column < 0)) {
+      QToolTip::showText(help->globalPos(), labelTip(row, column), this);
+      return true;
+    }
     QToolTip::hideText();
     e->ignore();
     return true;
@@ -385,7 +477,47 @@ void RunMatrix::mousePressEvent(QMouseEvent *e) {
     row = -1;
   if (pos.x() < kLabelWidth)
     column = column_;
+  const bool onCell = row >= 0 && pos.x() >= kLabelWidth;
+  if (e->button() == Qt::RightButton) {
+    // The menu acts on the selection when the click is in it; else on what
+    // is under the pointer (contextMenuEvent).
+    const bool inSelection =
+        onCell && selectedCells().contains(qMakePair(row, column));
+    if (!inSelection)
+      select(row, column);
+    return;
+  }
+  if (onCell && (e->modifiers() & Qt::ControlModifier)) {
+    toggle(row, column);
+    return;
+  }
+  if (onCell && (e->modifiers() & Qt::ShiftModifier) && row_ >= 0 &&
+      column_ >= 0) {
+    // The block between the main cell and this one.
+    const int r0 = std::min(row_, row), r1 = std::max(row_, row);
+    const int c0 = std::min(column_, column), c1 = std::max(column_, column);
+    more_.clear();
+    for (int r = r0; r <= r1; ++r)
+      for (int c = c0; c <= c1; ++c)
+        if (r != row_ || c != column_)
+          more_.insert(qint64(r) * 65536 + c);
+    update();
+    emit selectionChanged();
+    return;
+  }
   select(row, column);
+}
+
+void RunMatrix::contextMenuEvent(QContextMenuEvent *e) {
+  int row = -1, column = -1;
+  if (e->reason() == QContextMenuEvent::Keyboard) {
+    if (row_ >= 0 && column_ >= 0)
+      emit menuRequested(row_, column_,
+                         mapToGlobal(cellRect(row_, column_).center().toPoint()));
+    return;
+  }
+  if (hit(QPointF(e->pos()), &row, &column))
+    emit menuRequested(row, column, e->globalPos());
 }
 
 void RunMatrix::mouseDoubleClickEvent(QMouseEvent *e) {
@@ -420,6 +552,24 @@ void RunMatrix::keyPressEvent(QKeyEvent *e) {
   case Qt::Key_End:
     row = rows - 1;
     break;
+  case Qt::Key_A:
+    if (e->modifiers() & Qt::ControlModifier) {
+      more_.clear();
+      for (int r = 0; r < rows; ++r)
+        for (int c = 0; c < columns; ++c)
+          if (r != row_ || c != column_)
+            more_.insert(qint64(r) * 65536 + c);
+      if (row_ < 0 && rows > 0) {
+        row_ = 0;
+        column_ = std::max(0, column_);
+        more_.remove(qint64(row_) * 65536 + column_);
+      }
+      update();
+      emit selectionChanged();
+      return;
+    }
+    QWidget::keyPressEvent(e);
+    return;
   case Qt::Key_Return:
   case Qt::Key_Enter:
   case Qt::Key_Space:
@@ -657,7 +807,8 @@ void RecipeDialog::loadFile() {
                              tr("Only a text setting can take a file."));
     return;
   }
-  const QString path = QFileDialog::getOpenFileName(this, windowTitle());
+  const QString path = ui::pickFile(this, settings,
+                                    QStringLiteral("recipeFile"), windowTitle());
   if (path.isEmpty())
     return;
   QFile f(path);
@@ -731,6 +882,7 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
   confirm = [this](const QString &title, const QString &text) {
     return QMessageBox::question(this, title, text) == QMessageBox::Yes;
   };
+  freeSpace = [](const QString &dir) { return study::freeBytesAt(dir); };
   stack_ = new QStackedWidget(this);
 
   // No study open: the window's own bar above offers New and Open.
@@ -787,6 +939,24 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
   guideRow->addWidget(guide_, 1);
   guideRow->addWidget(guideGo_);
 
+  // Which rows are shown, when the study has many.
+  filter_ = new QLineEdit(main);
+  filter_->setObjectName(QStringLiteral("runsFilter"));
+  filter_->setClearButtonEnabled(true);
+  filter_->setMinimumWidth(250);
+  filter_->setMaximumWidth(320);
+  show_ = new QComboBox(main);
+  show_->setObjectName(QStringLiteral("runsShow"));
+  shown_ = new QLabel(main);
+  shown_->setObjectName(QStringLiteral("fieldLabel"));
+  disk_ = new QPushButton(main);
+  disk_->setObjectName(QStringLiteral("studyOnDisk"));
+  auto *filterRow = new QHBoxLayout;
+  filterRow->addWidget(filter_);
+  filterRow->addWidget(show_);
+  filterRow->addWidget(shown_, 1);
+  filterRow->addWidget(disk_);
+
   matrix_ = new RunMatrix(ctx_.theme, main);
   auto *scroll = new QScrollArea(main);
   scroll->setWidget(matrix_);
@@ -828,13 +998,40 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
   cardLayout->addWidget(recipeTitle_);
   cardLayout->addWidget(recipeTable_, 1);
 
+  // What ran, when, how long and how it ended: read from the run folders.
+  auto *activityPage = new QWidget(main);
+  activity_ = new QTableWidget(activityPage);
+  activity_->setObjectName(QStringLiteral("activityTable"));
+  activity_->setColumnCount(7);
+  activity_->verticalHeader()->hide();
+  activity_->setShowGrid(false);
+  activity_->setAlternatingRowColors(true);
+  activity_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  activity_->setSelectionBehavior(QAbstractItemView::SelectRows);
+  activity_->setSelectionMode(QAbstractItemView::SingleSelection);
+  activity_->horizontalHeader()->setStretchLastSection(true);
+  activity_->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft |
+                                                     Qt::AlignVCenter);
+  activity_->setSortingEnabled(true);
+  zone_ = new QLabel(activityPage);
+  zone_->setObjectName(QStringLiteral("fieldLabel"));
+  auto *activityLayout = new QVBoxLayout(activityPage);
+  activityLayout->setContentsMargins(0, 8, 0, 0);
+  activityLayout->addWidget(activity_, 1);
+  activityLayout->addWidget(zone_);
+  tabs_ = new QTabWidget(main);
+  tabs_->setObjectName(QStringLiteral("runsTabs"));
+  tabs_->addTab(card, QString());
+  tabs_->addTab(activityPage, QString());
+
   auto *mainLayout = new QVBoxLayout(main);
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->addLayout(bar);
   mainLayout->addLayout(guideRow);
+  mainLayout->addLayout(filterRow);
   mainLayout->addWidget(scroll, 3);
   mainLayout->addLayout(infoRow);
-  mainLayout->addWidget(card, 2);
+  mainLayout->addWidget(tabs_, 2);
   stack_->addWidget(main);
   auto *layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
@@ -880,10 +1077,69 @@ RunsPage::RunsPage(AppContext &ctx, QWidget *parent)
       fixSelected();
   });
   connect(matrix_, &RunMatrix::opened, this, &RunsPage::openSelectedFolder);
+  connect(matrix_, &RunMatrix::menuRequested, this, &RunsPage::showMenu);
+  connect(filter_, &QLineEdit::textChanged, this, &RunsPage::reload);
+  connect(show_, &QComboBox::activated, this, &RunsPage::reload);
+  connect(disk_, &QPushButton::clicked, this,
+          [this] { showStudyOnDisk(ctx_, this); });
+  connect(activity_->horizontalHeader(), &QHeaderView::sectionClicked, this,
+          [this] { activity_->setProperty("sorted", true); });
+  // A double click on a line of the activity list selects its cell.
+  connect(activity_, &QTableWidget::cellDoubleClicked, this, [this](int row, int) {
+    const QTableWidgetItem *it = activity_->item(row, 0);
+    if (!it || !ctx_.study->isOpen())
+      return;
+    const QStringList k = it->data(Qt::UserRole).toString().split('|');
+    const Study &s = ctx_.study->study();
+    for (int i = 0; k.size() == 3 && i < int(rows_.size()); ++i)
+      for (int j = 0; j < int(s.recipes.size()); ++j)
+        if (keyOf(i, s.recipes[j]) == it->data(Qt::UserRole).toString())
+          matrix_->select(i, j);
+  });
+  // The widths the reader gave the columns are kept.
+  if (ctx_.settings) {
+    const auto keep = [this](QTableWidget *t, const char *name) {
+      const QString key = QStringLiteral("runs/") + QLatin1String(name);
+      const QByteArray state = ctx_.settings->value(key).toByteArray();
+      if (!state.isEmpty())
+        t->horizontalHeader()->restoreState(state);
+      connect(t->horizontalHeader(), &QHeaderView::sectionResized, this,
+              [this, t, key] {
+                ctx_.settings->setValue(key, t->horizontalHeader()->saveState());
+              });
+    };
+    keep(activity_, "activityColumns");
+    tabs_->setCurrentIndex(
+        std::clamp(ctx_.settings->value(QStringLiteral("runs/tab")).toInt(), 0, 1));
+    connect(tabs_, &QTabWidget::currentChanged, this, [this](int i) {
+      ctx_.settings->setValue(QStringLiteral("runs/tab"), i);
+    });
+  }
   connect(ctx_.study, &study::StudyStore::changed, this, &RunsPage::reload);
 
   retranslate();
   reload();
+}
+
+RunsPage::~RunsPage() {
+  reportQueue(0); // nothing waits on a page that is gone
+  for (const QString &dir : std::as_const(live_))
+    study::LiveRuns::leave(dir);
+}
+
+void RunsPage::reportQueue(int waiting) {
+  if (ctx_.queue)
+    ctx_.queue->set(QStringLiteral("runs"), waiting);
+}
+
+QString RunsPage::lockProblem() const {
+  if (!ctx_.study->isOpen() || ctx_.study->holdsLock())
+    return {};
+  return tr("⚠  Nothing can be run into this study now: its folder is not "
+            "held by this window. Either the folder cannot be written "
+            "(read-only media, a drive that is full or was unplugged), or "
+            "the study is open in another window, which is where runs are "
+            "started. Results that are there can still be looked at.");
 }
 
 void RunsPage::changeEvent(QEvent *e) {
@@ -915,11 +1171,51 @@ void RunsPage::retranslate() {
   runOne_->setText(tr("Run the selected cell"));
   // Wide enough for either of its two labels (see showSelection).
   runOne_->setMinimumWidth(
-      std::max(runOne_->fontMetrics().horizontalAdvance(
-                   tr("Run the selected cell")),
-               runOne_->fontMetrics().horizontalAdvance(
-                   tr("Take out of the queue"))) +
+      std::max({runOne_->fontMetrics().horizontalAdvance(
+                    tr("Run the selected cell")),
+                runOne_->fontMetrics().horizontalAdvance(
+                    tr("Take out of the queue")),
+                runOne_->fontMetrics().horizontalAdvance(tr("Stop this run")),
+                runOne_->fontMetrics().horizontalAdvance(
+                    tr("Run the %n selected cell(s)", nullptr, 99))}) +
       40);
+  filter_->setPlaceholderText(tr("show rows with… (case or station)"));
+  ui::setHelp(filter_,
+              tr("Shows only the rows whose case name or station contains "
+                 "this text. The buttons then act on the rows shown; runs "
+                 "of hidden rows go on."));
+  {
+    const int was = std::max(0, show_->currentIndex());
+    show_->clear();
+    show_->addItem(tr("All rows"));
+    show_->addItem(tr("Rows with a failed or waiting cell"));
+    show_->addItem(tr("Rows with a cell that is not done"));
+    show_->addItem(tr("Rows that are running or queued"));
+    show_->setCurrentIndex(was);
+  }
+  ui::setHelp(show_, tr("Which rows are shown: all of them, or only those "
+                        "that need attention. \"Not done\" is missing, "
+                        "stale, failed or waiting."));
+  disk_->setText(tr("Study on disk…"));
+  disk_->setToolTip(ui::helpText(
+      tr("Shows what the study's results take on disk, per case and "
+         "recipe, and what is left over (working folders of runs that "
+         "crashed, files of failed runs, results of removed cases and "
+         "recipes), with a way to remove the leftovers.")));
+  tabs_->setTabText(0, tr("Recipe"));
+  tabs_->setTabText(1, tr("Activity"));
+  tabs_->setTabToolTip(
+      1, ui::helpText(tr("What ran, when, for how long and how it ended, "
+                         "read from the run folders: also what ran while "
+                         "you were away. A stopped run leaves nothing and is "
+                         "not listed.")));
+  activity_->setHorizontalHeaderLabels({tr("Ended"), tr("Case"), tr("Station"),
+                                        tr("Recipe"), tr("Outcome"),
+                                        tr("Took"), tr("Note")});
+  activity_->setToolTip(ui::helpText(
+      tr("Latest first; click a heading to sort. A double click selects "
+         "the run's cell in the table above.")));
+  zone_->setText(RunWords::zoneNote());
   new_->setText(tr("New recipe  ▾"));
   edit_->setText(tr("Edit recipe…"));
   remove_->setText(tr("Remove recipe"));
@@ -939,7 +1235,11 @@ void RunsPage::retranslate() {
   runOne_->setToolTip(ui::helpText(
       tr("Runs the recipe of the selected cell on its case and station. A "
          "cell that is already done is run again only after you confirm; "
-         "its results are replaced when the new run has succeeded.")));
+         "its results are replaced when the new run has succeeded. On a "
+         "cell that is running the button stops that one run, on a queued "
+         "one it takes it out of the queue; the other runs go on. With "
+         "several cells selected (Ctrl or Shift and a click) it runs them "
+         "all. A right click on a cell, a row or a heading has more.")));
   new_->setToolTip(ui::helpText(
       tr("Adds a recipe: one tool's settings under a name, run on every "
          "case. Indicators run once per case; Features and Classification "
@@ -991,23 +1291,113 @@ void RunsPage::reload() {
   stack_->setCurrentIndex(open ? 1 : 0);
   rows_.clear();
   cells_.clear();
-  if (!open)
+  if (!open) {
+    // The study was closed: what waited for it does not wait any more.
+    queue_.clear();
+    runAll_ = false;
+    reportQueue(0);
+    syncLive();
     return;
+  }
   const Study &s = ctx_.study->study();
+  const QString needle = filter_->text().trimmed();
+  const int mode = show_->currentIndex();
+  const QStringList places = queued();
+  int all = 0;
   for (const Case &c : s.cases) {
+    QList<Row> rows;
     if (c.stations.isEmpty())
-      rows_ << Row{c.id, QString()};
+      rows << Row{c.id, QString()};
     for (const study::StationRef &st : c.stations)
-      rows_ << Row{c.id, st.code};
+      rows << Row{c.id, st.code};
+    for (const Row &row : std::as_const(rows)) {
+      ++all;
+      if (!needle.isEmpty() && !c.name.contains(needle, Qt::CaseInsensitive) &&
+          !row.station.contains(needle, Qt::CaseInsensitive))
+        continue;
+      QList<Cell> line;
+      bool attention = false, notDone = false, going = false;
+      for (const Recipe &r : s.recipes) {
+        const Cell cell = study::cellOf(s, c, row.station, r);
+        attention = attention || cell.state == CellState::Failed ||
+                    cell.state == CellState::Blocked;
+        notDone = notDone || (cell.state != CellState::Done &&
+                              cell.state != CellState::NotApplicable);
+        const QString k = key(
+            c.id, study::perStation(r.tool) ? row.station : QString(), r.id);
+        going = going || busy(k) || places.contains(k);
+        line << cell;
+      }
+      if ((mode == 1 && !attention) || (mode == 2 && !notDone) ||
+          (mode == 3 && !going))
+        continue;
+      rows_ << row;
+      cells_ << line;
+    }
   }
-  for (const Row &row : rows_) {
-    QList<Cell> line;
-    const Case *c = s.findCase(row.caseId);
-    for (const Recipe &r : s.recipes)
-      line << study::cellOf(s, *c, row.station, r);
-    cells_ << line;
-  }
+  shown_->setText(all != rows_.size()
+                      ? tr("%1 of %2 rows shown").arg(rows_.size()).arg(all)
+                      : QString());
   render();
+  fillActivity();
+}
+
+void RunsPage::fillActivity() {
+  if (!ctx_.study->isOpen())
+    return;
+  // Sorts by the number it holds (a duration), not by its text.
+  class Number : public QTableWidgetItem {
+  public:
+    Number(const QString &text, qint64 value) : QTableWidgetItem(text) {
+      setData(Qt::UserRole + 1, value);
+    }
+    bool operator<(const QTableWidgetItem &o) const override {
+      return data(Qt::UserRole + 1).toLongLong() <
+             o.data(Qt::UserRole + 1).toLongLong();
+    }
+  };
+  const QList<study::Activity> list = study::activity(ctx_.study->study());
+  const int column = activity_->horizontalHeader()->sortIndicatorSection();
+  const Qt::SortOrder order = activity_->horizontalHeader()->sortIndicatorOrder();
+  const bool chosen = activity_->property("sorted").toBool();
+  activity_->setSortingEnabled(false);
+  activity_->setRowCount(int(list.size()));
+  for (int i = 0; i < int(list.size()); ++i) {
+    const study::Activity &a = list[i];
+    const QString k = key(a.caseId, a.station, a.recipeId);
+    const QString outcome =
+        a.ok ? (a.warnings.isEmpty() ? tr("✓  Done") : tr("✓  Done  ⚠"))
+             : tr("✕  Failed");
+    const QString note =
+        a.ok ? a.warnings.join(QStringLiteral(" · ")) : a.error;
+    const QStringList cols{RunWords::moment(a.finished), a.caseName,
+                           a.station.isEmpty() ? QStringLiteral("–") : a.station,
+                           a.recipeName, outcome};
+    for (int j = 0; j < int(cols.size()); ++j) {
+      auto *item = new QTableWidgetItem(cols[j]);
+      item->setData(Qt::UserRole, k);
+      item->setToolTip(QDir::toNativeSeparators(a.dir));
+      activity_->setItem(i, j, item);
+    }
+    auto *took = new Number(RunWords::duration(a.seconds()), a.seconds());
+    took->setData(Qt::UserRole, k);
+    took->setToolTip(
+        tr("started %1, ended %2")
+            .arg(RunWords::moment(a.started), RunWords::moment(a.finished)));
+    activity_->setItem(i, 5, took);
+    auto *why = new QTableWidgetItem(note.simplified());
+    why->setData(Qt::UserRole, k);
+    why->setToolTip(note.isEmpty() ? QString() : ui::helpText(note));
+    activity_->setItem(i, 6, why);
+  }
+  activity_->setSortingEnabled(true);
+  // Latest first until the reader sorts by something else.
+  if (chosen)
+    activity_->sortByColumn(column, order);
+  else
+    activity_->sortByColumn(0, Qt::DescendingOrder);
+  tabs_->setTabText(1, list.isEmpty() ? tr("Activity")
+                                      : tr("Activity (%1)").arg(list.size()));
 }
 
 void RunsPage::render(bool selection) {
@@ -1055,6 +1445,7 @@ void RunsPage::render(bool selection) {
         m.running = true;
         m.fraction = job->progress().fraction;
         m.doing = job->progress().text;
+        m.elapsedMs = job->elapsedMs();
       } else if (const int at = int(places.indexOf(k)); at >= 0) {
         m.queued = true;
         m.place = at + 1;
@@ -1083,23 +1474,48 @@ void RunsPage::render(bool selection) {
   }
   matrix_->setContents(labels, columns, cells);
   const int todo = int(runnable().size());
+  const QString locked = lockProblem();
   run_->setText(tr("Run missing and stale (%1)").arg(todo));
-  run_->setEnabled(todo > 0);
+  run_->setEnabled(todo > 0 && locked.isEmpty());
   stop_->setEnabled(runAll_ || !running_.isEmpty() || !queue_.isEmpty());
 
   // The next step, in words, with the page that it is done on.
   QString guide, page, go;
   const int inQueue = int(queue_.size()) + waitingOnCells;
   // The shell counts what waits here (status strip, the quit question).
-  if (ctx_.queue)
-    ctx_.queue->set(QStringLiteral("runs"), inQueue);
-  if (!running_.isEmpty() || inQueue > 0) {
+  reportQueue(inQueue);
+  if (!locked.isEmpty()) {
+    // Before anything else: why no run can be started here, and where the
+    // study's folder is looked at.
+    guide = locked;
+    page = QStringLiteral("cases");
+    go = tr("Go to Cases");
+  } else if (!running_.isEmpty() || inQueue > 0) {
     // What is going on: how many run, how many wait their turn.
     guide = tr("%1 running, %2 queued (%3 at a time; the number is on the "
                "Settings page).")
                 .arg(running_.size())
                 .arg(inQueue)
                 .arg(atOnce());
+    if (batchStarted_.isValid() && batchAsked_ > 0) {
+      // How the batch is doing; a time left only once a run of it has ended,
+      // and as an estimate from those.
+      guide += QLatin1Char(' ') +
+               tr("Started %1: %2 of %3 done")
+                   .arg(RunWords::clock(batchStarted_))
+                   .arg(batchDone_)
+                   .arg(std::max(batchAsked_, batchDone_));
+      const int left = int(running_.size()) + inQueue;
+      if (batchDone_ > 0 && left > 0)
+        guide += tr(", about %1 left")
+                     .arg(RunWords::duration(batchMs_ / batchDone_ / 1000 *
+                                            left / atOnce()));
+      guide += QLatin1Char('.');
+    }
+    if (!spaceNote_.isEmpty())
+      guide += QLatin1Char(' ') + spaceNote_;
+  } else if (!spaceNote_.isEmpty()) {
+    guide = spaceNote_;
   } else if (s.cases.isEmpty()) {
     guide = tr("This study has no cases yet. A case is an earthquake (or a "
                "reference date) and the stations it is studied from.");
@@ -1122,8 +1538,45 @@ void RunsPage::render(bool selection) {
   guideGo_->setText(go);
   guideGo_->setProperty("page", page);
   guideGo_->setVisible(!go.isEmpty() && ctx_.nav != nullptr);
+  syncLive();
   if (selection)
     showSelection();
+}
+
+QString RunsPage::dirOf(const QString &k) const {
+  if (!ctx_.study->isOpen())
+    return {};
+  const Study &s = ctx_.study->study();
+  const QStringList parts = k.split(QLatin1Char('|'));
+  if (parts.size() != 3)
+    return {};
+  const Case *c = s.findCase(parts[0]);
+  const Recipe *r = s.findRecipe(parts[2]);
+  return c && r ? study::runDir(s, *c, parts[1], *r) : QString();
+}
+
+void RunsPage::syncLive() {
+  // The folders of the cells that are running, winding down or queued: not
+  // to be taken for leftovers by "Study on disk".
+  QSet<QString> now;
+  const auto take = [this, &now](const QString &k) {
+    const QString dir = dirOf(k);
+    if (!dir.isEmpty())
+      now.insert(dir);
+  };
+  for (auto it = running_.constBegin(); it != running_.constEnd(); ++it)
+    take(it.key());
+  for (auto it = working_.constBegin(); it != working_.constEnd(); ++it)
+    take(it.key());
+  for (const Queued &q : std::as_const(queue_))
+    take(q.key);
+  for (const QString &dir : std::as_const(now))
+    if (!live_.contains(dir))
+      study::LiveRuns::enter(dir);
+  for (const QString &dir : std::as_const(live_))
+    if (!now.contains(dir))
+      study::LiveRuns::leave(dir);
+  live_ = now;
 }
 
 QList<QPair<RunsPage::Row, QString>> RunsPage::runnable() const {
@@ -1160,7 +1613,7 @@ void RunsPage::showSelection() {
   remove_->setEnabled(r != nullptr);
   QString info, dir, log, fixText, fixHelp;
   study::Fix fix = study::Fix::None;
-  bool canRun = false, isQueued = false;
+  bool canRun = false, isQueued = false, isRunning = false;
   const Cell *cell = r ? cellAt(row, col) : nullptr;
   if (cell) {
     const QString k = keyOf(row, *r);
@@ -1188,11 +1641,24 @@ void RunsPage::showSelection() {
       info += QStringLiteral(" — ") + cell->why;
     for (const QString &w : cell->warnings)
       info += QStringLiteral("\n⚠  ") + w;
-    if (cell->record && cell->record->finished.isValid())
-      info +=
-          QStringLiteral(" · ") + tr("last run %1 UTC")
-                                      .arg(cell->record->finished.toString(
-                                          QStringLiteral("yyyy-MM-dd HH:mm")));
+    if (m.running && running_.value(k))
+      info += QStringLiteral(" · ") +
+              tr("running for %1")
+                  .arg(RunWords::duration(running_.value(k)->elapsedMs() / 1000));
+    if (cell->record && cell->record->finished.isValid()) {
+      // When the finished run ended and how long it took (local time; the
+      // zone is said under the activity list).
+      const qint64 took = cell->record->started.isValid()
+                              ? cell->record->started.secsTo(
+                                    cell->record->finished)
+                              : -1;
+      info += QStringLiteral(" · ") +
+              (took >= 0 ? tr("last run ended %1, took %2")
+                               .arg(RunWords::moment(cell->record->finished),
+                                    RunWords::duration(took))
+                         : tr("last run ended %1")
+                               .arg(RunWords::moment(cell->record->finished)));
+    }
     if (!cell->note.isEmpty())
       info += QStringLiteral(" · ⚠ ") + cell->note;
     if (!cell->dir.isEmpty() && QDir(cell->dir).exists())
@@ -1201,13 +1667,17 @@ void RunsPage::showSelection() {
              QDir(study::runFailedDir(cell->dir)).exists())
       dir = study::runFailedDir(cell->dir); // what the failed run left
     log = cell->log;
+    if (m.running) // a running cell writes its log in its working folder
+      log = QDir(study::runTmpDir(cell->dir)).filePath(study::kRunLogName);
     // Where a waiting cell is put right; also a failed one with a known
     // remedy (too little data: Cases; the catalog's events: the recipe).
     if (!m.running && !m.queued &&
         (cell->state == CellState::Blocked || cell->state == CellState::Failed))
       fix = cell->fix;
-    canRun = m.queued || (cell->state != CellState::Blocked &&
-                          cell->state != CellState::NotApplicable && !busy(k));
+    isRunning = m.running;
+    canRun = m.queued || m.running ||
+             (cell->state != CellState::Blocked &&
+              cell->state != CellState::NotApplicable && !busy(k));
   } else if (s.recipes.isEmpty()) {
     info = tr("No recipes yet. Use New recipe to add one.");
   } else if (rows_.isEmpty()) {
@@ -1236,10 +1706,19 @@ void RunsPage::showSelection() {
   case study::Fix::None:
     break;
   }
-  cellInfo_->setText(info);
-  runOne_->setEnabled(canRun);
-  runOne_->setText(isQueued ? tr("Take out of the queue")
-                            : tr("Run the selected cell"));
+  if (!lockProblem().isEmpty()) // looking is allowed, running is not
+    canRun = isQueued || isRunning;
+  const int many = int(matrix_->selectedCells().size());
+  cellInfo_->setText(
+      many > 1 ? tr("%n cell(s) selected. Run them with the button, or "
+                    "right-click for more (stop, open the folders).",
+                    nullptr, many)
+               : info);
+  runOne_->setEnabled(canRun || (many > 1 && lockProblem().isEmpty()));
+  runOne_->setText(many > 1    ? tr("Run the %n selected cell(s)", nullptr, many)
+                   : isRunning ? tr("Stop this run")
+                   : isQueued  ? tr("Take out of the queue")
+                               : tr("Run the selected cell"));
   // A features cell that has a calibration kept: it can be made anew.
   const bool hasKept =
       cell && r && r->tool == study::kToolFeatures && !cell->dir.isEmpty() &&
@@ -1247,7 +1726,7 @@ void RunsPage::showSelection() {
            .entryList({QStringLiteral("*.json")}, QDir::Files)
            .isEmpty();
   recal_->setVisible(hasKept);
-  recal_->setEnabled(hasKept && canRun && !isQueued);
+  recal_->setEnabled(hasKept && canRun && !isQueued && !isRunning);
   fix_->setText(fixText);
   fix_->setToolTip(fixHelp.isEmpty() ? QString() : ui::helpText(fixHelp));
   fix_->setProperty("fix", int(fix));
@@ -1348,6 +1827,7 @@ void RunsPage::newRecipe(const QString &tool) {
   if (tool == study::kToolClassification)
     r.settings.insert(kFeaturesKey, features);
   RecipeDialog dialog(s, r, this);
+  dialog.settings = ctx_.settings;
   if (dialog.exec() != QDialog::Accepted)
     return;
   Recipe made = dialog.recipe();
@@ -1373,6 +1853,7 @@ void RunsPage::editRecipe() {
   Recipe shown = original;
   for (;;) {
     RecipeDialog dialog(s, shown, this);
+    dialog.settings = ctx_.settings;
     if (dialog.exec() != QDialog::Accepted)
       return;
     Recipe edited = dialog.recipe();
@@ -1462,7 +1943,11 @@ bool RunsPage::start(const Row &row, const Recipe &recipe, bool fresh) {
   // later than the job's state says.
   const auto working = std::make_shared<std::atomic<bool>>(true);
   auto *job = new TaskJob(
-      name, recipe.tool, tr("recipe %1 on %2").arg(recipe.id, c.id),
+      name, recipe.tool,
+      station.isEmpty()
+          ? tr("recipe \"%1\" on %2").arg(recipe.name, c.name)
+          : tr("recipe \"%1\" on %2, station %3")
+                .arg(recipe.name, c.name, station),
       [study, c, station, recipe, version, working,
        fresh](TaskContext &t) -> int {
         struct Leave {
@@ -1488,15 +1973,25 @@ bool RunsPage::start(const Row &row, const Recipe &recipe, bool fresh) {
   working_.insert(k, working);
   Job *added = ctx_.jobs->add(job);
   running_.insert(k, added);
-  connect(added, &Job::stateChanged, this, [this, added] {
+  connect(added, &Job::stateChanged, this, [this, added, k] {
     if (added->state() == Job::State::Running ||
         added->state() == Job::State::Queued)
       return;
-    // Cancelling a run, here or in the Jobs panel, ends the batch: the next
-    // cell is not started behind the user's back.
+    // Cancelling a run in the Jobs panel, or with Stop, ends the batch: the
+    // next cell is not started behind the user's back. A run stopped by
+    // itself ("Stop this run") leaves the others and the queue alone.
     if (added->state() == Job::State::Cancelled) {
-      runAll_ = false;
-      queue_.clear();
+      if (!stoppingOne_.remove(k)) {
+        runAll_ = false;
+        queue_.clear();
+        reportQueue(0); // said at once, not at the next redraw
+      }
+    } else {
+      stoppingOne_.remove(k); // it ended by itself before the stop reached it
+      if (batchStarted_.isValid()) {
+        ++batchDone_;
+        batchMs_ += added->elapsedMs();
+      }
     }
     // After the job has settled: show the new state, start what is next.
     QTimer::singleShot(0, this, [this] {
@@ -1509,8 +2004,23 @@ bool RunsPage::start(const Row &row, const Recipe &recipe, bool fresh) {
 }
 
 void RunsPage::runAll() {
+  if (!ctx_.study->isOpen())
+    return;
+  if (!lockProblem().isEmpty()) {
+    render(); // the guide line says why
+    return;
+  }
+  // Room for what the first runs unpack is looked at before anything starts.
+  QList<Want> wants;
+  for (const auto &item : runnable())
+    wants << Want{item.first, item.second};
+  if (!spaceAllows(wants))
+    return;
   attempted_.clear();
   runAll_ = true;
+  batchStarted_ = QDateTime::currentDateTimeUtc();
+  batchDone_ = batchAsked_ = 0;
+  batchMs_ = 0;
   pump();
   render();
 }
@@ -1519,42 +2029,405 @@ void RunsPage::runSelected(bool fresh) {
   if (!ctx_.study->isOpen())
     return;
   const Study &s = ctx_.study->study();
+  const QList<QPair<int, int>> chosen = matrix_->selectedCells();
+  if (chosen.size() > 1) {
+    runCells(chosen, fresh);
+    return;
+  }
   const int col = matrix_->selectedColumn(), row = matrix_->selectedRow();
   const Cell *cell = cellAt(row, col);
   if (!cell || col >= s.recipes.size())
     return;
   const Recipe &r = s.recipes[col];
   // A queued cell: the button takes it out again, and the cell is what it
-  // was before.
-  if (dequeue(keyOf(row, r))) {
+  // was before. A running one: the button stops that run, and no other.
+  const QString k = keyOf(row, r);
+  if (queued().contains(k) || running_.contains(k)) {
+    stopKeys({k});
+    return;
+  }
+  request({Want{rows_[row], r.id}}, fresh, false);
+}
+
+void RunsPage::runCells(const QList<QPair<int, int>> &cells, bool fresh) {
+  if (!ctx_.study->isOpen())
+    return;
+  const Study &s = ctx_.study->study();
+  QList<Want> wants;
+  for (const auto &cell : cells)
+    if (cell.first >= 0 && cell.first < rows_.size() && cell.second >= 0 &&
+        cell.second < s.recipes.size())
+      wants << Want{rows_[cell.first], s.recipes[cell.second].id};
+  request(wants, fresh, cells.size() > 1);
+}
+
+void RunsPage::runRow(int row) {
+  if (!ctx_.study->isOpen() || row < 0 || row >= rows_.size())
+    return;
+  QList<QPair<int, int>> cells;
+  for (int j = 0; j < int(ctx_.study->study().recipes.size()); ++j)
+    cells << qMakePair(row, j);
+  runCells(cells);
+}
+
+void RunsPage::runCase(int row) {
+  if (!ctx_.study->isOpen() || row < 0 || row >= rows_.size())
+    return;
+  QList<QPair<int, int>> cells;
+  for (int i = 0; i < int(rows_.size()); ++i)
+    if (rows_[i].caseId == rows_[row].caseId)
+      for (int j = 0; j < int(ctx_.study->study().recipes.size()); ++j)
+        cells << qMakePair(i, j);
+  runCells(cells);
+}
+
+void RunsPage::runColumn(int column) {
+  if (!ctx_.study->isOpen() || column < 0 ||
+      column >= ctx_.study->study().recipes.size())
+    return;
+  QList<QPair<int, int>> cells;
+  for (int i = 0; i < int(rows_.size()); ++i)
+    cells << qMakePair(i, column);
+  runCells(cells);
+}
+
+void RunsPage::request(const QList<Want> &asked, bool fresh, bool bulk) {
+  if (!ctx_.study->isOpen())
+    return;
+  if (!lockProblem().isEmpty()) {
+    render(); // the guide line says why
+    return;
+  }
+  const Study &s = ctx_.study->study();
+  // What of it can run: not a cell that waits for something, is running or
+  // queued already, or does not apply; a per-case tool once.
+  QList<Want> wants;
+  QSet<QString> seen;
+  int again = 0;
+  QString oneName, oneCase;
+  const QStringList places = queued();
+  for (const Want &w : asked) {
+    const Recipe *r = s.findRecipe(w.recipeId);
+    const Case *c = s.findCase(w.row.caseId);
+    if (!r || !c)
+      continue;
+    const QString k = key(
+        c->id, study::perStation(r->tool) ? w.row.station : QString(), r->id);
+    if (seen.contains(k) || busy(k) || places.contains(k))
+      continue;
+    const Cell cell = study::cellOf(s, *c, w.row.station, *r);
+    if (cell.state == CellState::Blocked ||
+        cell.state == CellState::NotApplicable)
+      continue;
+    seen.insert(k);
+    wants << w;
+    if (cell.state == CellState::Done) {
+      ++again;
+      oneName = r->name;
+      oneCase = c->name;
+    }
+  }
+  if (wants.isEmpty()) {
+    if (bulk)
+      spaceNote_ = tr("None of those cells can be run now: they are running, "
+                      "queued, or waiting for something.");
     render();
     return;
   }
-  if (cell->state == CellState::Done) {
-    const Case *c = s.findCase(rows_[row].caseId);
+  spaceNote_.clear();
+  if (!bulk && again == 1) {
     if (!confirm(tr("Run again"),
                  tr("\"%1\" already has a finished run on %2. Run it "
                     "again?\n\nThe finished results stay as they are until "
                     "the new run has succeeded; a run that is stopped or "
                     "fails leaves them untouched.")
-                     .arg(r.name, c ? c->name : rows_[row].caseId)))
+                     .arg(oneName, oneCase)))
+      return;
+  } else if (bulk) {
+    // A group is confirmed with its count, and with what it will take.
+    QList<qint64> needs;
+    for (const Want &w : std::as_const(wants)) {
+      const Recipe *r = s.findRecipe(w.recipeId);
+      const Case *c = s.findCase(w.row.caseId);
+      needs << study::tempSpaceFor(s, *c, w.row.station, *r).bytes;
+    }
+    const qint64 peak = study::peakNeed(needs, atOnce());
+    QString text = tr("Run %n cell(s)?", nullptr, int(wants.size()));
+    if (again > 0)
+      text += QLatin1Char(' ') +
+              tr("%n of them already have a finished run and are run again; "
+                 "their results stay as they are until the new run has "
+                 "succeeded.",
+                 nullptr, again);
+    text += QStringLiteral("\n\n") +
+            tr("%1 run at a time; the others wait in the queue.").arg(atOnce());
+    if (peak > 0)
+      text += QLatin1Char(' ') +
+              tr("While they run they need about %1 of temporary space for "
+                 "unpacked archives.")
+                  .arg(RunWords::bytes(peak));
+    if (!confirm(tr("Run cells"), text))
       return;
   }
+  if (!spaceAllows(wants))
+    return;
   // Through the same queue as a batch: a cell asked for while every slot
   // is taken waits its turn instead of running beside the others.
-  enqueue(rows_[row], r, fresh);
+  for (const Want &w : std::as_const(wants))
+    if (const Recipe *r = s.findRecipe(w.recipeId))
+      enqueue(w.row, *r, fresh);
   pump();
   render();
+}
+
+bool RunsPage::spaceAllows(const QList<Want> &wants) {
+  if (!ctx_.study->isOpen() || !freeSpace)
+    return true;
+  const Study &s = ctx_.study->study();
+  QList<qint64> needs;
+  for (const Want &w : wants) {
+    const Recipe *r = s.findRecipe(w.recipeId);
+    const Case *c = s.findCase(w.row.caseId);
+    if (r && c)
+      needs << study::tempSpaceFor(s, *c, w.row.station, *r).bytes;
+  }
+  const qint64 peak = study::peakNeed(needs, atOnce());
+  if (peak <= 0)
+    return true;
+  const qint64 free = freeSpace(s.dir);
+  if (free < 0)
+    return true; // unknown: the run itself will say if the disk fills
+  const QString figures =
+      tr("needs about %1 of temporary space for unpacked archives, and %2 "
+         "are free on the study's disk")
+          .arg(RunWords::bytes(peak), RunWords::bytes(free));
+  if (peak > free) {
+    // Clearly not enough: nothing is started.
+    spaceNote_ = tr("⚠  Not started: this %1. Free some space (\"Study on "
+                    "disk…\" lists leftovers), or run fewer cells at a time.")
+                     .arg(figures);
+    render();
+    return false;
+  }
+  if (double(peak) > 0.8 * double(free))
+    return confirm(tr("Little disk space"),
+                   tr("This %1. That leaves little room for the results "
+                      "themselves.\n\nRun all the same?")
+                       .arg(figures));
+  return true;
+}
+
+void RunsPage::stopKeys(const QStringList &keys) {
+  for (const QString &k : keys) {
+    if (dequeue(k))
+      continue;
+    if (const QPointer<Job> job = running_.value(k)) {
+      stoppingOne_.insert(k); // the others, and the queue, go on
+      job->cancel();
+    }
+  }
+  render();
+}
+
+void RunsPage::stopCells(const QList<QPair<int, int>> &cells) {
+  if (!ctx_.study->isOpen())
+    return;
+  const Study &s = ctx_.study->study();
+  QStringList keys;
+  for (const auto &cell : cells)
+    if (cell.first >= 0 && cell.first < rows_.size() && cell.second >= 0 &&
+        cell.second < s.recipes.size())
+      keys << keyOf(cell.first, s.recipes[cell.second]);
+  keys.removeDuplicates();
+  stopKeys(keys);
 }
 
 void RunsPage::stopBatch() {
   runAll_ = false;
   queue_.clear(); // the waiting cells are what they were before
-  const auto jobs = running_.values();
-  for (const QPointer<Job> &job : jobs)
-    if (job)
-      job->cancel();
+  reportQueue(0);
+  spaceNote_.clear();
+  // The queue is empty now; the stopped runs' endings must not empty it
+  // again, should cells be asked for before they have wound down.
+  for (auto it = running_.constBegin(); it != running_.constEnd(); ++it)
+    if (it.value()) {
+      stoppingOne_.insert(it.key());
+      it.value()->cancel();
+    }
   render();
+}
+
+QString RunsPage::duplicateRecipe(const QString &asName) {
+  if (!ctx_.study->isOpen())
+    return {};
+  const Study &s = ctx_.study->study();
+  const int col = matrix_->selectedColumn();
+  if (col < 0 || col >= s.recipes.size())
+    return {};
+  const Recipe original = s.recipes[col];
+  QString name = asName.trimmed();
+  if (name.isEmpty()) {
+    bool ok = false;
+    name = QInputDialog::getText(
+               this, tr("Duplicate recipe"),
+               tr("A copy of \"%1\" with the same settings, to change one of "
+                  "them in. Its name:")
+                   .arg(original.name),
+               QLineEdit::Normal, tr("%1 (copy)").arg(original.name), &ok)
+               .trimmed();
+    if (!ok || name.isEmpty())
+      return {};
+  }
+  Recipe copy = original;
+  copy.name = name;
+  copy.revision = 1; // a new recipe: nothing has been run with it
+  QString error, id;
+  if (!ctx_.study->update(
+          [&copy, &id](Study &st) {
+            copy.id = st.freeRecipeId(copy.name);
+            id = copy.id;
+            st.recipes << copy;
+          },
+          &error)) {
+    QMessageBox::warning(this, tr("Recipe"), error);
+    return {};
+  }
+  matrix_->select(-1, int(ctx_.study->study().recipes.size()) - 1);
+  return id;
+}
+
+QMenu *RunsPage::menuFor(int row, int column) {
+  auto *menu = new QMenu(this);
+  if (!ctx_.study->isOpen())
+    return menu;
+  const Study &s = ctx_.study->study();
+  const auto add = [menu](const QString &text, const char *name,
+                          std::function<void()> act, bool enabled = true) {
+    QAction *a = menu->addAction(text);
+    a->setObjectName(QLatin1String(name));
+    a->setEnabled(enabled);
+    QObject::connect(a, &QAction::triggered, menu, [act] { act(); });
+    return a;
+  };
+  const bool onColumn = column >= 0 && column < s.recipes.size();
+  const bool onRow = row >= 0 && row < rows_.size();
+  if (onRow && onColumn) {
+    const Recipe &r = s.recipes[column];
+    const Cell *cell = cellAt(row, column);
+    const QString k = keyOf(row, r);
+    const bool isRunning = running_.contains(k);
+    const bool isQueued = queued().contains(k);
+    const bool runnable =
+        cell && !busy(k) && !isQueued && cell->state != CellState::Blocked &&
+        cell->state != CellState::NotApplicable;
+    const QList<QPair<int, int>> chosen = matrix_->selectedCells();
+    const QPair<int, int> here(row, column);
+    if (chosen.size() > 1 && chosen.contains(here)) {
+      add(tr("Run the %n selected cell(s)", nullptr, int(chosen.size())),
+          "actRunSelected", [this, chosen] { runCells(chosen); });
+      add(tr("Stop the selected cells"), "actStopSelected",
+          [this, chosen] { stopCells(chosen); });
+      menu->addSeparator();
+    }
+    if (isRunning)
+      add(tr("Stop this run"), "actStop",
+          [this, here] { stopCells({here}); });
+    else if (isQueued)
+      add(tr("Take out of the queue"), "actStop",
+          [this, here] { stopCells({here}); });
+    else
+      add(cell && cell->state == CellState::Done ? tr("Run again…")
+                                                 : tr("Run"),
+          "actRun", [this, here] { runCells({here}); }, runnable);
+    if (r.tool == study::kToolFeatures && cell && !cell->dir.isEmpty() &&
+        !QDir(study::runCalibrationDir(cell->dir))
+             .entryList({QStringLiteral("*.json")}, QDir::Files)
+             .isEmpty())
+      add(tr("Recalibrate"), "actRecalibrate",
+          [this, here] { runCells({here}, true); }, runnable);
+    menu->addSeparator();
+    const QString log = cell ? cell->log : QString();
+    // A running cell writes its log in its working folder.
+    const QString liveLog =
+        isRunning && cell
+            ? QDir(study::runTmpDir(cell->dir)).filePath(study::kRunLogName)
+            : QString();
+    const QString shownLog = !liveLog.isEmpty() ? liveLog : log;
+    add(tr("Show log"), "actLog",
+        [this, shownLog] {
+          showLog_->setProperty("log", shownLog);
+          showLog();
+        },
+        !shownLog.isEmpty());
+    QString dir;
+    if (cell && !cell->dir.isEmpty()) {
+      if (QDir(cell->dir).exists())
+        dir = cell->dir;
+      else if (QDir(study::runFailedDir(cell->dir)).exists())
+        dir = study::runFailedDir(cell->dir);
+    }
+    add(tr("Open folder"), "actFolder",
+        [dir] { QDesktopServices::openUrl(QUrl::fromLocalFile(dir)); },
+        !dir.isEmpty());
+    const QString path = cell ? cell->dir : QString();
+    add(tr("Copy the folder's path"), "actCopyPath",
+        [path] {
+          QApplication::clipboard()->setText(QDir::toNativeSeparators(path));
+        },
+        !path.isEmpty());
+    menu->addSeparator();
+    const QString caseId = rows_[row].caseId, station = rows_[row].station;
+    add(tr("Go to Cases"), "actCases",
+        [this, caseId, station] {
+          if (ctx_.nav)
+            ctx_.nav->show(QStringLiteral("cases"),
+                           {{QStringLiteral("case"), caseId},
+                            {QStringLiteral("station"), station}});
+        },
+        ctx_.nav != nullptr);
+  } else if (onRow) {
+    const Case *c = s.findCase(rows_[row].caseId);
+    add(tr("Run this row"), "actRunRow", [this, row] { runRow(row); },
+        !s.recipes.isEmpty());
+    add(tr("Run this case (%1)").arg(c ? c->name : rows_[row].caseId),
+        "actRunCase", [this, row] { runCase(row); }, !s.recipes.isEmpty());
+    menu->addSeparator();
+    const QString caseId = rows_[row].caseId, station = rows_[row].station;
+    add(tr("Go to Cases"), "actCases",
+        [this, caseId, station] {
+          if (ctx_.nav)
+            ctx_.nav->show(QStringLiteral("cases"),
+                           {{QStringLiteral("case"), caseId},
+                            {QStringLiteral("station"), station}});
+        },
+        ctx_.nav != nullptr);
+  } else if (onColumn) {
+    add(tr("Run this recipe on every row"), "actRunRecipe",
+        [this, column] { runColumn(column); }, !rows_.isEmpty());
+    menu->addSeparator();
+    add(tr("Edit recipe…"), "actEdit", [this, column] {
+      matrix_->select(matrix_->selectedRow(), column);
+      editRecipe();
+    });
+    add(tr("Duplicate recipe…"), "actDuplicate", [this, column] {
+      matrix_->select(matrix_->selectedRow(), column);
+      duplicateRecipe();
+    });
+    add(tr("Remove recipe…"), "actRemove", [this, column] {
+      matrix_->select(matrix_->selectedRow(), column);
+      removeRecipe();
+    });
+  }
+  return menu;
+}
+
+void RunsPage::showMenu(int row, int column, const QPoint &globalPos) {
+  QMenu *menu = menuFor(row, column);
+  menu->setAttribute(Qt::WA_DeleteOnClose);
+  if (menu->isEmpty())
+    delete menu;
+  else
+    menu->popup(globalPos);
 }
 
 void RunsPage::fixSelected() {
@@ -1592,43 +2465,19 @@ void RunsPage::openSelectedFolder() {
 }
 
 void RunsPage::showLog() {
-  const QString path = showLog_->property("log").toString();
-  QFile f(path);
-  if (path.isEmpty() || !f.open(QIODevice::ReadOnly)) {
-    QMessageBox::warning(this, tr("Run log"),
-                         tr("Cannot read %1.").arg(path));
+  QString path = showLog_->property("log").toString();
+  if (path.isEmpty())
     return;
-  }
-  // The end of a very long log: that is where a failure is.
-  constexpr qint64 kMost = 2 * 1024 * 1024;
-  const bool cut = f.size() > kMost;
-  if (cut)
-    f.seek(f.size() - kMost);
-  QString text = QString::fromUtf8(f.readAll());
-  if (cut)
-    text = tr("(the beginning is left out; the whole log is in the file)") +
-           QLatin1Char('\n') + text.mid(text.indexOf(QLatin1Char('\n')) + 1);
-  auto *dialog = new QDialog(this);
-  dialog->setObjectName(QStringLiteral("runLog"));
+  // One window per log: asked for again, it comes to the front.
+  for (RunLogDialog *open : findChildren<RunLogDialog *>())
+    if (open->path() == path) {
+      open->refresh();
+      open->raise();
+      open->activateWindow();
+      return;
+    }
+  auto *dialog = new RunLogDialog(path, this);
   dialog->setAttribute(Qt::WA_DeleteOnClose);
-  dialog->setWindowTitle(tr("Run log"));
-  auto *where = new QLabel(QDir::toNativeSeparators(path), dialog);
-  where->setObjectName(QStringLiteral("fieldLabel"));
-  where->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  where->setWordWrap(true);
-  auto *view = new QPlainTextEdit(dialog);
-  view->setReadOnly(true);
-  view->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
-  view->setLineWrapMode(QPlainTextEdit::NoWrap);
-  view->setPlainText(text);
-  view->moveCursor(QTextCursor::End);
-  auto *buttons = new QDialogButtonBox(QDialogButtonBox::Close, dialog);
-  connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::close);
-  auto *layout = new QVBoxLayout(dialog);
-  layout->addWidget(where);
-  layout->addWidget(view, 1);
-  layout->addWidget(buttons);
-  dialog->resize(860, 560);
   dialog->show();
 }
 
@@ -1655,21 +2504,29 @@ void RunsPage::enqueue(const Row &row, const Recipe &r, bool fresh) {
   if (busy(k) || queued().contains(k))
     return;
   queue_ << Queued{row, r.id, k, fresh};
+  reportQueue(int(queue_.size()));
+  if (runAll_)
+    ++batchAsked_;
 }
 
 bool RunsPage::dequeue(const QString &k) {
   for (int i = 0; i < int(queue_.size()); ++i)
     if (queue_[i].key == k) {
       queue_.removeAt(i);
+      reportQueue(int(queue_.size()));
       return true;
     }
   return false;
 }
 
 void RunsPage::pump() {
-  if (!ctx_.study->isOpen()) {
+  if (!ctx_.study->isOpen() || !lockProblem().isEmpty()) {
+    // No study, or one this window may not write into: nothing is started.
     queue_.clear();
     runAll_ = false;
+    reportQueue(0);
+    if (ctx_.study->isOpen())
+      render();
     return;
   }
   const Study &s = ctx_.study->study();
@@ -1688,6 +2545,10 @@ void RunsPage::pump() {
       if (!attempted_.contains(k))
         enqueue(item.first, *r);
     }
+  }
+  if (spaceWaits_) { // looked at afresh below
+    spaceNote_.clear();
+    spaceWaits_ = false;
   }
   // A worker that is still leaving a cancelled run holds its slot too.
   int active = 0;
@@ -1712,12 +2573,45 @@ void RunsPage::pump() {
       ++i;
       continue;
     }
+    // The disk is looked at again when the cell's turn comes: what ran
+    // before it may have filled it. With runs going on it waits for them;
+    // with none it cannot start at all, and leaves the queue saying why.
+    if (freeSpace) {
+      const qint64 need = study::tempSpaceFor(s, *c, q.row.station, *r).bytes;
+      const qint64 free = need > 0 ? freeSpace(s.dir) : -1;
+      if (need > 0 && free >= 0 && need > free) {
+        const QString what =
+            q.row.station.isEmpty()
+                ? QStringLiteral("%1 · %2").arg(r->name, c->name)
+                : QStringLiteral("%1 · %2 · %3")
+                      .arg(r->name, c->name, q.row.station);
+        if (active > 0) {
+          spaceNote_ = tr("⚠  %1 waits for disk space: it needs about %2 of "
+                          "temporary space, %3 are free.")
+                           .arg(what, RunWords::bytes(need),
+                                RunWords::bytes(free));
+          spaceWaits_ = true;
+          ++i;
+        } else {
+          spaceNote_ = tr("⚠  %1 was not started: it needs about %2 of "
+                          "temporary space and %3 are free on the study's "
+                          "disk.")
+                           .arg(what, RunWords::bytes(need),
+                                RunWords::bytes(free));
+          attempted_.insert(q.key);
+          queue_.removeAt(i);
+        }
+        continue;
+      }
+    }
     queue_.removeAt(i);
     if (start(q.row, *r, q.fresh))
       ++active;
   }
   if (runAll_ && queue_.isEmpty() && active == 0)
     runAll_ = false;
+  if (!runAll_ && queue_.isEmpty() && active == 0)
+    batchStarted_ = QDateTime();
   render();
 }
 

@@ -9,6 +9,9 @@ qt_add_library(skg_mod_study STATIC
   studysetup.cpp    studysetup.h
   runspage.cpp      runspage.h
   comparepage.cpp   comparepage.h
+  runtext.cpp       runtext.h
+  runlog.cpp        runlog.h
+  studydisk.cpp     studydisk.h
   settinghelp.cpp   settinghelp.h
 )
 target_link_libraries(skg_mod_study PUBLIC skg_core skg_study skg_studyui PRIVATE skg_warnings)
