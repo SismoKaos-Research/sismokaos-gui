@@ -9,6 +9,8 @@ class QDateEdit;
 class QSpinBox;
 class QCheckBox;
 class QLabel;
+class QPushButton;
+class QDate;
 
 namespace skg {
 
@@ -25,6 +27,10 @@ class PlanDialog : public QDialog {
 public:
   explicit PlanDialog(const QString &ledgerPath, QWidget *parent = nullptr);
   PlanRequest request() const;
+  // Starts the dialog on a station and a period (a case's, from Cases).
+  void prefill(const QString &station, const QDate &from, const QDate &to);
+  // Why Plan cannot be pressed now, or nothing.
+  QString blockedReason() const;
 
 private:
   void updateHint();
@@ -37,6 +43,7 @@ private:
   QSpinBox *everyDays_;
   QCheckBox *verify_;
   QLabel *hint_;
+  QPushButton *ok_ = nullptr;
 };
 
 } // namespace skg

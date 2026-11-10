@@ -58,6 +58,15 @@ FdsnPane::FdsnPane(JobModel *jobs, QWidget *parent)
   stop_ = new QPushButton(this);
   where_ = new QLabel(this);
   where_->setWordWrap(true);
+  why_ = new QLabel(this);
+  why_->setObjectName(QStringLiteral("fdsnWhy"));
+  why_->setWordWrap(true);
+  station_->setObjectName(QStringLiteral("fdsnStation"));
+  network_->setObjectName(QStringLiteral("fdsnNetwork"));
+  start_->setObjectName(QStringLiteral("fdsnStart"));
+  end_->setObjectName(QStringLiteral("fdsnEnd"));
+  planOnly_->setObjectName(QStringLiteral("fdsnPlanOnly"));
+  go_->setObjectName(QStringLiteral("fdsnGo"));
 
   auto *form = new QFormLayout;
   form->addRow(tr("Station"), station_);
@@ -74,6 +83,7 @@ FdsnPane::FdsnPane(JobModel *jobs, QWidget *parent)
   buttons->addWidget(stop_);
   buttons->addStretch(1);
   form->addRow(QString(), buttons);
+  form->addRow(QString(), why_);
   form->addRow(QString(), where_);
 
   auto *left = new QWidget(this);
@@ -84,6 +94,9 @@ FdsnPane::FdsnPane(JobModel *jobs, QWidget *parent)
   layout->addWidget(table_, 1);
 
   connect(go_, &QPushButton::clicked, this, &FdsnPane::start);
+  connect(station_, &QLineEdit::textChanged, this, &FdsnPane::updateButtons);
+  connect(start_, &QDateEdit::dateChanged, this, &FdsnPane::updateButtons);
+  connect(end_, &QDateEdit::dateChanged, this, &FdsnPane::updateButtons);
   connect(stop_, &QPushButton::clicked, this, [this] {
     if (running_)
       running_->cancel();
@@ -105,12 +118,33 @@ void FdsnPane::setCampaign(const Campaign &c) {
 
 void FdsnPane::reload() { model_->reload(); }
 
+void FdsnPane::prefill(const QString &station, const QString &network,
+                       const QDate &firstDay, const QDate &dayAfterLast) {
+  station_->setText(station);
+  if (!network.isEmpty())
+    network_->setText(network);
+  if (firstDay.isValid())
+    start_->setDate(firstDay);
+  if (dayAfterLast.isValid())
+    end_->setDate(dayAfterLast);
+  updateButtons();
+}
+
+QString FdsnPane::blockedReason() const {
+  if (campaign_.ledgerPath.isEmpty())
+    return tr("Choose or create a campaign first: the days are recorded in "
+              "it.");
+  if (normaliseStation(station_->text()).isEmpty())
+    return tr("Give the station code.");
+  if (start_->date() >= end_->date())
+    return tr("The day after the last must be later than the first day.");
+  return {};
+}
+
 void FdsnPane::start() {
-  if (campaign_.ledgerPath.isEmpty() || running_)
+  if (running_ || !blockedReason().isEmpty())
     return;
   const QString station = normaliseStation(station_->text());
-  if (station.isEmpty())
-    return;
   const QString statePath = fdsnStatePath(campaign_),
                 outDir = fdsnDefaultOut(campaign_);
   const QString network = network_->text().trimmed().toUpper(),
@@ -175,6 +209,7 @@ void FdsnPane::start() {
         refresh();
         return 0;
       });
+  emit fetchStarted(outDir);
   running_ = jobs_->add(job);
   connect(running_, &Job::stateChanged, this, [this] {
     if (running_ && running_->state() != Job::State::Running) {
@@ -187,7 +222,10 @@ void FdsnPane::start() {
 }
 
 void FdsnPane::updateButtons() {
-  go_->setEnabled(!campaign_.ledgerPath.isEmpty() && !running_);
+  const QString why = blockedReason();
+  why_->setText(why);
+  why_->setVisible(!why.isEmpty());
+  go_->setEnabled(why.isEmpty() && !running_);
   stop_->setEnabled(running_ != nullptr);
 }
 

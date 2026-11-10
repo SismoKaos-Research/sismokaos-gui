@@ -37,6 +37,9 @@
 #include "modules/tdvms/ledgermodel.h"
 #include "modules/tdvms/mailboxdialog.h"
 #include "modules/tdvms/plandialog.h"
+#include <QSignalBlocker>
+#include <QFrame>
+#include "study/store.h"
 #include "tdvms/catalog.h"
 #include "tdvms/fetch.h"
 #include "tdvms/plan.h"
@@ -78,6 +81,29 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   top->addWidget(refresh_);
   top->addWidget(catalogs_);
 
+  // --- what a case wants (hidden until the Cases page asks) --------------
+  wantedBar_ = new QFrame(this);
+  wantedBar_->setObjectName(QStringLiteral("wantedBar"));
+  wantedText_ = new QLabel(wantedBar_);
+  wantedText_->setObjectName(QStringLiteral("wantedText"));
+  wantedStation_ = new QComboBox(wantedBar_);
+  wantedStation_->setObjectName(QStringLiteral("wantedStation"));
+  wantedPlan_ = new QPushButton(wantedBar_);
+  wantedPlan_->setObjectName(QStringLiteral("wantedPlan"));
+  wantedFdsn_ = new QPushButton(wantedBar_);
+  wantedFdsn_->setObjectName(QStringLiteral("wantedFdsn"));
+  wantedClose_ = new QPushButton(wantedBar_);
+  auto *wantedLayout = new QHBoxLayout(wantedBar_);
+  wantedLayout->setContentsMargins(0, 0, 0, 0);
+  wantedLayout->addWidget(wantedText_, 1);
+  wantedLayout->addWidget(wantedStation_);
+  wantedLayout->addWidget(wantedPlan_);
+  wantedLayout->addWidget(wantedFdsn_);
+  wantedLayout->addWidget(wantedClose_);
+  wantedBar_->hide();
+  showJobs_ = new QPushButton(this);
+  showJobs_->setObjectName(QStringLiteral("showJobs"));
+
   // --- left: run controls and status -----------------------------------
   address_ = new QLineEdit(this);
   slots_ = new QSpinBox(this);
@@ -110,6 +136,10 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   runButtons->addWidget(stop_);
   form->addRow(runButtons);
   form->addRow(runNote_);
+  auto *jobsRow = new QHBoxLayout;
+  jobsRow->addWidget(showJobs_);
+  jobsRow->addStretch(1);
+  form->addRow(jobsRow);
   status_ = new QPlainTextEdit(this);
   status_->setReadOnly(true);
   status_->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
@@ -155,7 +185,9 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   split->addWidget(tabs_);
   split->setStretchFactor(0, 1);
   split->setStretchFactor(1, 3);
+  ui::persistSplitter(split, ctx_.settings, QStringLiteral("tdvms/split"));
   auto *layout = new QVBoxLayout(this);
+  layout->addWidget(wantedBar_);
   layout->addLayout(top);
   layout->addWidget(split, 1);
 
@@ -167,6 +199,34 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
           &TdvmsWidget::selectCampaign);
   connect(newCampaign_, &QPushButton::clicked, this, &TdvmsWidget::newCampaign);
   connect(plan_, &QPushButton::clicked, this, &TdvmsWidget::plan);
+  connect(wantedPlan_, &QPushButton::clicked, this, &TdvmsWidget::plan);
+  connect(wantedFdsn_, &QPushButton::clicked, this, [this] {
+    applyWanted();
+    tabs_->setCurrentWidget(fdsn_);
+  });
+  connect(wantedStation_, &QComboBox::currentIndexChanged, this,
+          &TdvmsWidget::applyWanted);
+  connect(wantedClose_, &QPushButton::clicked, this, [this] {
+    wantedStations_.clear();
+    wantedBar_->hide();
+  });
+  connect(showJobs_, &QPushButton::clicked, this, [this] {
+    if (!ctx_.nav)
+      return;
+    QVariantMap args;
+    if (running_)
+      args.insert(QStringLiteral("job"), ctx_.jobs->rowOf(running_));
+    ctx_.nav->show(kNavJobsPanel, args);
+  });
+  connect(fdsn_, &FdsnPane::fetchStarted, this,
+          &TdvmsWidget::registerDownloadFolder);
+  if (ctx_.nav)
+    connect(ctx_.nav, &Navigator::requested, this,
+            [this](const QString &id, const QVariantMap &args) {
+              if (id == QLatin1String("tdvms") &&
+                  args.contains(QStringLiteral("stations")))
+                setWanted(args);
+            });
   connect(ingest_, &QPushButton::clicked, this, &TdvmsWidget::ingest);
   connect(refresh_, &QPushButton::clicked, this,
           &TdvmsWidget::refreshCampaigns);
@@ -292,6 +352,14 @@ void TdvmsWidget::newCampaign() {
       root_->text());
   try {
     const Campaign c = tdvms::newCampaign(root_->text(), name, target);
+    // A campaign is found by its ledger file; a new one has none until the
+    // first station is planned, so it would not show up. Start it empty.
+    if (!QFileInfo::exists(c.ledgerPath)) {
+      QFile ledger(c.ledgerPath);
+      if (!ledger.open(QIODevice::WriteOnly))
+        throw std::runtime_error(
+            tr("cannot create %1").arg(c.ledgerPath).toStdString());
+    }
     refreshCampaigns();
     campaign_->setCurrentIndex(campaign_->findData(c.ledgerPath));
   } catch (const std::exception &e) {
@@ -299,11 +367,57 @@ void TdvmsWidget::newCampaign() {
   }
 }
 
+void TdvmsWidget::setWanted(const QVariantMap &args) {
+  wantedStations_ = args.value(QStringLiteral("stations")).toStringList();
+  const auto day = [&](const char *key) {
+    const QDateTime t = QDateTime::fromString(
+        args.value(QLatin1String(key)).toString(), Qt::ISODate);
+    return t.isValid() ? t.toUTC().date() : QDate();
+  };
+  wantedStart_ = day("start");
+  wantedEnd_ = day("end");
+  // Whole days are downloaded: include the day the span ends on.
+  if (wantedEnd_.isValid())
+    wantedEnd_ = wantedEnd_.addDays(1);
+  wantedNetwork_ = args.value(QStringLiteral("network")).toString();
+  wantedCase_ = args.value(QStringLiteral("case")).toString();
+  {
+    const QSignalBlocker block(wantedStation_);
+    wantedStation_->clear();
+    wantedStation_->addItems(wantedStations_);
+  }
+  wantedBar_->setVisible(!wantedStations_.isEmpty());
+  retranslate();
+  applyWanted();
+}
+
+void TdvmsWidget::applyWanted() {
+  if (wantedStations_.isEmpty())
+    return;
+  fdsn_->prefill(wantedStation_->currentText(), wantedNetwork_, wantedStart_,
+                 wantedEnd_);
+}
+
+bool TdvmsWidget::registerDownloadFolder(const QString &dir) {
+  if (dir.isEmpty() || !ctx_.study || !ctx_.study->isOpen())
+    return false;
+  bool added = false;
+  ctx_.study->update(
+      [&](study::Study &s) { added = s.addWaveformRoot(dir); });
+  if (added) {
+    registered_ = dir;
+    updateControls();
+  }
+  return added;
+}
+
 void TdvmsWidget::plan() {
   const Campaign c = current();
   if (c.ledgerPath.isEmpty())
     return;
   PlanDialog dlg(c.ledgerPath, this);
+  if (!wantedStations_.isEmpty())
+    dlg.prefill(wantedStation_->currentText(), wantedStart_, wantedEnd_);
   if (dlg.exec() != QDialog::Accepted)
     return;
   const PlanRequest req = dlg.request();
@@ -457,6 +571,9 @@ void TdvmsWidget::startRun() {
           tr("No mailbox credentials are set, so links cannot be read and "
              "nothing will be downloaded. Submit anyway?")) != QMessageBox::Yes)
     return;
+  // What this run downloads belongs to the open study.
+  if (!opt.supervisor.dryRun)
+    registerDownloadFolder(c.raw);
   QPointer<TdvmsWidget> self(this);
   Notify desktop = [self](const QString &t, const QString &b, bool u) {
     QMetaObject::invokeMethod(
@@ -547,11 +664,18 @@ void TdvmsWidget::updateControls() {
   for (QWidget *w : std::initializer_list<QWidget *>{
            address_, slots_, interval_, exitWhenDone_, once_, dryRun_})
     w->setEnabled(!running_);
-  runNote_->setText(
+  QString note =
       running_ ? tr("Running. Progress and output are in the Jobs panel.")
                : (credentials().complete()
                       ? tr("Mailbox: %1").arg(credentials().user)
-                      : tr("No mailbox credentials set (Mailbox...).")));
+                      : tr("No mailbox credentials set (Mailbox…)."));
+  if (!registered_.isEmpty())
+    note += QLatin1Char('\n') +
+            tr("%1 is now one of the study's waveform folders.")
+                .arg(registered_);
+  runNote_->setText(note);
+  showJobs_->setEnabled(ctx_.nav != nullptr);
+  wantedPlan_->setEnabled(have);
 }
 
 void TdvmsWidget::changeEvent(QEvent *e) {
@@ -565,18 +689,50 @@ void TdvmsWidget::retranslate() {
                    tr("No campaign open.\nChoose a data folder, then New "
                       "campaign… to plan the stations and dates to download."));
   root_->setPlaceholderText(tr("folder holding the campaigns"));
-  rootBrowse_->setText(tr("Browse..."));
-  newCampaign_->setText(tr("New campaign..."));
-  plan_->setText(tr("Plan station..."));
-  ingest_->setText(tr("Ingest archive..."));
+  rootBrowse_->setText(QStringLiteral("…"));
+  newCampaign_->setText(tr("New campaign…"));
+  plan_->setText(tr("Plan station…"));
+  ingest_->setText(tr("Ingest archive…"));
+  showJobs_->setText(tr("Show in the Jobs panel"));
+  showJobs_->setToolTip(ui::helpText(
+      tr("Opens the Jobs panel at the bottom of the window, where every "
+         "download shows its progress and its full log.")));
+  if (!wantedStations_.isEmpty()) {
+    const QString period =
+        wantedStart_.isValid() && wantedEnd_.isValid()
+            ? tr("%1 to %2")
+                  .arg(wantedStart_.toString(Qt::ISODate),
+                       wantedEnd_.addDays(-1).toString(Qt::ISODate))
+            : QString();
+    wantedText_->setText(
+        wantedCase_.isEmpty()
+            ? tr("Waveforms wanted: %n station(s), %1", nullptr,
+                 int(wantedStations_.size()))
+                  .arg(period)
+            : tr("Waveforms wanted for %1: %n station(s), %2", nullptr,
+                 int(wantedStations_.size()))
+                  .arg(wantedCase_, period));
+  }
+  wantedPlan_->setText(tr("Plan from AFAD…"));
+  wantedFdsn_->setText(tr("Fill the FDSN form"));
+  wantedClose_->setText(tr("Dismiss"));
+  ui::setHelp(wantedStation_,
+              tr("The station of the case to download next. The plan dialog "
+                 "and the FDSN form start on it and on the case's span."));
+  wantedPlan_->setToolTip(ui::helpText(
+      tr("Opens the plan dialog on this station and the case's span, to "
+         "request the archives from AFAD's portal.")));
+  wantedFdsn_->setToolTip(ui::helpText(
+      tr("Puts this station and the case's span into the FDSN tab, to pull "
+         "the days from an FDSN service.")));
   refresh_->setText(tr("Refresh"));
   catalogs_->setText(tr("Refresh catalogs"));
   findChild<QGroupBox *>(QStringLiteral("runBox"))->setTitle(tr("Run"));
   exitWhenDone_->setText(tr("stop when every chunk has an outcome"));
   once_->setText(tr("one cycle only"));
   dryRun_->setText(tr("dry run (no mail flagged, no submissions)"));
-  mailbox_->setText(tr("Mailbox..."));
-  start_->setText(tr("Start"));
+  mailbox_->setText(tr("Mailbox…"));
+  start_->setText(tr("Fetch"));
   ui::setPrimary(start_);
   status_->setPlaceholderText(tr("The run log appears here."));
   stop_->setText(tr("Stop"));

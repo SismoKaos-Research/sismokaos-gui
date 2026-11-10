@@ -25,6 +25,16 @@ public:
   explicit FdsnPane(JobModel *jobs, QWidget *parent = nullptr);
   void setCampaign(const tdvms::Campaign &c);
   void reload();
+  // Fills the form (a case's station and span, sent from the Cases page).
+  // An empty network keeps the one in the form.
+  void prefill(const QString &station, const QString &network,
+               const QDate &firstDay, const QDate &dayAfterLast);
+  // Why Fetch cannot be pressed now, or nothing.
+  QString blockedReason() const;
+
+signals:
+  // A pull was started that files its days under this folder.
+  void fetchStarted(const QString &outDir);
 
 protected:
   void changeEvent(QEvent *e) override;
@@ -51,6 +61,7 @@ private:
   QPushButton *go_;
   QPushButton *stop_;
   QLabel *where_;
+  QLabel *why_;
 };
 
 } // namespace skg

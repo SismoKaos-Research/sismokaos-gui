@@ -66,7 +66,11 @@ PlanDialog::PlanDialog(const QString &ledgerPath, QWidget *parent)
 
   auto *buttons = new QDialogButtonBox(
       QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  buttons->button(QDialogButtonBox::Ok)->setText(tr("Plan"));
+  ok_ = buttons->button(QDialogButtonBox::Ok);
+  ok_->setText(tr("Plan"));
+  station_->setObjectName(QStringLiteral("planStation"));
+  start_->setObjectName(QStringLiteral("planStart"));
+  end_->setObjectName(QStringLiteral("planEnd"));
   connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
@@ -107,6 +111,28 @@ PlanDialog::PlanDialog(const QString &ledgerPath, QWidget *parent)
                  "strong-motion accelerometer is flagged."));
 }
 
+void PlanDialog::prefill(const QString &station, const QDate &from,
+                         const QDate &to) {
+  const int i = station_->findData(station);
+  if (i >= 0)
+    station_->setCurrentIndex(i);
+  else
+    station_->setEditText(station);
+  if (from.isValid())
+    start_->setDate(from);
+  if (to.isValid())
+    end_->setDate(to);
+  updateHint();
+}
+
+QString PlanDialog::blockedReason() const {
+  if (request().station.isEmpty())
+    return tr("Choose the station to plan.");
+  if (start_->date() >= end_->date())
+    return tr("\"To\" must be later than \"From\".");
+  return {};
+}
+
 PlanRequest PlanDialog::request() const {
   PlanRequest r;
   const int i = station_->currentIndex();
@@ -125,7 +151,12 @@ PlanRequest PlanDialog::request() const {
 void PlanDialog::updateHint() {
   const PlanRequest r = request();
   QStringList bits;
-  if (!r.station.isEmpty()) {
+  const QString why = blockedReason();
+  if (ok_)
+    ok_->setEnabled(why.isEmpty());
+  if (!why.isEmpty()) {
+    bits << why;
+  } else {
     try {
       const int n = planWindows(r.startIso, r.endIso, r.chunkDays,
                                 r.everyDays > 0 ? r.everyDays : -1)

@@ -6,7 +6,7 @@ qt_add_library(skg_mod_tdvms STATIC
   coveragepane.cpp  coveragepane.h
   fdsnpane.cpp      fdsnpane.h
 )
-target_link_libraries(skg_mod_tdvms PUBLIC skg_core skg_tdvms PRIVATE skg_warnings)
+target_link_libraries(skg_mod_tdvms PUBLIC skg_core skg_tdvms skg_study PRIVATE skg_warnings)
 list(APPEND SKG_MODULE_TARGETS skg_mod_tdvms)
 list(APPEND SKG_TRANSLATED_TARGETS skg_mod_tdvms)
 set(SKG_MODULE_TARGETS ${SKG_MODULE_TARGETS} PARENT_SCOPE)

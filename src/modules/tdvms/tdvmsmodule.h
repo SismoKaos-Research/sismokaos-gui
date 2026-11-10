@@ -3,6 +3,8 @@
 // through the skg_tdvms library; nothing shells out.
 #pragma once
 
+#include <QDate>
+#include <QVariantMap>
 #include <QSystemTrayIcon>
 #include <QWidget>
 
@@ -37,6 +39,8 @@ public:
   QString description() const override {
     return tr("AFAD/TDVMS download campaigns and FDSN pulls");
   }
+  // The second step of a study: getting the waveforms of its cases.
+  Section section() const override { return Section::Study; }
   QStringList requiredTools() const override { return {}; }
   QWidget *createWidget(AppContext &ctx, QWidget *parent) override;
 };
@@ -45,6 +49,16 @@ class TdvmsWidget : public QWidget {
   Q_OBJECT
 public:
   TdvmsWidget(AppContext ctx, QWidget *parent = nullptr);
+
+  // What a case needs (sent by the Cases page through the Navigator): keys
+  // "stations" (list of codes), "start" and "end" (ISO UTC), and optionally
+  // "network" and "case" (its name, shown). Fills the FDSN form and the plan
+  // dialog; the bar at the top says what is wanted.
+  void setWanted(const QVariantMap &args);
+  // The folder a download files its archives under becomes one of the open
+  // study's waveform folders, so the Cases and Runs pages find them. True
+  // when the study did not know it yet.
+  bool registerDownloadFolder(const QString &dir);
 
 protected:
   void changeEvent(QEvent *e) override;
@@ -58,6 +72,7 @@ private:
   void reloadLedger();
   void newCampaign();
   void plan();
+  void applyWanted();
   void ingest();
   void resetSelected();
   void startRun();
@@ -103,6 +118,18 @@ private:
   CoveragePane *coverage_;
   FdsnPane *fdsn_;
   QSystemTrayIcon *tray_ = nullptr;
+
+  QWidget *wantedBar_;
+  QLabel *wantedText_;
+  QComboBox *wantedStation_;
+  QPushButton *wantedPlan_;
+  QPushButton *wantedFdsn_;
+  QPushButton *wantedClose_;
+  QStringList wantedStations_;
+  QDate wantedStart_, wantedEnd_;
+  QString wantedNetwork_, wantedCase_;
+  QPushButton *showJobs_;
+  QString registered_; // the folder last added to the study, for the note
 };
 
 } // namespace skg
