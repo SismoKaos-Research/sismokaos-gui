@@ -212,10 +212,25 @@ QString Study::resolved(const QString &path) const {
 }
 
 QString Study::stored(const QString &absolutePath) const {
-  if (absolutePath.isEmpty() || dir.isEmpty())
+  if (absolutePath.isEmpty() || dir.isEmpty() ||
+      absolutePath.startsWith(QLatin1Char(':')))
     return absolutePath;
-  const QString rel = QDir(dir).relativeFilePath(absolutePath);
-  return rel.startsWith(QStringLiteral("..")) ? absolutePath : rel;
+  const QString abs = QDir::cleanPath(absolutePath);
+  const QString rel = QDir(dir).relativeFilePath(abs);
+  if (QDir::isAbsolutePath(rel))
+    return abs; // another drive
+  if (!rel.startsWith(QStringLiteral("..")))
+    return rel;
+  // Beside the study: relative only when the two share a real folder, not
+  // just the root (or /home, /mnt): then they can move together.
+  const QStringList a = QDir::cleanPath(dir).split(QLatin1Char('/')),
+                    b = abs.split(QLatin1Char('/'));
+  int common = 0;
+  while (common < a.size() && common < b.size() && a[common] == b[common])
+    ++common;
+  // a[0] is "" on Unix ("/x/y") and the drive on Windows ("C:/x").
+  const int shared = common - 1;
+  return shared >= 2 ? rel : abs;
 }
 
 QString Study::stationListPath() const {
@@ -225,9 +240,106 @@ QString Study::stationListPath() const {
 QString Study::dataDirFor(const StationRef &s) const {
   if (!s.dataDir.isEmpty())
     return resolved(s.dataDir);
+  const QStringList roots = waveformRoots();
+  for (const QString &root : roots)
+    if (QDir(QDir(root).filePath(s.code)).exists())
+      return QDir(root).filePath(s.code);
+  return roots.isEmpty() ? QString() : QDir(roots.first()).filePath(s.code);
+}
+
+QStringList Study::waveformRoots() const {
+  QStringList out;
+  if (!dataRoot.isEmpty())
+    out << resolved(dataRoot);
+  for (const QString &r : moreDataRoots) {
+    const QString abs = resolved(r);
+    if (!abs.isEmpty() && !out.contains(abs))
+      out << abs;
+  }
+  return out;
+}
+
+bool Study::addWaveformRoot(const QString &absolutePath) {
+  const QString abs = QDir::cleanPath(absolutePath);
+  if (abs.isEmpty() || waveformRoots().contains(abs))
+    return false;
   if (dataRoot.isEmpty())
-    return {};
-  return QDir(resolved(dataRoot)).filePath(s.code);
+    dataRoot = stored(abs);
+  else
+    moreDataRoots << stored(abs);
+  return true;
+}
+
+QList<MissingInput> Study::missingInputs() const {
+  QList<MissingInput> out;
+  QStringList seen;
+  const auto check = [&](MissingInput::Kind kind, const QString &storedPath) {
+    if (storedPath.isEmpty() || storedPath.startsWith(QLatin1Char(':')))
+      return;
+    const QString abs = resolved(storedPath);
+    if (QFileInfo::exists(abs) || seen.contains(abs))
+      return;
+    seen << abs;
+    out.append({kind, abs});
+  };
+  check(MissingInput::Kind::Catalog, catalog);
+  check(MissingInput::Kind::StationList, stationList);
+  check(MissingInput::Kind::WaveformRoot, dataRoot);
+  for (const QString &r : moreDataRoots)
+    check(MissingInput::Kind::WaveformRoot, r);
+  for (const Case &c : cases) {
+    check(MissingInput::Kind::FaultFile, c.zone.faultGeoJson);
+    for (const StationRef &st : c.stations)
+      check(MissingInput::Kind::StationData, st.dataDir);
+  }
+  return out;
+}
+
+int Study::relocate(const QString &oldPath, const QString &newPath) {
+  QStringList a = QDir::cleanPath(oldPath).split(QLatin1Char('/')),
+              b = QDir::cleanPath(newPath).split(QLatin1Char('/'));
+  while (a.size() > 1 && b.size() > 1 && a.last() == b.last()) {
+    a.removeLast();
+    b.removeLast();
+  }
+  QString oldRoot = a.join(QLatin1Char('/')), newRoot = b.join(QLatin1Char('/'));
+  if (oldRoot.isEmpty())
+    oldRoot = QStringLiteral("/");
+  if (newRoot.isEmpty())
+    newRoot = QStringLiteral("/");
+  const QString oldPrefix =
+      oldRoot.endsWith(QLatin1Char('/')) ? oldRoot : oldRoot + QLatin1Char('/');
+  int changed = 0;
+  const auto fix = [&](QString &field) {
+    if (field.isEmpty() || field.startsWith(QLatin1Char(':')))
+      return;
+    const QString abs = resolved(field);
+    if (QFileInfo::exists(abs))
+      return;
+    QString moved;
+    if (abs == oldRoot)
+      moved = newRoot;
+    else if (abs.startsWith(oldPrefix))
+      moved = QDir(newRoot).filePath(abs.mid(oldPrefix.size()));
+    else
+      return;
+    moved = QDir::cleanPath(moved);
+    if (!QFileInfo::exists(moved))
+      return;
+    field = stored(moved);
+    ++changed;
+  };
+  fix(catalog);
+  fix(stationList);
+  fix(dataRoot);
+  for (QString &r : moreDataRoots)
+    fix(r);
+  for (Case &c : cases) {
+    fix(c.zone.faultGeoJson);
+    for (StationRef &st : c.stations)
+      fix(st.dataDir);
+  }
+  return changed;
 }
 
 const Case *Study::findCase(const QString &id) const {
@@ -264,8 +376,9 @@ QString Study::toToml() const {
                            const QString &indent = {}) {
     out += indent + k + QStringLiteral(" = ") + v + QLatin1Char('\n');
   };
-  out += QStringLiteral("# A sismokaos-gui study. Edited by the application; "
-                        "hand edits are kept.\n");
+  out += QStringLiteral("# A sismokaos-gui study. The application rewrites "
+                        "this file on every change:\n# edited values are "
+                        "read, comments and unknown keys are not kept.\n");
   line(QStringLiteral("schema"), QStringLiteral("1"));
   line(QStringLiteral("name"), quoted(name));
   line(QStringLiteral("catalog"), quoted(catalog));
@@ -273,6 +386,15 @@ QString Study::toToml() const {
        number(catalogUtcOffsetHours));
   line(QStringLiteral("station_list"), quoted(stationList));
   line(QStringLiteral("data_root"), quoted(dataRoot));
+  {
+    QStringList roots;
+    if (!dataRoot.isEmpty())
+      roots << dataRoot;
+    for (const QString &r : moreDataRoots)
+      if (!r.isEmpty() && !roots.contains(r))
+        roots << r;
+    line(QStringLiteral("waveform_roots"), stringList(roots));
+  }
   for (const Case &c : cases) {
     out += QStringLiteral("\n[[case]]\n");
     line(QStringLiteral("id"), quoted(c.id));
@@ -344,6 +466,15 @@ Study Study::fromToml(const QString &text, const QString &dir) {
   s.catalogUtcOffsetHours = num(tbl, "catalog_utc_offset_hours", 0.0);
   s.stationList = str(tbl, "station_list");
   s.dataRoot = str(tbl, "data_root");
+  // Schema 1 began with data_root alone; waveform_roots repeats it first.
+  for (const QString &r : strings(tbl, "waveform_roots")) {
+    if (r.isEmpty())
+      continue;
+    if (s.dataRoot.isEmpty())
+      s.dataRoot = r;
+    else if (r != s.dataRoot && !s.moreDataRoots.contains(r))
+      s.moreDataRoots << r;
+  }
   if (const toml::array *arr = tbl["case"].as_array()) {
     for (const toml::node &n : *arr) {
       const toml::table *t = n.as_table();

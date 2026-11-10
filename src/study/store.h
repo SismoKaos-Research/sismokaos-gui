@@ -33,8 +33,10 @@ public:
   // Folders of the studies opened lately, newest first; missing ones are
   // dropped.
   QStringList recent() const;
-  // Opens the study that was open when the application last closed.
-  void reopenLast();
+  // Opens the study that was open when the application last closed. False
+  // with the reason in `error` when there was one and it cannot be opened;
+  // true when it opened or there was none.
+  bool reopenLast(QString *error = nullptr);
 
   static const QString kSettingRecent;
   static const QString kSettingLast;

@@ -89,11 +89,24 @@ QStringList StudyStore::recent() const {
   return out;
 }
 
-void StudyStore::reopenLast() {
+bool StudyStore::reopenLast(QString *error) {
   const QString last = settings_->value(kSettingLast).toString();
-  if (!last.isEmpty() &&
-      QFileInfo::exists(QDir(last).filePath(Study::kFileName)))
-    open(last);
+  if (last.isEmpty())
+    return true;
+  if (!QFileInfo::exists(QDir(last).filePath(Study::kFileName))) {
+    if (error)
+      *error = tr("The study that was open last, %1, is not there any more "
+                  "(a moved folder or an unplugged disk).")
+                   .arg(last);
+    settings_->remove(kSettingLast);
+    return false;
+  }
+  QString why;
+  if (open(last, &why))
+    return true;
+  if (error)
+    *error = tr("The study in %1 could not be opened: %2").arg(last, why);
+  return false;
 }
 
 void StudyStore::remember(const QString &dir) {

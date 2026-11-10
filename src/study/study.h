@@ -21,6 +21,13 @@
 //   catalog_utc_offset_hours = 0.0
 //   station_list = ""                  # empty: the built-in AFAD list
 //   data_root = ""                     # <data_root>/<STATION>/ miniSEED
+//   waveform_roots = []                # every such folder, data_root first;
+//                                      # a station is looked for in each
+//
+// Paths are stored relative to the study folder when they lie inside it, and
+// also when they lie beside it under a common folder (so a study and its data
+// can move together to another disk); otherwise absolute. Comments and keys
+// the application does not know are not kept when it saves the file.
 //
 //   [[case]]
 //   id = "sivrice-2020"                # folder name; never changes
@@ -78,6 +85,14 @@ struct StationRef {
   QString dataDir;       // empty: <data_root>/<code>
 };
 
+// An input the study names that is not on disk (a moved catalog, an unplugged
+// data disk).
+struct MissingInput {
+  enum class Kind { Catalog, StationList, WaveformRoot, StationData, FaultFile };
+  Kind kind;
+  QString path; // absolute, as resolved
+};
+
 struct Zone {
   enum class Kind { Circle, Fault };
   Kind kind = Kind::Circle;
@@ -126,7 +141,8 @@ public:
   QString catalog;
   double catalogUtcOffsetHours = 0.0;
   QString stationList;
-  QString dataRoot;
+  QString dataRoot;           // the first waveform folder
+  QStringList moreDataRoots;  // further waveform folders, as stored
   QList<Case> cases;
   QList<Recipe> recipes;
 
@@ -136,7 +152,22 @@ public:
   QString catalogPath() const { return resolved(catalog); }
   // The station list to read: the study's, or the built-in AFAD one.
   QString stationListPath() const;
+  // The station's own folder if it names one; otherwise <root>/<code> in the
+  // first waveform root that has it (the first root when none has).
   QString dataDirFor(const StationRef &s) const;
+  // Every waveform folder, absolute, `dataRoot` first.
+  QStringList waveformRoots() const;
+  // Adds a waveform folder (it becomes `dataRoot` when there is none yet).
+  // False when the study already lists it.
+  bool addWaveformRoot(const QString &absolutePath);
+
+  // The inputs that are named but not found on disk.
+  QList<MissingInput> missingInputs() const;
+  // The user found `oldPath` at `newPath`: what the two have in common at
+  // the end is dropped to get the folder that moved (/old/disk -> /mnt/usb),
+  // and every missing input under it that exists at the new place is
+  // rewritten. Returns how many paths changed.
+  int relocate(const QString &oldPath, const QString &newPath);
 
   const Case *findCase(const QString &id) const;
   const Recipe *findRecipe(const QString &id) const;
