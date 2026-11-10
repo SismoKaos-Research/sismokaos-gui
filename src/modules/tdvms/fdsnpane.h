@@ -29,12 +29,16 @@ public:
   // An empty network keeps the one in the form.
   void prefill(const QString &station, const QString &network,
                const QDate &firstDay, const QDate &dayAfterLast);
+  // The station code in the form, as typed.
+  QString station() const;
   // Why Fetch cannot be pressed now, or nothing.
   QString blockedReason() const;
 
 signals:
   // A pull was started that files its days under this folder.
   void fetchStarted(const QString &outDir);
+  // The station code in the form changed.
+  void stationChanged(const QString &code);
 
 protected:
   void changeEvent(QEvent *e) override;

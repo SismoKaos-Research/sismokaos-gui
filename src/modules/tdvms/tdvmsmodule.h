@@ -45,6 +45,8 @@ public:
   QWidget *createWidget(AppContext &ctx, QWidget *parent) override;
 };
 
+class StationPickMap;
+
 class TdvmsWidget : public QWidget {
   Q_OBJECT
 public:
@@ -73,6 +75,9 @@ private:
   void newCampaign();
   void plan();
   void applyWanted();
+  // The map tab: a click adds a station to what is wanted or takes it out.
+  void toggleStation(const QString &code);
+  void updateStationMap();
   void ingest();
   void resetSelected();
   void startRun();
@@ -117,6 +122,7 @@ private:
   QPushButton *reset_;
   CoveragePane *coverage_;
   FdsnPane *fdsn_;
+  StationPickMap *stationMap_;
   QSystemTrayIcon *tray_ = nullptr;
 
   QWidget *wantedBar_;

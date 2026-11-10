@@ -1,3 +1,6 @@
+#include <exception>
+
+#include "modules/tdvms/stationmap.h"
 #include "modules/tdvms/tdvmsmodule.h"
 
 #include "core/ui.h"
@@ -179,6 +182,14 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   tabs_->addTab(chunks, QString());
   tabs_->addTab(coverage_, QString());
   tabs_->addTab(fdsn_, QString());
+  stationMap_ = new StationPickMap(ctx_.theme, this);
+  stationMap_->setObjectName(QStringLiteral("stationMap"));
+  try {
+    stationMap_->setStations(tdvms::loadStations());
+  } catch (const std::exception &) {
+    // No list: the map still shows what is chosen by name in its summary.
+  }
+  tabs_->addTab(stationMap_, QString());
 
   auto *split = new QSplitter(Qt::Horizontal, this);
   split->addWidget(left);
@@ -206,10 +217,18 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   });
   connect(wantedStation_, &QComboBox::currentIndexChanged, this,
           &TdvmsWidget::applyWanted);
+  connect(wantedStation_, &QComboBox::currentIndexChanged, this,
+          &TdvmsWidget::updateStationMap);
   connect(wantedClose_, &QPushButton::clicked, this, [this] {
     wantedStations_.clear();
     wantedBar_->hide();
+    stationMap_->clearCase();
+    updateStationMap();
   });
+  connect(stationMap_, &StationPickMap::toggled, this,
+          &TdvmsWidget::toggleStation);
+  connect(fdsn_, &FdsnPane::stationChanged, this,
+          &TdvmsWidget::updateStationMap);
   connect(showJobs_, &QPushButton::clicked, this, [this] {
     if (!ctx_.nav)
       return;
@@ -389,6 +408,60 @@ void TdvmsWidget::setWanted(const QVariantMap &args) {
   wantedBar_->setVisible(!wantedStations_.isEmpty());
   retranslate();
   applyWanted();
+  // Where the case is, when the sender said so.
+  if (args.contains(QStringLiteral("lat")) &&
+      args.contains(QStringLiteral("lon")))
+    stationMap_->setCase(wantedCase_, args.value(QStringLiteral("lat")).toDouble(),
+                         args.value(QStringLiteral("lon")).toDouble(),
+                         args.value(QStringLiteral("zone_km")).toDouble());
+  else
+    stationMap_->clearCase();
+  updateStationMap();
+}
+
+// What the map shows as chosen: the stations wanted, and the one typed in
+// the FDSN form.
+void TdvmsWidget::updateStationMap() {
+  QStringList chosen = wantedStations_;
+  const QString typed = fdsn_->station();
+  if (!typed.isEmpty() && !chosen.contains(typed, Qt::CaseInsensitive))
+    chosen << typed;
+  stationMap_->setSelected(chosen, wantedStations_.isEmpty()
+                                       ? typed
+                                       : wantedStation_->currentText());
+}
+
+void TdvmsWidget::toggleStation(const QString &code) {
+  const auto at = [this](const QString &c) {
+    for (int i = 0; i < wantedStations_.size(); ++i)
+      if (wantedStations_[i].compare(c, Qt::CaseInsensitive) == 0)
+        return i;
+    return -1;
+  };
+  const int i = at(code);
+  const bool typedOnly =
+      i < 0 && fdsn_->station().compare(code, Qt::CaseInsensitive) == 0;
+  if (i >= 0)
+    wantedStations_.removeAt(i);
+  else if (!typedOnly)
+    wantedStations_ << code;
+  {
+    const QSignalBlocker block(wantedStation_);
+    wantedStation_->clear();
+    wantedStation_->addItems(wantedStations_);
+    if (i < 0 && !typedOnly)
+      wantedStation_->setCurrentIndex(int(wantedStations_.size()) - 1);
+  }
+  wantedBar_->setVisible(!wantedStations_.isEmpty());
+  retranslate();
+  // The forms follow: on the station just chosen, or off the one taken out.
+  if (wantedStations_.isEmpty() || typedOnly)
+    fdsn_->prefill(wantedStations_.isEmpty() ? QString()
+                                             : wantedStation_->currentText(),
+                   QString(), QDate(), QDate());
+  else
+    applyWanted();
+  updateStationMap();
 }
 
 void TdvmsWidget::applyWanted() {
@@ -705,7 +778,11 @@ void TdvmsWidget::retranslate() {
                        wantedEnd_.addDays(-1).toString(Qt::ISODate))
             : QString();
     wantedText_->setText(
-        wantedCase_.isEmpty()
+        period.isEmpty()
+            ? tr("Stations chosen on the map: %n. Set the period in the "
+                 "form you use.",
+                 nullptr, int(wantedStations_.size()))
+        : wantedCase_.isEmpty()
             ? tr("Waveforms wanted: %n station(s), %1", nullptr,
                  int(wantedStations_.size()))
                   .arg(period)
@@ -740,6 +817,11 @@ void TdvmsWidget::retranslate() {
   tabs_->setTabText(0, tr("Chunks"));
   tabs_->setTabText(1, tr("Coverage"));
   tabs_->setTabText(2, tr("FDSN"));
+  tabs_->setTabText(3, tr("Map"));
+  tabs_->setTabToolTip(
+      3, ui::helpText(tr("Where the stations are: every station of the "
+                         "portal, and the ones chosen for download. Click a "
+                         "station to choose it or take it out.")));
   const int keep = stateFilter_->currentIndex();
   stateFilter_->blockSignals(true);
   stateFilter_->clear();
