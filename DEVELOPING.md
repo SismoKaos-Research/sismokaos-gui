@@ -41,8 +41,8 @@ src/cbi/       the catalog-based indicators port, after indicators-forecast: zon
                homogenisation, Gardner-Knopoff, windows, indicators, table, figures, run
                (library; data/ holds the EAFZ GeoJSON and the AFAD magnitude map)
 src/ayzek/     the launcher logic for the bundled ayzek: command line, output parsing (not a port)
-src/core/      Module interface, AppContext, ModuleRegistry, I18n
-src/modules/   one directory per tab, each its own static library target
+src/core/      Module interface, AppContext, ModuleRegistry, I18n, Theme, ui helpers
+src/modules/   one directory per page, each its own static library target
 src/app/       MainWindow, UpdateCheck, main()
 third_party/   vendored libraries (miniz, libsvm, toml++) with a PROVENANCE.md each,
                and the XGBoost and ayzek submodules (*-PROVENANCE.md beside them)
@@ -54,7 +54,7 @@ translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
 .github/       CI on every push; the release workflow on tags
 ```
 
-## Adding a tab (module)
+## Adding a page (module)
 
 1. Create `src/modules/<name>/` with a `CMakeLists.txt` like
    `modules/placeholder/CMakeLists.txt`: a static library appended to
@@ -62,9 +62,28 @@ translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
    `src/modules/CMakeLists.txt`.
 2. Subclass `skg::Module` (`src/core/module.h`): `id()`, `title()`,
    `description()`, `requiredTools()`, `createWidget()`. The widget gets an
-   `AppContext` with the jobs model, the tool registry and the settings.
+   `AppContext` with the jobs model, the tool registry, the settings and the
+   theme. `section()` says where it sits in the sidebar (Study, Tools, or
+   Footer; Tools by default) and `iconId()` names its icon, by default
+   `src/core/resources/icons/<id>.svg` (a 24x24 line drawing with
+   `stroke="#000"`, recoloured at run time; a plain square when missing).
 3. Register it in `src/app/main.cpp` with `modules.emplace<YourModule>()`.
-   Tabs appear in registration order.
+   Pages appear in registration order within their section.
+
+The look lives in `src/core`: `theme.{h,cpp}` holds the light and dark colour
+tokens and builds the palette and the style sheet from
+`resources/theme.qss` (`@token` names are substituted); nothing is written
+at run time. `ui.h` has the shared helpers: `ui::setPrimary(button)` for the
+page's one main action, `ui::setEmptyHint(view, text)` for the hint inside
+an empty table (call it from `retranslate()`), and `ui::polishPage()`, which
+the main window applies to every page. Draw with `ctx.theme->color("text")`
+and `seriesColors()` in custom-painted widgets so both themes work, and
+repaint on `Theme::changed`.
+
+To look at every page without touching your own settings:
+`sismokaos-gui --settings /tmp/try.ini --screenshots /tmp/shots` (set
+`ui/theme=dark` or `ui/language=tr` in the INI; `QT_QPA_PLATFORM=offscreen`
+works).
 
 User-visible strings go through `tr()`; widgets re-read them in
 `changeEvent(QEvent::LanguageChange)`. Labels built in a loop can keep their

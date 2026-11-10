@@ -78,19 +78,28 @@ has the AppImage, the Windows zip (unpack anywhere, run
 
 ## The window
 
-The tabs along the top are the tools: **Data**, **Features**,
-**Classification**, **Analysis** and **Settings**.
+The **sidebar** on the left lists the pages. Under *Tools* are **Data**,
+**Features**, **Classification**, **Analysis**, **Indicators** and **Early
+warning**; **Settings** is at the bottom. Alt+1 … Alt+9 jump to a page. The
+header above each page gives its name and one line on what it is for. The
+sections below still call the pages "tabs".
 
-The **Jobs** panel at the bottom lists everything the application runs: a
-download campaign, a calibration, a feature extraction. Each job shows its
-state, progress, elapsed time and, when selected, its live log. *Cancel*
-stops a job cooperatively: it finishes the step it is on and writes nothing
-half-done. *Copy log* puts the log on the clipboard for a bug report. The
-panel can be hidden and shown from *View → Jobs*; it reappears when a job
-starts.
+On every page the one filled button is the page's main action (*Run*,
+*Start*). An empty table or log says what to do to fill it.
 
-**Language.** *View → Language* switches between Türkçe and English
-immediately; the choice is remembered.
+**Jobs.** The strip at the bottom says what is running and how far it is.
+Click *Jobs* on its right (or *View → Jobs*, Ctrl+J) to open the jobs panel,
+which lists everything the application runs: a download campaign, a
+calibration, a feature extraction. Each job shows its state, progress,
+elapsed time and, when selected, its live log. *Cancel* stops a job
+cooperatively: it finishes the step it is on and writes nothing half-done.
+*Copy log* puts the log on the clipboard for a bug report.
+
+**Language.** The *EN / TR* switch in the header (or *View → Language*)
+changes the language immediately; the choice is remembered.
+
+**Theme.** *View → Theme* or the Settings page chooses a light or a dark
+look, or follows the system. Figures stay on a white background in both.
 
 Closing the window while jobs run asks first; confirming cancels them.
 
