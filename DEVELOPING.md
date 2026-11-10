@@ -33,7 +33,9 @@ src/jobs/      Job, ProcessJob (QProcess + progress parsing), TaskJob (worker th
 src/tools/     ToolDesc, ToolRegistry: descriptors and resolution of external CLIs
 src/tdvms/     the C++ port of tdvms-pull (library, no Widgets)
 src/fx/        the C++ port of the feature extraction, after sismokaos-cli (library, no Widgets)
-src/analysis/  the SCAP port: catalogs, faults, labelling, figures (library, QtGui only)
+src/analysis/  the SCAP port: catalogs, faults, labelling, figures (library, QtGui only),
+               and the regions port, after earthquake-clustering-eafz: regions (SOM, Mean
+               Shift), regionmap, regionrun (data/ holds the Natural Earth countries outline)
 src/sfc/       the classification port: settings, dataset, split, models, tuning, run (library)
 src/cbi/       the catalog-based indicators port, after indicators-forecast: zones, Mc and
                homogenisation, Gardner-Knopoff, windows, indicators, table, figures, run
@@ -44,7 +46,8 @@ src/modules/   one directory per tab, each its own static library target
 src/app/       MainWindow, UpdateCheck, main()
 third_party/   vendored libraries (miniz, libsvm, toml++) with a PROVENANCE.md each,
                and the XGBoost and ayzek submodules (*-PROVENANCE.md beside them)
-packaging/     desktop entry and icon; ayzek/ holds the Meson driver and zig cross file
+packaging/     desktop entry and icon; ayzek/ holds the Meson driver and zig cross file;
+               naturalearth/ the script that made src/analysis/data/countries.geojson
 tests/         QtTest suites and their fixtures (tests/data)
 translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
                install.sh / install.ps1 live at the root

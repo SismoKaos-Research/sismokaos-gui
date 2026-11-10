@@ -19,7 +19,7 @@ For building from source, the code layout and how to add a tab, see
 3. [Data tab: TDVMS campaigns and FDSN pulls](#data-tab-tdvms-campaigns-and-fdsn-pulls)
 4. [Features tab: preprocessing and feature extraction](#features-tab-preprocessing-and-feature-extraction)
 5. [Classification tab: models and experiments](#classification-tab-models-and-experiments)
-6. [Analysis tab: earthquakes, faults, labels and figures](#analysis-tab-earthquakes-faults-labels-and-figures)
+6. [Analysis tab: earthquakes, faults, labels, figures and regions](#analysis-tab-earthquakes-faults-labels-figures-and-regions)
 7. [Indicators tab: catalog-based seismicity indicators](#indicators-tab-catalog-based-seismicity-indicators)
 8. [Early warning tab: ayzek](#early-warning-tab-ayzek)
 9. [Settings tab](#settings-tab)
@@ -376,12 +376,13 @@ comparison), the reports and the settings snapshot. *HTML report* writes
 one self-contained page with every run's metrics, confusion matrices and
 figures and opens it. *Delete run…* removes a run's folder and rows.
 
-## Analysis tab: earthquakes, faults, labels and figures
+## Analysis tab: earthquakes, faults, labels, figures and regions
 
 This tab takes a feature table and puts it next to the earthquake catalog
 and the active faults, the way the SCAP platform did: which events happened
 near the station and when, which fault is closest, a label per window, and
-the figures.
+the figures. Its last pane, *Regions*, needs only the catalog: it splits the
+epicentres into seismic regions.
 
 ### Inputs (top of the tab)
 
@@ -434,6 +435,66 @@ figure plus the combined one into a folder as a job.
 Station comparison: add the feature tables of several stations, pick the
 column, and *Build grid* renders the daily figures of every station for the
 days they share, stations down and days across, as one PNG.
+
+### Regions
+
+Seismic regionalisation: the epicentres of the catalog loaded at the top are
+grouped into regions, each region is written as a catalog of its own, and
+the result is drawn on a map. This pane is a port of the
+`earthquake-clustering-eafz` script by Zeynep Çalım (MIT), the code of
+Z. Çalım, S. Çimen, T. Yıldırım and Ş. Ersoy, "Analysis and Visualization of
+Seismic Activity Before and After a Major Earthquake for Earthquake
+Prediction in High-Risk Areas", 2025 33rd Signal Processing and
+Communications Applications Conference (SIU), pp. 1–4,
+doi:[10.1109/SIU66497.2025.11111859](https://doi.org/10.1109/SIU66497.2025.11111859).
+
+Only the latitude and longitude columns are used (`latitude`/`enlem`,
+`longitude`/`boylam`, any case), so a table without dates or magnitudes
+works here even though the other panes cannot use it; rows without
+coordinates are skipped.
+
+- **Methods**:
+  - *SOM*: a self-organising map of 1 × *Regions* units; every event joins
+    the region of its nearest unit. A unit that attracts no event gives no
+    region, so there can be fewer regions than asked for.
+  - *SOM + Mean Shift*: a larger map (10 × 10 by default) first summarises
+    the catalog, then Mean Shift groups the map's units by density and so
+    decides the number of regions itself. *Mean Shift quantile* sets its
+    bandwidth: a larger value gives fewer, larger regions.
+  - *Training iterations* and *Random seed* apply to both. The same seed
+    gives the same regions.
+- **Maps**: *Area name* is the first line of the map titles. *Marker* adds a
+  labelled point (a station, a city). The layers are the country outlines
+  shipped with the application, the faults (the shapefile loaded at the top
+  of the tab, or the shipped East Anatolian Fault traces when none is
+  loaded), a *Provinces* polygon shapefile if you give one, and the
+  *Cities* labels: the sixteen cities around the East Anatolian Fault by
+  default, or your own CSV of `lat, lon, name` (an optional `align` column
+  with `right` puts the label left of the point). Maps are 12 × 10 inches at
+  the chosen dpi; tick *and SVG* for a vector copy (large for big catalogs).
+- **Run** starts a job. The pane then lists every region (centre, latitude
+  and longitude range, number of events, file) and shows the maps; choose
+  the map above the picture. The map language is the application's.
+
+The output folder receives the script's files and two more:
+
+| file | content |
+|---|---|
+| `map_01_study_area_plain.png` | every event, no layers |
+| `map_02_study_area_geographic.png` | every event over the boundaries and faults |
+| `map_03_som.png`, `map_04_som_meanshift.png` | the regions of each method, with their centres |
+| `som_region_N.csv`, `sommeanshift_region_N.csv` | the catalog lines of region N, every original column untouched |
+| `regions_summary.csv` | the region table |
+| `regions_run.json` | what was run: settings, the catalog's SHA-256, the layers used, the version |
+
+The script's interactive HTML maps are not produced; the map in the pane
+replaces them. The clustering is this application's own implementation of
+the same two algorithms (the script uses MiniSom and scikit-learn), with its
+own random numbers: for a seed the regions are reproducible here, but they
+are not the Python script's regions event for event. Keep a paper's maps and
+tables with the implementation that produced them. Map lines come from
+Natural Earth and do not necessarily depict accepted national boundaries;
+the maps say so.
 
 ## Indicators tab: catalog-based seismicity indicators
 
@@ -601,6 +662,7 @@ Early warning tab runs it.
 | feature extraction results, labelled tables | the output directory you chose | | |
 | classification projects (`project.toml`, `results/`) | the project folder you chose | | |
 | indicator tables and figures (`Deprem_Analiz_Grafikleri_*/`) | the output root you chose (`~/indicators` by default) | | |
+| region maps, per-region catalogs, `regions_run.json` | the output folder you chose (`~/regions` by default) | | |
 | ayzek's assessment table and scores | the output folder you chose (your home folder when empty) | | |
 | the shipped ayzek (executable, `models/`, licence) | inside the AppImage, `usr/share/sismokaos-gui/ayzek` | `sismokaos-gui.app/Contents/Resources/ayzek` | `ayzek\` beside the executable |
 
@@ -657,6 +719,7 @@ Third-party parts, each with a provenance note:
 | toml++ | MIT | `third_party/tomlplusplus/PROVENANCE.md` |
 | miniz | MIT | `third_party/miniz/PROVENANCE.md` |
 | East Anatolian Fault traces (GEM GAF-DB) | CC BY-SA 4.0 | `src/cbi/data/PROVENANCE.md` |
+| Country outlines (Natural Earth 5.1.1, clipped and simplified) | public domain | `src/analysis/data/PROVENANCE.md` |
 | ayzek (a separate program run by the Early warning tab) | GPL-3.0-or-later | `third_party/AYZEK-PROVENANCE.md` |
 
 ayzek is not linked into the application: it is shipped beside it with its
