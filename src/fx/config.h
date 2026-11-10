@@ -76,6 +76,9 @@ struct Config {
 
   // Derived and run-time fields, not in the JSON.
   QString dataDir;
+  // When not empty, exactly these files (plain or zip) are read instead of
+  // everything in `dataDir`, and only the records of `station` are used.
+  QStringList inputFiles;
   QString outputRoot;
   QString calibrationFile; // reuse a previous run's calibration
   QStringList bandFilter;  // empty runs every band

@@ -197,6 +197,41 @@ private slots:
                  .size());
   }
 
+  void preprocessReadsOnlyTheChosenFiles() {
+    // A study hands over exactly the files that overlap a case's span.
+    const QTemporaryDir out;
+    Config cfg = baseConfig(out.path());
+    PreprocessOptions opt;
+    opt.stagingRoot = out.path();
+    const auto run = [&](int *samples) {
+      *samples = 0;
+      return preprocessDirectory(cfg.dataDir, cfg, opt, [&](ChannelChunk &&c) {
+        *samples += int(c.e.size());
+      });
+    };
+    int samples = 0;
+    for (const QFileInfo &f : QDir(kData).entryInfoList(
+             {QStringLiteral("*.mseed"), QStringLiteral("*.zip")}, QDir::Files))
+      cfg.inputFiles << f.filePath();
+    QCOMPARE(cfg.inputFiles.size(), 4);
+    // The folder itself is not listed: it may be anywhere, or nowhere.
+    cfg.dataDir = out.filePath("not-there");
+    QVERIFY(run(&samples));
+    QCOMPARE(samples, 7800 * 5);
+    // A file left out is not read: without the Z file there is no Z.
+    const QStringList all = cfg.inputFiles;
+    cfg.inputFiles.clear();
+    for (const QString &f : all)
+      if (!f.contains(QLatin1String("HHZ")))
+        cfg.inputFiles << f;
+    QCOMPARE(cfg.inputFiles.size(), 3);
+    QVERIFY_EXCEPTION_THROWN(run(&samples), std::runtime_error);
+    // Records of another station in the chosen files are not used.
+    cfg.inputFiles = all;
+    cfg.station = QStringLiteral("OTHER");
+    QVERIFY_EXCEPTION_THROWN(run(&samples), std::runtime_error);
+  }
+
   void featureWriterColumnsAndDev() {
     FeatureWriter w({QStringLiteral("A"), QStringLiteral("B")});
     w.addWindow(QStringLiteral("x_w01"), 1.0,

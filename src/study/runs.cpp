@@ -26,6 +26,7 @@
 #include "sfc/experiments.h"
 #include "sfc/run.h"
 #include "sfc/settings.h"
+#include "study/waveindex.h"
 
 namespace skg::study {
 
@@ -203,9 +204,18 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   const StationRef *st = stationOf(c, station);
   if (!st)
     fail(QStringLiteral("the case has no station %1").arg(station));
-  const QString dataDir = s.dataDirFor(*st);
-  if (dataDir.isEmpty() || !QDir(dataDir).exists())
-    fail(QStringLiteral("no waveform folder for %1").arg(station));
+  // Only the files that overlap the case's span are read (waveindex.h).
+  QString chosenHow;
+  const QStringList inputFiles =
+      waveFilesFor(s, *WaveIndex::shared(s.dir), *st, c.spanStart(), c.time,
+                   &chosenHow);
+  if (inputFiles.isEmpty())
+    fail(QStringLiteral("no waveform files for %1 in the span %2 to %3 (%4)")
+             .arg(station, c.spanStart().toString(Qt::ISODate),
+                  c.time.toString(Qt::ISODate), chosenHow));
+  const QString dataDir = QFileInfo(inputFiles.first()).absolutePath();
+  if (hooks.log)
+    hooks.log(QStringLiteral(" Waveforms from %1").arg(chosenHow));
   fx::Config cfg;
   const QString json = strOf(r, "config_json");
   if (!json.trimmed().isEmpty()) {
@@ -218,6 +228,7 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   }
   cfg.station = station;
   cfg.dataDir = dataDir;
+  cfg.inputFiles = inputFiles;
   cfg.outputRoot = dir;
   cfg.calibrationFile.clear(); // every case calibrates for itself
   if (cfg.calibration.catalog.isEmpty())
@@ -644,8 +655,7 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
       blocked = QStringLiteral("the study has no earthquake catalog");
   } else if (r.tool == kToolFeatures) {
     const StationRef *st = stationOf(c, station);
-    const QString dir = st ? s.dataDirFor(*st) : QString();
-    if (dir.isEmpty() || !QDir(dir).exists())
+    if (!st || !hasWaveforms(s, *st))
       blocked = QStringLiteral("no waveform folder for %1").arg(station);
   } else if (r.tool == kToolClassification) {
     QString why;

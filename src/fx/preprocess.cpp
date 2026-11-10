@@ -209,7 +209,10 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
   auto stopping = [&] { return opt.shouldStop && opt.shouldStop(); };
   QStringList listed;
   const QFileInfo info(dataDir);
-  if (info.isFile())
+  const bool chosen = !cfg.inputFiles.isEmpty();
+  if (chosen)
+    listed = cfg.inputFiles;
+  else if (info.isFile())
     listed << dataDir;
   else
     for (const QFileInfo &f :
@@ -242,6 +245,10 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
       }
     }
     for (RecordRef &r : indexFile(inputs.files[fi], fi)) {
+      // A chosen file may hold other stations beside the one asked for.
+      if (chosen && r.channelId.section(QLatin1Char('.'), 1, 1)
+                            .compare(cfg.station, Qt::CaseInsensitive) != 0)
+        continue;
       if (nativeFs == 0)
         nativeFs = r.rate;
       else if (std::abs(nativeFs - r.rate) > 1e-6)
