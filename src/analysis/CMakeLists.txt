@@ -11,7 +11,11 @@ qt_add_library(skg_analysis STATIC
   plot.cpp       plot.h
   map.cpp        map.h
   grid.cpp       grid.h
+  mapview.h
   regions.cpp    regions.h
+  regionmap.cpp  regionmap.h
+  regionrun.cpp  regionrun.h
+  data/analysis.qrc
 )
 target_include_directories(skg_analysis PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(skg_analysis PUBLIC Qt6::Core Qt6::Gui Qt6::Svg skg_fx PRIVATE skg_warnings)

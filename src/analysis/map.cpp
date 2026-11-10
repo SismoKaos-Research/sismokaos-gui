@@ -11,6 +11,7 @@
 #include <numbers>
 
 #include "analysis/geo.h"
+#include "analysis/mapview.h"
 
 namespace skg::analysis {
 
@@ -20,19 +21,7 @@ QString tr(const QString &lang, const char *trText, const char *enText) {
                                      : QString::fromUtf8(enText);
 }
 
-// (lon, lat) -> pixels, equirectangular with the cosine of the centre latitude.
-struct View {
-  QRectF rect;   // device
-  QRectF extent; // lon/lat
-  QPointF toPx(double lon, double lat) const {
-    return {rect.left() + (lon - extent.left()) / extent.width() * rect.width(),
-            rect.bottom() -
-                (lat - extent.top()) / extent.height() * rect.height()};
-  }
-  QPointF toPx(const QPointF &lonLat) const {
-    return toPx(lonLat.x(), lonLat.y());
-  }
-};
+using View = MapView;
 
 QPolygonF circlePolygon(const View &v, double lat, double lon, double km) {
   QPolygonF poly;
@@ -45,15 +34,6 @@ QPolygonF circlePolygon(const View &v, double lat, double lon, double km) {
     poly << v.toPx(lo, la);
   }
   return poly;
-}
-
-double niceScaleKm(double widthKm) {
-  const double target = widthKm / 4.0;
-  const double mag = std::pow(10.0, std::floor(std::log10(target)));
-  for (double m : {1.0, 2.0, 5.0, 10.0})
-    if (m * mag >= target)
-      return m * mag;
-  return 10 * mag;
 }
 } // namespace
 
@@ -184,17 +164,7 @@ void drawMap(QPainter &p, const QRectF &rect, const MapSpec &spec) {
     const QPointF c =
         v.toPx(spec.mainEvent->event.lon, spec.mainEvent->event.lat);
     const double r = 9 * px;
-    QPainterPath star;
-    for (int i = 0; i < 10; ++i) {
-      const double a = -std::numbers::pi / 2 + i * std::numbers::pi / 5;
-      const double rr = (i % 2 == 0) ? r * 1.5 : r * 0.65;
-      const QPointF q(c.x() + rr * std::cos(a), c.y() + rr * std::sin(a));
-      if (i == 0)
-        star.moveTo(q);
-      else
-        star.lineTo(q);
-    }
-    star.closeSubpath();
+    const QPainterPath star = starPath(c, r);
     p.setPen(QPen(Qt::black, 0.8 * px));
     p.setBrush(QColor(0xFF, 0xD7, 0x00));
     p.drawPath(star);
