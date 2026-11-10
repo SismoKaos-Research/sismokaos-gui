@@ -25,6 +25,9 @@
 //   station_list = ""                  # empty: the built-in AFAD list
 //   data_root = ""                     # old files only: read, not written
 //   waveform_roots = []                # old files only: read, not written
+//   waveforms_last_id = 3              # the highest number a waveform folder
+//                                      # ever had here: an id is never given
+//                                      # out twice, also after a removal
 //
 //   [[waveforms]]                      # folders holding miniSEED, any layout
 //   id = "w1"                          # key of the folder in the index file
@@ -175,6 +178,11 @@ public:
   double catalogUtcOffsetHours = 0.0;
   QString stationList;
   QList<WaveRoot> waveRoots; // the waveform folders, in the order added
+  // The highest number a waveform folder's id ("w<n>") ever had in this
+  // study. A folder that leaves the list does not hand its id to a later
+  // one: the index, and a scan that is still running, may hold its files
+  // under that id.
+  int waveRootSerial = 0;
   QList<ExtraStation> extraStations;
   QList<Case> cases;
   QList<Recipe> recipes;
@@ -199,7 +207,10 @@ public:
   // Adds several waveform folders at once, so that no file ends up under two
   // of them: a folder already listed, or lying inside a listed one, is not
   // added (`covered`); a listed folder lying inside a new one leaves the
-  // list (`replaced`), since the new one holds all of it.
+  // list (`replaced`), since the new one holds all of it. Folders are
+  // compared as the file system sees them: another spelling of the same
+  // folder (letter case on Windows and macOS, a symbolic link, a path with
+  // "..") is the same folder.
   struct RootsAdded {
     QStringList added, covered, replaced; // absolute paths
   };
@@ -226,6 +237,15 @@ public:
   QString toToml() const;
   static Study fromToml(const QString &text, const QString &dir); // throws
 };
+
+// Whether two paths name the same folder as the file system sees it: other
+// letter case on a volume that ignores it, a symbolic link, "..", a trailing
+// slash are all the same folder. Paths that do not exist are compared by
+// their text (resolved as far as they exist), ignoring case on Windows and
+// macOS.
+bool sameFolder(const QString &a, const QString &b);
+// Whether `child` is `parent` or lies inside it, in the same sense.
+bool folderInside(const QString &child, const QString &parent);
 
 // "Sivrice (Elazığ) 2020" -> "sivrice-elazig-2020"; never empty.
 QString slug(const QString &text);

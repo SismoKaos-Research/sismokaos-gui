@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <stdexcept>
 #include <string>
 
@@ -271,10 +272,99 @@ QStringList Study::waveformRoots() const {
   return out;
 }
 
+namespace {
+
+// Whether file names differ by letter case alone on this platform's usual
+// volumes. A volume that ignores case elsewhere (exFAT under Linux) is
+// caught by asking the file system, for folders that exist.
+Qt::CaseSensitivity pathCase() {
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+  return Qt::CaseInsensitive;
+#else
+  return Qt::CaseSensitive;
+#endif
+}
+
+// The path with links and ".." resolved as far as it exists; what does not
+// exist is kept as written.
+QString realPath(const QString &path) {
+  const QString clean = QDir::cleanPath(QDir(path).absolutePath());
+  QString cur = clean, rest;
+  for (int depth = 0; depth < 128; ++depth) {
+    const QFileInfo fi(cur);
+    if (fi.exists()) {
+      const QString real = fi.canonicalFilePath();
+      if (!real.isEmpty())
+        return rest.isEmpty() ? real
+                              : QDir::cleanPath(real + QLatin1Char('/') + rest);
+    }
+    const QString up = fi.path();
+    if (up == cur || up.isEmpty() || up == QLatin1String("."))
+      break;
+    rest = rest.isEmpty() ? fi.fileName()
+                          : fi.fileName() + QLatin1Char('/') + rest;
+    cur = up;
+  }
+  return clean;
+}
+
+bool sameOnDisk(const QString &a, const QString &b) {
+  std::error_code ec;
+  const bool same = std::filesystem::equivalent(
+      std::filesystem::path(a.toStdU16String()),
+      std::filesystem::path(b.toStdU16String()), ec);
+  return !ec && same;
+}
+
+// The id number of a waveform folder ("w12" -> 12), 0 for anything else.
+int rootNumber(const QString &id) {
+  bool ok = false;
+  const int n = id.startsWith(QLatin1Char('w')) ? id.mid(1).toInt(&ok) : 0;
+  return ok ? n : 0;
+}
+
+} // namespace
+
+bool sameFolder(const QString &a, const QString &b) {
+  if (a.isEmpty() || b.isEmpty())
+    return false;
+  if (realPath(a).compare(realPath(b), pathCase()) == 0)
+    return true;
+  return QFileInfo::exists(a) && QFileInfo::exists(b) && sameOnDisk(a, b);
+}
+
+bool folderInside(const QString &child, const QString &parent) {
+  if (child.isEmpty() || parent.isEmpty())
+    return false;
+  const QString c = realPath(child), p = realPath(parent);
+  const QString prefix = p.endsWith(QLatin1Char('/')) ? p : p + QLatin1Char('/');
+  if (c.compare(p, pathCase()) == 0 || c.startsWith(prefix, pathCase()))
+    return true;
+  // The text says no; a volume that ignores letter case may still say yes:
+  // is one of the child's folders, going up, the parent?
+  if (!QFileInfo::exists(p))
+    return false;
+  QString cur = c;
+  for (int depth = 0; depth < 128; ++depth) {
+    if (cur.size() < p.size())
+      break; // above the parent already
+    if (QFileInfo::exists(cur) && sameOnDisk(cur, p))
+      return true;
+    const QString up = QFileInfo(cur).path();
+    if (up == cur || up.isEmpty() || up == QLatin1String("."))
+      break;
+    cur = up;
+  }
+  return false;
+}
+
 bool Study::addWaveformRoot(const QString &absolutePath) {
   const QString abs = QDir::cleanPath(absolutePath);
-  if (abs.isEmpty() || waveformRoots().contains(abs))
+  if (abs.isEmpty())
     return false;
+  for (const WaveRoot &r : waveRoots)
+    if (sameFolder(resolved(r.path), abs))
+      return false;
   addWaveRoot(abs);
   return true;
 }
@@ -282,31 +372,30 @@ bool Study::addWaveformRoot(const QString &absolutePath) {
 QString Study::addWaveRoot(const QString &absolutePath) {
   const QString clean = QDir::cleanPath(absolutePath);
   for (const WaveRoot &r : waveRoots)
-    if (QDir::cleanPath(resolved(r.path)) == clean)
+    if (sameFolder(resolved(r.path), clean))
       return r.id;
-  int n = 1;
-  const auto taken = [this](const QString &id) {
-    for (const WaveRoot &r : waveRoots)
-      if (r.id == id)
-        return true;
-    return false;
-  };
-  while (taken(QStringLiteral("w%1").arg(n)))
-    ++n;
-  waveRoots << WaveRoot{QStringLiteral("w%1").arg(n), stored(clean)};
+  // Never an id that was in use before: see waveRootSerial.
+  for (const WaveRoot &r : waveRoots)
+    waveRootSerial = std::max(waveRootSerial, rootNumber(r.id));
+  waveRoots << WaveRoot{QStringLiteral("w%1").arg(++waveRootSerial),
+                        stored(clean)};
   return waveRoots.last().id;
 }
 
 Study::RootsAdded Study::addWaveRoots(const QStringList &absolutePaths) {
   RootsAdded out;
   const auto inside = [](const QString &child, const QString &parent) {
-    return child == parent ||
-           child.startsWith(parent.endsWith('/') ? parent : parent + '/');
+    return folderInside(child, parent);
   };
   QStringList wanted;
   for (const QString &p : absolutePaths) {
     const QString clean = QDir::cleanPath(QDir(p).absolutePath());
-    if (!clean.isEmpty() && !wanted.contains(clean))
+    if (clean.isEmpty())
+      continue;
+    bool twice = false;
+    for (const QString &w : std::as_const(wanted))
+      twice = twice || sameFolder(w, clean);
+    if (!twice)
       wanted << clean;
   }
   // Parents before their sub-folders, so a sub-folder given in the same go
@@ -315,12 +404,11 @@ Study::RootsAdded Study::addWaveRoots(const QStringList &absolutePaths) {
             [](const QString &a, const QString &b) {
               return a.size() != b.size() ? a.size() < b.size() : a < b;
             });
-  // A folder that leaves the list must not hand its id to a new one: the
-  // index still holds its files under that id until the next scan.
-  int lastId = 0;
+  // A folder that leaves the list must not hand its id to a new one, now or
+  // later: the index, and a scan that is still running, hold its files
+  // under that id. The highest number ever used is kept in the study.
   for (const WaveRoot &r : waveRoots)
-    if (r.id.startsWith(QLatin1Char('w')))
-      lastId = std::max(lastId, r.id.mid(1).toInt());
+    waveRootSerial = std::max(waveRootSerial, rootNumber(r.id));
   for (const QString &path : wanted) {
     bool isCovered = false;
     for (const WaveRoot &r : waveRoots)
@@ -339,7 +427,8 @@ Study::RootsAdded Study::addWaveRoots(const QStringList &absolutePaths) {
         waveRoots.removeAt(i);
       }
     }
-    waveRoots << WaveRoot{QStringLiteral("w%1").arg(++lastId), stored(path)};
+    waveRoots << WaveRoot{QStringLiteral("w%1").arg(++waveRootSerial),
+                          stored(path)};
     out.added << path;
   }
   return out;
@@ -402,9 +491,12 @@ QList<MissingInput> Study::missingInputs() const {
 }
 
 int Study::relocate(const QString &oldPath, const QString &newPath) {
+  // The old place is gone, so only its text can be compared: without regard
+  // to letter case where file names have none (Windows, macOS).
+  const Qt::CaseSensitivity cs = pathCase();
   QStringList a = QDir::cleanPath(oldPath).split(QLatin1Char('/')),
               b = QDir::cleanPath(newPath).split(QLatin1Char('/'));
-  while (a.size() > 1 && b.size() > 1 && a.last() == b.last()) {
+  while (a.size() > 1 && b.size() > 1 && a.last().compare(b.last(), cs) == 0) {
     a.removeLast();
     b.removeLast();
   }
@@ -423,9 +515,9 @@ int Study::relocate(const QString &oldPath, const QString &newPath) {
     if (QFileInfo::exists(abs))
       return;
     QString moved;
-    if (abs == oldRoot)
+    if (abs.compare(oldRoot, cs) == 0)
       moved = newRoot;
-    else if (abs.startsWith(oldPrefix))
+    else if (abs.startsWith(oldPrefix, cs))
       moved = QDir(newRoot).filePath(abs.mid(oldPrefix.size()));
     else
       return;
@@ -491,6 +583,13 @@ QString Study::toToml() const {
   line(QStringLiteral("catalog_utc_offset_hours"),
        number(catalogUtcOffsetHours));
   line(QStringLiteral("station_list"), quoted(stationList));
+  {
+    int last = waveRootSerial;
+    for (const WaveRoot &r : waveRoots)
+      last = std::max(last, rootNumber(r.id));
+    if (last > 0)
+      line(QStringLiteral("waveforms_last_id"), QString::number(last));
+  }
   for (const WaveRoot &r : waveRoots) {
     out += QStringLiteral("\n[[waveforms]]\n");
     line(QStringLiteral("id"), quoted(r.id));
@@ -581,6 +680,10 @@ Study Study::fromToml(const QString &text, const QString &dir) {
         if (!r.id.isEmpty() && !r.path.isEmpty())
           s.waveRoots << r;
       }
+  s.waveRootSerial =
+      int(tbl["waveforms_last_id"].value<int64_t>().value_or(0));
+  for (const WaveRoot &r : std::as_const(s.waveRoots))
+    s.waveRootSerial = std::max(s.waveRootSerial, rootNumber(r.id));
   // Files from before [[waveforms]] named their folders in data_root and in
   // the waveform_roots list (data_root first): each becomes a folder here.
   {
