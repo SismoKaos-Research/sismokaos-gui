@@ -10,10 +10,12 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QPainter>
 #include <QSaveFile>
 #include <QTimeZone>
 
 #include <stdexcept>
+#include <vector>
 
 #include "analysis/plot.h"
 

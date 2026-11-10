@@ -20,11 +20,15 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QUrl>
 #include <QVBoxLayout>
+
+#include <algorithm>
+#include <initializer_list>
 
 #include "analysis/regionmap.h"
 #include "analysis/shapefile.h"

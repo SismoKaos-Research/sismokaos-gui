@@ -2,10 +2,16 @@
 // Mean Shift and its bandwidth, the two regionalisations, the region files,
 // the map layers and the map itself, and a whole run with the script's
 // file names.
+#include <QImage>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QPainter>
 #include <QtTest>
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <set>
 
 #include "analysis/plot.h"

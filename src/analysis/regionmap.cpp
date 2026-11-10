@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QList>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPen>
@@ -17,6 +18,7 @@
 #include <limits>
 #include <numbers>
 #include <stdexcept>
+#include <utility>
 
 #include "analysis/geo.h"
 #include "analysis/mapview.h"
