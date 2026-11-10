@@ -1079,6 +1079,29 @@ void TstStudyPages::waveformsOnCases() {
   }));
   QCOMPARE(found->item(1, 8)->text(), QStringLiteral("typed"));
   QVERIFY(!found->item(1, 9)->text().contains(QStringLiteral("no coordinates")));
+  // Sent here from another page with a case and a station to fix: both get
+  // selected; then back to the first case for what follows.
+  {
+    auto *cases = page.findChild<QTableWidget *>(QStringLiteral("caseTable"));
+    QVERIFY(cases && cases->rowCount() >= 2);
+    const QString second = store_->study().cases[1].id;
+    nav.show(QStringLiteral("cases"), {{QStringLiteral("case"), second},
+                                       {QStringLiteral("station"),
+                                        QStringLiteral("SYN2")}});
+    QCOMPARE(cases->currentRow(), 1);
+    QVERIFY(rowOf("SYN2") >= 0);
+    QCOMPARE(stations->currentRow(), rowOf("SYN2"));
+    nav.show(QStringLiteral("cases"),
+             {{QStringLiteral("case"), store_->study().cases[0].id}});
+    QCOMPARE(cases->currentRow(), 0);
+  }
+  // A file that arrives after the user has moved between cases is still
+  // picked up.
+  writeDays(root + "/SYN1/last.mseed", "SYN1", inA.addDays(20), 2);
+  QVERIFY(store_->update([&root](Study &st) { st.addWaveformRoot(root); }));
+  QTRY_COMPARE_WITH_TIMEOUT(stations->item(rowOf("SYN1"), 4)->text(),
+                            QStringLiteral("found: 7 of 200 days in span"),
+                            20000);
 }
 
 void TstStudyPages::stationsWithData() {

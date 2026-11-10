@@ -359,6 +359,28 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
         stationTable_->scrollToItem(stationTable_->item(i, 1));
       }
   });
+  // Another page can send the user here with a case (and a station) to fix.
+  if (ctx_.nav)
+    connect(ctx_.nav, &Navigator::requested, this,
+            [this](const QString &page, const QVariantMap &args) {
+              if (page != QLatin1String("cases"))
+                return;
+              const QString id = args.value(QStringLiteral("case")).toString();
+              const QString code =
+                  args.value(QStringLiteral("station")).toString();
+              for (int i = 0; !id.isEmpty() && i < table_->rowCount(); ++i)
+                if (table_->item(i, 0)->data(Qt::UserRole).toString() == id) {
+                  table_->selectRow(i);
+                  table_->scrollToItem(table_->item(i, 0));
+                }
+              for (int i = 0; !code.isEmpty() && i < stationTable_->rowCount();
+                   ++i)
+                if (stationTable_->item(i, 1) &&
+                    stationTable_->item(i, 1)->text() == code) {
+                  stationTable_->selectRow(i);
+                  stationTable_->scrollToItem(stationTable_->item(i, 1));
+                }
+            });
   connect(name_, &QLineEdit::editingFinished, this, &CasesPage::saveCase);
   connect(stationTable_, &QTableWidget::itemChanged, this,
           &CasesPage::saveCase);

@@ -2,7 +2,7 @@
 // compared. It is a folder with one file, study.toml, that lists
 //
 //   - where the inputs are (the earthquake catalog, the station list, the
-//     folder holding one sub-folder of miniSEED per station);
+//     folder scanned for miniSEED; the headers say which station);
 //   - the cases: an earthquake, or a reference date with no earthquake, and
 //     the place it is studied from (stations with distance and azimuth, a
 //     catalog zone, and the span: how long before the event is studied);
@@ -67,7 +67,7 @@
 //     longitude = 39.19
 //     distance_km = 36.4
 //     azimuth_deg = 18.0               # from the epicentre to the station
-//     data_dir = ""                    # overrides <data_root>/<code>
+//     data_dir = ""                    # overrides the indexed waveform folders
 //
 //   [[recipe]]
 //   id = "indicators-12mo"
@@ -98,7 +98,7 @@ struct StationRef {
   double lat = 0, lon = 0;
   double distanceKm = 0;
   double azimuthDeg = 0; // from the epicentre to the station
-  QString dataDir;       // empty: <data_root>/<code>
+  QString dataDir;       // empty: found through the waveform index
 };
 
 // An input the study names that is not on disk (a moved catalog, an unplugged
