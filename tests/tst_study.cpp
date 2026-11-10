@@ -1,8 +1,10 @@
 // Studies: the study file, cases from catalog events, nearest stations and
 // the store.
+#include <QDir>
 #include <QSettings>
 #include <QSignalSpy>
 #include <QTemporaryDir>
+#include <QTimeZone>
 #include <QtTest>
 
 #include <cmath>
@@ -138,17 +140,17 @@ void TstStudy::tomlRoundTrip() {
 
 void TstStudy::badFilesSayWhy() {
   QTemporaryDir dir;
-  QVERIFY_EXCEPTION_THROWN(Study::load(dir.path()), std::runtime_error);
-  QVERIFY_EXCEPTION_THROWN(
-      Study::fromToml(QStringLiteral("name = "), dir.path()),
-      std::runtime_error);
-  QVERIFY_EXCEPTION_THROWN(
-      Study::fromToml(QStringLiteral("schema = 2\n"), dir.path()),
-      std::runtime_error);
-  QVERIFY_EXCEPTION_THROWN(
+  QVERIFY_THROWS_EXCEPTION(std::runtime_error, Study::load(dir.path()));
+  QVERIFY_THROWS_EXCEPTION(
+      std::runtime_error,
+      Study::fromToml(QStringLiteral("name = "), dir.path()));
+  QVERIFY_THROWS_EXCEPTION(
+      std::runtime_error,
+      Study::fromToml(QStringLiteral("schema = 2\n"), dir.path()));
+  QVERIFY_THROWS_EXCEPTION(
+      std::runtime_error,
       Study::fromToml(QStringLiteral("[[case]]\nid = \"a\"\ntime = \"x\"\n"),
-                      dir.path()),
-      std::runtime_error);
+                      dir.path()));
   try {
     Study::fromToml(QStringLiteral("a = 1\nb = = 2\n"), dir.path());
     QFAIL("no exception");
