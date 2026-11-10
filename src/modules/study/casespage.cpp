@@ -832,7 +832,11 @@ void CasesPage::updateWaveSummary() {
     if (!scan_->status().isEmpty())
       text += QStringLiteral(" · ") + scan_->status();
     else if (index->pendingCoverage() > 0)
-      text += QStringLiteral(" · ") + tr("coverage not read yet");
+      text += QStringLiteral(" · ") +
+              (index->estimatedFiles() == index->pendingCoverage()
+                   ? tr("coverage estimated from the file names; not read "
+                        "exactly yet")
+                   : tr("coverage not read yet"));
   }
   waveSummary_->setText(text);
 }

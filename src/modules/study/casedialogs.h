@@ -30,8 +30,12 @@ void fillStationTable(QTableWidget *table,
                       const QList<study::StationRef> &stations,
                       const QStringList &ticked,
                       const StationNote &waveforms = {});
-// "found: 340 of 365 days in span", "found: at least 12 of 365 days in span
-// (coverage not read yet)" or "not found", from the study's waveform index.
+// What the study's waveform index holds of the station in the period:
+// "found: 340 of 365 days in span" once the exact scan has read its files;
+// "about 340 of 365 days in span — exact scan running" while some of the
+// days are estimated from the periods in the file names; "found: at least
+// 12 of 365 days in span (coverage not read yet)" when some file's name
+// carries no period; or "not found".
 QString waveformNote(const study::Study &study, const study::StationRef &s,
                      const QDateTime &from, const QDateTime &to);
 // Whether the study's waveform folders hold anything of the station.

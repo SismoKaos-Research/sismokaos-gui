@@ -14,10 +14,16 @@
 #include <QLineEdit>
 #include <QLocale>
 #include <QPushButton>
+#include <QDir>
+#include <QSettings>
+#include <QShowEvent>
 #include <QSignalBlocker>
+#include <QSpinBox>
 #include <QVBoxLayout>
 
 #include "core/i18n.h"
+#include "study/scancache.h"
+#include "study/waveindex.h"
 #include "tools/toolregistry.h"
 
 namespace skg {
@@ -172,7 +178,7 @@ private:
 class SettingsWidget : public QWidget {
 public:
   SettingsWidget(AppContext &ctx, I18n *i18n, Theme *theme, QWidget *parent)
-      : QWidget(parent), i18n_(i18n), theme_(theme) {
+      : QWidget(parent), i18n_(i18n), theme_(theme), settings_(ctx.settings) {
     lang_ = new QComboBox(this);
     for (const QString &code : I18n::available())
       lang_->addItem(QLocale(code).nativeLanguageName(), code);
@@ -209,8 +215,42 @@ public:
     langLayout->addWidget(themeLabel_);
     langLayout->addWidget(themeCombo_, 1);
 
+    // Scanning waveform folders: how many files at once, and the results
+    // kept between studies.
+    scanBox_ = new QGroupBox(this);
+    workersLabel_ = new QLabel(scanBox_);
+    workers_ = new QSpinBox(scanBox_);
+    workers_->setObjectName(QStringLiteral("scanWorkers"));
+    workers_->setRange(0, 32);
+    workers_->setValue(
+        settings_ ? settings_->value(QLatin1String(study::kScanWorkersSetting), 0)
+                        .toInt()
+                  : 0);
+    connect(workers_, &QSpinBox::valueChanged, this, [this](int n) {
+      if (settings_)
+        settings_->setValue(QLatin1String(study::kScanWorkersSetting), n);
+    });
+    cacheLabel_ = new QLabel(scanBox_);
+    cacheLabel_->setObjectName(QStringLiteral("scanCacheUsage"));
+    cacheLabel_->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    clearCache_ = new QPushButton(scanBox_);
+    clearCache_->setObjectName(QStringLiteral("clearScanCache"));
+    connect(clearCache_, &QPushButton::clicked, this, [this] {
+      const QString dir = study::ScanCache::sharedDir();
+      if (!dir.isEmpty())
+        cacheProblem_ = !study::ScanCache(dir).clear();
+      showCacheUsage();
+    });
+    auto *scanLayout = new QHBoxLayout(scanBox_);
+    scanLayout->addWidget(workersLabel_);
+    scanLayout->addWidget(workers_);
+    scanLayout->addSpacing(16);
+    scanLayout->addWidget(cacheLabel_, 1);
+    scanLayout->addWidget(clearCache_);
+
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(langBox_);
+    layout->addWidget(scanBox_);
     for (const ToolDesc &d : ctx.tools->tools())
       layout->addWidget(new ToolBox(ctx.tools, d, this));
     layout->addStretch(1);
@@ -223,9 +263,57 @@ protected:
       retranslate();
     QWidget::changeEvent(e);
   }
+  // The cache grows while scans run on other pages.
+  void showEvent(QShowEvent *e) override {
+    showCacheUsage();
+    QWidget::showEvent(e);
+  }
 
 private:
+  void showCacheUsage() {
+    const QString dir = study::ScanCache::sharedDir();
+    clearCache_->setEnabled(!dir.isEmpty());
+    if (dir.isEmpty()) {
+      cacheLabel_->setText(tr("Scan results are not kept between studies in "
+                              "this session."));
+      return;
+    }
+    const study::ScanCache::Usage u = study::ScanCache(dir).usage();
+    QString text =
+        tr("Scan results kept for %n waveform file(s)", nullptr, u.files) +
+        QStringLiteral(" · ") +
+        tr("%1 MB in %2")
+            .arg(double(u.bytes) / 1048576.0, 0, 'f', 1)
+            .arg(QDir::toNativeSeparators(dir));
+    if (cacheProblem_)
+      text = tr("⚠ Some of it could not be removed.") + QLatin1Char(' ') + text;
+    cacheLabel_->setText(text);
+    clearCache_->setEnabled(u.files > 0 || u.bytes > 0);
+  }
+
   void retranslate() {
+    scanBox_->setTitle(tr("Waveform scan"));
+    workersLabel_->setText(tr("Files read at once"));
+    workers_->setSpecialValueText(
+        tr("Automatic (%1)").arg(study::defaultScanWorkers()));
+    clearCache_->setText(tr("Clear scan cache"));
+    ui::setHelp({workersLabel_, workers_},
+                tr("How many waveform files the exact coverage scan reads at "
+                   "the same time. Automatic leaves two processor cores free "
+                   "and uses at most six, since beyond that the disk is "
+                   "usually the limit. Lower it if the computer gets "
+                   "sluggish during a scan; on a slow external drive a "
+                   "higher number rarely helps. It takes effect with the "
+                   "next scan."));
+    clearCache_->setToolTip(ui::helpText(
+        tr("The exact coverage of every waveform file that was scanned is "
+           "kept for this user, so a second study on the same data, or the "
+           "same folder added again or moved to another drive, does not "
+           "read the files again. This removes those results; the studies' "
+           "own indexes are not touched, and nothing of your data is "
+           "deleted. The files are simply read again when needed.")));
+    cacheLabel_->setToolTip(clearCache_->toolTip());
+    showCacheUsage();
     langBox_->setTitle(tr("Interface"));
     langLabel_->setText(tr("Language"));
     themeLabel_->setText(tr("Theme"));
@@ -247,6 +335,13 @@ private:
   QLabel *themeLabel_;
   QGroupBox *langBox_;
   QLabel *langLabel_;
+  QSettings *settings_;
+  QGroupBox *scanBox_;
+  QLabel *workersLabel_;
+  QSpinBox *workers_;
+  QLabel *cacheLabel_;
+  QPushButton *clearCache_;
+  bool cacheProblem_ = false;
 };
 
 } // namespace

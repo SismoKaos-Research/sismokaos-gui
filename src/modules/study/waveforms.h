@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QElapsedTimer>
 #include <QObject>
 #include <QPointer>
 
@@ -36,8 +37,14 @@ public:
   // Does nothing while a scan is running or no study is open.
   void start();
   void cancel();
-  // "Reading coverage: 120/600" while running, or how the last scan ended.
+  // "Reading coverage: 12%, about 9 min left" while running, or how the last
+  // scan ended. `detail` is the same with the amounts and the speed.
   QString status() const { return status_; }
+  QString detail() const { return detail_; }
+
+  // How many files the exact scan reads at once: the setting, or what suits
+  // the machine when it is 0 (automatic).
+  static int workers(const QSettings *settings);
 
 signals:
   void updated(); // the index changed, or the status did
@@ -47,7 +54,8 @@ private:
 
   AppContext ctx_;
   QPointer<Job> job_;
-  QString status_;
+  QString status_, detail_;
+  QElapsedTimer sinceUpdate_;
 };
 
 class WaveformsDialog : public QDialog {

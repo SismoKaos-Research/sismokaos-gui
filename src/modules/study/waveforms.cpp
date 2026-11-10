@@ -19,6 +19,11 @@
 #include <QTimeZone>
 #include <QVBoxLayout>
 
+#include <QElapsedTimer>
+#include <QSettings>
+
+#include <algorithm>
+#include <cmath>
 #include <exception>
 #include <iterator>
 
@@ -30,6 +35,7 @@
 #include "modules/study/studysetup.h"
 #include "jobs/jobmodel.h"
 #include "jobs/taskjob.h"
+#include "study/scancache.h"
 #include "study/store.h"
 
 namespace skg {
@@ -48,6 +54,7 @@ void WaveScan::start() {
     return;
   if (ctx_.study->study().waveRoots.isEmpty()) {
     status_.clear();
+    detail_.clear();
     emit updated();
     return;
   }
@@ -59,67 +66,162 @@ void WaveScan::cancel() {
     job_->cancel();
 }
 
+int WaveScan::workers(const QSettings *settings) {
+  const int set =
+      settings
+          ? settings->value(QLatin1String(study::kScanWorkersSetting), 0).toInt()
+          : 0;
+  return set > 0 ? std::min(set, 64) : study::defaultScanWorkers();
+}
+
+namespace {
+
+QString sizeText(qint64 bytes) {
+  const double gb = double(bytes) / 1073741824.0;
+  return gb >= 1.0 ? WaveScan::tr("%1 GB").arg(gb, 0, 'f', gb >= 100 ? 0 : 1)
+                   : WaveScan::tr("%1 MB").arg(double(bytes) / 1048576.0, 0,
+                                                'f', 0);
+}
+
+QString durationText(double seconds) {
+  if (seconds < 90)
+    return WaveScan::tr("%1 s").arg(std::max(1, int(std::lround(seconds))));
+  const int minutes = int(std::lround(seconds / 60.0));
+  return minutes < 90 ? WaveScan::tr("%1 min").arg(minutes)
+                      : WaveScan::tr("%1 h %2 min")
+                            .arg(minutes / 60)
+                            .arg(minutes % 60);
+}
+
+} // namespace
+
 void WaveScan::run(ScanPass pass) {
   const Study study = ctx_.study->study();
   const bool identity = pass == ScanPass::Identity;
+  const int workers = WaveScan::workers(ctx_.settings);
+  const QString cacheDir = study::ScanCache::sharedDir();
+  // The stations cases are waiting for are read first.
+  QStringList first;
+  for (const study::Case &c : study.cases)
+    for (const study::StationRef &st : c.stations)
+      if (!first.contains(st.code))
+        first << st.code;
   auto *job = new TaskJob(
       identity ? tr("Waveforms: which stations") : tr("Waveforms: coverage"),
       QStringLiteral("waveforms"),
-      identity ? tr("first record of every file in the waveform folders")
-               : tr("every record header in the waveform folders"),
-      [study, pass](TaskContext &t) -> int {
+      identity ? tr("the names and the first record of every file in the "
+                    "waveform folders")
+               : tr("every record header in the waveform folders, %n file(s) "
+                    "at a time",
+                    nullptr, workers),
+      [study, pass, workers, cacheDir, first](TaskContext &t) -> int {
+        const bool identity = pass == ScanPass::Identity;
         WaveIndex index = WaveIndex::load(study.dir);
         // Folders the study no longer lists leave the index.
         for (auto it = index.roots.begin(); it != index.roots.end();)
           it = study.waveRootPath(it.key()).isEmpty() ? index.roots.erase(it)
                                                       : std::next(it);
-        int failed = 0;
-        bool stopped = false;
+        QList<study::ScanFolder> folders;
         for (const study::WaveRoot &root : study.waveRoots) {
-          const QString path = study.resolved(root.path);
-          t.log(QStringLiteral("%1: %2").arg(root.id, path));
-          study::ScanHooks hooks;
-          hooks.shouldStop = [&t] { return t.cancelled(); };
-          hooks.progress = [&t](int done, int total, const QString &name) {
-            t.progress(total > 0 ? double(done) / total : 0.0,
-                       QStringLiteral("%1/%2 %3").arg(done).arg(total).arg(
-                           name));
-          };
-          hooks.checkpoint = [&index, &study] { index.save(study.dir); };
-          try {
-            const study::ScanStats s =
-                study::scanRoot(index, root.id, path, pass, hooks);
-            t.log(QStringLiteral("  %1 files, %2 read now, %3 not miniSEED, "
-                                 "%4 gone")
-                      .arg(s.listed)
-                      .arg(s.read)
-                      .arg(s.skipped)
-                      .arg(s.dropped));
-            stopped = stopped || s.stopped;
-          } catch (const std::exception &e) {
-            t.log(QStringLiteral("  error: %1").arg(QString::fromUtf8(e.what())));
-            ++failed;
-          }
-          if (stopped)
-            break;
+          folders << study::ScanFolder{root.id, study.resolved(root.path)};
+          t.log(QStringLiteral("%1: %2").arg(root.id, folders.last().path));
         }
+        study::ScanCache cache(cacheDir);
+        study::ScanOptions options;
+        options.workers = workers;
+        options.firstStations = first;
+        options.cache = cacheDir.isEmpty() ? nullptr : &cache;
+        QElapsedTimer clock;
+        clock.start();
+        // The speed over the last few seconds, for the time left.
+        QList<QPair<qint64, qint64>> samples; // ms, bytes
+        study::ScanHooks hooks;
+        hooks.shouldStop = [&t] { return t.cancelled(); };
+        hooks.checkpoint = [&index, &study] { index.save(study.dir); };
+        if (identity) {
+          hooks.progress = [&t](int done, int total, const QString &) {
+            t.progress(total > 0 ? double(done) / total : 0.0,
+                       WaveScan::tr("%1 of %2 files").arg(done).arg(total));
+          };
+        } else {
+          hooks.bytes = [&](qint64 done, qint64 total, int filesDone,
+                            int filesTotal) {
+            const qint64 now = clock.elapsed();
+            samples.append({now, done});
+            while (samples.size() > 2 && now - samples.first().first > 8000)
+              samples.removeFirst();
+            const double seconds =
+                double(now - samples.first().first) / 1000.0;
+            const double rate =
+                seconds > 0.5
+                    ? double(done - samples.first().second) / seconds
+                    : 0.0;
+            QString text = WaveScan::tr("%1 of %2")
+                               .arg(sizeText(done), sizeText(total));
+            if (rate > 0) {
+              text += QStringLiteral(" · ") +
+                      WaveScan::tr("%1/s").arg(sizeText(qint64(rate)));
+              if (total > done)
+                text += QStringLiteral(" · ") +
+                        WaveScan::tr("about %1 left")
+                            .arg(durationText(double(total - done) / rate));
+            }
+            text += QStringLiteral(" · ") + WaveScan::tr("%1 of %2 files")
+                                                .arg(filesDone)
+                                                .arg(filesTotal);
+            t.progress(total > 0 ? double(done) / double(total) : 0.0, text);
+          };
+        }
+        const study::ScanStats s =
+            study::scanRoots(index, folders, pass, hooks, options);
+        const double seconds = double(clock.elapsed()) / 1000.0;
+        t.log(QStringLiteral("  %1 files, %2 read now, %3 from the scan "
+                             "cache, %4 not miniSEED, %5 gone")
+                  .arg(s.listed)
+                  .arg(s.read)
+                  .arg(s.cached)
+                  .arg(s.skipped)
+                  .arg(s.dropped));
+        if (!identity && s.read > 0 && seconds > 0)
+          t.log(QStringLiteral("  %1 MB in %2 s with %3 worker(s): %4 MB/s")
+                    .arg(double(s.bytes) / 1048576.0, 0, 'f', 0)
+                    .arg(seconds, 0, 'f', 1)
+                    .arg(workers)
+                    .arg(double(s.bytes) / 1048576.0 / seconds, 0, 'f', 0));
+        for (const QString &path : s.missing)
+          t.log(QStringLiteral("  error: the folder %1 does not exist")
+                    .arg(path));
         QString error;
         if (!index.save(study.dir, &error)) {
           t.log(QStringLiteral("error: %1").arg(error));
           return 1;
         }
-        return failed > 0 || stopped ? 1 : 0;
+        return !s.missing.isEmpty() || s.stopped ? 1 : 0;
       });
   Job *added = ctx_.jobs->add(job);
   job_ = added;
   status_ = identity ? tr("Looking for stations…") : tr("Reading coverage…");
+  detail_ = status_;
   emit updated();
   connect(added, &Job::progressChanged, this, [this, added, identity] {
-    const QString text = added->progress().text;
-    status_ = (identity ? tr("Looking for stations: %1")
+    const ProgressState p = added->progress();
+    // The short form names how far it is; the long one is the job's own line.
+    const QString percent =
+        tr("%1%").arg(int(std::floor(std::clamp(p.fraction, 0.0, 1.0) * 100)));
+    const QString left = p.text.section(QStringLiteral(" · "), 2, 2);
+    status_ = identity ? tr("Looking for stations: %1").arg(p.text)
+                       : left.isEmpty()
+                             ? tr("Reading coverage: %1").arg(percent)
+                             : tr("Reading coverage: %1, %2").arg(percent, left);
+    detail_ = (identity ? tr("Looking for stations: %1")
                         : tr("Reading coverage: %1"))
-                  .arg(text.section(QLatin1Char(' '), 0, 0));
-    emit updated();
+                  .arg(p.text);
+    // The progress arrives several times a second; the pages that follow
+    // the scan redraw their tables, so they are told once a second.
+    if (!sinceUpdate_.isValid() || sinceUpdate_.elapsed() >= 1000) {
+      sinceUpdate_.start();
+      emit updated();
+    }
   });
   connect(added, &Job::stateChanged, this, [this, added, pass] {
     const Job::State st = added->state();
@@ -136,6 +238,7 @@ void WaveScan::run(ScanPass pass) {
                   : st == Job::State::Cancelled
                         ? tr("The scan was stopped; what it had read is kept.")
                         : tr("The scan ended with errors; see the Jobs panel.");
+    detail_ = status_;
     emit updated();
   });
 }
@@ -268,8 +371,11 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
   stop_->setToolTip(ui::helpText(
       tr("Stops the scan. What it has read so far is kept.")));
   table_->setToolTip(ui::helpText(
-      tr("One row per station found in the files. Days with data is exact "
-         "once the coverage has been read; before that it shows a dash.")));
+      tr("One row per station found in the files. Last day and Days with "
+         "data are exact once the coverage has been read. Until then they "
+         "are an estimate from the periods in the file names, marked ≈ "
+         "(gaps are not known yet), or a dash when the names carry no "
+         "period.")));
   coords_->setToolTip(ui::helpText(
       tr("For a station the station list does not know: type its latitude "
          "and longitude once. They are kept in the study and used for "
@@ -422,9 +528,17 @@ void WaveformsDialog::refresh() {
           w.channels.join(QStringLiteral(" ")),
           rates.join(QStringLiteral(", ")),
           dayText(w.first),
-          w.coverageKnown ? dayText(w.last - 1e-3)
-                          : tr("≥ %1").arg(dayText(w.last)),
-          w.coverageKnown ? QString::number(w.days) : QStringLiteral("–"),
+          // Exact once every file has been read; "≈" while some of it is an
+          // estimate from the file names; a lower bound when even that is
+          // missing.
+          w.coverageKnown
+              ? dayText(w.last - 1e-3)
+              : w.extentEstimated ? tr("≈ %1").arg(dayText(w.last - 1e-3))
+                                  : tr("≥ %1").arg(dayText(w.last)),
+          w.coverageKnown
+              ? QString::number(w.days)
+              : w.extentEstimated ? tr("≈ %1").arg(w.days)
+                                  : QStringLiteral("–"),
           QString::number(w.files),
           coords,
           notes.join(QStringLiteral(" · "))};
@@ -442,7 +556,8 @@ void WaveformsDialog::refresh() {
   skipped_->setText(tr("Skipped files (%1)…").arg(nSkipped));
   skipped_->setEnabled(nSkipped > 0);
   const int pending = index->pendingCoverage();
-  QString status = scan_->status();
+  const int estimated = index->estimatedFiles();
+  QString status = scan_->detail();
   if (status.isEmpty() && !index->isEmpty())
     status = pending > 0
                  ? tr("%1 stations in %2 files; coverage not read yet for %3 "
@@ -453,6 +568,11 @@ void WaveformsDialog::refresh() {
                  : tr("%1 stations in %2 files; coverage read for all.")
                        .arg(stations.size())
                        .arg(index->fileCount());
+  else if (scan_->running() && estimated > 0)
+    status += QStringLiteral(" · ") +
+              tr("%n file(s) shown by an estimate from their names until "
+                 "then (≈)",
+                 nullptr, estimated);
   status_->setText(status);
   if (unknown > 0) {
     problem_->setProperty("auto", true);

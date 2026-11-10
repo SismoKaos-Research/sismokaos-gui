@@ -19,6 +19,7 @@
 #include "modules/features/featuresmodule.h"
 #include "modules/indicators/indicatorsmodule.h"
 #include "modules/settings/settingsmodule.h"
+#include "study/scancache.h"
 #include "modules/study/studymodule.h"
 #include "modules/study/studyswitcher.h"
 #include "modules/tdvms/tdvmsmodule.h"
@@ -55,6 +56,13 @@ int main(int argc, char *argv[]) {
                                         QSettings::IniFormat)
           : std::make_unique<QSettings>();
   QSettings &settings = *settingsPtr;
+  // Exact waveform scans are kept for all studies of this user. A trial run
+  // with its own settings file keeps its own, beside that file.
+  study::ScanCache::setSharedDir(
+      cli.isSet(QStringLiteral("settings"))
+          ? cli.value(QStringLiteral("settings")) +
+                QStringLiteral(".scan-cache")
+          : study::ScanCache::defaultDir());
   I18n i18n(&settings);
   i18n.applySaved();
 

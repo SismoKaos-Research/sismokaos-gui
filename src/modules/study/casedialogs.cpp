@@ -143,8 +143,17 @@ QString waveformNote(const study::Study &study, const study::StationRef &s,
   }
   const auto index = study::WaveIndex::shared(study.dir);
   if (index->hasStation(s.code)) {
-    bool approx = false;
-    const int days = index->daysCovered(s.code, from, to, &approx);
+    bool approx = false, atLeast = false;
+    const int days = index->daysCovered(s.code, from, to, &approx, &atLeast);
+    // Exact once the scan has read the station's files; "about" while some
+    // of the days are estimated from the periods in the file names; "at
+    // least" when some file's name says nothing about its period.
+    if (approx && !atLeast)
+      return QCoreApplication::translate(
+                 "skg::AddFromCatalogDialog",
+                 "about %1 of %2 days in span — exact scan running")
+          .arg(days)
+          .arg(total);
     return approx ? QCoreApplication::translate(
                         "skg::AddFromCatalogDialog", "found: at least %1 of %2 days in span "
                              "(coverage not read yet)")
