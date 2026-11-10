@@ -373,6 +373,16 @@ void ExperimentsPane::retranslate() {
   report_->setText(tr("HTML report"));
   remove_->setText(tr("Delete run…"));
   openFolder_->setText(tr("Open folder"));
+  refresh_->setToolTip(
+      ui::helpText(tr("Reads the project's experiments from disk again.")));
+  report_->setToolTip(ui::helpText(
+      tr("Writes one self-contained HTML page with every run's scores, "
+         "confusion matrices and figures, and opens it.")));
+  remove_->setToolTip(ui::helpText(
+      tr("Deletes the selected run's folder and its rows in "
+         "experiments.csv. This cannot be undone.")));
+  openFolder_->setToolTip(ui::helpText(
+      tr("Opens the selected run's folder in the file manager.")));
 }
 
 } // namespace skg

@@ -1,6 +1,8 @@
 #include "modules/study/casedialogs.h"
 
+#include <QAbstractItemView>
 #include <QComboBox>
+#include <QCompleter>
 #include <QCoreApplication>
 #include <QDateTimeEdit>
 #include <QDialogButtonBox>
@@ -11,8 +13,10 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QRegularExpression>
 #include <QSignalBlocker>
 #include <QSpinBox>
+#include <QStandardItemModel>
 #include <QTableWidget>
 #include <QTimeZone>
 #include <QVBoxLayout>
@@ -48,6 +52,71 @@ QSpinBox *spanBox(QWidget *parent) {
   s->setSuffix(QCoreApplication::translate("skg::AddFromCatalogDialog",
                                            " days before the event"));
   return s;
+}
+
+// Where the code under the cursor starts and ends in a list of codes
+// separated by commas, semicolons or spaces.
+QPair<int, int> codeAt(const QString &text, int cursor) {
+  const auto isSep = [](QChar c) {
+    return c == QLatin1Char(',') || c == QLatin1Char(';') || c.isSpace();
+  };
+  int start = qBound(0, cursor, int(text.size()));
+  while (start > 0 && !isSep(text[start - 1]))
+    --start;
+  int end = qBound(0, cursor, int(text.size()));
+  while (end < text.size() && !isSep(text[end]))
+    ++end;
+  return {start, end};
+}
+
+// Completion for a list of station codes: only the code being typed is
+// completed, the earlier ones stay. The popup says where each station is;
+// only its code is inserted.
+void attachCodeCompleter(QLineEdit *edit,
+                         const std::vector<analysis::Station> &stations) {
+  auto *model = new QStandardItemModel(edit);
+  for (const analysis::Station &st : stations) {
+    QStringList where;
+    if (!st.province.isEmpty())
+      where << st.province;
+    if (!st.district.isEmpty())
+      where << st.district;
+    auto *item = new QStandardItem(
+        where.isEmpty() ? st.code
+                        : st.code + QStringLiteral(" — ") +
+                              where.join(QLatin1Char('/')));
+    item->setData(st.code, Qt::UserRole);
+    model->appendRow(item);
+  }
+  model->sort(0);
+  auto *completer = new QCompleter(model, edit);
+  completer->setObjectName(QStringLiteral("nearCompleter"));
+  completer->setCompletionRole(Qt::UserRole);
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  completer->setCompletionMode(QCompleter::PopupCompletion);
+  completer->setWidget(edit); // not setCompleter(): that replaces the text
+  QObject::connect(edit, &QLineEdit::textEdited, completer,
+                   [edit, completer](const QString &text) {
+                     const auto [start, end] =
+                         codeAt(text, edit->cursorPosition());
+                     const QString prefix =
+                         text.mid(start, edit->cursorPosition() - start);
+                     completer->setCompletionPrefix(prefix);
+                     if (prefix.isEmpty()) {
+                       completer->popup()->hide();
+                       return;
+                     }
+                     completer->complete();
+                   });
+  QObject::connect(
+      completer, qOverload<const QModelIndex &>(&QCompleter::activated), edit,
+      [edit](const QModelIndex &index) {
+        const QString code = index.data(Qt::UserRole).toString();
+        const QString text = edit->text();
+        const auto [start, end] = codeAt(text, edit->cursorPosition());
+        edit->setText(text.left(start) + code + text.mid(end));
+        edit->setCursorPosition(start + int(code.size()));
+      });
 }
 
 } // namespace
@@ -126,14 +195,39 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   filter->addWidget(place_, 1);
   filter->addWidget(count_);
 
+  // Second filter row: only earthquakes close to the stations one has data
+  // for. Empty means no such filter.
+  nearCodes_ = new QLineEdit(this);
+  nearCodes_->setObjectName(QStringLiteral("nearStations"));
+  nearCodes_->setPlaceholderText(
+      tr("only near station(s): codes separated by commas"));
+  nearCodes_->setClearButtonEnabled(true);
+  attachCodeCompleter(nearCodes_, stations_);
+  nearKm_ = new QDoubleSpinBox(this);
+  nearKm_->setObjectName(QStringLiteral("nearKm"));
+  nearKm_->setRange(5, 1000);
+  nearKm_->setDecimals(0);
+  nearKm_->setValue(100);
+  nearKm_->setPrefix(tr("within "));
+  nearKm_->setSuffix(tr(" km"));
+  nearNote_ = new QLabel(this);
+  nearNote_->setObjectName(QStringLiteral("fieldLabel"));
+  nearNote_->setWordWrap(true);
+  nearNote_->hide();
+  auto *nearRow = new QHBoxLayout;
+  nearRow->addWidget(nearCodes_, 1);
+  nearRow->addWidget(nearKm_);
+
   table_ = plainTable(this);
   table_->setObjectName(QStringLiteral("eventTable"));
-  table_->setColumnCount(4);
-  table_->setHorizontalHeaderLabels(
-      {tr("Origin time (UTC)"), tr("M"), tr("Depth"), tr("Place")});
+  table_->setColumnCount(5);
+  table_->setHorizontalHeaderLabels({tr("Origin time (UTC)"), tr("M"),
+                                     tr("Depth"), tr("Nearest station"),
+                                     tr("Place")});
   table_->setColumnWidth(0, 170);
   table_->setColumnWidth(1, 60);
   table_->setColumnWidth(2, 80);
+  table_->setColumnWidth(3, 140);
 
   name_ = new QLineEdit(this);
   span_ = spanBox(this);
@@ -162,15 +256,50 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
 
   auto *layout = new QVBoxLayout(this);
   layout->addLayout(filter);
+  layout->addLayout(nearRow);
+  layout->addWidget(nearNote_);
   layout->addWidget(table_, 3);
   layout->addLayout(form);
   layout->addWidget(stationTable_, 2);
   layout->addWidget(buttons);
   resize(760, 720);
+  ui::polishPage(this);
+
+  ui::setHelp(minMag_, tr("Lists only earthquakes of at least this "
+                          "magnitude. Lower it to see smaller events; the "
+                          "table shows at most the 500 largest."));
+  ui::setHelp(place_, tr("Lists only earthquakes whose place name in the "
+                         "catalog contains this text, e.g. a province."));
+  ui::setHelp(nearCodes_,
+              tr("Lists only earthquakes close to at least one of these "
+                 "stations, e.g. the ones you have waveforms for. Type "
+                 "station codes of the built-in AFAD list separated by "
+                 "commas; codes are completed as you type. Those stations "
+                 "start ticked for the earthquake you pick."));
+  ui::setHelp(nearKm_, tr("How close to one of the stations above an "
+                          "earthquake must be to be listed, in km."));
+  table_->setToolTip(ui::helpText(
+      tr("The catalog's earthquakes that pass the filters, largest first. "
+         "Select the one to study.")));
+  ui::setHelp(name_, tr("The case's name in tables and figures. Filled from "
+                        "the earthquake's place and year; change it "
+                        "freely."));
+  ui::setHelp(span_, tr("How many days before the earthquake are studied. "
+                        "It can be changed later on the Cases page."));
+  ui::setHelp(maxKm_, tr("Stations of the built-in AFAD list within this "
+                         "distance of the epicentre are offered in the "
+                         "table below."));
+  stationTable_->setToolTip(ui::helpText(
+      tr("Tick the stations the earthquake is studied from. Distance and "
+         "azimuth are from the epicentre to the station.")));
 
   connect(minMag_, &QDoubleSpinBox::valueChanged, this,
           &AddFromCatalogDialog::refill);
   connect(place_, &QLineEdit::textChanged, this, &AddFromCatalogDialog::refill);
+  connect(nearCodes_, &QLineEdit::textChanged, this,
+          &AddFromCatalogDialog::refill);
+  connect(nearKm_, &QDoubleSpinBox::valueChanged, this,
+          &AddFromCatalogDialog::refill);
   connect(table_, &QTableWidget::itemSelectionChanged, this,
           &AddFromCatalogDialog::eventChosen);
   connect(maxKm_, &QDoubleSpinBox::valueChanged, this,
@@ -181,13 +310,54 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
 void AddFromCatalogDialog::refill() {
   const double minMag = minMag_->value();
   const QString needle = place_->text().trimmed();
+  // Resolve the typed station codes; unknown ones are named, not ignored.
+  filterStations_.clear();
+  QStringList unknown;
+  static const QRegularExpression sep(QStringLiteral("[,;\\s]+"));
+  for (const QString &code : nearCodes_->text().split(sep, Qt::SkipEmptyParts)) {
+    const auto it = std::find_if(
+        stations_.begin(), stations_.end(), [&code](const analysis::Station &s) {
+          return s.code.compare(code, Qt::CaseInsensitive) == 0;
+        });
+    if (it == stations_.end())
+      unknown << code;
+    else if (std::none_of(filterStations_.begin(), filterStations_.end(),
+                          [&it](const analysis::Station &s) {
+                            return s.code == it->code;
+                          }))
+      filterStations_.push_back(*it);
+  }
+  const bool byStation = !filterStations_.empty();
+  const bool typedOnlyUnknown = !unknown.isEmpty() && !byStation;
+  nearKm_->setEnabled(byStation);
+  nearNote_->setVisible(!unknown.isEmpty());
+  nearNote_->setText(unknown.isEmpty()
+                         ? QString()
+                         : tr("not in the station list: %1")
+                               .arg(unknown.join(QStringLiteral(", "))));
+  const double nearKm = nearKm_->value();
   shown_.clear();
+  std::vector<QString> nearestText(events_.size());
   for (int i = 0; i < int(events_.size()); ++i) {
     const analysis::Event &e = events_[static_cast<size_t>(i)];
     if (e.mag + 1e-9 < minMag)
       continue;
     if (!needle.isEmpty() && !e.place.contains(needle, Qt::CaseInsensitive))
       continue;
+    if (typedOnlyUnknown)
+      continue; // a filter was asked for and matches no station
+    if (byStation) {
+      const auto hits =
+          analysis::stationsWithin(filterStations_, e.lat, e.lon, nearKm);
+      if (hits.empty())
+        continue;
+      const auto best = std::min_element(
+          hits.begin(), hits.end(),
+          [](const analysis::StationDistance &a,
+             const analysis::StationDistance &b) { return a.km < b.km; });
+      nearestText[static_cast<size_t>(i)] =
+          tr("%1 · %2 km").arg(best->station.code).arg(best->km, 0, 'f', 0);
+    }
     shown_.push_back(i);
   }
   // Largest first; the table shows at most the first 500.
@@ -213,8 +383,13 @@ void AddFromCatalogDialog::refill() {
                     new QTableWidgetItem(QString::number(e.mag, 'f', 1)));
     table_->setItem(
         row, 2, new QTableWidgetItem(tr("%1 km").arg(e.depthKm, 0, 'f', 0)));
-    table_->setItem(row, 3, new QTableWidgetItem(e.place));
+    table_->setItem(
+        row, 3,
+        new QTableWidgetItem(
+            nearestText[static_cast<size_t>(shown_[static_cast<size_t>(row)])]));
+    table_->setItem(row, 4, new QTableWidgetItem(e.place));
   }
+  table_->setColumnHidden(3, !byStation);
   count_->setText(total > int(shown_.size())
                       ? tr("%1 earthquakes, the largest %2 shown")
                             .arg(total)
@@ -236,13 +411,18 @@ void AddFromCatalogDialog::eventChosen() {
   const analysis::Event &e =
       events_[static_cast<size_t>(shown_[static_cast<size_t>(row)])];
   name_->setText(study::caseFromEvent(e).name);
-  const QStringList keep = [this] {
-    QStringList k;
-    for (const study::StationRef &s : tickedStations(stationTable_, near_))
-      k << s.code;
-    return k;
-  }();
-  near_ = study::nearestStations(stations_, e.lat, e.lon, maxKm_->value());
+  // Stations stay ticked from the previous choice; the ones the events were
+  // filtered by start ticked, since they are why this event is listed.
+  QStringList keep;
+  for (const study::StationRef &s : tickedStations(stationTable_, near_))
+    keep << s.code;
+  double radius = maxKm_->value();
+  if (!filterStations_.empty()) {
+    radius = std::max(radius, nearKm_->value());
+    for (const analysis::Station &s : filterStations_)
+      keep << s.code;
+  }
+  near_ = study::nearestStations(stations_, e.lat, e.lon, radius);
   fillStationTable(stationTable_, near_, keep);
 }
 
@@ -318,6 +498,19 @@ ReferenceDateDialog::ReferenceDateDialog(const study::Study &study,
   layout->addLayout(form);
   layout->addWidget(buttons);
   resize(520, 0);
+  ui::setHelp(name_, tr("The case's name in tables and figures."));
+  ui::setHelp(time_, tr("The date and time (UTC) that takes the place of "
+                        "an earthquake's origin time: days are counted back "
+                        "from it."));
+  ui::setHelp(place_, tr("Where the reference date is studied: the "
+                         "epicentre, zone and stations of an existing "
+                         "case, or coordinates of its own with stations "
+                         "ticked later on the Cases page."));
+  ui::setHelp({lat_, lon_}, tr("Latitude and longitude in degrees (north "
+                               "and east positive) of the place, when it is "
+                               "not taken from an existing case."));
+  ui::setHelp(span_, tr("How many days before the date are studied. It can "
+                        "be changed later on the Cases page."));
 }
 
 void ReferenceDateDialog::accept() {

@@ -1,5 +1,7 @@
 #include "core/theme.h"
 
+#include "core/ui.h"
+
 #include <QApplication>
 #include <QFile>
 #include <QGuiApplication>
@@ -29,7 +31,9 @@ const QHash<QString, QString> &lightTokens() {
       {"sideText", "#C3CCD8"},   {"sideMuted", "#7C8A9B"},
       {"sideActive", "#22303F"}, {"field", "#FFFFFF"},
       {"disabledBg", "#EEF1F4"}, {"grid", "#E8EBEF"},
-      {"link", "#0F766E"},       {"mode", "light"}};
+      {"link", "#0F766E"},       {"mode", "light"},
+      {"tip", "#16202B"},        {"tipText", "#F3F5F8"},
+      {"tipBorder", "#16202B"}};
   return t;
 }
 
@@ -43,7 +47,9 @@ const QHash<QString, QString> &darkTokens() {
       {"sideText", "#B8C2CE"},   {"sideMuted", "#6B7786"},
       {"sideActive", "#1B242F"}, {"field", "#141920"},
       {"disabledBg", "#171C24"}, {"grid", "#2C333D"},
-      {"link", "#3CC7BA"},       {"mode", "dark"}};
+      {"link", "#3CC7BA"},       {"mode", "dark"},
+      {"tip", "#263140"},        {"tipText", "#E3E8EE"},
+      {"tipBorder", "#3D4A5B"}};
   return t;
 }
 
@@ -176,8 +182,8 @@ void Theme::apply() {
   pal.setColor(QPalette::HighlightedText, c("onAccent"));
   pal.setColor(QPalette::Link, c("link"));
   pal.setColor(QPalette::LinkVisited, c("link"));
-  pal.setColor(QPalette::ToolTipBase, c("side"));
-  pal.setColor(QPalette::ToolTipText, Qt::white);
+  pal.setColor(QPalette::ToolTipBase, c("tip"));
+  pal.setColor(QPalette::ToolTipText, c("tipText"));
   pal.setColor(QPalette::Light, c("surface"));
   pal.setColor(QPalette::Midlight, c("surface2"));
   pal.setColor(QPalette::Mid, c("border"));

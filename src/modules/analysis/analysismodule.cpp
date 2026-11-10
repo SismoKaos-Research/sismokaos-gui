@@ -1,5 +1,7 @@
 #include "modules/analysis/analysismodule.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
@@ -428,6 +430,37 @@ void AnalysisWidget::retranslate() {
   tabs_->setTabText(2, tr("Figures"));
   tabs_->setTabText(3, tr("Grid"));
   tabs_->setTabText(4, tr("Regions"));
+
+  ui::setHelp({tableLabel_, table_, tableBrowse_},
+              tr("The feature table to analyse: a <name>_features.npy or "
+                 ".csv from the Features page. The run metadata beside it "
+                 "supplies the station code and the window length."));
+  ui::setHelp({catalogLabel_, catalog_, catalogBrowse_},
+              tr("The AFAD earthquake catalog export, CSV or .gz. The "
+                 "Regions pane needs only this."));
+  ui::setHelp(catalogTz_,
+              tr("Whether the times in the catalog file are UTC or Turkey "
+                 "time (UTC+3). AFAD exports are UTC."));
+  ui::setHelp({stationsLabel_, stations_, stationsBrowse_},
+              tr("A CSV of station codes with latitude and longitude, used "
+                 "to find the station's position. Empty uses the AFAD list "
+                 "built into the application."));
+  ui::setHelp({stationLabel_, stationCode_},
+              tr("The code of the station the table was recorded at. "
+                 "Distances and directions to the earthquakes are measured "
+                 "from it."));
+  ui::setHelp(manualPosition_,
+              tr("Tick to type the station's latitude and longitude "
+                 "instead of looking the code up in the station list."));
+  ui::setHelp(lat_, tr("Latitude of the station in degrees, north "
+                       "positive."));
+  ui::setHelp(lon_, tr("Longitude of the station in degrees, east "
+                       "positive."));
+  ui::setHelp({faultsLabel_, faults_, faultsBrowse_},
+              tr("Optional: a shapefile (.shp with its .dbf) of fault "
+                 "lines, such as MTA's active fault map. With it the "
+                 "nearest fault to each earthquake is named and the "
+                 "faults are drawn on the maps."));
 }
 
 } // namespace skg

@@ -1,5 +1,7 @@
 #include "modules/study/runspage.h"
 
+#include "modules/study/settinghelp.h"
+
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
@@ -337,16 +339,22 @@ RecipeDialog::RecipeDialog(const Study &s, const Recipe &r, QWidget *parent)
   table_->setRowCount(int(r.settings.size()));
   int row = 0;
   for (auto it = r.settings.begin(); it != r.settings.end(); ++it, ++row) {
-    auto *k = new QTableWidgetItem(it.key());
+    // The readable name is shown; the key travels in the item.
+    const SettingInfo info = settingInfo(r.tool, it.key());
+    auto *k = new QTableWidgetItem(info.label);
+    k->setData(Qt::UserRole, it.key());
+    k->setToolTip(info.tooltip(it.key()));
     k->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     auto *v = new QTableWidgetItem(valueText(it.value()));
     v->setData(Qt::UserRole, it.value());
+    v->setToolTip(info.tooltip(it.key()));
     if (isLongText(it.value()))
       v->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     table_->setItem(row, 0, k);
     table_->setItem(row, 1, v);
   }
-  table_->setColumnWidth(0, 190);
+  table_->setColumnWidth(0, 250);
+
 
   QString note =
       tr("Values keep their kind: true/false, a number, text, or a list "
@@ -358,21 +366,25 @@ RecipeDialog::RecipeDialog(const Study &s, const Recipe &r, QWidget *parent)
       if (o.tool == study::kToolFeatures)
         ids << o.id;
     note += QLatin1Char('\n') +
-            tr("features_recipe names the features recipe whose table is "
-               "classified (%1). classes are ranges of days before the "
-               "event.")
+            tr("\"Features recipe\" takes the id of the features recipe "
+               "whose table is classified (%1). Classes are ranges of days "
+               "before the event.")
                 .arg(ids.isEmpty() ? tr("none yet")
                                    : ids.join(QStringLiteral(", ")));
   } else if (r.tool == study::kToolFeatures) {
     note += QLatin1Char('\n') +
-            tr("config_json is a config.json of the Features page; load it "
-               "with the button below. Empty uses the defaults.");
+            tr("\"Features configuration\" is a config.json of the Features "
+               "page; load it with the button below. Empty uses the "
+               "defaults.");
   }
   auto *noteLabel = new QLabel(note, this);
   noteLabel->setObjectName(QStringLiteral("fieldLabel"));
   noteLabel->setWordWrap(true);
   auto *load =
       new QPushButton(tr("Load a file into the selected setting…"), this);
+  load->setToolTip(ui::helpText(
+      tr("Reads a text file (a config.json, a project.toml) into the "
+         "selected setting. Only settings that hold text take a file.")));
   connect(load, &QPushButton::clicked, this, &RecipeDialog::loadFile);
   auto *buttons = new QDialogButtonBox(
       QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -391,6 +403,10 @@ RecipeDialog::RecipeDialog(const Study &s, const Recipe &r, QWidget *parent)
   layout->addWidget(noteLabel);
   layout->addLayout(bottom);
   resize(640, 620);
+  ui::setHelp(name_, tr("The recipe's name: the column heading on the Runs "
+                        "page and the entry in the Compare lists. The "
+                        "result folders use an id made from the first "
+                        "name, which does not change on a rename."));
 }
 
 void RecipeDialog::loadFile() {
@@ -423,7 +439,7 @@ void RecipeDialog::accept() {
   if (!name_->text().trimmed().isEmpty())
     next.name = name_->text().trimmed();
   for (int row = 0; row < table_->rowCount(); ++row) {
-    const QString k = table_->item(row, 0)->text();
+    const QString k = table_->item(row, 0)->data(Qt::UserRole).toString();
     const QTableWidgetItem *v = table_->item(row, 1);
     const QVariant old = v->data(Qt::UserRole);
     if (isLongText(old) || v->text() == valueText(old)) {
@@ -436,7 +452,7 @@ void RecipeDialog::accept() {
       QMessageBox::warning(
           this, windowTitle(),
           tr("%1: \"%2\" is not the kind of value this setting takes.")
-              .arg(k, v->text()));
+              .arg(table_->item(row, 0)->text(), v->text()));
       return;
     }
     next.settings.insert(k, parsed);
@@ -573,6 +589,25 @@ void RunsPage::retranslate() {
   openFolder_->setText(tr("Open folder"));
   hint_->setText(tr("A recipe is one tool's saved settings; the same recipe "
                     "on every case is the same analysis."));
+  run_->setToolTip(ui::helpText(
+      tr("Queues every cell that is missing or stale as a job, two at a "
+         "time, and goes on to the cells they unblock (a classification "
+         "after its features).")));
+  runOne_->setToolTip(ui::helpText(
+      tr("Runs the recipe of the selected cell on its case and station, "
+         "again if it was already done.")));
+  new_->setToolTip(ui::helpText(
+      tr("Adds a recipe: one tool's settings under a name, run on every "
+         "case. Indicators run once per case; Features and Classification "
+         "once per station.")));
+  edit_->setToolTip(ui::helpText(
+      tr("Changes the settings of the selected column's recipe. A changed "
+         "setting raises the revision and marks its finished runs stale.")));
+  remove_->setToolTip(ui::helpText(
+      tr("Takes the selected column's recipe out of the study. The result "
+         "folders stay on disk.")));
+  openFolder_->setToolTip(ui::helpText(
+      tr("Opens the selected cell's result folder in the file manager.")));
   recipeTable_->setHorizontalHeaderLabels(
       {tr("Setting"), tr("Value"), tr("Across cases")});
 }
@@ -729,9 +764,17 @@ void RunsPage::showSelection() {
     if (!r->settings.contains(f))
       lines << QStringList{f, QStringLiteral("–"), tr("fitted per case")};
   recipeTable_->setRowCount(int(lines.size()));
-  for (int i = 0; i < int(lines.size()); ++i)
-    for (int j = 0; j < 3; ++j)
-      recipeTable_->setItem(i, j, new QTableWidgetItem(lines[i][j]));
+  for (int i = 0; i < int(lines.size()); ++i) {
+    // Readable name in the first column; the key and what the setting does
+    // on hover.
+    const SettingInfo info = settingInfo(r->tool, lines[i][0]);
+    for (int j = 0; j < 3; ++j) {
+      auto *item = new QTableWidgetItem(j == 0 ? info.label : lines[i][j]);
+      item->setData(Qt::UserRole, lines[i][0]);
+      item->setToolTip(info.tooltip(lines[i][0]));
+      recipeTable_->setItem(i, j, item);
+    }
+  }
   recipeTable_->setColumnWidth(0, 200);
   recipeTable_->setColumnWidth(1, 430);
 }

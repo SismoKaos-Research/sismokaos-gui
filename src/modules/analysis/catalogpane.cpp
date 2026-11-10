@@ -146,7 +146,8 @@ CatalogPane::CatalogPane(std::shared_ptr<AnalysisState> state, QWidget *parent)
   exportSvg_ = new QPushButton(this);
   exportCsv_ = new QPushButton(this);
   auto *mapBar = new QHBoxLayout;
-  mapBar->addWidget(new QLabel(tr("View half-width (km)"), this));
+  mapBar->addWidget(
+      ui::buddyLabel(tr("View half-width (km)"), extent_, this));
   mapBar->addWidget(extent_);
   mapBar->addWidget(showFaults_);
   mapBar->addStretch(1);
@@ -315,6 +316,19 @@ void CatalogPane::retranslate() {
   exportPng_->setText(tr("Map as PNG…"));
   exportSvg_->setText(tr("Map as SVG…"));
   exportCsv_->setText(tr("Events as CSV…"));
+  ui::setHelp(extent_,
+              tr("How far the map reaches from the station to each side, "
+                 "in km. \"fit\" (0) shows every listed event; a smaller "
+                 "value zooms in on the station."));
+  ui::setHelp(showFaults_, tr("Draws the fault lines loaded at the top of "
+                              "the page on the map."));
+  exportPng_->setToolTip(
+      ui::helpText(tr("Saves the map as shown as a PNG picture.")));
+  exportSvg_->setToolTip(ui::helpText(
+      tr("Saves the map as shown as an SVG vector drawing.")));
+  exportCsv_->setToolTip(ui::helpText(
+      tr("Saves the listed events with their distance, direction and "
+         "nearest fault as a CSV table.")));
 }
 
 } // namespace skg

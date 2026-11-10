@@ -448,6 +448,48 @@ void FeaturesWidget::retranslate() {
   stop_->setText(tr("Stop"));
   tabs_->setTabText(0, tr("Status"));
   tabs_->setTabText(1, tr("Results"));
+
+  ui::setHelp({dataLabel_, dataDir_, dataBrowse_},
+              tr("The folder with the miniSEED files of one station (E, N "
+                 "and Z components). Zip archives in it are unpacked for "
+                 "the run; other files are skipped."));
+  ui::setHelp({outLabel_, outDir_, outBrowse_},
+              tr("Where the feature tables and the run's records are "
+                 "written. Empty: a folder named results under the data "
+                 "directory."));
+  ui::setHelp({configLabel_, configPath_},
+              tr("A config.json holding all the settings on this page. "
+                 "Load… reads one, Save writes the settings shown. Without "
+                 "a file the defaults are used."));
+  configLoad_->setToolTip(ui::helpText(
+      tr("Reads a config.json into the settings, in the layout of the "
+         "Rust tool or of the Python tool.")));
+  configSave_->setToolTip(ui::helpText(
+      tr("Writes the settings currently shown to the config file.")));
+  ui::setHelp(reuseCalibration_,
+              tr("Takes the chaos parameters from the calibration file of "
+                 "an earlier run (same station, same sampling rate) "
+                 "instead of calibrating again. The catalog is then not "
+                 "needed."));
+  ui::setHelp({calibrationFile_, calibrationBrowse_},
+              tr("The <name>_calibration.json of the earlier run whose "
+                 "calibration is reused."));
+  ui::setHelp(bandFilter_,
+              tr("With bands in the settings: run only the bands named "
+                 "here, separated by commas. Empty runs all of them."));
+  run_->setToolTip(ui::helpText(
+      tr("Calibrates the chaos parameters on quiet periods, then extracts "
+         "the features window by window, for each band.")));
+  preprocess_->setToolTip(ui::helpText(
+      tr("Only filters and decimates the three components and writes them "
+         "as one float32 stream, for training on waveforms instead of "
+         "features.")));
+  dryRun_->setToolTip(ui::helpText(
+      tr("Checks the settings and lists the runs that would happen, "
+         "without reading the data.")));
+  stop_->setToolTip(ui::helpText(
+      tr("Ends the job after the window in progress. Nothing partial is "
+         "written.")));
   updateControls();
 }
 

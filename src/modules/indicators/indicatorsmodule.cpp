@@ -256,8 +256,9 @@ void IndicatorsWidget::retranslate() {
   catalog_->setPlaceholderText(
       tr("AFAD export CSV: Date, Latitude, Longitude, Magnitude…"));
   describe_->setText(tr("Describe"));
-  describe_->setToolTip(tr("Loads the catalog, applies the selection and "
-                           "reports the events kept."));
+  describe_->setToolTip(
+      ui::helpText(tr("Loads the catalog, applies the selection and "
+                      "reports the events kept.")));
   zoneLabel_->setText(tr("Events"));
   const QStringList zones{
       tr("Whole catalog"), tr("Near the East Anatolian Fault Zone"),
@@ -276,19 +277,26 @@ void IndicatorsWidget::retranslate() {
   startLabel_->setText(tr("From date"));
   useStart_->setText(tr("drop earlier events"));
   homogenize_->setText(tr("Homogenise magnitudes"));
-  homogenize_->setToolTip(
-      tr("Converts AFAD magnitudes before 2013-11-20 onto the 2014-2019 "
-         "ML/Mw practice by rate matching. Empty file = the conversion "
-         "shipped with the app."));
+  ui::setHelp(homogenize_,
+              tr("Converts AFAD magnitudes before 2013-11-20 onto the "
+                 "2014-2019 ML/Mw practice by rate matching. Empty file = "
+                 "the conversion shipped with the app. Without it, a "
+                 "catalog that crosses that date mixes two magnitude "
+                 "scales and every indicator shows an artificial jump."));
+  ui::setHelp(conversion_,
+              tr("A magnitude conversion saved with Fit…, as JSON. Empty "
+                 "uses the conversion shipped with the application."));
   conversion_->setPlaceholderText(tr("conversion JSON (empty = shipped)"));
   fit_->setText(tr("Fit…"));
-  fit_->setToolTip(tr("Fits a conversion on a national AFAD catalog "
-                      "(declustered) and saves it as JSON."));
+  fit_->setToolTip(
+      ui::helpText(tr("Fits a conversion on a national AFAD catalog "
+                      "(declustered) and saves it as JSON.")));
   decluster_->setText(tr("Decluster (Gardner-Knopoff mainshocks only)"));
   mcLabel_->setText(tr("Completeness Mc"));
   estimateMc_->setText(tr("Estimate"));
-  estimateMc_->setToolTip(
-      tr("Maximum curvature + 0.2 on the selected events."));
+  estimateMc_->setToolTip(ui::helpText(
+      tr("Sets Mc to the maximum-curvature estimate plus 0.2, computed on "
+         "the selected events.")));
   magBinLabel_->setText(tr("Magnitude bin"));
   windowLabel_->setText(tr("Window"));
   stepLabel_->setText(tr("Step"));
@@ -322,6 +330,90 @@ void IndicatorsWidget::retranslate() {
   for (QGroupBox *box : findChildren<QGroupBox *>())
     if (box->objectName().isEmpty())
       box->setTitle(tr("Indicators"));
+
+  ui::setHelp(catalog_,
+              tr("The earthquake catalog: an AFAD export (CSV or .gz) with "
+                 "Date as dd/mm/YYYY HH:MM:SS, Latitude, Longitude and "
+                 "Magnitude."));
+  ui::setHelp(zone_,
+              tr("Which events of the catalog are used: all of them, those "
+                 "near the East Anatolian Fault Zone (traces shipped with "
+                 "the application), those near the fault traces of your "
+                 "own GeoJSON file, or those within a circle."));
+  ui::setHelp(zoneFile_,
+              tr("Your own fault traces: a GeoJSON FeatureCollection of "
+                 "LineString features. A \"strand\" property on a feature "
+                 "lets you pick strands below."));
+  ui::setHelp(strands_,
+              tr("Uses only the named strands of the fault traces, "
+                 "separated by commas. Empty uses all. The shipped East "
+                 "Anatolian traces have main and northern."));
+  ui::setHelp(buffer_, tr("Events within this distance of the fault traces "
+                          "are used, in km. Default 30."));
+  ui::setHelp({lat_, lon_, radius_},
+              tr("For the circle: latitude and longitude of its centre in "
+                 "degrees, and its radius in km. Events inside it are "
+                 "used."));
+  ui::setHelp({start_, useStart_},
+              tr("Drops the events before this date, for instance from "
+                 "before the network was densified."));
+  ui::setHelp(decluster_,
+              tr("Keeps only the Gardner-Knopoff mainshocks and single "
+                 "events, i.e. removes aftershock and foreshock sequences. "
+                 "Most indicators then rest on far fewer events."));
+  ui::setHelp(mc_,
+              tr("The completeness magnitude: the magnitude above which "
+                 "the catalog is taken to hold every event. Events below "
+                 "it do not enter the b-value, the a-value and η. The "
+                 "original analysis used 1.3 for the EAFZ; with the 2014+ "
+                 "ML catalog use about 2.0."));
+  ui::setHelp(magBin_, tr("The rounding of the catalog's magnitudes (0.1 "
+                          "for AFAD). The b-value uses Mc minus half a "
+                          "bin."));
+  ui::setHelp({window_, windowUnit_},
+              tr("Length of the sliding time window each indicator value "
+                 "is computed on, as a calendar duration. Longer windows "
+                 "hold more events and change more slowly. Default 12 "
+                 "months."));
+  ui::setHelp({step_, stepUnit_},
+              tr("How far the window advances between two values. A step "
+                 "shorter than the window makes the windows overlap. "
+                 "Default 1 month."));
+  ui::setHelp(sigma_,
+              tr("Width of the weighting for the second version of the "
+                 "mean magnitude and the energy rate, in which the weights "
+                 "rise towards the newest event of the window. "
+                 "Default 0.4."));
+  ui::setHelp(ma_, tr("Trailing averages of the indicators over these "
+                      "numbers of windows, separated by commas, e.g. "
+                      "7,15,23. One figure per number."));
+  ui::setHelp(maCombined_, tr("Draws all the moving averages of an "
+                              "indicator on one figure instead of one "
+                              "figure each."));
+  ui::setHelp(bollinger_,
+              tr("Also draws each indicator with a trailing mean and bands "
+                 "at ± k standard deviations around it."));
+  ui::setHelp(bbWindow_, tr("How many windows the trailing mean and "
+                            "standard deviation of the Bollinger bands "
+                            "cover. Default 20."));
+  ui::setHelp(bbK_, tr("Width of the Bollinger bands in standard "
+                       "deviations on each side of the mean. Default 2."));
+  ui::setHelp({labelMag_, labelDays_},
+              tr("The Risk_Durumu column marks the windows that end within "
+                 "this many days before an earthquake of at least this "
+                 "magnitude."));
+  ui::setHelp(outRoot_,
+              tr("The folder under which each run makes its own folder, "
+                 "named after the catalog, the selection, the window and "
+                 "the step."));
+  ui::setHelp(dpi_, tr("Resolution of the PNG figures in dots per inch. "
+                       "Higher gives larger, sharper pictures."));
+  ui::setHelp(plots_, tr("Writes a PNG figure per indicator. Unticked, "
+                         "only the window table is written."));
+  run_->setToolTip(ui::helpText(
+      tr("Computes the indicators on the selected events as a job and "
+         "shows the result on the Results tab.")));
+  stop_->setToolTip(ui::helpText(tr("Stops the run.")));
 }
 
 void IndicatorsWidget::loadSettings() {

@@ -1,5 +1,7 @@
 #include "modules/settings/settingsmodule.h"
 
+#include "core/ui.h"
+
 #include "core/theme.h"
 
 #include <QComboBox>
@@ -119,6 +121,18 @@ private:
     exeLabel_->setText(tr("Executable"));
     dirLabel_->setText(tr("Project"));
     statusLabel_->setText(tr("Status"));
+    ui::setHelp({exe_, exeBrowse_},
+                tr("Optional: the tool's command-line executable, for "
+                   "running the original tool beside the application. "
+                   "Empty looks on the PATH and in the project's .venv. "
+                   "Nothing in the other pages needs it."));
+    ui::setHelp({dir_, dirBrowse_},
+                tr("Optional: the tool's project directory, a checkout "
+                   "with its pyproject.toml. Its .venv is searched for the "
+                   "executable."));
+    probe_->setToolTip(ui::helpText(
+        tr("Asks the tool for its version to see whether it can be "
+           "run.")));
   }
 
   void refresh() {
@@ -218,6 +232,12 @@ private:
     themeCombo_->setItemText(0, tr("Follow the system"));
     themeCombo_->setItemText(1, tr("Light"));
     themeCombo_->setItemText(2, tr("Dark"));
+    ui::setHelp({langLabel_, lang_},
+                tr("The language of the application. It changes at "
+                   "once."));
+    ui::setHelp({themeLabel_, themeCombo_},
+                tr("Light or dark colours, or whichever the system is set "
+                   "to."));
   }
 
   I18n *i18n_;

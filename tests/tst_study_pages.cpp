@@ -2,9 +2,13 @@
 // and survive an edit. With SKG_SHOTS set to a folder, each page is also
 // saved there as a PNG (used when changing the look).
 #include <QApplication>
+#include <QAbstractItemView>
 #include <QComboBox>
+#include <QCompleter>
 #include <QDir>
 #include <QDirIterator>
+#include <QDoubleSpinBox>
+#include <QLineEdit>
 #include <QFileInfo>
 #include <QTimeZone>
 
@@ -196,6 +200,71 @@ void TstStudyPages::addFromCatalog() {
   // The synthetic catalog has six hand-placed events of M >= 5.
   QCOMPARE(events->rowCount(), 6);
   QCOMPARE(events->item(0, 1)->text(), QStringLiteral("6.4"));
+  // Filtering by a station keeps only the earthquakes close to it, says how
+  // far each is, and starts that station ticked.
+  auto *codes = dialog.findChild<QLineEdit *>(QStringLiteral("nearStations"));
+  auto *km = dialog.findChild<QDoubleSpinBox *>(QStringLiteral("nearKm"));
+  auto *st = dialog.findChild<QTableWidget *>(QStringLiteral("stationTable"));
+  QVERIFY(codes && km && st);
+  // Take a station of the built-in list that is close to the largest event.
+  events->selectRow(0);
+  QVERIFY(st->rowCount() > 0);
+  const QString code = st->item(0, 1)->text();
+  codes->setText(code.toLower() + QStringLiteral(", NOPE"));
+  km->setValue(60);
+  const int nearCount = events->rowCount();
+  QVERIFY(nearCount >= 1 && nearCount <= 6);
+  QVERIFY(!events->isColumnHidden(3));
+  for (int i = 0; i < nearCount; ++i)
+    QVERIFY(events->item(i, 3)->text().startsWith(code));
+  km->setValue(5);
+  QVERIFY(events->rowCount() < 6);
+  km->setValue(60);
+  events->selectRow(0);
+  bool filterTicked = false;
+  for (int i = 0; i < st->rowCount(); ++i)
+    filterTicked = filterTicked ||
+                   (st->item(i, 1)->text() == code &&
+                    st->item(i, 0)->checkState() == Qt::Checked);
+  QVERIFY(filterTicked);
+  shot(dialog, QStringLiteral("add_from_catalog_near"));
+  // Typing a second code completes only that one: the list offers the
+  // stations whose code starts with what was typed, with their place, and
+  // accepting one keeps the first code.
+  auto *completer = dialog.findChild<QCompleter *>(QStringLiteral("nearCompleter"));
+  QVERIFY(completer);
+  const QString other = st->item(1, 1)->text();
+  QVERIFY(other != code && other.size() >= 2);
+  codes->setText(code + QStringLiteral(", "));
+  codes->setFocus();
+  codes->setCursorPosition(int(codes->text().size()));
+  QTest::keyClicks(codes, other.left(2).toLower());
+  QCOMPARE(completer->completionPrefix(), other.left(2).toLower());
+  QVERIFY(completer->completionCount() >= 1);
+  int found = -1;
+  for (int i = 0; i < completer->completionCount(); ++i) {
+    QVERIFY(completer->setCurrentRow(i));
+    QVERIFY(completer->currentIndex()
+                .data(Qt::UserRole)
+                .toString()
+                .startsWith(other.left(2), Qt::CaseInsensitive));
+    if (completer->currentIndex().data(Qt::UserRole).toString() == other)
+      found = i;
+  }
+  QVERIFY(found >= 0);
+  QVERIFY(completer->setCurrentRow(found));
+  QVERIFY(completer->currentIndex().data(Qt::DisplayRole).toString().startsWith(
+      other));
+  emit completer->activated(completer->currentIndex());
+  completer->popup()->hide();
+  QCOMPARE(codes->text(), code + QStringLiteral(", ") + other);
+  codes->setText(QStringLiteral("NOPE"));
+  QCOMPARE(events->rowCount(), 0);
+  codes->clear();
+  QCOMPARE(events->rowCount(), 6);
+  QVERIFY(events->isColumnHidden(3));
+  for (int i = 0; i < st->rowCount(); ++i)
+    st->item(i, 0)->setCheckState(Qt::Unchecked);
   events->selectRow(0);
   // The built-in station list offers stations near the chosen event.
   auto *near = dialog.findChild<QTableWidget *>(QStringLiteral("stationTable"));
@@ -355,11 +424,14 @@ void TstStudyPages::recipeDialog() {
   RecipeDialog second(s, s.recipes[0]);
   auto *t2 = second.findChild<QTableWidget *>(QStringLiteral("settingsTable"));
   for (int i = 0; i < t2->rowCount(); ++i) {
-    if (t2->item(i, 0)->text() == QLatin1String("window_months"))
+    if (t2->item(i, 0)->data(Qt::UserRole).toString() ==
+        QLatin1String("window_months"))
       t2->item(i, 1)->setText(QStringLiteral("9"));
-    if (t2->item(i, 0)->text() == QLatin1String("ma_windows"))
+    if (t2->item(i, 0)->data(Qt::UserRole).toString() ==
+        QLatin1String("ma_windows"))
       t2->item(i, 1)->setText(QStringLiteral("5, 9"));
-    if (t2->item(i, 0)->text() == QLatin1String("bollinger"))
+    if (t2->item(i, 0)->data(Qt::UserRole).toString() ==
+        QLatin1String("bollinger"))
       t2->item(i, 1)->setText(QStringLiteral("yes"));
   }
   second.accept();

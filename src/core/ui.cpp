@@ -5,6 +5,7 @@
 #include <QAbstractItemView>
 #include <QAbstractSpinBox>
 #include <QEvent>
+#include <QFormLayout>
 #include <QLayout>
 #include <QLineEdit>
 #include <QMargins>
@@ -27,6 +28,102 @@ void setFlag(QWidget *w, const char *name, bool on) {
 }
 
 } // namespace
+
+namespace {
+
+bool layoutHolds(QLayout *layout, const QWidget *w) {
+  for (int i = 0; i < layout->count(); ++i) {
+    QLayoutItem *it = layout->itemAt(i);
+    if (it->widget() == w)
+      return true;
+    if (it->layout() && layoutHolds(it->layout(), w))
+      return true;
+  }
+  return false;
+}
+
+// The row label of `w` in a form layout at or below `layout`.
+QLabel *formLabel(QLayout *layout, const QWidget *w) {
+  if (auto *form = qobject_cast<QFormLayout *>(layout)) {
+    for (int row = 0; row < form->rowCount(); ++row) {
+      QLayoutItem *field = form->itemAt(row, QFormLayout::FieldRole);
+      if (!field)
+        continue;
+      const bool here = field->widget() == w ||
+                        (field->layout() && layoutHolds(field->layout(), w));
+      if (!here)
+        continue;
+      QLayoutItem *label = form->itemAt(row, QFormLayout::LabelRole);
+      return label ? qobject_cast<QLabel *>(label->widget()) : nullptr;
+    }
+  }
+  for (int i = 0; i < layout->count(); ++i)
+    if (QLayout *child = layout->itemAt(i)->layout())
+      if (QLabel *l = formLabel(child, w))
+        return l;
+  return nullptr;
+}
+
+} // namespace
+
+QLabel *helpLabel(const QWidget *field) {
+  const QWidget *parent = field->parentWidget();
+  if (!parent)
+    return nullptr;
+  // The field itself may be a form row's field, or sit in a plain holder
+  // widget (a path field with its "…" button) that is.
+  const QWidget *w = field;
+  for (int up = 0; up < 3 && w->parentWidget(); ++up, w = w->parentWidget()) {
+    const QWidget *p = w->parentWidget();
+    if (p->layout())
+      if (QLabel *l = formLabel(p->layout(), w))
+        return l;
+  }
+  const auto labels =
+      parent->findChildren<QLabel *>(QString(), Qt::FindDirectChildrenOnly);
+  for (QLabel *l : labels)
+    if (l->buddy() == field)
+      return l;
+  return nullptr;
+}
+
+QLabel *buddyLabel(const QString &text, QWidget *field, QWidget *parent) {
+  auto *label = new QLabel(text, parent);
+  label->setBuddy(field);
+  return label;
+}
+
+QString helpText(const QString &text) {
+  if (text.isEmpty())
+    return text;
+  // A short text stays on one line. A longer one is rich text in a column
+  // of a fixed, readable width: plain text would run in one long line, and
+  // rich text left to itself wraps into a narrow strip.
+  const QString escaped = text.toHtmlEscaped();
+  if (text.size() <= 48)
+    return QStringLiteral("<qt><nobr>%1</nobr></qt>").arg(escaped);
+  return QStringLiteral("<qt><table width=\"340\" cellspacing=\"0\" "
+                        "cellpadding=\"0\"><tr><td>%1</td></tr></table></qt>")
+      .arg(escaped);
+}
+
+void setHelp(QWidget *field, const QString &text) {
+  if (!field)
+    return;
+  const QString tip = helpText(text);
+  field->setToolTip(tip);
+  field->setWhatsThis(tip);
+  field->setProperty("help", text);
+  if (QLabel *label = helpLabel(field)) {
+    label->setToolTip(tip);
+    label->setWhatsThis(tip);
+  }
+}
+
+void setHelp(std::initializer_list<QWidget *> fields, const QString &text) {
+  for (QWidget *f : fields)
+    setHelp(f, text);
+}
 
 void setPrimary(QAbstractButton *button, bool on) {
   setFlag(button, "primary", on);

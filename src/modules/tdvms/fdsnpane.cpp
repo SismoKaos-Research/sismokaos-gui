@@ -203,6 +203,36 @@ void FdsnPane::retranslate() {
   go_->setText(tr("Fetch"));
   ui::setPrimary(go_);
   stop_->setText(tr("Stop"));
+
+  ui::setHelp(station_, tr("The station code at the FDSN service, e.g. "
+                           "SVRC. One station per pull."));
+  ui::setHelp(network_, tr("The FDSN network code of the station. KO is "
+                           "KOERI's network."));
+  ui::setHelp(channels_,
+              tr("Which channels to fetch, as an FDSN pattern; ? stands for "
+                 "any one letter. BH? is the three broadband components "
+                 "(BHE, BHN, BHZ)."));
+  ui::setHelp(service_, tr("Address of the FDSN dataselect service. The "
+                           "default is KOERI's."));
+  ui::setHelp(start_, tr("The first UTC day to fetch. Whole days are "
+                         "fetched, one file per day."));
+  ui::setHelp(end_, tr("The day after the last one to fetch: this day "
+                       "itself is not fetched."));
+  ui::setHelp(retries_,
+              tr("How many times a day is tried before it is marked "
+                 "failed, with a growing pause between tries. Default 5."));
+  ui::setHelp(planOnly_, tr("Adds the days to the FDSN ledger as pending "
+                            "without downloading anything now."));
+  ui::setHelp(retryFailed_,
+              tr("Before fetching, puts the days of this station that "
+                 "failed earlier back to pending so they are tried "
+                 "again."));
+  go_->setToolTip(ui::helpText(
+      tr("Adds the days to the campaign's FDSN ledger and downloads the "
+         "pending ones, oldest first, as a job.")));
+  stop_->setToolTip(
+      ui::helpText(tr("Stops the pull; the days not yet fetched stay "
+                      "pending.")));
 }
 
 } // namespace skg

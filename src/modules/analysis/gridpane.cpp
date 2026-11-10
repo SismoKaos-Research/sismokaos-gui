@@ -53,9 +53,9 @@ GridPane::GridPane(AppContext ctx, std::shared_ptr<AnalysisState> state,
   bar->addWidget(add_);
   bar->addWidget(remove_);
   bar->addSpacing(12);
-  bar->addWidget(new QLabel(tr("Column"), this));
+  bar->addWidget(ui::buddyLabel(tr("Column"), column_, this));
   bar->addWidget(column_);
-  bar->addWidget(new QLabel(tr("At most"), this));
+  bar->addWidget(ui::buddyLabel(tr("At most"), maxDays_, this));
   bar->addWidget(maxDays_);
   bar->addStretch(1);
   bar->addWidget(build_);
@@ -238,6 +238,22 @@ void GridPane::retranslate() {
   ui::setPrimary(build_);
   save_->setText(tr("Save PNG…"));
   maxDays_->setSuffix(tr(" days"));
+  add_->setToolTip(ui::helpText(
+      tr("Adds feature tables of other stations to compare, one per "
+         "station.")));
+  remove_->setToolTip(
+      ui::helpText(tr("Takes the selected table off the list.")));
+  ui::setHelp(column_, tr("The column drawn for every station. It must "
+                          "exist in every table."));
+  ui::setHelp(maxDays_,
+              tr("The grid shows at most this many of the days the "
+                 "stations share, from the first one. More days make a "
+                 "wider picture."));
+  build_->setToolTip(ui::helpText(
+      tr("Draws the daily figures of every station for the days they "
+         "share, stations down and days across, as one picture.")));
+  save_->setToolTip(
+      ui::helpText(tr("Saves the grid as a PNG picture.")));
 }
 
 } // namespace skg

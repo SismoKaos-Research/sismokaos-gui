@@ -8,6 +8,7 @@
 // QEvent::LanguageChange.
 #pragma once
 
+#include <QVariantMap>
 #include <QObject>
 #include <QSettings>
 #include <QString>
@@ -23,12 +24,27 @@ namespace study {
 class StudyStore;
 }
 
+// Lets a page send the user to another page ("Next: get waveforms"). `args`
+// carries what the target should show or prefill; a page that cares connects
+// to `requested` and looks for its own id. May be null in tests.
+class Navigator : public QObject {
+  Q_OBJECT
+public:
+  using QObject::QObject;
+  void show(const QString &moduleId, const QVariantMap &args = {}) {
+    emit requested(moduleId, args);
+  }
+signals:
+  void requested(const QString &moduleId, const QVariantMap &args);
+};
+
 struct AppContext {
   JobModel *jobs = nullptr;
   ToolRegistry *tools = nullptr;
   QSettings *settings = nullptr;
   Theme *theme = nullptr; // colours and icons of the current look
   study::StudyStore *study = nullptr; // the open study, if any
+  Navigator *nav = nullptr;           // page-to-page navigation
 };
 
 class Module : public QObject {

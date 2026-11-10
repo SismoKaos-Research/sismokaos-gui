@@ -1,5 +1,7 @@
 #include "modules/classification/settingspane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDateTimeEdit>
@@ -468,6 +470,109 @@ void SettingsPane::retranslate() {
   tomlNote_->setText(tr("Every setting as TOML, the layout of sfc's "
                         "project.toml. Grids and the scatter lists are edited "
                         "here; the form covers the rest."));
+
+  ui::setHelp(station_, tr("The station code. It names the results folder "
+                           "and the labelled table."));
+  ui::setHelp(eventName_, tr("A short name for the earthquake. It names "
+                             "the results folder."));
+  ui::setHelp(eqTime_,
+              tr("The earthquake's origin time in UTC. Days are counted "
+                 "back from it, and on the event day only the hours before "
+                 "it are used."));
+  classTable_->setToolTip(ui::helpText(
+      tr("How the days before the event become classes. Each row is one "
+         "label: the range of days before the event (first to last), the "
+         "step (1 = every day, 2 = every second day) and how many days "
+         "are taken. A planned day without data is replaced by the "
+         "nearest day that has some.")));
+  if (QLabel *l = ui::helpLabel(classTable_))
+    l->setToolTip(classTable_->toolTip());
+  addRow_->setToolTip(
+      ui::helpText(tr("Adds a label row to the class table.")));
+  removeRow_->setToolTip(
+      ui::helpText(tr("Removes the selected label row.")));
+  ui::setHelp(labelMerge_,
+              tr("Joins labels into fewer classes: one class number per "
+                 "label, in label order. 0,1,1,2 puts labels 1 and 2 into "
+                 "one class. Empty keeps every label a class of its own."));
+  ui::setHelp(classMonths_,
+              tr("A seasonal control: restricts a class to windows "
+                 "recorded in the listed calendar months, written as "
+                 "class: months, e.g. 1: 10 11 12 1 2 3. Empty uses all "
+                 "months."));
+  features_->setToolTip(ui::helpText(
+      tr("The columns of the table given to the models. Tick the ones to "
+         "use; the list is the source's numeric columns.")));
+  if (QLabel *l = ui::helpLabel(features_))
+    l->setToolTip(features_->toolTip());
+  ui::setHelp(scaler_,
+              tr("How feature values are brought to a common scale, fitted "
+                 "on the training days only: robust (median and "
+                 "quartiles, least affected by outliers), standard (mean "
+                 "and standard deviation) or minmax (smallest to "
+                 "largest)."));
+  ui::setHelp({clip_, clipValue_},
+              tr("After scaling, cuts every value off at plus and minus "
+                 "this limit, so that a few extreme windows do not "
+                 "dominate."));
+  ui::setHelp(trainSize_,
+              tr("Share of each label's days used to train the models "
+                 "(0 to 1). Whole days go to one set, never single "
+                 "windows."));
+  ui::setHelp(valSize_,
+              tr("Share of each label's days used to choose parameters and "
+                 "compare models. What remains after training and "
+                 "validation is the test set."));
+  ui::setHelp(seed_, tr("Starting value of the random numbers (the split "
+                        "of days, the models). The same seed repeats the "
+                        "same run."));
+  ui::setHelp(runName_,
+              tr("Names this experiment; its files go to models/<run name>. "
+                 "Running a name again adds rows to experiments.csv and "
+                 "the latest per model counts."));
+  const QString baseline =
+      tr("Baseline models trained in the baseline step: logistic "
+         "regression and support vector machines with a linear, "
+         "polynomial or RBF kernel. Tick the ones to train.");
+  ui::setHelp({logistic_, svmLinear_, svmPoly_, svmRbf_}, baseline);
+  const QString trees =
+      tr("Tree models trained in the trees step: random forest, gradient "
+         "boosting and XGBoost. Tick the ones to train.");
+  ui::setHelp({randomForest_, gradientBoosting_, xgboost_}, trees);
+  ui::setHelp(balanced_,
+              tr("Weights each class inversely to its number of windows, "
+                 "so that a class with few windows counts as much as a "
+                 "large one."));
+  ui::setHelp(selectBy_,
+              tr("The score that picks the best parameters of each model: "
+                 "f1_macro (F1 averaged over the classes, each class "
+                 "counting the same) or accuracy (share of windows "
+                 "classified correctly)."));
+  ui::setHelp({cv_, cvFolds_},
+              tr("Tunes parameters by k-fold cross-validation over the "
+                 "training and validation days together (the number is k, "
+                 "the number of folds) instead of the fixed validation "
+                 "days. Slower, steadier."));
+  ui::setHelp(saveModels_, tr("Also writes the trained models into the "
+                              "run's folder. Unticked, only the scores, "
+                              "reports and figures are kept."));
+  ui::setHelp(annEpochs_, tr("The neural network: the most passes over the "
+                             "training data in one training."));
+  ui::setHelp(annPatience_,
+              tr("The neural network: training stops early when the "
+                 "result on the validation days has not improved for this many "
+                 "epochs."));
+  ui::setHelp(annBalance_,
+              tr("The neural network: repeats windows of the rarer classes "
+                 "in the training data until the classes are the same "
+                 "size."));
+  ui::setHelp(toml_,
+              tr("Every setting as text in the layout of sfc's "
+                 "project.toml. Edit the parameter grids and the scatter "
+                 "lists here, then Apply TOML."));
+  applyToml_->setToolTip(ui::helpText(
+      tr("Reads the text on the left into the form. An error in the text "
+         "is reported and nothing changes.")));
 }
 
 } // namespace skg

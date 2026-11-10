@@ -1,5 +1,7 @@
 #include "modules/features/configpane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QEvent>
@@ -363,6 +365,137 @@ void ConfigPane::retranslate() {
   for (auto *s : {staSec_, meanPeriod_, preSec_, minPost_})
     s->setSuffix(tr(" s"));
   maxDist_->setSuffix(tr(" km"));
+
+  ui::setHelp(station_, tr("The station code. It only labels the outputs "
+                           "and looks the station up in the station list "
+                           "for the calibration."));
+  ui::setHelp(fs_,
+              tr("The sampling rate the data is reduced to before the "
+                 "features are computed. The recorded rate must be a whole "
+                 "multiple of it. Default 5 Hz."));
+  ui::setHelp(winSec_, tr("Length of one analysis window in seconds. Each "
+                          "window gives one row of features. Default "
+                          "200 s."));
+  ui::setHelp(stepSec_,
+              tr("How far the window moves between two rows, in seconds. "
+                 "A step shorter than the window makes the windows "
+                 "overlap. Default 50 s."));
+  ui::setHelp(staSec_,
+              tr("Length of the short-term average in the STA/LTA feature "
+                 "(the ratio of recent to background signal level), in "
+                 "seconds. Default 0.5 s."));
+  ui::setHelp(ltaSec_, tr("Length of the long-term (background) average in "
+                          "the STA/LTA feature, in seconds. Default 60 s."));
+  ui::setHelp(freqmin_, tr("Lower corner of the bandpass filter applied "
+                           "before the features: slower motion is removed. "
+                           "Default 0.1 Hz."));
+  ui::setHelp(freqmax_,
+              tr("Upper corner of the bandpass filter: faster motion is "
+                 "removed. It must stay below half the sampling rate. "
+                 "Default 2 Hz."));
+  ui::setHelp(splitHz_,
+              tr("The frequency that separates \"low\" from \"high\" in the "
+                 "low- and high-frequency energy features. Default 1 Hz."));
+  ui::setHelp(chaosOnly_,
+              tr("Computes only the chaotic features (Lyapunov exponents, "
+                 "sample entropy and the like) and writes them to a "
+                 "separate file, <name>_chaos_features."));
+  ui::setHelp(tau_,
+              tr("The embedding delay: how many samples apart the values "
+                 "are that are combined into one point of the "
+                 "reconstructed state space. In a full run it is "
+                 "calibrated from the data and this is only the starting "
+                 "value."));
+  ui::setHelp(dim_,
+              tr("The embedding dimension: how many delayed values make up "
+                 "one point of the reconstructed state space. Calibrated "
+                 "in a full run; this is the starting value."));
+  ui::setHelp(evolve_,
+              tr("For the Wolf Lyapunov exponent: how many samples two "
+                 "neighbouring trajectories are followed before their "
+                 "separation is measured and a new neighbour is chosen. "
+                 "Default 5."));
+  ui::setHelp(minSamples_,
+              tr("A window with fewer samples than this gets no Lyapunov "
+                 "exponents (the values are left empty). Default 500."));
+  ui::setHelp(meanPeriod_,
+              tr("The typical period of the signal in seconds. It keeps "
+                 "neighbours in the Rosenstein method apart in time and is "
+                 "its time unit. Calibrated in a full run; this is the "
+                 "starting value."));
+  ui::setHelp({riseLo_, riseHi_},
+              tr("The Rosenstein exponent is the slope of the divergence "
+                 "curve between these two fractions of its total rise. "
+                 "Defaults 0.1 and 0.9: the middle of the rise, without "
+                 "its start and its flattening end."));
+  ui::setHelp(horizon_,
+              tr("How long neighbouring trajectories are followed for the "
+                 "Rosenstein divergence curve, in mean periods. "
+                 "Default 20."));
+  ui::setHelp(sampentM_,
+              tr("Sample entropy compares runs of this many consecutive "
+                 "samples (the pattern length m). Default 2."));
+  ui::setHelp(sampentR_,
+              tr("Sample entropy counts two patterns as alike when they "
+                 "differ by less than r times the signal's standard "
+                 "deviation. In a full run the tolerance is set from the "
+                 "quiet periods. Default 0.2."));
+  ui::setHelp({catalog_, catalogBrowse_},
+              tr("The AFAD earthquake catalog (CSV or .csv.gz). The "
+                 "calibration uses it to find the periods without "
+                 "earthquakes. Needed for a full run unless a calibration "
+                 "is reused."));
+  ui::setHelp({stationCoords_, stationCoordsBrowse_},
+              tr("A CSV with station codes, latitudes and longitudes, to "
+                 "find the station's position. Empty uses the AFAD list "
+                 "built into the application."));
+  ui::setHelp(useCoords_, tr("Type the station's latitude and longitude "
+                             "below instead of looking the code up in the "
+                             "station list."));
+  ui::setHelp(lat_, tr("Latitude of the station in degrees, north "
+                       "positive."));
+  ui::setHelp(lon_, tr("Longitude of the station in degrees, east "
+                       "positive."));
+  ui::setHelp(minMag_,
+              tr("Only earthquakes of at least this magnitude make a period "
+                 "\"not quiet\" for the calibration."));
+  ui::setHelp(maxDist_, tr("Only earthquakes within this distance of the "
+                           "station make a period \"not quiet\", in km."));
+  ui::setHelp(preSec_, tr("The time excluded as not quiet starts this many "
+                          "seconds before an earthquake's origin time."));
+  ui::setHelp(minPost_,
+              tr("The time after an earthquake that is excluded at least, "
+                 "in seconds. The larger of this and the coda duration "
+                 "counts."));
+  ui::setHelp(coda_,
+              tr("Multiplies the estimated coda duration (how long the "
+                 "shaking takes to die down, after Lee) to get the time "
+                 "excluded after an earthquake. Larger excludes more."));
+  ui::setHelp(maxWindows_,
+              tr("How many quiet, gap-free windows are drawn at random for "
+                 "the calibration. More is slower and steadier."));
+  ui::setHelp(loud_,
+              tr("Of the sampled quiet windows, those louder than this "
+                 "factor times the median level are dropped, per "
+                 "component, as probably not quiet after all."));
+  ui::setHelp(seed_, tr("Starting value of the random draw of quiet "
+                        "windows. The same seed repeats the same "
+                        "calibration."));
+  ui::setHelp(maxTau_,
+              tr("The largest embedding delay the calibration tries. Tau "
+                 "is the first minimum of the average mutual information "
+                 "up to this value."));
+  ui::setHelp(maxDim_,
+              tr("The largest embedding dimension the calibration tries "
+                 "with the false-nearest-neighbours test."));
+  bandsView_->setToolTip(ui::helpText(
+      tr("Optional frequency bands. Each row is a complete run of its own "
+         "(band corners, rate, window, step, STA, LTA, split), written to "
+         "a sub-folder named after the band. Edit a cell in place.")));
+  addBand_->setToolTip(ui::helpText(
+      tr("Adds a band row filled with the settings shown above.")));
+  removeBand_->setToolTip(
+      ui::helpText(tr("Removes the selected band row.")));
 }
 
 } // namespace skg

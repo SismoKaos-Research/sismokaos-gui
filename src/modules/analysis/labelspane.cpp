@@ -1,5 +1,7 @@
 #include "modules/analysis/labelspane.h"
 
+#include "core/ui.h"
+
 #include <QDoubleSpinBox>
 #include <QEvent>
 #include <QFileInfo>
@@ -36,7 +38,7 @@ LabelsPane::LabelsPane(AppContext ctx, std::shared_ptr<AnalysisState> state,
   preview_->horizontalHeader()->setSectionResizeMode(
       QHeaderView::ResizeToContents);
   auto *bar = new QHBoxLayout;
-  bar->addWidget(new QLabel(tr("Window length (s)"), this));
+  bar->addWidget(ui::buddyLabel(tr("Window length (s)"), winSec_, this));
   bar->addWidget(winSec_);
   bar->addWidget(run_);
   bar->addStretch(1);
@@ -124,6 +126,17 @@ void LabelsPane::changeEvent(QEvent *e) {
   QWidget::changeEvent(e);
 }
 
-void LabelsPane::retranslate() { run_->setText(tr("Label the windows")); }
+void LabelsPane::retranslate() {
+  run_->setText(tr("Label the windows"));
+  ui::setHelp(winSec_,
+              tr("Length of one feature window in seconds. An earthquake is "
+                 "assigned to the window its origin time falls in. Filled "
+                 "from the table's run metadata when that is found."));
+  run_->setToolTip(ui::helpText(
+      tr("Adds to every window the earthquakes that happened in it "
+         "(magnitude, position, distance and direction from the station, "
+         "a 0/1 flag) and writes <name>_etiketli.csv and .npy beside the "
+         "table.")));
+}
 
 } // namespace skg

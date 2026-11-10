@@ -391,28 +391,28 @@ void EarlyWarningWidget::retranslate() {
   replayBox_->setTitle(tr("Replay"));
   addFiles_->setText(tr("Add files..."));
   removeFiles_->setText(tr("Remove"));
-  files_->setToolTip(tr("One miniSEED file per station, HH? channels; the "
+  ui::setHelp(files_, tr("One miniSEED file per station, HH? channels; the "
                         "station code is read from the records and its "
                         "position from the station table."));
   speedLabel_->setText(tr("Speed"));
-  speed_->setToolTip(tr("1 = real time, 10 = ten times faster, 0 = as fast "
+  ui::setHelp(speed_, tr("1 = real time, 10 = ten times faster, 0 = as fast "
                         "as the machine allows"));
   speed_->setSpecialValueText(tr("as fast as possible"));
   fromLabel_->setText(tr("Detect from (UTC)"));
-  from_->setToolTip(tr("No triggers before this time; earlier data still "
+  ui::setHelp(from_, tr("No triggers before this time; earlier data still "
                        "warms up the filters. Empty: from the start."));
   catalogLabel_->setText(tr("AFAD catalog"));
-  catalog_->setToolTip(tr("An AFAD catalogue export (CSV). Each alarm is "
+  ui::setHelp(catalog_, tr("An AFAD catalogue export (CSV). Each alarm is "
                           "compared with it; without one, alarms are "
                           "reported but not scored."));
   catalogBrowse_->setText(tr("Browse..."));
   liveBox_->setTitle(tr("Live"));
   serverLabel_->setText(tr("SeedLink server"));
   streamsLabel_->setText(tr("Streams"));
-  streams_->setToolTip(tr("NET.STA or NET.STA.LOC, comma-separated; every "
+  ui::setHelp(streams_, tr("NET.STA or NET.STA.LOC, comma-separated; every "
                           "station needs coordinates in the station table"));
   archiveLabel_->setText(tr("Archive to"));
-  archive_->setToolTip(tr("Every record received is appended to "
+  ui::setHelp(archive_, tr("Every record received is appended to "
                           "DIR/STATION.mseed, which replays like any file"));
   archiveBrowse_->setText(tr("Browse..."));
   durationLabel_->setText(tr("Duration (s)"));
@@ -425,7 +425,7 @@ void EarlyWarningWidget::retranslate() {
   detector_->setItemText(3, tr("FilterPicker (reference)"));
   minStationsLabel_->setText(tr("Stations to declare"));
   minStations_->setSpecialValueText(tr("default"));
-  minStations_->setToolTip(tr("Station detections needed to declare an "
+  ui::setHelp(minStations_, tr("Station detections needed to declare an "
                               "event; ayzek's default is 2 (3 for the "
                               "transformer)"));
   thresholdLabel_->setText(tr("Trigger threshold"));
@@ -447,22 +447,22 @@ void EarlyWarningWidget::retranslate() {
   noMagnitude_->setText(tr("No magnitude estimate"));
   verbose_->setText(tr("Verbose: every station detection, pick and Pd"));
   outputLabel_->setText(tr("Output folder"));
-  output_->setToolTip(tr("Working directory of the run; the assessment "
+  ui::setHelp(output_, tr("Working directory of the run; the assessment "
                          "table and the scores go here"));
   outputBrowse_->setText(tr("Browse..."));
   sitesLabel_->setText(tr("Warning sites"));
-  sites_->setToolTip(tr("One place per line as NAME,LAT,LON; the S-wave "
+  ui::setHelp(sites_, tr("One place per line as NAME,LAT,LON; the S-wave "
                         "warning time at each is reported"));
   stationsLabel_->setText(tr("Station table"));
-  stations_->setToolTip(tr("code,lat,lon[,...] in place of the shipped "
+  ui::setHelp(stations_, tr("code,lat,lon[,...] in place of the shipped "
                            "table (TU and KO stations), for another "
                            "network"));
   stationsBrowse_->setText(tr("Browse..."));
   modelsLabel_->setText(tr("Models folder"));
-  models_->setToolTip(tr("Weights directory; empty uses the shipped models"));
+  ui::setHelp(models_, tr("Weights directory; empty uses the shipped models"));
   modelsBrowse_->setText(tr("Browse..."));
   extraLabel_->setText(tr("Extra options"));
-  extra_->setToolTip(tr("Any other ayzek option, as on the command line"));
+  ui::setHelp(extra_, tr("Any other ayzek option, as on the command line"));
   run_->setText(tr("Run"));
   ui::setPrimary(run_);
   log_->setPlaceholderText(tr("The run log appears here."));
@@ -479,6 +479,70 @@ void EarlyWarningWidget::retranslate() {
          "ayzek</a>."));
   if (!running_ && summary_->text().isEmpty())
     summary_->setText(tr("No run yet."));
+
+  installBrowse_->setToolTip(ui::helpText(
+      tr("Runs another copy of ayzek instead of the one shipped with the "
+         "application.")));
+  installReset_->setToolTip(ui::helpText(
+      tr("Forgets the chosen executable and goes back to the shipped "
+         "copy.")));
+  ui::setHelp({modeLabel_, mode_},
+              tr("Where the waveforms come from: recorded miniSEED files "
+                 "played back, or a live stream from a SeedLink server "
+                 "(not available in the Windows build of ayzek)."));
+  addFiles_->setToolTip(ui::helpText(
+      tr("Adds miniSEED files to replay, one per station.")));
+  removeFiles_->setToolTip(
+      ui::helpText(tr("Takes the selected files off the list.")));
+  ui::setHelp(server_, tr("The SeedLink server to read from, as "
+                          "HOST:PORT."));
+  ui::setHelp(duration_, tr("Stops the live input after this many seconds. "
+                            "0 runs until you press Stop."));
+  ui::setHelp(detector_,
+              tr("What decides at each station that an earthquake has "
+                 "started: the 6 s window detector (ayzek's default), the "
+                 "streaming onset transformer, or the classic STA/LTA and "
+                 "FilterPicker methods as references."));
+  ui::setHelp(threshold_,
+              tr("A station triggers when the detector's probability "
+                 "reaches this value in a run of consecutive windows (see "
+                 "Trigger windows). ayzek's default is 0.8. Lower triggers "
+                 "sooner and more often falsely."));
+  ui::setHelp(triggerWindows_,
+              tr("How many consecutive windows must reach the trigger "
+                 "threshold. ayzek's default is 8, which adds 3.5 s to a "
+                 "trigger; fewer is faster and less certain."));
+  ui::setHelp(instant_,
+              tr("A station also triggers on a single window at or above "
+                 "this probability. ayzek's default is 0.9; a value above "
+                 "1 turns this off."));
+  ui::setHelp(release_,
+              tr("After a trigger, the station can trigger again once two "
+                 "windows have fallen below this probability. ayzek's "
+                 "default is 0.3."));
+  ui::setHelp(locate_,
+              tr("How the event is located: from the transformer's "
+                 "geometry head as soon as it triggers, or from P and S "
+                 "picks. \"default\" leaves the choice to ayzek."));
+  ui::setHelp(assess_,
+              tr("Judges every alarm from the S-P times picked at its "
+                 "stations and writes the verdicts to assess.csv in the "
+                 "output folder."));
+  ui::setHelp(scores_,
+              tr("Writes the detector's probability for every window of "
+                 "every station into scores/ in the output folder, for "
+                 "looking at afterwards."));
+  ui::setHelp(verbose_, tr("Prints every station detection, pick and peak "
+                           "displacement (Pd) value, not only the "
+                           "alarms."));
+  ui::setHelp(noMagnitude_, tr("Skips the magnitude estimate from the "
+                               "peak P displacement."));
+  run_->setToolTip(ui::helpText(
+      tr("Starts ayzek with these settings as a job. Its output appears "
+         "on the Results tab.")));
+  stop_->setToolTip(ui::helpText(tr("Stops ayzek.")));
+  openOutput_->setToolTip(ui::helpText(
+      tr("Opens the run's working directory in the file manager.")));
 }
 
 void EarlyWarningWidget::refreshInstall() {

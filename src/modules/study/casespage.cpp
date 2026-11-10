@@ -253,6 +253,46 @@ void CasesPage::retranslate() {
   radius_->setSuffix(tr(" km"));
   spanLabel_->setText(tr("Span"));
   span_->setSuffix(tr(" days"));
+
+  ui::setHelp({catalogLabel_, catalog_, catalogBrowse_},
+              tr("The earthquake catalog of this study: an AFAD export, CSV "
+                 "or .gz. Cases are picked from it and the Indicators "
+                 "recipes read their events from it."));
+  ui::setHelp(catalogTime_,
+              tr("Whether the times in the catalog file are UTC or Turkey "
+                 "time (UTC+3). AFAD exports are UTC. A wrong choice shifts "
+                 "every event by three hours."));
+  ui::setHelp({dataLabel_, dataRoot_, dataBrowse_},
+              tr("For the Features recipes: a folder with one sub-folder of "
+                 "miniSEED files per station, named by the station code. "
+                 "Not needed for Indicators."));
+  add_->setToolTip(ui::helpText(
+      tr("Adds a case by picking an earthquake from the study's catalog and "
+         "ticking the stations near it.")));
+  addRef_->setToolTip(ui::helpText(
+      tr("Adds a case with no earthquake: a date at a place, studied the "
+         "same way so it can be read beside the earthquakes.")));
+  remove_->setToolTip(ui::helpText(
+      tr("Takes the selected case out of the study. Its result folders "
+         "stay on disk.")));
+  ui::setHelp(name_, tr("The case's name, as shown in the tables and the "
+                        "figures. Changes are saved at once."));
+  stationTable_->setToolTip(ui::helpText(
+      tr("Tick the stations this case is studied from. Each ticked station "
+         "is a row of its own on the Runs and Compare pages.")));
+  ui::setHelp({zoneLabel_, zone_},
+              tr("Which catalog events count for this case in the Indicators "
+                 "recipes: those within a circle around the epicentre, or "
+                 "those within a buffer on both sides of the shipped East "
+                 "Anatolian fault traces."));
+  ui::setHelp(radius_, tr("Radius of the circle, or width of the buffer on "
+                          "each side of the fault traces, in km. Larger "
+                          "takes in more events."));
+  ui::setHelp({spanLabel_, span_},
+              tr("How many days before the event are studied. The Indicators "
+                 "recipes use the catalog from one window before the span "
+                 "up to, but not including, the event. Changing it marks "
+                 "the case's finished runs stale."));
 }
 
 QString CasesPage::currentId() const {

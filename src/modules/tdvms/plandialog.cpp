@@ -1,5 +1,7 @@
 #include "modules/tdvms/plandialog.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCompleter>
@@ -83,6 +85,26 @@ PlanDialog::PlanDialog(const QString &ledgerPath, QWidget *parent)
   connect(end_, &QDateEdit::dateChanged, this, &PlanDialog::updateHint);
   connect(chunkDays_, &QSpinBox::valueChanged, this, &PlanDialog::updateHint);
   updateHint();
+
+  ui::setHelp(station_,
+              tr("The station to request. Type a code or part of one; the "
+                 "list is the portal's station catalog with network and "
+                 "instrument (Refresh catalogs updates it)."));
+  ui::setHelp(start_, tr("The first day of the period to download."));
+  ui::setHelp(end_, tr("The end of the period to download."));
+  ui::setHelp(chunkDays_,
+              tr("Length of one request (a chunk) in days. The period is "
+                 "cut into windows of this length, one portal request "
+                 "each."));
+  ui::setHelp(everyDays_,
+              tr("Spacing between the starts of two windows. \"Cover the "
+                 "whole period\" puts the windows back to back; a larger "
+                 "number downloads only a sample, one window every that "
+                 "many days."));
+  ui::setHelp(verify_,
+              tr("Asks the portal whether the station code exists before "
+                 "planning, and shows its network and instrument. A "
+                 "strong-motion accelerometer is flagged."));
 }
 
 PlanRequest PlanDialog::request() const {

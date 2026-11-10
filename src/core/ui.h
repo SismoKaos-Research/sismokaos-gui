@@ -7,6 +7,8 @@
 #include <QPointer>
 #include <QString>
 
+#include <initializer_list>
+
 class QAbstractButton;
 class QAbstractItemView;
 class QWidget;
@@ -36,6 +38,26 @@ private:
   QPointer<QAbstractItemView> view_;
 };
 void setEmptyHint(QAbstractItemView *view, const QString &text);
+
+// Hover help for an option: `text` (plain, one or two sentences) becomes the
+// tooltip and the What's This text of the field and of its label, so
+// hovering either explains the option. The label is the field's row label in
+// a QFormLayout (also when the field sits in a nested row layout) or a
+// QLabel whose buddy is the field; it is looked up at the time of the call,
+// so call this after the field is in its layout, i.e. from retranslate().
+// Long text is wrapped. The plain text is kept in the "help" property.
+void setHelp(QWidget *field, const QString &text);
+// The same for several widgets that make up one option (a path field and its
+// "…" button, a value and its unit).
+void setHelp(std::initializer_list<QWidget *> fields, const QString &text);
+// A label for a field that sits in a plain row (not a form): the field is
+// its buddy, so setHelp() on the field reaches the label too.
+QLabel *buddyLabel(const QString &text, QWidget *field, QWidget *parent);
+// The label setHelp() would use for this field, or nullptr.
+QLabel *helpLabel(const QWidget *field);
+// The tooltip form of a help text (wrapped rich text), for item views and
+// other places that take a string.
+QString helpText(const QString &text);
 
 // Applied once to each page by the main window: "..." buttons become
 // compact, spin boxes get a text margin, tables lose their grid and get

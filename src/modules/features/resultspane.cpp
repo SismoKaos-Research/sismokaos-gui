@@ -1,5 +1,7 @@
 #include "modules/features/resultspane.h"
 
+#include "core/ui.h"
+
 #include <QDesktopServices>
 #include <QDir>
 #include <QEvent>
@@ -193,6 +195,10 @@ void ResultsPane::changeEvent(QEvent *e) {
 void ResultsPane::retranslate() {
   refresh_->setText(tr("Refresh"));
   open_->setText(tr("Open folder"));
+  refresh_->setToolTip(
+      ui::helpText(tr("Lists the files of the output directory again.")));
+  open_->setToolTip(ui::helpText(
+      tr("Opens the output directory in the file manager.")));
 }
 
 } // namespace skg

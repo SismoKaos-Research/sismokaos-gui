@@ -589,21 +589,67 @@ void RegionsPane::retranslate() {
   methods_->setItemText(0, tr("SOM and SOM + Mean Shift"));
   methods_->setItemText(1, tr("SOM (a fixed number of regions)"));
   methods_->setItemText(2, tr("SOM + Mean Shift (finds the number)"));
-  regions_->setToolTip(tr(
-      "Units of the linear map; each becomes a region if events fall to it"));
-  gridRows_->setToolTip(
-      tr("The map that compresses the catalog before Mean Shift groups its "
-         "units"));
-  gridCols_->setToolTip(gridRows_->toolTip());
-  quantile_->setToolTip(
-      tr("Share of the map's units used as neighbours for the bandwidth; "
-         "larger gives fewer regions"));
-  seed_->setToolTip(tr("The same seed gives the same regions"));
+  ui::setHelp(methods_,
+              tr("How the epicentres are grouped into regions. SOM (a "
+                 "self-organising map) makes the number of regions you "
+                 "ask for; SOM + Mean Shift first summarises the catalog "
+                 "with a larger map and then finds the number of regions "
+                 "itself from where the events are dense."));
+  ui::setHelp(regions_,
+              tr("For SOM: the number of units of the map. Each unit "
+                 "becomes a region if events fall to it, so there can be "
+                 "fewer regions than asked for. Default 5."));
+  ui::setHelp({gridRows_, gridCols_},
+              tr("For SOM + Mean Shift: rows and columns of the map that "
+                 "summarises the catalog before Mean Shift groups its "
+                 "units. Default 10 × 10."));
+  ui::setHelp(quantile_,
+              tr("For Mean Shift: the share of the map's units used as "
+                 "neighbours when its bandwidth is estimated. A larger "
+                 "value gives fewer, larger regions. Default 0.15."));
+  ui::setHelp(iterations_,
+              tr("How many training steps the self-organising maps take. "
+                 "Applies to both methods. Default 5000."));
+  ui::setHelp(seed_, tr("Starting value of the random numbers. The same "
+                        "seed gives the same regions. Default 42."));
   area_->setPlaceholderText(
       tr("first line of the map titles, e.g. East Anatolian Fault Zone"));
   marker_->setText(tr("Marker"));
-  markerLat_->setToolTip(tr("Latitude"));
-  markerLon_->setToolTip(tr("Longitude"));
+  ui::setHelp(area_, tr("The first line of the map titles, e.g. the name "
+                        "of the fault zone."));
+  ui::setHelp(marker_, tr("Adds one labelled point to the maps, for "
+                          "example a station or a city."));
+  ui::setHelp(markerLat_, tr("Latitude of the marker in degrees, north "
+                             "positive."));
+  ui::setHelp(markerLon_, tr("Longitude of the marker in degrees, east "
+                             "positive."));
+  ui::setHelp(markerLabel_, tr("The text written beside the marker."));
+  ui::setHelp({provincesEdit_, provincesBrowse_},
+              tr("Optional: a polygon shapefile (.shp) of province "
+                 "boundaries, drawn on the maps."));
+  ui::setHelp({citiesEdit_, citiesBrowse_},
+              tr("Optional: a CSV of lat, lon, name for the city labels. "
+                 "An align column with the word right puts a label left "
+                 "of its point. Empty uses sixteen cities around the East "
+                 "Anatolian Fault."));
+  ui::setHelp(showCountries_, tr("Draws the country outlines shipped with "
+                                 "the application (Natural Earth)."));
+  ui::setHelp(showCities_, tr("Writes the city names on the maps."));
+  ui::setHelp(maps_, tr("Writes the maps as PNG pictures into the output "
+                        "folder. Unticked, only the region tables are "
+                        "written."));
+  ui::setHelp(dpi_, tr("Resolution of the PNG maps in dots per inch. Maps "
+                       "are 12 × 10 inches, so 200 dpi gives 2400 × 2000 "
+                       "pixels."));
+  ui::setHelp({outDir_, outBrowse_},
+              tr("Where the maps, the catalog of each region, the summary "
+                 "table and the run record are written."));
+  ui::setHelp(mapChoice_, tr("Which of the run's maps is shown: the study "
+                             "area, or the regions of one method."));
+  start_->setToolTip(ui::helpText(
+      tr("Groups the epicentres of the catalog loaded at the top into "
+         "regions and draws the maps, as a job.")));
+  stop_->setToolTip(ui::helpText(tr("Stops the run.")));
   markerLabel_->setPlaceholderText(tr("label"));
   provincesEdit_->setPlaceholderText(tr("province polygons (.shp), optional"));
   citiesEdit_->setPlaceholderText(
@@ -611,14 +657,16 @@ void RegionsPane::retranslate() {
          "Fault"));
   showCountries_->setText(tr("countries"));
   showFaults_->setText(tr("faults"));
-  showFaults_->setToolTip(
-      tr("The fault shapefile loaded at the top, or the shipped East "
-         "Anatolian traces when none is loaded"));
+  ui::setHelp(showFaults_,
+              tr("Draws the faults: the shapefile loaded at the top of the "
+                 "page, or the shipped East Anatolian traces when none is "
+                 "loaded."));
   showCities_->setText(tr("cities"));
   maps_->setText(tr("Write PNG maps"));
   dpi_->setSuffix(tr(" dpi"));
   svg_->setText(tr("and SVG"));
-  svg_->setToolTip(tr("An SVG beside every PNG; large for big catalogs"));
+  ui::setHelp(svg_, tr("Also writes an SVG vector copy beside every PNG. "
+                       "Large for big catalogs."));
   start_->setText(tr("Run"));
   ui::setPrimary(start_);
   log_->setPlaceholderText(tr("The run log appears here."));

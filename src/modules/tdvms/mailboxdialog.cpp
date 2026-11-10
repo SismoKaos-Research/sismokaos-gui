@@ -1,5 +1,7 @@
 #include "modules/tdvms/mailboxdialog.h"
 
+#include "core/ui.h"
+
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QLabel>
@@ -73,6 +75,26 @@ MailboxDialog::MailboxDialog(JobModel *jobs, QWidget *parent)
                      .arg(credentialsPath(), settingsPath()),
                  this));
   layout->addWidget(buttons);
+
+  ui::setHelp(host_, tr("The IMAP server of the mailbox the portal's mails "
+                        "arrive in, e.g. imap.gmail.com."));
+  ui::setHelp(user_, tr("The login name of that mailbox, usually the "
+                        "e-mail address."));
+  ui::setHelp(password_,
+              tr("The mailbox password. For Gmail this must be an app "
+                 "password, not the account password. It is stored in a "
+                 "file only you can read."));
+  check_->setToolTip(ui::helpText(
+      tr("Logs in once with these values and reports how many messages "
+         "the inbox holds.")));
+  ui::setHelp(slots_,
+              tr("The default number of requests a campaign keeps open at "
+                 "the portal at once; a run can change it."));
+  ui::setHelp(notify_,
+              tr("Where to send a notice when a run needs attention: an "
+                 "ntfy topic URL, or the word desktop for a system "
+                 "notification. Several, separated by commas. Empty: no "
+                 "notices."));
 }
 
 void MailboxDialog::check() {

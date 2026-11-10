@@ -442,6 +442,27 @@ void ClassificationWidget::retranslate() {
   tabs_->setTabText(0, tr("Settings"));
   tabs_->setTabText(1, tr("Run"));
   tabs_->setTabText(2, tr("Experiments"));
+
+  ui::setHelp({projectLabel_, project_, projectBrowse_},
+              tr("The folder that holds project.toml. Results are written "
+                 "under results/<station>/<event>/ inside it. A new folder "
+                 "starts from the defaults."));
+  ui::setHelp({sourceLabel_, source_, sourceBrowse_},
+              tr("The table of windows to classify: sfc's labelled CSV, or "
+                 "a feature table from the Features page, which is then "
+                 "labelled by the class table in the settings."));
+  save_->setToolTip(ui::helpText(
+      tr("Writes the settings shown to project.toml in the project "
+         "folder.")));
+  steps_->setToolTip(ui::helpText(
+      tr("The steps of a run, in fixed order; tick the ones to do. split "
+         "divides the days into training, validation and test; baseline, "
+         "ann and trees train the models; compare puts their scores side "
+         "by side; the others write figures.")));
+  run_->setToolTip(ui::helpText(
+      tr("Runs the ticked steps as a job. The log shows every parameter "
+         "combination with its validation score.")));
+  stop_->setToolTip(ui::helpText(tr("Stops the run.")));
 }
 
 } // namespace skg

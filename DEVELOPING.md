@@ -96,6 +96,23 @@ the main window applies to every page. Draw with `ctx.theme->color("text")`
 and `seriesColors()` in custom-painted widgets so both themes work, and
 repaint on `Theme::changed`.
 
+**Hover help.** Every option a user can set carries a tooltip. Give it with
+`ui::setHelp(field, tr("…"))` from `retranslate()` (or at the end of a
+dialog's constructor), after the field is in its layout: the same text goes
+on the field, on its label (the row label of a `QFormLayout`, also through a
+holder widget or a nested row, or a `QLabel` whose buddy is the field;
+`ui::buddyLabel()` makes one for a plain row) and into What's This, wrapped
+as rich text. `ui::setHelp({a, b}, text)` covers the parts of one option (a
+path and its "…" button). Buttons and item views take
+`setToolTip(ui::helpText(tr("…")))`. Write one or two plain sentences: what
+the option does, its unit, the default, what a larger value changes; take
+the meaning from the code that reads the option, not from its name. Recipe
+settings are explained in one table, `modules/study/settinghelp.cpp`
+(readable name and help per key), used by the recipe dialog and the Runs
+page. `tst_help` builds every page and dialog and fails, listing them, when
+a spin box, combo box, check box, radio button or editable text field has no
+tooltip or its label has none.
+
 To look at every page without touching your own settings:
 `sismokaos-gui --settings /tmp/try.ini --screenshots /tmp/shots` (set
 `ui/theme=dark` or `ui/language=tr` in the INI; `QT_QPA_PLATFORM=offscreen`

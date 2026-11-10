@@ -1,5 +1,7 @@
 #include "modules/tdvms/coveragepane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QEvent>
 #include <QFontDatabase>
@@ -187,6 +189,14 @@ void CoveragePane::retranslate() {
                                      tr("Covered"), tr("Of"), tr("Gaps"),
                                      tr("Timeline")});
   gaps_->setPlaceholderText(tr("Select a channel to list its gaps."));
+  compute_->setToolTip(ui::helpText(
+      tr("Reads the headers of every miniSEED record in the downloaded "
+         "archives (not the samples) and shows how much of the requested "
+         "time each channel covers.")));
+  ui::setHelp(refresh_,
+              tr("Rereads every archive instead of using the results "
+                 "cached from the last time. Slower; use it when archives "
+                 "were replaced."));
 }
 
 } // namespace skg

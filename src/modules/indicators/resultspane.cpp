@@ -142,6 +142,11 @@ void IndicatorsResultsPane::retranslate() {
                               "earlier run's folder."));
   open_->setText(tr("Open folder"));
   choose_->setText(tr("Open an earlier run…"));
+  open_->setToolTip(ui::helpText(
+      tr("Opens the shown run's folder in the file manager.")));
+  choose_->setToolTip(ui::helpText(
+      tr("Shows the table and figures of a run folder written "
+         "earlier.")));
   if (dir_.isEmpty())
     info_->setText(tr("No run yet. Run the indicators or open an earlier "
                       "output folder."));

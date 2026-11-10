@@ -4,7 +4,11 @@
 
 QWidget#shell, QWidget#content, QStackedWidget#pages { background: @bg; }
 QStackedWidget#pages > QWidget { background: @bg; }
-QToolTip { background: @side; color: #FFFFFF; border: none; padding: 4px 8px; }
+/* Hover help. Dark on the light theme, raised and outlined on the dark one,
+   so it stands off the page in both. Text set with ui::setHelp() is rich
+   text and wraps. */
+QToolTip { background: @tip; color: @tipText; border: 1px solid @tipBorder;
+  padding: 6px 8px; }
 
 /* Sidebar */
 QFrame#sidebar { background: @side; }

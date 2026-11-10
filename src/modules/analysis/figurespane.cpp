@@ -1,5 +1,7 @@
 #include "modules/analysis/figurespane.h"
 
+#include "core/ui.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDateEdit>
@@ -77,7 +79,7 @@ FiguresPane::FiguresPane(AppContext ctx, std::shared_ptr<AnalysisState> state,
   bar->addWidget(yMax_);
   bar->addStretch(1);
   auto *exportBar = new QHBoxLayout;
-  exportBar->addWidget(new QLabel(tr("PNG dpi"), this));
+  exportBar->addWidget(ui::buddyLabel(tr("PNG dpi"), dpi_, this));
   exportBar->addWidget(dpi_);
   exportBar->addWidget(exportPng_);
   exportBar->addWidget(exportSvg_);
@@ -325,7 +327,33 @@ void FiguresPane::retranslate() {
   exportSvg_->setText(tr("SVG…"));
   exportAll_->setText(tr("All daily figures…"));
   windowDays_->setSuffix(tr(" days"));
-  channel_->setToolTip(tr("Channel, for the title"));
+  ui::setHelp(column_, tr("The numeric column of the feature table that "
+                          "is drawn."));
+  ui::setHelp(mode_,
+              tr("What stretch of time is drawn: one day, all days end to "
+                 "end (the main event as a red line), or a window of days "
+                 "around the main event."));
+  ui::setHelp(channel_, tr("The component (E, N or Z) named in the "
+                           "figure's title. It does not change what is "
+                           "drawn; choose the column for that."));
+  ui::setHelp(day_, tr("The day shown in the One day view."));
+  ui::setHelp(windowDays_, tr("How many days are shown in the Around the "
+                              "main event view."));
+  ui::setHelp(autoRange_,
+              tr("Lets the y axis follow SCAP's fixed ranges for its five "
+                 "metrics and the data for other columns. Untick to set "
+                 "the range yourself."));
+  ui::setHelp({yMin_, yMax_}, tr("Lower and upper end of the y axis, used "
+                                 "when automatic range is unticked."));
+  ui::setHelp(dpi_, tr("Resolution of exported PNG figures in dots per "
+                       "inch. Higher gives larger, sharper pictures."));
+  exportPng_->setToolTip(
+      ui::helpText(tr("Saves the figure shown as a PNG picture.")));
+  exportSvg_->setToolTip(ui::helpText(
+      tr("Saves the figure shown as an SVG vector drawing.")));
+  exportAll_->setToolTip(ui::helpText(
+      tr("Writes the figure of every day and the combined one into a "
+         "folder, as a job.")));
 }
 
 } // namespace skg

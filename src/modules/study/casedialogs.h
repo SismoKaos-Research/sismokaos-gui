@@ -43,6 +43,11 @@ private:
   std::vector<analysis::Event> events_;
   std::vector<analysis::Station> stations_;
   std::vector<int> shown_; // row -> index into events_
+  // The "near stations" filter: the codes typed, resolved against the list.
+  std::vector<analysis::Station> filterStations_;
+  QLineEdit *nearCodes_;
+  QDoubleSpinBox *nearKm_;
+  QLabel *nearNote_;
   QList<study::StationRef> near_;
   std::optional<study::Case> result_;
   QDoubleSpinBox *minMag_;

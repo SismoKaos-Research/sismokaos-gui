@@ -592,6 +592,66 @@ void TdvmsWidget::retranslate() {
     stateFilter_->addItem(s, s);
   stateFilter_->setCurrentIndex(std::max(0, keep));
   stateFilter_->blockSignals(false);
+
+  ui::setHelp({root_, rootBrowse_},
+              tr("The folder that holds your download campaigns. Each "
+                 "campaign is a sub-folder under campaigns/ with its ledger "
+                 "(the list of requests) and the downloaded archives."));
+  ui::setHelp(campaign_, tr("The campaign shown and run: one set of "
+                            "stations and time windows to download."));
+  newCampaign_->setToolTip(ui::helpText(
+      tr("Starts a campaign: a name and, if the archives should go to "
+         "another disk, the download folder.")));
+  plan_->setToolTip(ui::helpText(
+      tr("Adds chunks to the campaign: a station and the time windows to "
+         "request for it.")));
+  ingest_->setToolTip(ui::helpText(
+      tr("Files an archive you obtained by other means against the chunk "
+         "whose window it matches.")));
+  refresh_->setToolTip(
+      ui::helpText(tr("Reads the campaign's ledger from disk again.")));
+  catalogs_->setToolTip(ui::helpText(
+      tr("Downloads the current station list from the portal and the M5+ "
+         "events from USGS, used by the plan dialog and the coverage "
+         "view.")));
+  mailbox_->setToolTip(ui::helpText(
+      tr("The IMAP login of the mailbox the portal writes to, the default "
+         "number of slots and where to send notifications.")));
+  ui::setHelp(address_,
+              tr("The e-mail address requests are made with, usually the "
+                 "mailbox user. The portal mails the download links to "
+                 "plus-addresses of it (you+a1@…), one per slot."));
+  ui::setHelp(slots_,
+              tr("How many requests may be open at the portal at once. "
+                 "Each slot is a plus-address of its own, so every reply "
+                 "can be matched to its request. More slots download "
+                 "faster, up to what the portal accepts per address."));
+  ui::setHelp(interval_,
+              tr("Seconds between two cycles. A cycle reads the inbox, "
+                 "downloads the links that arrived, frees stale slots and "
+                 "submits new requests. Default 60 s."));
+  ui::setHelp(exitWhenDone_,
+              tr("The run ends by itself when no chunk is pending or "
+                 "submitted any more. Unticked, it keeps cycling until "
+                 "you press Stop."));
+  ui::setHelp(once_, tr("Does a single cycle (read the inbox, download, "
+                        "free slots, submit) and stops."));
+  ui::setHelp(dryRun_,
+              tr("Reads the mailbox and works out what it would do, but "
+                 "marks no mail as handled and submits no request. For "
+                 "checking the setup."));
+  start_->setToolTip(ui::helpText(
+      tr("Starts the run as a job. It appears in the Jobs panel and the "
+         "log below shows each cycle.")));
+  stop_->setToolTip(
+      ui::helpText(tr("Ends the run after the current cycle.")));
+  ui::setHelp(stateFilter_,
+              tr("Shows only the chunks in one state: pending (not yet "
+                 "requested), submitted (waiting for the mail), fetched, "
+                 "nodata, failed, retired or claimed."));
+  reset_->setToolTip(ui::helpText(
+      tr("Puts the selected chunks back to pending so they are requested "
+         "again, for example after a failure.")));
   updateControls();
 }
 

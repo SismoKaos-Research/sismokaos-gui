@@ -608,6 +608,21 @@ void ComparePage::retranslate() {
   fittedTitle_->setText(tr("FITTED PER CASE"));
   fittedNote_->setText(tr("What each case fitted for itself in this recipe; "
                           "everything else in the recipe is identical."));
+  ui::setHelp({recipeLabel_, recipe_},
+              tr("The classification recipe whose scores are listed: one "
+                 "row per case and station, with the baseline beside the "
+                 "best model."));
+  exportTable_->setToolTip(
+      ui::helpText(tr("Writes the score rows as shown to a CSV file.")));
+  ui::setHelp({seriesLabel_, seriesRecipe_},
+              tr("The indicators or features recipe whose values are drawn "
+                 "below, one line per case."));
+  ui::setHelp({columnLabel_, column_},
+              tr("The column that is drawn: an indicator such as the "
+                 "b-value, or a feature (the median of each day). Every "
+                 "case is placed on days before its own event."));
+  exportFigure_->setToolTip(ui::helpText(
+      tr("Writes the series figure as shown to a PNG or an SVG file.")));
 }
 
 void ComparePage::refresh() {

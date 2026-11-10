@@ -87,7 +87,9 @@ header above each page gives its name and one line on what it is for. The
 sections below still call the pages "tabs".
 
 On every page the one filled button is the page's main action (*Run*,
-*Start*). An empty table or log says what to do to fill it.
+*Start*). An empty table or log says what to do to fill it. Every option
+explains itself: rest the pointer on a field, its label or a button and a
+box says what it does, its unit and, where there is one, the default.
 
 **Jobs.** The strip at the bottom says what is running and how far it is.
 Click *Jobs* on its right (or *View → Jobs*, Ctrl+J) to open the jobs panel,

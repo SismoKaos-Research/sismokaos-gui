@@ -64,7 +64,8 @@ int main(int argc, char *argv[]) {
   theme.apply();
   study::StudyStore studies(&settings);
   studies.reopenLast();
-  AppContext ctx{&jobs, &tools, &settings, &theme, &studies};
+  Navigator nav;
+  AppContext ctx{&jobs, &tools, &settings, &theme, &studies, &nav};
 
   // The pages, in order within their sidebar section. A new module is one
   // more line here.
@@ -81,6 +82,10 @@ int main(int argc, char *argv[]) {
   modules.emplace<SettingsModule>(&i18n, &theme);
 
   MainWindow w(ctx, modules, &i18n);
+  QObject::connect(&nav, &Navigator::requested, &w,
+                   [&w](const QString &id, const QVariantMap &) {
+                     w.showModule(id);
+                   });
   w.addHeaderWidget(new StudySwitcher(&studies, &w));
   w.show();
   if (cli.isSet(QStringLiteral("screenshots"))) {
