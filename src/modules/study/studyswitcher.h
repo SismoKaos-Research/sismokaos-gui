@@ -27,6 +27,14 @@ public:
   static bool setupAfterCreate;
   static std::function<void(const QString &)> showPage;
   static void openStudy(QWidget *parent, study::StudyStore *store);
+  // Opens the study in `dir` (a recent one, a dropped folder), saying why
+  // when it cannot be. A study that is open elsewhere is refused with who
+  // has it; one held from another computer can be opened anyway, after a
+  // question (`breakLockAnswer` answers it in tests: 1 yes, 0 no; -1 asks).
+  static bool openPath(QWidget *parent, study::StudyStore *store,
+                       const QString &dir, int breakLockAnswer = -1);
+  // The "Set up the study" dialog for the open study (File > Study inputs…).
+  static void studyInputs(QWidget *parent, study::StudyStore *store);
   // Asks where each input of the open study that is not on disk has gone
   // (a moved catalog, a data disk mounted elsewhere) and rewrites the paths.
   // One answer fixes everything that moved with it. `ask` returns the new

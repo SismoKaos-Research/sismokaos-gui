@@ -11,6 +11,9 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include <QFontMetrics>
+
+#include "core/ui.h"
 #include "modules/study/studysetup.h"
 #include "study/store.h"
 
@@ -139,16 +142,22 @@ int StudySwitcher::locateMissing(QWidget *parent, study::StudyStore *store,
 void StudySwitcher::fillMenu() {
   QMenu *m = menu();
   m->clear();
+  m->setToolTipsVisible(true);
+  const QFontMetrics fm(m->font());
   for (const QString &dir : store_->recent()) {
-    QAction *a = m->addAction(QFileInfo(dir).fileName());
-    a->setToolTip(dir);
+    // The study's own name, then where it is, shortened in the middle.
+    QAction *a = m->addAction(
+        QStringLiteral("%1   —   %2")
+            .arg(study::StudyStore::nameOf(dir),
+                 fm.elidedText(
+                     QDir::toNativeSeparators(QFileInfo(dir).absolutePath()),
+                     Qt::ElideMiddle, 280))
+            .replace(QLatin1Char('&'), QStringLiteral("&&")));
+    a->setToolTip(QDir::toNativeSeparators(dir));
     a->setCheckable(true);
     a->setChecked(store_->isOpen() && store_->study().dir == dir);
-    connect(a, &QAction::triggered, this, [this, dir] {
-      QString error;
-      if (!store_->open(dir, &error))
-        QMessageBox::warning(this, tr("Study"), error);
-    });
+    connect(a, &QAction::triggered, this,
+            [this, dir] { openPath(this, store_, dir); });
   }
   if (!m->isEmpty())
     m->addSeparator();
@@ -159,9 +168,51 @@ void StudySwitcher::fillMenu() {
   close->setEnabled(store_->isOpen());
 }
 
+bool StudySwitcher::openPath(QWidget *parent, study::StudyStore *store,
+                             const QString &dir, int breakLockAnswer) {
+  QString error;
+  if (store->open(dir, &error))
+    return true;
+  // Held from another computer: that cannot be checked from here, so the
+  // user may know better (it crashed, it was switched off).
+  if (store->refusedBy().refused && store->refusedBy().otherHost) {
+    bool anyway = breakLockAnswer == 1;
+    if (breakLockAnswer < 0) {
+      QMessageBox box(parent);
+      box.setIcon(QMessageBox::Warning);
+      box.setWindowTitle(tr("Open study"));
+      box.setText(error);
+      box.setInformativeText(
+          tr("Opening it here while it is in use there lets the two write "
+             "over each other's results."));
+      QPushButton *open =
+          box.addButton(tr("Open anyway"), QMessageBox::DestructiveRole);
+      QPushButton *cancel = box.addButton(QMessageBox::Cancel);
+      box.setDefaultButton(cancel);
+      box.exec();
+      anyway = box.clickedButton() == open;
+    }
+    if (!anyway)
+      return false;
+    if (store->open(dir, &error, true))
+      return true;
+  }
+  if (breakLockAnswer < 0)
+    QMessageBox::warning(parent, tr("Open study"), error);
+  return false;
+}
+
+void StudySwitcher::studyInputs(QWidget *parent, study::StudyStore *store) {
+  if (!store->isOpen())
+    return;
+  StudySetupDialog setup(store, parent);
+  setup.exec();
+}
+
 void StudySwitcher::newStudy(QWidget *parent, study::StudyStore *store) {
-  const QString dir = QFileDialog::getExistingDirectory(
-      parent, tr("Folder for the new study (its results are written here)"));
+  const QString dir = ui::pickFolder(
+      parent, store->settings(), QStringLiteral("study/new"),
+      tr("Folder for the new study (its results are written here)"));
   if (dir.isEmpty())
     return;
   // A folder that already is a study: that is the one they mean.
@@ -169,11 +220,8 @@ void StudySwitcher::newStudy(QWidget *parent, study::StudyStore *store) {
     if (QMessageBox::question(
             parent, tr("New study"),
             tr("%1 already holds a study. Open it instead?").arg(dir)) ==
-        QMessageBox::Yes) {
-      QString error;
-      if (!store->open(dir, &error))
-        QMessageBox::warning(parent, tr("Open study"), error);
-    }
+        QMessageBox::Yes)
+      openPath(parent, store, dir);
     return;
   }
   // Results are written next to whatever is there; say so before it happens.
@@ -205,13 +253,12 @@ void StudySwitcher::newStudy(QWidget *parent, study::StudyStore *store) {
 }
 
 void StudySwitcher::openStudy(QWidget *parent, study::StudyStore *store) {
-  const QString dir = QFileDialog::getExistingDirectory(
-      parent, tr("Open a study folder (the one holding study.toml)"));
+  const QString dir = ui::pickFolder(
+      parent, store->settings(), QStringLiteral("study/open"),
+      tr("Open a study folder (the one holding study.toml)"));
   if (dir.isEmpty())
     return;
-  QString error;
-  if (!store->open(dir, &error))
-    QMessageBox::warning(parent, tr("Open study"), error);
+  openPath(parent, store, dir);
 }
 
 } // namespace skg
