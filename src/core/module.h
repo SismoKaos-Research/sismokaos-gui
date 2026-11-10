@@ -1,4 +1,4 @@
-// The Module interface: one tab of the application.
+// The Module interface: one page of the application.
 //
 // To add a module: create src/modules/<name>/ with its own CMakeLists.txt
 // (see modules/placeholder for the smallest one), subclass Module, and
@@ -18,11 +18,13 @@ namespace skg {
 
 class JobModel;
 class ToolRegistry;
+class Theme;
 
 struct AppContext {
   JobModel *jobs = nullptr;
   ToolRegistry *tools = nullptr;
   QSettings *settings = nullptr;
+  Theme *theme = nullptr; // colours and icons of the current look
 };
 
 class Module : public QObject {
@@ -30,14 +32,23 @@ class Module : public QObject {
 public:
   using QObject::QObject;
 
+  // Where the module appears in the sidebar: the study workflow at the top,
+  // the tools below it, or pinned to the bottom (settings).
+  enum class Section { Study, Tools, Footer };
+
   // Stable identifier used in settings keys; never translated.
   virtual QString id() const = 0;
-  // Tab title and a one-line description, translated at call time.
+  // Sidebar and page title, and the one line under the page title; both
+  // translated at call time.
   virtual QString title() const = 0;
   virtual QString description() const { return {}; }
+  virtual Section section() const { return Section::Tools; }
+  // Name of the sidebar icon in core/resources/icons (without ".svg");
+  // defaults to the id, and to a plain square when there is no such file.
+  virtual QString iconId() const { return id(); }
   // Tool ids the module drives; the settings page reports them per module.
   virtual QStringList requiredTools() const { return {}; }
-  // The tab's widget; created once by the main window.
+  // The page's widget; created once by the main window.
   virtual QWidget *createWidget(AppContext &ctx, QWidget *parent) = 0;
 };
 
