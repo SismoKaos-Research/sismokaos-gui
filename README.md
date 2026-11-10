@@ -242,6 +242,37 @@ full catalog in one of two ways:
   and the dialog reports what the download holds when it ends. A catalog
   that stops near magnitude 4 is still too sparse for b-values.
 
+Under the catalog's path the row says what the file holds: how many
+earthquakes, over which dates, and **from about which magnitude**. That last
+number is the magnitude 5% of the events lie at or below, so it tells how
+far down the list really goes. When it is above 3 the row marks the catalog
+as sparse, and the tools say what that means for them:
+
+- a **Features** cell runs, with a warning: the calibration picks its quiet
+  windows by avoiding the catalog's earthquakes, and with such a catalog it
+  only avoids those of that size and larger; smaller local ones sit inside
+  the "quiet" windows unseen. The warning is in the run's log and record;
+- an **Indicators** cell waits when the recipe counts earthquakes from a
+  completeness magnitude more than 0.5 below where the catalog starts (a
+  b-value from magnitude 1.3 cannot be had from a list that starts at 4.4).
+  Raise the recipe's completeness magnitude, let it be estimated per case,
+  or use a full catalog. Within that margin, and when it is estimated, the
+  cell runs with a warning.
+
+A warning stays with the results: the cell shows ⚠ and says it on hover,
+and on Compare the scores made under it carry the same mark.
+
+**Place names.** Catalog files are read as UTF-8, or as the Turkish code
+page (Windows-1254) when they are not UTF-8, so an AFAD export saved by a
+spreadsheet keeps its ğ, ı, İ and ş. The USGS service itself replaces such
+letters by "?" in the names of its older earthquakes ("13 km N of Do?anyol,
+Turkey"), in every format it offers. The application puts them back, in the
+built-in list and in what it downloads, from a list of place names
+(GeoNames): the one place near the earthquake whose name fits. A name that
+fits no place, or more than one, stays as the service gave it. A case made
+before this was in place gets its letters back when the study is opened;
+its folder keeps the name it had, so its runs stay with it.
+
 When you use AFAD data, cite the Disaster and Emergency Management
 Presidency (AFAD), Earthquake Department, as the source, as AFAD asks.
 
@@ -364,13 +395,18 @@ The selected case shows below the table: its name, the **catalog zone** the
 Indicators use (a circle around the epicentre, or a buffer around the East
 Anatolian fault zone), the span, and the stations near the epicentre to tick,
 each with a *Waveforms* column such as "found: 340 of 365 days in span" or
-"not found". A change that would make finished runs of the case stale asks
+"not found". A station that has data, but none of it in this case's span
+(it started recording after the earthquake, say), reads "⚠ data, but none in
+the span (it has 2020-06-27 to 2021-03-01)": a Features run on it could only
+fail, so its cell on the Runs page waits, and a new case never starts with
+such a station ticked. A station with data on less than a tenth of the
+span's days is marked "⚠ little of the span" and runs with that warning. A change that would make finished runs of the case stale asks
 first and says how many. If the study file cannot be saved, a banner says so
 and the page goes back to what is saved.
 
 The button at the bottom right is the next step: *Next: get waveforms →*
-while a ticked station has no waveforms, *Next: recipes →* once they all
-have.
+while a ticked station has no waveforms in the span, *Next: recipes →* once
+they all have.
 
 ### Runs
 
@@ -417,20 +453,65 @@ cell is one of:
 | ↻ Stale | run, but something it depended on has changed since (see below) |
 | ✕ Failed | the last run ended with an error |
 | ⏸ Waiting | cannot run yet; the reason names what is missing and where to put it right |
+| ⋯ Queued | asked for, and waiting for a free slot; the number is its place in the queue |
 | ◔ Running | a job is on it; the percentage is the job's progress |
+
+A ⚠ beside *Done* means the run was made under something worth knowing (a
+sparse catalog, a station with little data in the span); point at the cell,
+or select it, to read what.
 
 Select a cell to read its reason under the matrix. A waiting cell has a
 button that goes to the fix: *Go to Cases* (no catalog, no stations, no
-waveforms), *Edit recipe…*, or *Select the cell it needs* (a classification
-waiting for its features).
+waveforms, or none in the span), *Edit recipe…*, or *Select the cell it
+needs* (a classification waiting for its features). A failed cell has the
+same button when the remedy is known: *Go to Cases* when the station had
+too little data in the span to calibrate on, *Edit recipe…* when the
+catalog's earthquakes left no quiet windows.
 
-- *Run missing and stale* queues those cells as jobs, two at a time, and
-  goes on to the cells they unblock.
-- *Run the selected cell* runs one. For a cell that already has a finished
-  run it asks first.
-- *Stop* cancels the runs this page started and starts no further ones.
+- *Run missing and stale* puts those cells in the queue and goes on to the
+  cells they unblock. Two run at a time (the number is *Runs at the same
+  time* on the Settings page); the others show *Queued*, also a
+  classification that waits for its features in the same batch.
+- *Run the selected cell* runs one, through the same queue: started while
+  every slot is taken, it waits its turn instead of running beside the
+  others. For a cell that already has a finished run it asks first. On a
+  queued cell the button reads *Take out of the queue*, and the cell is
+  then what it was before.
+- *Stop* cancels the runs this page started and empties the queue.
+- The line above the matrix says how many cells run and how many wait.
 - *Show log* opens what the cell's last run wrote; *Open folder* shows its
   files.
+
+**One progress bar per run.** A Features run goes through up to three
+phases: *Unpacking the archives* (when the station's files are zips; done
+once for the whole run), *Calibrating chaos parameters on quiet periods*,
+and *Extracting features*. The bar covers all of them and never starts
+again: the job's row and the cell's tooltip say which phase it is in ("2/3
+Calibrating … · 1200/5600 records · about 4 min left in this phase"). The
+phases have fixed shares of the bar, 5, 10 and 85 of 100, a rough guess at
+their cost on real station data, not a measurement of the run in front of
+you; the time left is that of the current phase, from its own pace. A phase
+that does not happen (no archives, a calibration that is reused) is left
+out and the others are numbered anew. A Classification run likewise has one
+bar over its steps, and a step that trains several models moves through its
+share model by model.
+
+**A calibration is kept.** The calibration is a pass over all the station's
+data, so a Features run keeps it as soon as it is made, beside its result
+folder in `<folder>.calibration/`, also when the run is then stopped or
+fails in the extraction. The next run of the same cell uses it again and
+skips that phase, but only if everything it depends on is the same: the
+waveform files read, the catalog (its content and time offset), the
+station's position, the span, and the settings that enter the calibration
+(sample rate, filter band, window length, sample entropy radius, and the
+calibration settings). Otherwise it calibrates again, and the run's log
+says what changed ("Calibration redone: the catalog changed"). *Recalibrate*
+beside *Run the selected cell* makes it anew whatever is kept. A calibration
+is never shared with another case, station or recipe; the latest two are
+kept. The finished run's record says which calibration it used and whether
+it was reused, and the values are under *Fitted per case* on Compare as
+before. The unpacked archives are not kept between runs: a restarted run
+unpacks again.
 
 **A run never damages a finished one.** It works in a folder beside the
 result, `<folder>.tmp`, and takes the result's place only when it finishes.
@@ -1156,6 +1237,11 @@ working directory of the run.
 
 **Interface** chooses the language and the theme.
 
+**Study runs** has *Runs at the same time*: how many cells of the Runs page
+run at once (default 2); the others wait in the queue. A feature extraction
+uses several processor cores and unpacks its waveform files, so more at
+once is not always faster.
+
 **Waveform scan** has two things. *Files read at once* is how many waveform
 files the exact coverage scan of a study reads at the same time. *Automatic*
 leaves two processor cores free and uses at most six; lower it if the
@@ -1260,9 +1346,17 @@ Stated plainly, so that nobody finds them the hard way:
 - **No mail arrives.** *Mailbox… → Check login* must succeed; for Gmail use
   an app password and make sure IMAP is enabled. Requests go out from the
   plus-addresses of the *Address* field, so that mailbox must accept them.
-- **Calibration fails with too few quiet windows.** Raise the minimum
-  magnitude or lower the maximum distance so fewer events exclude time, use
-  more data, or reuse a calibration from a longer run of the same station.
+- **Calibration fails with too few quiet windows.** The message says which
+  of three things it was. *Too little waveform data* (with the hours read
+  per component): the station has too little data in the period; get more
+  of it, or untick the station. *Windows hold gaps*: the data is too broken
+  up. *Windows fall near a catalog earthquake*: raise the minimum magnitude
+  or lower the maximum distance so fewer events exclude time, or reuse a
+  calibration from a longer run of the same station.
+- **Place names show "?" for Turkish letters.** In a catalog downloaded or
+  a case made with an earlier version: open the study again, and download
+  the catalog again. A name that still has one fits no place, or more than
+  one, in the list the application carries.
 - **The station is not in the embedded list.** Type its latitude and
   longitude (*set the station position directly*) or point to your own
   station list CSV with code, latitude and longitude columns.
@@ -1305,6 +1399,7 @@ Third-party parts, each with a provenance note:
 | East Anatolian Fault Zone strands (GEM GAF-DB; a separate data file, distributed alongside, not as part of, the program; remains CC BY-SA 4.0) | CC BY-SA 4.0 | `data/faults/PROVENANCE.md` |
 | Country outlines (Natural Earth 5.1.1, clipped and simplified) | public domain | `src/analysis/data/PROVENANCE.md` |
 | Built-in earthquake list (M 5+ since 1990 around Türkiye, from the USGS FDSN event service) | public domain | `src/tdvms/data/PROVENANCE.md` |
+| Place names with letters outside ASCII, 24–48° E, 32–44° N (GeoNames `cities500`, reduced; used to restore the letters USGS replaces by "?") | CC BY 4.0 | `src/text/data/PROVENANCE.md` |
 | Built-in station list (the stations the AFAD TDVMS portal lists: code, network, position, instruments) | no licence stated by the source | `src/tdvms/data/PROVENANCE.md` |
 | ayzek (a separate program run by the Early warning page) | GPL-3.0-or-later | `third_party/AYZEK-PROVENANCE.md` |
 

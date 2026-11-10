@@ -30,6 +30,8 @@ Formatting is LLVM style with the repository's `.clang-format`.
 ```
 src/jobs/      Job, ProcessJob (QProcess + progress parsing), TaskJob (worker thread),
                JobModel, JobsPanel
+src/text/      decoding catalog text (UTF-8, else Windows-1254) and restoring place names an
+               event service damaged (QtCore only; data/ holds the GeoNames place list)
 src/tools/     ToolDesc, ToolRegistry: descriptors and resolution of external CLIs
 src/tdvms/     the C++ port of tdvms-pull (library, no Widgets); data/ holds the built-in
                station and earthquake lists (catalog.h), embedded as resources
@@ -160,7 +162,22 @@ decompression library: the zips go through miniz.
 for picking cases, `queryForStudy()` and `fetchCatalog()` for the download.
 `fetchCatalog()` takes the `tdvms::Http` to use, so tests pass a fake one
 (`CatalogFetchDialog` takes an `HttpFactory`). Its messages are in the
-translation context `skg::study::CatalogText`.
+translation context `skg::study::CatalogText`. `catalogSummary()` says what
+a catalog file holds (events, dates, and the magnitude floor: the magnitude
+5% of the events lie at or below), remembered per file by size and time;
+`cellOf()` and `runWarnings()` compare the floor with what a tool needs
+(`defaults::kSparseCatalogMag`, `kMcFloorMargin`).
+
+**Text** (`src/text`, QtCore only; `fx` and `tdvms` link it): `text::decode()`
+reads CSV bytes as UTF-8, or as Windows-1254 when they are not valid UTF-8
+(never Latin-1), and `fx::lines()` goes through it, so every catalog reader
+does. `text::repairPlace()` puts back the letters the USGS service replaces
+by "?" in place names, from `data/places.tsv` (GeoNames, made by
+`packaging/geonames/make_places.py`): exactly one place near the earthquake
+must fit. It is applied where names come in (`tdvms::loadEvents()`,
+`analysis::loadEvents()`, `parseFdsnText()`) and when a study file is read
+(`Study::fromToml()` repairs a case's `place` and its name; the id stays).
+Everything the application writes is UTF-8.
 
 **Runs** (`study/runs.h`). To let a study run another tool, add it in
 `src/study/runs.cpp`: a tool name in `recipeTools()`, its defaults in
@@ -180,13 +197,47 @@ table to `seriesColumns()` and `seriesOf()` in `compare.cpp`.
   the tool name), `catalog_sha256`, `upstream` (classification: when its
   features run finished), `waveforms` (features: a stamp of the files read),
   `waveform_files` and `waveforms_estimated` (features: the files themselves,
-  and whether some were chosen on an estimate), `app_version`, `started`, `finished`, `ok`, `error`, `settings`, `inputs`,
-  `fitted`, `outputs`. A record whose signature does not start with the tool
+  and whether some were chosen on an estimate), `app_version`, `started`,
+  `finished`, `ok`, `error`, `error_reason` (a failure with a known remedy:
+  `no_data`, `little_data`, `gappy_data`, `events`, from
+  `fx::CalibrationError`), `warnings` (what the run was made under, from
+  `runWarnings()`), `settings`, `inputs`, `fitted`, `outputs`. A record whose signature does not start with the tool
   name predates the per-tool signatures and reads as stale.
 - Reasons shown to the user go through `RunText::tr()` (context
   `skg::study::RunText`; `skg::study::CompareText` in `compare.cpp`) and name
   the path checked and where to put it right. `Cell::fix` (`Fix::Cases`,
-  `Recipe`, `RunFirst`) drives the button beside the reason.
+  `Recipe`, `RunFirst`) drives the button beside the reason, also of a
+  failed cell whose `error_reason` is known. A cell that is blocked says so
+  even when its last run failed.
+- `Cell::warnings` is not a reason to stop: of a finished run it is what its
+  record says, of a cell still to run what `runWarnings()` says now. The
+  Runs page shows ⚠ and the tooltip, Compare the same beside the scores
+  (`ScoreRow::warnings`, a `warnings` column in the exported table).
+- A Features cell is blocked when `chooseWaveFiles()` finds no file for the
+  case's span, with the station's dates from `spanData()`; `SpanData::thin()`
+  (under `defaults::kMinSpanCoverage` of the span's days) is a warning.
+- **Progress.** A tool that has phases reports one fraction for the whole
+  run that never goes back. `fx::RunHooks::overall` gives it for the feature
+  runs (`fx::RunProgress`: fraction, phase k of n, name, a line of text with
+  the time the phase has left); the shares of the phases are
+  `kWeightUnpack`, `kWeightCalibrate` and `kWeightExtract` in
+  `fx/engine.cpp`. The archives are unpacked once per run
+  (`prepareInputs()`, handed to both passes through
+  `PreprocessOptions::prepared`). `sfc::runSteps()` maps the models inside a
+  step into the step's share. A page shows `overall`, never the per-phase
+  `progress`.
+- **Kept calibrations** (`runs.h`, "Calibrations are kept"):
+  `<run folder>.calibration/<key>.json`, written from the
+  `fx::RunHooks::calibrated` hook; the key and its parts are built in
+  `calibrationKey()` in `runs.cpp`. A setting that enters the calibration
+  must be added there, or a stale calibration would be reused.
+  `RunHooks::freshCalibration` forces a new one; `run.json` carries
+  `calibration_key` and `calibration_reused`.
+- **The queue.** The Runs page starts every cell through `enqueue()` and
+  `pump()`: at most `RunsPage::atOnce()` run (setting `runs/atOnce`,
+  `defaults::kRunsAtOnce`), the rest wait in `queue_` and are drawn as
+  Queued (`MatrixCell::queued`, `place`, `waitsFor`). A batch adds what
+  becomes runnable on each `pump()`; `dequeue()` and Stop put a cell back.
 - `sha256Cached()` is keyed on size and mtime; use it for anything asked on
   every refresh.
 

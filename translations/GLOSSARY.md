@@ -66,6 +66,12 @@ translations).
 | covered / not covered (earthquake) | kapsanan / kapsanmayan | |
 | quiet period (calibration) | sakin dönem | |
 | calibration | kalibrasyon | |
+| recalibrate | yeniden kalibre et | |
+| kept / reused (calibration) | saklanan / yeniden kullanıldı | |
+| queued (a cell waiting for a free slot) | sırada | the user's word |
+| take out of the queue | sıradan çıkar | |
+| sparse (catalog) | seyrek | ? |
+| little of the span (station coverage) | sürenin azı | ? short for a table cell |
 | time offset (catalog vs UTC) | zaman farkı | |
 | Turkey time | Türkiye saati | |
 | early warning | erken uyarı | |
