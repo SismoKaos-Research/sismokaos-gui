@@ -134,6 +134,7 @@ private slots:
   void compareExportsAndKeys();
   void compareManySeriesAndEmptyStates();
   void waveformsOnCases();
+  void stationsWithData();
   void catalogOffsetRereadsCaseTimes();
   void cleanupTestCase();
 
@@ -1078,6 +1079,64 @@ void TstStudyPages::waveformsOnCases() {
   }));
   QCOMPARE(found->item(1, 8)->text(), QStringLiteral("typed"));
   QVERIFY(!found->item(1, 9)->text().contains(QStringLiteral("no coordinates")));
+}
+
+void TstStudyPages::stationsWithData() {
+  // The waveform folders of the test before this one hold SYN1 and SYN2.
+  const Study &s = store_->study();
+  QCOMPARE(stationsWithWaveforms(s), QStringList({"SYN1", "SYN2"}));
+  {
+    AddFromCatalogDialog dialog(s);
+    auto *mine = dialog.findChild<QPushButton *>(QStringLiteral("nearMine"));
+    auto *codes = dialog.findChild<QLineEdit *>(QStringLiteral("nearStations"));
+    QVERIFY(mine && codes);
+    QVERIFY(mine->isEnabled());
+    QVERIFY(codes->text().isEmpty());
+    mine->click();
+    QCOMPARE(codes->text(), QStringLiteral("SYN1, SYN2"));
+  }
+  {
+    // Opened "from stations", the filter starts with them.
+    AddFromCatalogDialog dialog(s, nullptr, {QStringLiteral("SYN2")});
+    QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("nearStations"))
+                 ->text(),
+             QStringLiteral("SYN2"));
+  }
+  // The Waveforms dialog hands the selected stations on.
+  WaveScan scan(ctx_);
+  WaveformsDialog dialog(ctx_, &scan);
+  dialog.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&dialog));
+  auto *table = dialog.findChild<QTableWidget *>(QStringLiteral("waveStations"));
+  auto *near = dialog.findChild<QPushButton *>(QStringLiteral("waveFindNear"));
+  QVERIFY(table && near);
+  QTRY_COMPARE(table->rowCount(), 2);
+  QVERIFY(dialog.findNear().isEmpty());
+  int syn2 = -1;
+  for (int i = 0; i < table->rowCount(); ++i)
+    if (table->item(i, 0)->text() == QLatin1String("SYN2"))
+      syn2 = i;
+  QVERIFY(syn2 >= 0);
+  table->selectRow(syn2);
+  near->click();
+  QCOMPARE(dialog.findNear(), QStringList({"SYN2"}));
+  QCOMPARE(dialog.result(), int(QDialog::Accepted));
+  // With nothing selected it is every station.
+  WaveformsDialog all(ctx_, &scan);
+  QTRY_COMPARE(
+      all.findChild<QTableWidget *>(QStringLiteral("waveStations"))->rowCount(),
+      2);
+  all.findChild<QPushButton *>(QStringLiteral("waveFindNear"))->click();
+  QCOMPARE(all.findNear(), QStringList({"SYN1", "SYN2"}));
+  // Adding a folder inside a listed one adds nothing and says so.
+  const int before = int(store_->study().waveRoots.size());
+  WaveformsDialog third(ctx_, &scan);
+  third.addFolders({dir_.filePath("own-data/SYN1")});
+  QCOMPARE(int(store_->study().waveRoots.size()), before);
+  bool said = false;
+  for (QLabel *l : third.findChildren<QLabel *>())
+    said = said || l->text().contains(QStringLiteral("Already covered"));
+  QVERIFY(said);
 }
 
 void TstStudyPages::catalogOffsetRereadsCaseTimes() {

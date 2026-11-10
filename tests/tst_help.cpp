@@ -39,6 +39,7 @@
 #include "modules/indicators/indicatorsmodule.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/study/casedialogs.h"
+#include "modules/study/studysetup.h"
 #include "modules/study/waveforms.h"
 #include "modules/study/runspage.h"
 #include "modules/study/studymodule.h"
@@ -268,6 +269,16 @@ void TstHelp::everyOptionHasHelp() {
   {
     PlanDialog d(dir_.filePath("ledger.tsv"));
     qInfo() << "plan options:" << audit(&d, QStringLiteral("plan"), &missing);
+  }
+  {
+    StudySetupDialog d(ctx_.study);
+    qInfo() << "study setup options:"
+            << audit(&d, QStringLiteral("study-setup"), &missing);
+  }
+  {
+    CatalogFetchDialog d(s);
+    qInfo() << "catalog download options:"
+            << audit(&d, QStringLiteral("catalog-download"), &missing);
   }
   for (const QString &line : missing)
     qWarning().noquote() << line;
