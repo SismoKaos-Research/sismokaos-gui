@@ -22,6 +22,8 @@ class QPushButton;
 class QSpinBox;
 class QStackedWidget;
 class QTableWidget;
+class QToolButton;
+class QMenu;
 
 namespace skg {
 
@@ -45,8 +47,35 @@ public:
   static int runsMadeStale(const study::Study &before,
                            const study::Study &after, const QString &caseId);
 
+  // What the buttons and menus do, also for tests. Each asks through
+  // `confirm` before a change that costs finished runs.
+  // The ids of the selected cases, in the order of the table.
+  QStringList selectedIds() const;
+  // Adds the cases; one whose id names an existing case replaces that
+  // case's name, span and stations and keeps its folder.
+  bool addCases(const QList<study::Case> &cases);
+  // Removes the selected cases. They can be put back with restoreRemoved()
+  // until the study is closed; their result folders are not touched, so
+  // their runs come back with them.
+  void removeCase();
+  QStringList removedCases() const; // names, the last removed first
+  bool restoreRemoved(int index = 0);
+  bool setSpanOf(const QStringList &ids, int days);
+  // For each case: the nearest `n` stations within `km` that have waveforms
+  // in its span (stationsToStartWith).
+  bool applyStationRule(const QStringList &ids, int n, double km);
+  QString duplicateCase(const QString &id); // the new case's id
+  // Sends the Data page the stations and the period of these cases.
+  void getWaveformsFor(const QStringList &ids);
+  // Files and folders dropped on the page: a catalog (asked first, with
+  // what it holds), waveform folders, or a StationXML file.
+  void handleDrop(const QStringList &paths);
+
 protected:
   void changeEvent(QEvent *e) override;
+  bool eventFilter(QObject *o, QEvent *e) override;
+  void dragEnterEvent(QDragEnterEvent *e) override;
+  void dropEvent(QDropEvent *e) override;
 
 private:
   void retranslate();
@@ -59,8 +88,14 @@ private:
   void updateBuiltIn();
   void openSetup();
   void addReference();
-  void removeCase();
   void chooseCatalog();
+  void applyFilter();
+  void fillMenu(QMenu *menu);
+  void saveTableState();
+  void tickNearest();
+  void untickAll();
+  int staleAfter(const std::function<void(study::Study &)> &edit,
+                 const QStringList &ids) const;
   void offsetChosen(int index);
   void openWaveforms();
   void chooseStationFolder();
@@ -97,6 +132,18 @@ private:
   QPushButton *catalogGet_, *catalogUpdate_, *setup_;
   QComboBox *catalogTime_;
   QPushButton *add_, *addRef_, *remove_, *coverageButton_;
+  QToolButton *more_;
+  QLineEdit *filter_;
+  QPushButton *scanJob_, *tickNearest_, *untickAll_;
+  // Removed in this session, the last first; cleared with the study.
+  struct Removed {
+    study::Case c;
+    int position = 0;
+  };
+  QList<Removed> removed_;
+  QString removedFrom_; // the study they belong to
+  QString tableStateOf_; // the study whose column widths are applied
+  int stationSort_ = 0;  // 0 ticked first then nearest, 2 distance, 4 coverage
   QLabel *summary_;
   QTableWidget *table_;
   QWidget *detail_;
