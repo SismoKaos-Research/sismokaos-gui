@@ -30,6 +30,7 @@
 
 #include "core/defaults.h"
 #include "core/ui.h"
+#include "study/catalogs.h"
 #include "study/waveindex.h"
 
 namespace skg {
@@ -212,12 +213,24 @@ QList<study::StationRef> tickedStations(const QTableWidget *table,
   return out;
 }
 
+QStringList stationsWithWaveforms(const study::Study &study) {
+  QStringList codes;
+  for (const study::WaveStation &s :
+       study::WaveIndex::shared(study.dir)->stations())
+    if (!s.code.isEmpty() && !codes.contains(s.code))
+      codes << s.code;
+  codes.sort();
+  return codes;
+}
+
 AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
-                                           QWidget *parent)
-    : QDialog(parent), study_(study) {
+                                           QWidget *parent,
+                                           const QStringList &nearStations)
+    : QDialog(parent), study_(study), builtIn_(study.catalog.isEmpty()) {
   setWindowTitle(tr("Add a case from the catalog"));
-  events_ =
-      analysis::loadEvents(study.catalogPath(), study.catalogUtcOffsetHours);
+  // The study's own catalog, or the built-in list of large earthquakes when
+  // it has none: enough to pick the cases from.
+  events_ = study::pickingEvents(study);
   try {
     stations_ = study.stations();
   } catch (const std::exception &) {
@@ -258,9 +271,17 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   nearNote_->setObjectName(QStringLiteral("fieldLabel"));
   nearNote_->setWordWrap(true);
   nearNote_->hide();
+  mine_ = new QPushButton(tr("Stations I have data for"), this);
+  mine_->setObjectName(QStringLiteral("nearMine"));
+  mine_->setAutoDefault(false);
+  haveData_ = stationsWithWaveforms(study);
+  mine_->setEnabled(!haveData_.isEmpty());
+  connect(mine_, &QPushButton::clicked, this,
+          [this] { nearCodes_->setText(haveData_.join(QStringLiteral(", "))); });
   auto *nearRow = new QHBoxLayout;
   nearRow->addWidget(nearCodes_, 1);
   nearRow->addWidget(nearKm_);
+  nearRow->addWidget(mine_);
 
   table_ = plainTable(this);
   table_->setObjectName(QStringLiteral("eventTable"));
@@ -311,9 +332,17 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
       return QDateTime::fromSecsSinceEpoch(qint64(epoch), QTimeZone::UTC)
           .toString(QStringLiteral("yyyy-MM-dd"));
     };
-    range_->setText(tr("The catalog covers %1 to %2 (%3 events).")
-                        .arg(day(lo->epoch), day(hi->epoch))
-                        .arg(events_.size()));
+    range_->setText(
+        builtIn_
+            ? tr("Built-in list of large earthquakes: %1 to %2, %3 events of "
+                 "magnitude 5 and above. Enough to pick the cases; the "
+                 "analyses of small earthquakes need the study's own catalog.")
+                  .arg(day(lo->epoch), day(hi->epoch))
+                  .arg(events_.size())
+            : tr("The catalog covers %1 to %2 (%3 events).")
+                  .arg(day(lo->epoch), day(hi->epoch))
+                  .arg(events_.size()));
+    range_->setWordWrap(true);
   }
   stationNote_ = new QLabel(this);
   stationNote_->setObjectName(QStringLiteral("fieldLabel"));
@@ -340,6 +369,15 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
                           "table shows at most the 500 largest."));
   ui::setHelp(place_, tr("Lists only earthquakes whose place name in the "
                          "catalog contains this text, e.g. a province."));
+  mine_->setToolTip(ui::helpText(
+      haveData_.isEmpty()
+          ? tr("Fills the filter with the stations found in the study's "
+               "waveform folders. None are known yet: add a waveform folder "
+               "on the Cases page first.")
+          : tr("Fills the filter with the %n station(s) found in the study's "
+               "waveform folders, so only earthquakes you can study with the "
+               "data you have are listed.",
+               nullptr, int(haveData_.size()))));
   ui::setHelp(nearCodes_,
               tr("Lists only earthquakes close to at least one of these "
                  "stations, e.g. the ones you have waveforms for. Type "
@@ -378,6 +416,8 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
           &AddFromCatalogDialog::eventChosen);
   connect(stationTable_, &QTableWidget::itemChanged, this,
           &AddFromCatalogDialog::updateNotes);
+  if (!nearStations.isEmpty())
+    nearCodes_->setText(nearStations.join(QStringLiteral(", ")));
   refill();
 }
 
@@ -570,7 +610,7 @@ void AddFromCatalogDialog::updateNotes() {
                          })
             ->epoch;
     const double need = e.epoch - (span_->value() + months * 30.44) * 86400.0;
-    if (need < first)
+    if (need < first && !builtIn_)
       notes << tr("⚠ The span%1 starts on %2, before the catalog's first "
                   "event (%3). The indicators would be computed on a "
                   "shorter period.")

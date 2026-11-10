@@ -21,7 +21,12 @@
 #include <exception>
 #include <iterator>
 
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
+
 #include "core/ui.h"
+#include "modules/study/studysetup.h"
 #include "jobs/jobmodel.h"
 #include "jobs/taskjob.h"
 #include "study/store.h"
@@ -161,7 +166,8 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
   folders_ = new QListWidget(this);
   folders_->setObjectName(QStringLiteral("waveFolders"));
   folders_->setMaximumHeight(96);
-  add_ = new QPushButton(tr("Add folder…"), this);
+  setAcceptDrops(true);
+  add_ = new QPushButton(tr("Add folders…"), this);
   ui::setPrimary(add_);
   repoint_ = new QPushButton(tr("Moved…"), this);
   remove_ = new QPushButton(tr("Remove"), this);
@@ -194,13 +200,13 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
   table_->setShowGrid(false);
   table_->setAlternatingRowColors(true);
   table_->setSelectionBehavior(QAbstractItemView::SelectRows);
-  table_->setSelectionMode(QAbstractItemView::SingleSelection);
+  table_->setSelectionMode(QAbstractItemView::ExtendedSelection);
   table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
   table_->horizontalHeader()->setStretchLastSection(true);
   table_->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft |
                                                   Qt::AlignVCenter);
   ui::setEmptyHint(table_, tr("No stations yet.\nAdd the folder that holds "
-                              "your miniSEED files."));
+                              "your miniSEED files, or drop it here."));
 
   problem_ = new QLabel(this);
   problem_->setObjectName(QStringLiteral("fieldLabel"));
@@ -208,9 +214,12 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
   coords_ = new QPushButton(tr("Type coordinates…"), this);
   xml_ = new QPushButton(tr("Load StationXML…"), this);
   skipped_ = new QPushButton(this);
+  near_ = new QPushButton(tr("Find earthquakes near these…"), this);
+  near_->setObjectName(QStringLiteral("waveFindNear"));
   auto *below = new QHBoxLayout;
   below->addWidget(coords_);
   below->addWidget(xml_);
+  below->addWidget(near_);
   below->addStretch(1);
   below->addWidget(skipped_);
 
@@ -231,7 +240,14 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
       tr("The waveform folders of this study. Each is scanned through all "
          "its sub-folders, except those whose name starts with _ or a dot.")));
   add_->setToolTip(ui::helpText(
-      tr("Adds a folder of miniSEED files (plain or zipped) and scans it.")));
+      tr("Adds one or several folders of miniSEED files (plain or zipped) "
+         "and scans them. Hold Ctrl or Shift to pick more than one. A folder "
+         "of station folders (stations/CODE/…) is added once, as a whole; "
+         "folders can also be dropped on this window.")));
+  near_->setToolTip(ui::helpText(
+      tr("Goes on to adding a case, listing only the earthquakes close to "
+         "the stations selected in the table (all stations when none is "
+         "selected).")));
   repoint_->setToolTip(ui::helpText(
       tr("Tells the study that the selected folder now lives somewhere else, "
          "for example on another drive. Files that did not change are not "
@@ -259,6 +275,18 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
          "reason.")));
 
   connect(add_, &QPushButton::clicked, this, &WaveformsDialog::addFolder);
+  connect(near_, &QPushButton::clicked, this, [this] {
+    QStringList codes;
+    const bool any = !table_->selectedItems().isEmpty();
+    for (int row = 0; row < table_->rowCount(); ++row) {
+      const QTableWidgetItem *it = table_->item(row, 0);
+      if (it && (!any || it->isSelected()) && !codes.contains(it->text()))
+        codes << it->text();
+    }
+    findNear_ = codes;
+    if (!codes.isEmpty())
+      accept();
+  });
   connect(repoint_, &QPushButton::clicked, this, &WaveformsDialog::repoint);
   connect(remove_, &QPushButton::clicked, this, &WaveformsDialog::removeFolder);
   connect(rescan_, &QPushButton::clicked, scan_, &WaveScan::start);
@@ -420,12 +448,43 @@ void WaveformsDialog::refresh() {
 }
 
 void WaveformsDialog::addFolder() {
-  const QString path = QFileDialog::getExistingDirectory(
-      this, tr("Folder of waveforms"), ctx_.study->study().dir);
-  if (path.isEmpty())
+  addFolders(
+      pickFolders(this, tr("Folders of waveforms"), ctx_.study->study().dir));
+}
+
+void WaveformsDialog::addFolders(const QStringList &paths) {
+  if (paths.isEmpty())
     return;
-  if (edit([&path](Study &s) { s.addWaveRoot(path); }))
+  Study::RootsAdded r;
+  if (!edit([&](Study &s) { r = s.addWaveRoots(paths); }))
+    return;
+  QStringList notes;
+  if (!r.covered.isEmpty())
+    notes << tr("Already covered by a listed folder: %1")
+                 .arg(r.covered.join(QStringLiteral(", ")));
+  if (!r.replaced.isEmpty())
+    notes << tr("Now covered by a folder that holds it, so taken off the "
+                "list (its files are read again once): %1")
+                 .arg(r.replaced.join(QStringLiteral(", ")));
+  if (!notes.isEmpty()) {
+    problem_->setProperty("auto", false);
+    problem_->setText(notes.join(QStringLiteral("\n")));
+  }
+  if (!r.added.isEmpty())
     scan_->start();
+}
+
+void WaveformsDialog::dragEnterEvent(QDragEnterEvent *e) {
+  if (!foldersOf(e->mimeData()).isEmpty())
+    e->acceptProposedAction();
+}
+
+void WaveformsDialog::dropEvent(QDropEvent *e) {
+  const QStringList dropped = foldersOf(e->mimeData());
+  if (dropped.isEmpty())
+    return;
+  addFolders(dropped);
+  e->acceptProposedAction();
 }
 
 void WaveformsDialog::repoint() {

@@ -285,17 +285,20 @@ void AnalysisWidget::reloadInBackground() {
 void AnalysisWidget::applyStudyInputs() {
   const study::Study *s = studyBar_->study();
   // Held to the study: its catalog and time offset are the ones read.
-  catalog_->setReadOnly(s != nullptr);
-  catalogBrowse_->setEnabled(s == nullptr);
-  catalogTz_->setEnabled(s == nullptr);
+  // (A study with no catalog of its own leaves the fields to the user.)
+  const bool ownCatalog = s && !s->catalog.isEmpty();
+  catalog_->setReadOnly(ownCatalog);
+  catalogBrowse_->setEnabled(!ownCatalog);
+  catalogTz_->setEnabled(!ownCatalog);
   if (!s)
     return;
   bool changed = false;
-  if (catalog_->text() != s->catalogPath()) {
+  if (ownCatalog && catalog_->text() != s->catalogPath()) {
     catalog_->setText(s->catalogPath());
     changed = true;
   }
-  const int tz = catalogTz_->findData(s->catalogUtcOffsetHours);
+  const int tz =
+      ownCatalog ? catalogTz_->findData(s->catalogUtcOffsetHours) : -1;
   if (tz >= 0 && tz != catalogTz_->currentIndex()) {
     const QSignalBlocker block(catalogTz_);
     catalogTz_->setCurrentIndex(tz);

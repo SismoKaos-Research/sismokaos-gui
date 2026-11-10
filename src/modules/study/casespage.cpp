@@ -12,6 +12,7 @@
 #include <QGroupBox>
 #include <QHash>
 #include <QHBoxLayout>
+#include <QPointer>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QLabel>
@@ -33,9 +34,14 @@
 #include "core/ui.h"
 #include "modules/study/casedialogs.h"
 #include "modules/study/casemap.h"
+#include "modules/study/studysetup.h"
 #include "modules/study/studyswitcher.h"
 #include "modules/study/waveforms.h"
+#include "jobs/jobmodel.h"
+#include "jobs/taskjob.h"
+#include "study/catalogs.h"
 #include "study/runs.h"
+#include "tdvms/catalog.h"
 #include "study/store.h"
 #include "study/waveindex.h"
 
@@ -117,8 +123,14 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   waveSummary_ = new QLabel(inputs_);
   waveSummary_->setObjectName(QStringLiteral("waveSummary"));
   waveSummary_->setWordWrap(true);
-  catalogBrowse_ = new QPushButton(QStringLiteral("…"), inputs_);
-  ui::setCompact(catalogBrowse_);
+  catalogBrowse_ = new QPushButton(inputs_);
+  catalogBrowse_->setObjectName(QStringLiteral("catalogOwn"));
+  catalogGet_ = new QPushButton(inputs_);
+  catalogGet_->setObjectName(QStringLiteral("catalogGet"));
+  catalogUpdate_ = new QPushButton(inputs_);
+  catalogUpdate_->setObjectName(QStringLiteral("catalogUpdate"));
+  setup_ = new QPushButton(inputs_);
+  setup_->setObjectName(QStringLiteral("studyInputs"));
   waveButton_ = new QPushButton(inputs_);
   waveButton_->setObjectName(QStringLiteral("waveformsButton"));
   catalogTime_ = new QComboBox(inputs_);
@@ -129,11 +141,19 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   auto *grid = new QGridLayout(inputs_);
   grid->addWidget(catalogLabel_, 0, 0);
   grid->addWidget(catalog_, 0, 1);
-  grid->addWidget(catalogBrowse_, 0, 2);
-  grid->addWidget(catalogTime_, 0, 3);
+  auto *catalogButtons = new QHBoxLayout;
+  catalogButtons->addWidget(catalogUpdate_);
+  catalogButtons->addWidget(catalogBrowse_);
+  catalogButtons->addWidget(catalogGet_);
+  catalogButtons->addWidget(catalogTime_);
+  auto *waveButtons = new QHBoxLayout;
+  waveButtons->addStretch(1);
+  waveButtons->addWidget(waveButton_);
+  waveButtons->addWidget(setup_);
+  grid->addLayout(catalogButtons, 0, 2);
   grid->addWidget(dataLabel_, 1, 0);
-  grid->addWidget(waveSummary_, 1, 1, 1, 2);
-  grid->addWidget(waveButton_, 1, 3);
+  grid->addWidget(waveSummary_, 1, 1);
+  grid->addLayout(waveButtons, 1, 2);
   grid->setColumnStretch(1, 1);
 
   banner_ = new QLabel(main);
@@ -267,6 +287,10 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
           [this] { StudySwitcher::openStudy(this, ctx_.study); });
   connect(catalogBrowse_, &QPushButton::clicked, this,
           &CasesPage::chooseCatalog);
+  connect(catalogGet_, &QPushButton::clicked, this, &CasesPage::getCatalog);
+  connect(catalogUpdate_, &QPushButton::clicked, this,
+          &CasesPage::updateBuiltIn);
+  connect(setup_, &QPushButton::clicked, this, &CasesPage::openSetup);
   connect(waveButton_, &QPushButton::clicked, this, &CasesPage::openWaveforms);
   connect(catalogTime_, &QComboBox::activated, this, &CasesPage::offsetChosen);
   connect(folder_, &QPushButton::clicked, this,
@@ -322,6 +346,10 @@ void CasesPage::retranslate() {
   catalogLabel_->setText(tr("Earthquake catalog"));
   dataLabel_->setText(tr("Waveforms"));
   catalog_->setPlaceholderText(tr("AFAD catalog export, CSV or .gz"));
+  catalogBrowse_->setText(tr("Use my own file…"));
+  catalogGet_->setText(tr("Get the catalog…"));
+  catalogUpdate_->setText(tr("Update…"));
+  setup_->setText(tr("Study inputs…"));
   waveButton_->setText(tr("Waveforms…"));
   catalogTime_->setItemText(0, tr("times in UTC"));
   catalogTime_->setItemText(1, tr("times in Turkey time (+3)"));
@@ -335,8 +363,9 @@ void CasesPage::retranslate() {
                                      tr("Origin time (UTC)"), tr("M"),
                                      tr("Depth"), tr("Stations"), tr("Span")});
   ui::setEmptyHint(table_,
-                   tr("No cases yet.\nChoose the earthquake catalog above, "
-                      "then Add from catalog…"));
+                   tr("No cases yet.\nAdd from catalog… picks an "
+                      "earthquake, from the built-in list or your own "
+                      "catalog."));
   stationsTitle_->setText(tr("STATIONS NEAR THE EPICENTRE"));
   zoneLabel_->setText(tr("Catalog zone"));
   zone_->setItemText(0, tr("Circle around the epicentre, radius"));
@@ -345,10 +374,27 @@ void CasesPage::retranslate() {
   spanLabel_->setText(tr("Span"));
   span_->setSuffix(tr(" days"));
 
-  ui::setHelp({catalogLabel_, catalog_, catalogBrowse_},
-              tr("The earthquake catalog of this study: an AFAD export, CSV "
-                 "or .gz. Cases are picked from it and the Indicators "
-                 "recipes read their events from it."));
+  ui::setHelp({catalogLabel_, catalog_},
+              tr("The earthquake catalog of this study. Without a file of "
+                 "its own the study uses the built-in list of large "
+                 "earthquakes, which is enough to pick cases. The Indicators "
+                 "and the Features calibration count small earthquakes and "
+                 "need a full catalog: an AFAD export, or a download."));
+  catalogBrowse_->setToolTip(ui::helpText(
+      tr("Chooses a catalog file of your own: an AFAD export as CSV, plain "
+         "or .gz. Cases are picked from it and the analyses read their "
+         "events from it.")));
+  catalogGet_->setToolTip(ui::helpText(
+      tr("Downloads the earthquakes around this study's cases from an FDSN "
+         "event service into the study folder and makes that file the "
+         "study's catalog.")));
+  catalogUpdate_->setToolTip(ui::helpText(
+      tr("Brings the built-in lists up to date over the network: the "
+         "stations from the AFAD portal and the large earthquakes from "
+         "USGS.")));
+  setup_->setToolTip(ui::helpText(
+      tr("The catalog and the waveform folders of the study in one dialog, "
+         "as when the study was created.")));
   ui::setHelp(catalogTime_,
               tr("Whether the times in the catalog file are UTC or Turkey "
                  "time (UTC+3). AFAD exports are UTC. A wrong choice shifts "
@@ -438,22 +484,40 @@ void CasesPage::refresh() {
   const Study &s = ctx_.study->study();
   const QString keep = currentId();
   updating_ = true;
-  catalog_->setText(s.catalogPath());
   const bool noCatalog = s.catalog.isEmpty();
   const bool lostCatalog = !noCatalog && !QFileInfo::exists(s.catalogPath());
+  if (noCatalog) {
+    const study::BuiltInCatalog b = study::builtInCatalog();
+    // "updated" only when it was: the list as shipped is as old as the
+    // release, which the date of its last earthquake bounds from below.
+    catalog_->setText(
+        (b.refreshed ? tr("Built-in list: M ≥ %1 since %2, updated %3")
+                     : tr("Built-in list: M ≥ %1 since %2, as shipped (to %3)"))
+            .arg(b.minMagnitude, 0, 'f', 0)
+            .arg(b.first.year())
+            .arg(b.updated.toString(Qt::ISODate)));
+  } else {
+    catalog_->setText(s.catalogPath());
+  }
+  catalog_->setCursorPosition(0);
+  catalogUpdate_->setVisible(noCatalog);
+  // The built-in list is in UTC; there is nothing to choose.
+  catalogTime_->setVisible(!noCatalog);
   catalog_->setStyleSheet(
       lostCatalog ? QStringLiteral("color: %1;")
                         .arg(ctx_.theme->statusColor(QStringLiteral("serious"))
                                  .name())
                   : QString());
-  add_->setEnabled(!noCatalog && !lostCatalog);
+  add_->setEnabled(!lostCatalog);
   add_->setToolTip(ui::helpText(
       lostCatalog
           ? tr("The catalog file is not where the study says it is: %1. "
                "Choose it again above.")
                 .arg(s.catalogPath())
           : noCatalog
-                ? tr("Choose the earthquake catalog above first.")
+                ? tr("Adds a case by picking an earthquake from the "
+                     "built-in list of large earthquakes and ticking the "
+                     "stations near it.")
                 : tr("Adds a case by picking an earthquake from the study's "
                      "catalog and ticking the stations near it.")));
   // The offset: one of the two usual ones, or whatever the study says.
@@ -770,9 +834,11 @@ void CasesPage::saveCase() {
   apply(edit);
 }
 
-void CasesPage::addFromCatalog() {
+void CasesPage::addFromCatalog() { addNear({}); }
+
+void CasesPage::addNear(const QStringList &stations) {
   try {
-    AddFromCatalogDialog dialog(ctx_.study->study(), this);
+    AddFromCatalogDialog dialog(ctx_.study->study(), this, stations);
     if (dialog.exec() != QDialog::Accepted || !dialog.result())
       return;
     Case c = *dialog.result();
@@ -910,6 +976,67 @@ void CasesPage::openWaveforms() {
   dialog.exec();
   updateWaveSummary();
   showCase();
+  // "Find earthquakes near these…": on to picking a case near the stations
+  // that were selected there.
+  if (!dialog.findNear().isEmpty())
+    addNear(dialog.findNear());
+}
+
+void CasesPage::openSetup() {
+  StudySetupDialog dialog(ctx_.study, this);
+  dialog.exec();
+}
+
+void CasesPage::getCatalog() {
+  CatalogFetchDialog dialog(ctx_.study->study(), this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+  QPointer<CasesPage> self(this);
+  if (startCatalogFetch(ctx_, dialog.query(), dialog.serviceId(),
+                        [self](bool ok, const QString &text) {
+                          if (self)
+                            self->showBanner((ok ? QString()
+                                                 : QStringLiteral("⚠ ")) +
+                                             text);
+                        }))
+    showBanner(tr("Downloading the catalog; progress is in the Jobs panel."));
+}
+
+void CasesPage::updateBuiltIn() {
+  QPointer<CasesPage> self(this);
+  Job *job = ctx_.jobs->add(new TaskJob(
+      tr("catalog refresh"), QStringLiteral("tdvms"),
+      tr("stations from the portal, M5+ events from USGS"),
+      [](TaskContext &t) -> int {
+        try {
+          auto http = tdvms::makeQtHttp();
+          const auto [stations, events] = tdvms::refreshCatalogs(*http);
+          t.log(QStringLiteral("%1: %2; %3: %4")
+                    .arg(tdvms::stationsPath())
+                    .arg(stations)
+                    .arg(tdvms::eventsPath())
+                    .arg(events));
+          return 0;
+        } catch (const std::exception &e) {
+          t.log(QString::fromUtf8(e.what()));
+          return 1;
+        }
+      }));
+  catalogUpdate_->setEnabled(false);
+  connect(job, &Job::stateChanged, this, [self, job] {
+    const Job::State st = job->state();
+    if (!self || st == Job::State::Running || st == Job::State::Queued)
+      return;
+    self->catalogUpdate_->setEnabled(true);
+    if (st == Job::State::Done) {
+      self->showBanner(QString());
+      self->refresh();
+    } else {
+      self->showBanner(tr("⚠ The built-in lists could not be updated: %1")
+                           .arg(job->log().isEmpty() ? QString()
+                                                     : job->log().last()));
+    }
+  });
 }
 
 void CasesPage::chooseStationFolder() {

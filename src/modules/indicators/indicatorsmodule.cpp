@@ -269,12 +269,16 @@ IndicatorsWidget::IndicatorsWidget(AppContext ctx, QWidget *parent)
 
 void IndicatorsWidget::applyStudyInputs() {
   const study::Study *s = studyBar_->study();
-  // Held to the study: its catalog is the one read.
-  catalog_->setReadOnly(s != nullptr);
-  catalogBrowse_->setEnabled(s == nullptr);
+  // Held to the study: its catalog is the one read. A study with no
+  // catalog of its own (it picks cases from the built-in list of large
+  // earthquakes, far too few for indicators) leaves the field to the user.
+  const bool ownCatalog = s && !s->catalog.isEmpty();
+  catalog_->setReadOnly(ownCatalog);
+  catalogBrowse_->setEnabled(!ownCatalog);
   if (!s)
     return;
-  catalog_->setText(s->catalogPath());
+  if (ownCatalog)
+    catalog_->setText(s->catalogPath());
   if (const study::Case *c = studyBar_->currentCase()) {
     // The case's zone: its circle, or its fault traces.
     if (c->zone.kind == study::Zone::Kind::Fault) {

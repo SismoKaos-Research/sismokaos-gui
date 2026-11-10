@@ -11,9 +11,13 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include "modules/study/studysetup.h"
 #include "study/store.h"
 
 namespace skg {
+
+bool StudySwitcher::setupAfterCreate = true;
+std::function<void(const QString &)> StudySwitcher::showPage;
 
 StudySwitcher::StudySwitcher(study::StudyStore *store, QWidget *parent)
     : QToolButton(parent), store_(store) {
@@ -187,8 +191,17 @@ void StudySwitcher::newStudy(QWidget *parent, study::StudyStore *store) {
   if (!ok)
     return;
   QString error;
-  if (!store->create(dir, name.trimmed(), &error))
+  if (!store->create(dir, name.trimmed(), &error)) {
     QMessageBox::warning(parent, tr("New study"), error);
+    return;
+  }
+  // The catalog and the waveform folders in one go; both can be skipped.
+  if (setupAfterCreate) {
+    StudySetupDialog setup(store, parent);
+    setup.exec();
+  }
+  if (showPage)
+    showPage(QStringLiteral("cases"));
 }
 
 void StudySwitcher::openStudy(QWidget *parent, study::StudyStore *store) {

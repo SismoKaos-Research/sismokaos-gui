@@ -53,6 +53,10 @@ private:
   void showCase(); // the selection changed
   void saveCase(); // the detail fields changed
   void addFromCatalog();
+  void addNear(const QStringList &stations); // the same, filtered to these
+  void getCatalog();
+  void updateBuiltIn();
+  void openSetup();
   void addReference();
   void removeCase();
   void chooseCatalog();
@@ -87,6 +91,7 @@ private:
   QLabel *catalogLabel_, *dataLabel_, *waveSummary_;
   QLineEdit *catalog_;
   QPushButton *catalogBrowse_, *waveButton_;
+  QPushButton *catalogGet_, *catalogUpdate_, *setup_;
   QComboBox *catalogTime_;
   QPushButton *add_, *addRef_, *remove_;
   QLabel *summary_;

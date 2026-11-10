@@ -21,6 +21,11 @@ public:
 
   // The dialogs, also used by the pages' "no study open" state.
   static void newStudy(QWidget *parent, study::StudyStore *store);
+  // Whether a new study goes on to the "Set up the study" dialog (tests
+  // switch it off), and how the page of the given id is shown afterwards
+  // (set by the application; unset in tests).
+  static bool setupAfterCreate;
+  static std::function<void(const QString &)> showPage;
   static void openStudy(QWidget *parent, study::StudyStore *store);
   // Asks where each input of the open study that is not on disk has gone
   // (a moved catalog, a data disk mounted elsewhere) and rewrites the paths.

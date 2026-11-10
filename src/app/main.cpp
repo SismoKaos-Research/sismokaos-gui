@@ -86,6 +86,8 @@ int main(int argc, char *argv[]) {
 
   MainWindow w(ctx, modules, &i18n);
   w.addHeaderWidget(new StudySwitcher(&studies, &w));
+  // A new study ends on the Cases page, where its first step is.
+  StudySwitcher::showPage = [&w](const QString &id) { w.showModule(id); };
   QObject::connect(&w, &MainWindow::newStudyRequested, &w,
                    [&] { StudySwitcher::newStudy(&w, &studies); });
   QObject::connect(&w, &MainWindow::openStudyRequested, &w,

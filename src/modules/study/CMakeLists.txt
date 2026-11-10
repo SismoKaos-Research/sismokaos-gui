@@ -5,6 +5,7 @@ qt_add_library(skg_mod_study STATIC
   casedialogs.cpp   casedialogs.h
   casemap.cpp       casemap.h
   waveforms.cpp     waveforms.h
+  studysetup.cpp    studysetup.h
   runspage.cpp      runspage.h
   comparepage.cpp   comparepage.h
   settinghelp.cpp   settinghelp.h

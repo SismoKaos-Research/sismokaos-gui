@@ -267,7 +267,10 @@ void FeaturesWidget::applyStudyInputs() {
   if (!s)
     return;
   fx::Config cfg = config_->config();
-  cfg.calibration.catalog = s->catalogPath();
+  // A study with no catalog of its own leaves the page's catalog alone:
+  // the built-in list of large earthquakes cannot calibrate anything.
+  if (!s->catalog.isEmpty())
+    cfg.calibration.catalog = s->catalogPath();
   if (st) {
     cfg.station = st->code;
     cfg.calibration.stationLat = st->lat;

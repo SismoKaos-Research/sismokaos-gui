@@ -54,6 +54,15 @@ class WaveformsDialog : public QDialog {
   Q_OBJECT
 public:
   WaveformsDialog(AppContext ctx, WaveScan *scan, QWidget *parent = nullptr);
+  // The stations selected when "Find earthquakes near these…" closed the
+  // dialog; empty otherwise.
+  QStringList findNear() const { return findNear_; }
+  // Adds the folders (none twice, none inside another) and scans them.
+  void addFolders(const QStringList &paths);
+
+protected:
+  void dragEnterEvent(QDragEnterEvent *e) override;
+  void dropEvent(QDropEvent *e) override;
 
 private:
   void refresh();
@@ -73,7 +82,8 @@ private:
   QListWidget *folders_;
   QPushButton *add_, *repoint_, *remove_, *rescan_, *stop_;
   QTableWidget *table_;
-  QPushButton *coords_, *xml_, *skipped_;
+  QPushButton *coords_, *xml_, *skipped_, *near_;
+  QStringList findNear_;
 };
 
 } // namespace skg

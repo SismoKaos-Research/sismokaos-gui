@@ -36,6 +36,8 @@ QString waveformNote(const study::Study &study, const study::StationRef &s,
                      const QDateTime &from, const QDateTime &to);
 // Whether the study's waveform folders hold anything of the station.
 bool hasWaveformsOf(const study::Study &study, const study::StationRef &s);
+// The codes of the stations the study's waveform folders hold, sorted.
+QStringList stationsWithWaveforms(const study::Study &study);
 QList<study::StationRef> tickedStations(const QTableWidget *table,
                                         const QList<study::StationRef> &all);
 
@@ -43,7 +45,11 @@ class AddFromCatalogDialog : public QDialog {
   Q_OBJECT
 public:
   // Throws std::runtime_error when the catalog cannot be read.
-  AddFromCatalogDialog(const study::Study &study, QWidget *parent = nullptr);
+  // Without a catalog of its own the study offers the built-in list of
+  // large earthquakes. `nearStations` starts the "near stations" filter with
+  // those codes.
+  AddFromCatalogDialog(const study::Study &study, QWidget *parent = nullptr,
+                       const QStringList &nearStations = {});
   std::optional<study::Case> result() const { return result_; }
   void accept() override;
 
@@ -53,6 +59,9 @@ private:
   void updateNotes(); // warnings under the tables, and the Add button
 
   const study::Study &study_;
+  bool builtIn_; // the events are the built-in list, not the study's catalog
+  QStringList haveData_; // stations found in the study's waveform folders
+  QPushButton *mine_;
   QPushButton *ok_;
   QLabel *range_, *stationNote_, *warning_;
   std::vector<analysis::Event> events_;
