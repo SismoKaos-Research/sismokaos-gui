@@ -8,6 +8,7 @@
 
 #include <QHash>
 #include <QList>
+#include <QSet>
 #include <QString>
 #include <QWidget>
 
@@ -82,6 +83,7 @@ struct PreviewEvent {
   int row = 0; // reported on a click
   double lat = 0, lon = 0, magnitude = 0;
   QString tip;
+  QString label; // shown beside it when it is selected
 };
 
 class CasePreview : public QWidget {
@@ -92,8 +94,11 @@ public:
 
   // Nothing chosen yet: the earthquakes of the list, and, when the list is
   // limited to those near some stations, what those stations cover.
+  // `selected` rows are drawn strong, in colour and with their name: the
+  // earthquakes about to be added when several are chosen at once.
   void setList(const QList<PreviewEvent> &events,
-               const QList<CoverageStation> &filterStations, double filterKm);
+               const QList<CoverageStation> &filterStations, double filterKm,
+               const QSet<int> &selected = {});
   // The chosen earthquake: its zone, the candidate stations and the ticked
   // ones. A ticked station beyond the zone is flagged.
   void setCase(const study::Case &c, const QList<study::StationRef> &candidates,

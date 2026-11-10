@@ -366,9 +366,10 @@ QString CasePreview::warning() const {
 
 void CasePreview::setList(const QList<PreviewEvent> &events,
                           const QList<CoverageStation> &filterStations,
-                          double filterKm) {
+                          double filterKm, const QSet<int> &selected) {
   if (!map_)
     return;
+  const QList<QColor> palette = theme_->seriesColors();
   GeoContent c;
   c.coverageColor = theme_->color(QStringLiteral("accent"));
   for (const CoverageStation &s : filterStations) {
@@ -396,6 +397,14 @@ void CasePreview::setList(const QList<PreviewEvent> &events,
     m.lat = e.lat;
     m.lon = e.lon;
     m.magnitude = e.magnitude;
+    if (selected.contains(e.row)) {
+      m.strong = true;
+      m.label = e.label;
+      if (!palette.isEmpty())
+        m.color = palette.first();
+    } else if (!selected.isEmpty()) {
+      m.dim = true;
+    }
     c.markers << m;
   }
   // Coming back from a chosen earthquake, or a changed list: show it all.
@@ -407,6 +416,10 @@ void CasePreview::setList(const QList<PreviewEvent> &events,
   hint_->setText(
       events.isEmpty()
           ? tr("No earthquake passes the filters.")
+          : !selected.isEmpty()
+                ? tr("%n earthquake(s) chosen. Hold Ctrl and click another to "
+                     "add it to the choice or take it out.",
+                     nullptr, int(selected.size()))
           : filterStations.isEmpty()
                 ? tr("The earthquakes of the list. Click one to select it; "
                      "drag to move the map, turn the wheel to zoom.")
