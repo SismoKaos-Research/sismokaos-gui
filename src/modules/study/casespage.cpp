@@ -1,18 +1,24 @@
 #include "modules/study/casespage.h"
 
 #include <QComboBox>
+#include <QCryptographicHash>
 #include <QDoubleSpinBox>
+#include <QDir>
 #include <QEvent>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFrame>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHash>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QSplitter>
 #include <QStackedWidget>
@@ -22,20 +28,60 @@
 #include <cmath>
 #include <exception>
 
+#include "core/defaults.h"
 #include "core/theme.h"
 #include "core/ui.h"
 #include "modules/study/casedialogs.h"
 #include "modules/study/casemap.h"
 #include "modules/study/studyswitcher.h"
+#include "modules/study/waveforms.h"
+#include "study/runs.h"
 #include "study/store.h"
+#include "study/waveindex.h"
 
 namespace skg {
 
 using study::Case;
 using study::Study;
 
+std::function<bool(QWidget *, const QString &, const QString &)>
+    CasesPage::confirm =
+        [](QWidget *parent, const QString &title, const QString &text) {
+          return QMessageBox::question(parent, title, text) == QMessageBox::Yes;
+        };
+
+int CasesPage::runsMadeStale(const Study &before, const Study &after,
+                             const QString &caseId) {
+  const Case *c0 = before.findCase(caseId);
+  const Case *c1 = after.findCase(caseId);
+  if (!c0 || !c1)
+    return 0;
+  QStringList rows;
+  for (const study::StationRef &st : c0->stations)
+    rows << st.code;
+  if (rows.isEmpty())
+    rows << QString();
+  int n = 0;
+  for (const study::Recipe &r : before.recipes)
+    for (const QString &station : std::as_const(rows)) {
+      if (study::cellOf(before, *c0, station, r).state !=
+          study::CellState::Done)
+        continue;
+      // A station that is unticked keeps its results on disk; it is the
+      // runs that stay in the table and stop being current that count.
+      bool kept = station.isEmpty();
+      for (const study::StationRef &st : c1->stations)
+        kept = kept || st.code == station;
+      if (kept && study::cellOf(after, *c1, station, r).state !=
+                      study::CellState::Done)
+        ++n;
+    }
+  return n;
+}
+
 CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
     : QWidget(parent), ctx_(ctx) {
+  scan_ = new WaveScan(ctx_, this);
   stack_ = new QStackedWidget(this);
 
   // No study open.
@@ -66,25 +112,34 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   catalogLabel_ = new QLabel(inputs_);
   dataLabel_ = new QLabel(inputs_);
   catalog_ = new QLineEdit(inputs_);
+  catalog_->setObjectName(QStringLiteral("studyCatalog"));
   catalog_->setReadOnly(true);
-  dataRoot_ = new QLineEdit(inputs_);
-  dataRoot_->setReadOnly(true);
+  waveSummary_ = new QLabel(inputs_);
+  waveSummary_->setObjectName(QStringLiteral("waveSummary"));
+  waveSummary_->setWordWrap(true);
   catalogBrowse_ = new QPushButton(QStringLiteral("…"), inputs_);
-  dataBrowse_ = new QPushButton(QStringLiteral("…"), inputs_);
   ui::setCompact(catalogBrowse_);
-  ui::setCompact(dataBrowse_);
+  waveButton_ = new QPushButton(inputs_);
+  waveButton_->setObjectName(QStringLiteral("waveformsButton"));
   catalogTime_ = new QComboBox(inputs_);
+  catalogTime_->setObjectName(QStringLiteral("catalogTime"));
   catalogTime_->addItem(QString(), 0.0);
   catalogTime_->addItem(QString(), 3.0);
+  catalogTime_->addItem(QString(), QVariant()); // "Other…"
   auto *grid = new QGridLayout(inputs_);
   grid->addWidget(catalogLabel_, 0, 0);
   grid->addWidget(catalog_, 0, 1);
   grid->addWidget(catalogBrowse_, 0, 2);
   grid->addWidget(catalogTime_, 0, 3);
   grid->addWidget(dataLabel_, 1, 0);
-  grid->addWidget(dataRoot_, 1, 1);
-  grid->addWidget(dataBrowse_, 1, 2);
+  grid->addWidget(waveSummary_, 1, 1, 1, 2);
+  grid->addWidget(waveButton_, 1, 3);
   grid->setColumnStretch(1, 1);
+
+  banner_ = new QLabel(main);
+  banner_->setObjectName(QStringLiteral("banner"));
+  banner_->setWordWrap(true);
+  banner_->hide();
 
   add_ = new QPushButton(main);
   ui::setPrimary(add_);
@@ -128,24 +183,43 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   stationTable_->verticalHeader()->hide();
   stationTable_->setShowGrid(false);
   stationTable_->setAlternatingRowColors(true);
-  stationTable_->setSelectionMode(QAbstractItemView::NoSelection);
+  stationTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
+  stationTable_->setSelectionMode(QAbstractItemView::SingleSelection);
   stationTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
   stationTable_->horizontalHeader()->setStretchLastSection(true);
   stationTable_->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft |
                                                          Qt::AlignVCenter);
   stationTable_->setMinimumHeight(150);
   stationTable_->setMaximumHeight(210);
+  stationHint_ = new QLabel(card);
+  stationHint_->setObjectName(QStringLiteral("stationHint"));
+  stationHint_->setWordWrap(true);
+  folder_ = new QPushButton(card);
+  folder_->setObjectName(QStringLiteral("stationFolder"));
+  folderClear_ = new QPushButton(card);
+  getWave_ = new QPushButton(card);
+  getWave_->setObjectName(QStringLiteral("getWaveforms"));
+  next_ = new QPushButton(card);
+  next_->setObjectName(QStringLiteral("nextRecipes"));
+  auto *stationButtons = new QHBoxLayout;
+  stationButtons->addWidget(folder_);
+  stationButtons->addWidget(folderClear_);
+  stationButtons->addStretch(1);
+  stationButtons->addWidget(getWave_);
+  stationButtons->addWidget(next_);
   zoneLabel_ = new QLabel(card);
   zoneLabel_->setObjectName(QStringLiteral("fieldLabel"));
   zone_ = new QComboBox(card);
   zone_->addItem(QString(), int(study::Zone::Kind::Circle));
   zone_->addItem(QString(), int(study::Zone::Kind::Fault));
   radius_ = new QDoubleSpinBox(card);
+  radius_->setObjectName(QStringLiteral("caseRadius"));
   radius_->setRange(1, 2000);
   radius_->setDecimals(0);
   spanLabel_ = new QLabel(card);
   spanLabel_->setObjectName(QStringLiteral("fieldLabel"));
   span_ = new QSpinBox(card);
+  span_->setObjectName(QStringLiteral("caseSpan"));
   span_->setRange(1, 3650);
   auto *zoneRow = new QHBoxLayout;
   zoneRow->addWidget(zoneLabel_);
@@ -162,6 +236,8 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   cardLayout->addWidget(map_, 1);
   cardLayout->addWidget(stationsTitle_);
   cardLayout->addWidget(stationTable_);
+  cardLayout->addWidget(stationHint_);
+  cardLayout->addLayout(stationButtons);
   cardLayout->addLayout(zoneRow);
 
   auto *split = new QSplitter(Qt::Horizontal, main);
@@ -175,6 +251,7 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
 
   auto *mainLayout = new QVBoxLayout(main);
   mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->addWidget(banner_);
   mainLayout->addWidget(inputs_);
   mainLayout->addLayout(bar);
   mainLayout->addWidget(split, 1);
@@ -190,10 +267,22 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
           [this] { StudySwitcher::openStudy(this, ctx_.study); });
   connect(catalogBrowse_, &QPushButton::clicked, this,
           &CasesPage::chooseCatalog);
-  connect(dataBrowse_, &QPushButton::clicked, this, &CasesPage::chooseDataRoot);
-  connect(catalogTime_, &QComboBox::activated, this, [this](int i) {
-    const double h = catalogTime_->itemData(i).toDouble();
-    ctx_.study->update([h](Study &s) { s.catalogUtcOffsetHours = h; });
+  connect(waveButton_, &QPushButton::clicked, this, &CasesPage::openWaveforms);
+  connect(catalogTime_, &QComboBox::activated, this, &CasesPage::offsetChosen);
+  connect(folder_, &QPushButton::clicked, this,
+          &CasesPage::chooseStationFolder);
+  connect(folderClear_, &QPushButton::clicked, this,
+          &CasesPage::clearStationFolder);
+  connect(getWave_, &QPushButton::clicked, this, &CasesPage::getWaveforms);
+  connect(next_, &QPushButton::clicked, this, [this] {
+    if (ctx_.nav)
+      ctx_.nav->show(QStringLiteral("runs"));
+  });
+  connect(stationTable_, &QTableWidget::itemSelectionChanged, this,
+          &CasesPage::updateStationButtons);
+  connect(scan_, &WaveScan::updated, this, [this] {
+    updateWaveSummary();
+    showCase();
   });
   connect(add_, &QPushButton::clicked, this, &CasesPage::addFromCatalog);
   connect(addRef_, &QPushButton::clicked, this, &CasesPage::addReference);
@@ -231,12 +320,14 @@ void CasesPage::retranslate() {
   openStudy_->setText(tr("Open study…"));
   inputs_->setTitle(tr("Study inputs"));
   catalogLabel_->setText(tr("Earthquake catalog"));
-  dataLabel_->setText(tr("Waveform folder"));
+  dataLabel_->setText(tr("Waveforms"));
   catalog_->setPlaceholderText(tr("AFAD catalog export, CSV or .gz"));
-  dataRoot_->setPlaceholderText(
-      tr("a folder with one sub-folder of miniSEED per station"));
+  waveButton_->setText(tr("Waveforms…"));
   catalogTime_->setItemText(0, tr("times in UTC"));
   catalogTime_->setItemText(1, tr("times in Turkey time (+3)"));
+  catalogTime_->setItemText(2, tr("another offset…"));
+  folder_->setText(tr("Choose folder…"));
+  folderClear_->setText(tr("Use the study's folders"));
   add_->setText(tr("Add from catalog…"));
   addRef_->setText(tr("Add reference date…"));
   remove_->setText(tr("Remove"));
@@ -262,10 +353,27 @@ void CasesPage::retranslate() {
               tr("Whether the times in the catalog file are UTC or Turkey "
                  "time (UTC+3). AFAD exports are UTC. A wrong choice shifts "
                  "every event by three hours."));
-  ui::setHelp({dataLabel_, dataRoot_, dataBrowse_},
-              tr("For the Features recipes: a folder with one sub-folder of "
-                 "miniSEED files per station, named by the station code. "
-                 "Not needed for Indicators."));
+  ui::setHelp({dataLabel_, waveSummary_, waveButton_},
+              tr("For the Features recipes: the folders holding the "
+                 "waveforms you already have, and what was found in them. "
+                 "The station of each file is read from its miniSEED "
+                 "headers, so any folder layout works. Not needed for "
+                 "Indicators."));
+  folder_->setToolTip(ui::helpText(
+      tr("For the selected, ticked station: use the files of one folder you "
+         "choose, whatever the study's waveform folders hold. For data whose "
+         "headers carry a different station code.")));
+  folderClear_->setToolTip(ui::helpText(
+      tr("Drops the folder chosen for the selected station, so its files "
+         "are looked up in the study's waveform folders again.")));
+  getWave_->setToolTip(ui::helpText(
+      tr("Step 2: opens the Data page with this case's stations and span "
+         "filled in, to download what is missing.")));
+  next_->setToolTip(ui::helpText(
+      tr("Step 3: goes to the Runs page, where recipes are made and run on "
+         "the cases. Features recipes need the waveforms first; Indicators "
+         "recipes do not.")));
+  updateStationButtons();
   add_->setToolTip(ui::helpText(
       tr("Adds a case by picking an earthquake from the study's catalog and "
          "ticking the stations near it.")));
@@ -279,7 +387,9 @@ void CasesPage::retranslate() {
                         "figures. Changes are saved at once."));
   stationTable_->setToolTip(ui::helpText(
       tr("Tick the stations this case is studied from. Each ticked station "
-         "is a row of its own on the Runs and Compare pages.")));
+         "is a row of its own on the Runs and Compare pages. Waveforms says "
+         "how many days of the span the study's waveform folders hold for "
+         "the station.")));
   ui::setHelp({zoneLabel_, zone_},
               tr("Which catalog events count for this case in the Indicators "
                  "recipes: those within a circle around the epicentre, or "
@@ -303,11 +413,16 @@ QString CasesPage::currentId() const {
 }
 
 const std::vector<analysis::Station> &CasesPage::stationList() {
-  const QString path = ctx_.study->study().stationListPath();
-  if (path != stationsFrom_) {
-    stationsFrom_ = path;
+  // The station list plus the study's own extra stations; read again only
+  // when either changes.
+  const Study &st = ctx_.study->study();
+  QString key = st.stationListPath();
+  for (const study::ExtraStation &e : st.extraStations)
+    key += QStringLiteral("|%1:%2:%3").arg(e.code).arg(e.lat).arg(e.lon);
+  if (key != stationsFrom_) {
+    stationsFrom_ = key;
     try {
-      stations_ = analysis::loadStations(path);
+      stations_ = st.stations();
     } catch (const std::exception &) {
       stations_.clear(); // cases keep the stations they already name
     }
@@ -324,9 +439,42 @@ void CasesPage::refresh() {
   const QString keep = currentId();
   updating_ = true;
   catalog_->setText(s.catalogPath());
-  dataRoot_->setText(s.waveformRoots().value(0));
-  catalogTime_->setCurrentIndex(s.catalogUtcOffsetHours == 3.0 ? 1 : 0);
-  add_->setEnabled(!s.catalog.isEmpty());
+  const bool noCatalog = s.catalog.isEmpty();
+  const bool lostCatalog = !noCatalog && !QFileInfo::exists(s.catalogPath());
+  catalog_->setStyleSheet(
+      lostCatalog ? QStringLiteral("color: %1;")
+                        .arg(ctx_.theme->statusColor(QStringLiteral("serious"))
+                                 .name())
+                  : QString());
+  add_->setEnabled(!noCatalog && !lostCatalog);
+  add_->setToolTip(ui::helpText(
+      lostCatalog
+          ? tr("The catalog file is not where the study says it is: %1. "
+               "Choose it again above.")
+                .arg(s.catalogPath())
+          : noCatalog
+                ? tr("Choose the earthquake catalog above first.")
+                : tr("Adds a case by picking an earthquake from the study's "
+                     "catalog and ticking the stations near it.")));
+  // The offset: one of the two usual ones, or whatever the study says.
+  while (catalogTime_->count() > 3)
+    catalogTime_->removeItem(2);
+  int offsetIndex = catalogTime_->findData(s.catalogUtcOffsetHours);
+  if (offsetIndex < 0) {
+    catalogTime_->insertItem(
+        2,
+        tr("times in UTC%1%2")
+            .arg(s.catalogUtcOffsetHours < 0 ? QStringLiteral("−")
+                                             : QStringLiteral("+"))
+            .arg(std::abs(s.catalogUtcOffsetHours)),
+        s.catalogUtcOffsetHours);
+    offsetIndex = 2;
+  }
+  catalogTime_->setCurrentIndex(offsetIndex);
+  updateWaveSummary();
+  // Waveform folders that were never scanned, or that gained files since
+  // (a download on the Data page): scan them, which reads only what is new.
+  rescanIfChanged();
   table_->setRowCount(int(s.cases.size()));
   int rows = 0, select = -1;
   for (int i = 0; i < int(s.cases.size()); ++i) {
@@ -378,9 +526,12 @@ void CasesPage::showCase() {
     facts_->clear();
     map_->clear();
     stationTable_->setRowCount(0);
+    stationHint_->clear();
     updating_ = false;
+    updateStationButtons();
     return;
   }
+  const QString keepStation = selectedStation();
   updating_ = true;
   name_->setText(c->name);
   const QString when =
@@ -403,11 +554,36 @@ void CasesPage::showCase() {
   QStringList ticked;
   for (const study::StationRef &st : c->stations)
     ticked << st.code;
-  for (const study::StationRef &o :
-       study::nearestStations(stationList(), c->lat, c->lon, 200.0))
+  for (const study::StationRef &o : study::nearestStations(
+           stationList(), c->lat, c->lon, defaults::kStationRadiusKm))
     if (!ticked.contains(o.code))
       candidates_ << o;
-  fillStationTable(stationTable_, candidates_, ticked);
+  const QDateTime from = c->spanStart(), to = c->time;
+  fillStationTable(stationTable_, candidates_, ticked,
+                   [&s, from, to](const study::StationRef &st) {
+                     return waveformNote(s, st, from, to);
+                   });
+  stationTable_->resizeColumnToContents(4);
+  for (int i = 0; i < stationTable_->rowCount(); ++i)
+    if (stationTable_->item(i, 1)->text() == keepStation) {
+      const QSignalBlocker block(stationTable_);
+      stationTable_->selectRow(i);
+    }
+  int without = 0;
+  for (const study::StationRef &st : c->stations)
+    if (!hasWaveformsOf(s, st))
+      ++without;
+  stationHint_->setText(
+      c->stations.isEmpty()
+          ? tr("⚠ No station is ticked: only the Indicators recipes run for "
+               "this case. Tick the stations it is studied from.")
+          : without > 0
+                ? tr("⚠ %n ticked station(s) have no waveforms in the "
+                     "study's folders. Add the folder under Waveforms…, or "
+                     "get the data.",
+                     nullptr, without)
+                : QString());
+  stationHint_->setVisible(!stationHint_->text().isEmpty());
   zone_->setCurrentIndex(c->zone.kind == study::Zone::Kind::Fault ? 1 : 0);
   radius_->setValue(c->zone.kind == study::Zone::Kind::Fault
                         ? c->zone.bufferKm
@@ -420,6 +596,127 @@ void CasesPage::showCase() {
       index = i;
   map_->setCase(*c, candidates_, colors[index % colors.size()]);
   updating_ = false;
+  updateStationButtons();
+}
+
+QString CasesPage::selectedStation() const {
+  const int row = stationTable_->currentRow();
+  if (row < 0 || stationTable_->selectedItems().isEmpty() ||
+      !stationTable_->item(row, 1))
+    return {};
+  return stationTable_->item(row, 1)->text();
+}
+
+void CasesPage::updateStationButtons() {
+  const Case *c = ctx_.study->isOpen()
+                      ? ctx_.study->study().findCase(currentId())
+                      : nullptr;
+  const QString code = selectedStation();
+  const study::StationRef *st = nullptr;
+  if (c)
+    for (const study::StationRef &x : c->stations)
+      if (x.code == code)
+        st = &x;
+  folder_->setEnabled(st != nullptr);
+  folderClear_->setEnabled(st && !st->dataDir.isEmpty());
+  getWave_->setEnabled(c && !c->stations.isEmpty() && ctx_.nav);
+  next_->setEnabled(c && ctx_.nav);
+  // The next step follows the sidebar: Data (2) while a ticked station has
+  // no waveforms, Runs (3) once they all have.
+  bool lacking = false;
+  if (c)
+    for (const study::StationRef &x : c->stations)
+      lacking = lacking || !hasWaveformsOf(ctx_.study->study(), x);
+  getWave_->setText(lacking ? tr("Next: get waveforms →")
+                            : tr("Get more waveforms…"));
+  next_->setText(lacking || !c ? tr("Go on to recipes →")
+                               : tr("Next: recipes →"));
+  ui::setPrimary(getWave_, lacking);
+  ui::setPrimary(next_, c && !lacking);
+}
+
+void CasesPage::rescanIfChanged() {
+  const Study &s = ctx_.study->study();
+  if (s.waveRoots.isEmpty() || scan_->running())
+    return;
+  // What the folders looked like when they were last scanned is remembered
+  // between sessions, so opening the application does not scan for nothing.
+  const QString key =
+      QStringLiteral("waveforms/scanned/") +
+      QString::fromLatin1(QCryptographicHash::hash(s.dir.toUtf8(),
+                                                   QCryptographicHash::Sha1)
+                              .toHex());
+  QString stamp;
+  for (const study::WaveRoot &r : s.waveRoots)
+    stamp += r.id + QLatin1Char('=') +
+             study::folderStamp(s.resolved(r.path)) + QLatin1Char(';');
+  const auto index = study::WaveIndex::shared(s.dir);
+  bool missing = false;
+  for (const study::WaveRoot &r : s.waveRoots)
+    missing = missing || !index->roots.contains(r.id);
+  if (!missing && ctx_.settings->value(key).toString() == stamp)
+    return;
+  ctx_.settings->setValue(key, stamp);
+  scan_->start();
+}
+
+void CasesPage::updateWaveSummary() {
+  if (!ctx_.study->isOpen())
+    return;
+  const Study &s = ctx_.study->study();
+  QString text;
+  if (s.waveRoots.isEmpty()) {
+    text = tr("No waveform folder yet. Add the folder that holds your "
+              "miniSEED files, or download with the Data page.");
+  } else {
+    const auto index = study::WaveIndex::shared(s.dir);
+    int lost = 0;
+    for (const study::WaveRoot &r : s.waveRoots)
+      if (!QDir(s.resolved(r.path)).exists())
+        ++lost;
+    text = tr("%n folder(s)", nullptr, int(s.waveRoots.size())) +
+           QStringLiteral(" · ") +
+           tr("%n station(s) found", nullptr, int(index->stations().size()));
+    if (lost > 0)
+      text += QStringLiteral(" · ") +
+              tr("⚠ %n folder(s) not found (moved?)", nullptr, lost);
+    const int skipped = int(index->skipped().size());
+    if (skipped > 0)
+      text += QStringLiteral(" · ") + tr("%n file(s) skipped", nullptr, skipped);
+    if (!scan_->status().isEmpty())
+      text += QStringLiteral(" · ") + scan_->status();
+    else if (index->pendingCoverage() > 0)
+      text += QStringLiteral(" · ") + tr("coverage not read yet");
+  }
+  waveSummary_->setText(text);
+}
+
+void CasesPage::showBanner(const QString &text) {
+  banner_->setStyleSheet(
+      QStringLiteral("QLabel { background: %1; color: %2; border: 1px solid "
+                     "%3; border-radius: 6px; padding: 6px 10px; }")
+          .arg(ctx_.theme->color(QStringLiteral("surface2")).name(),
+               ctx_.theme->color(QStringLiteral("text")).name(),
+               ctx_.theme->statusColor(QStringLiteral("serious")).name()));
+  banner_->setText(text);
+  banner_->setVisible(!text.isEmpty());
+}
+
+bool CasesPage::apply(const std::function<void(Study &)> &edit) {
+  QString error;
+  if (ctx_.study->update(edit, &error)) {
+    if (banner_->property("saveError").toBool()) {
+      banner_->setProperty("saveError", false);
+      showBanner(QString());
+    }
+    return true;
+  }
+  banner_->setProperty("saveError", true);
+  showBanner(tr("⚠ The study could not be saved, so the change was not "
+                "kept: %1")
+                 .arg(error));
+  refresh(); // back to what is on disk
+  return false;
 }
 
 void CasesPage::saveCase() {
@@ -434,32 +731,43 @@ void CasesPage::saveCase() {
   const bool fault = zone_->currentIndex() == 1;
   const double km = radius_->value();
   const int span = span_->value();
-  QString error;
-  if (!ctx_.study->update(
-          [&](Study &s) {
-            for (Case &c : s.cases) {
-              if (c.id != id)
-                continue;
-              if (!name.isEmpty())
-                c.name = name;
-              // A ticked station keeps what the case already knew about
-              // it (its data folder).
-              QList<study::StationRef> next;
-              for (study::StationRef st : stations) {
-                for (const study::StationRef &old : c.stations)
-                  if (old.code == st.code)
-                    st.dataDir = old.dataDir;
-                next << st;
-              }
-              c.stations = next;
-              c.zone.kind =
-                  fault ? study::Zone::Kind::Fault : study::Zone::Kind::Circle;
-              (fault ? c.zone.bufferKm : c.zone.radiusKm) = km;
-              c.spanDays = span;
-            }
-          },
-          &error))
-    QMessageBox::warning(this, tr("Study"), error);
+  const auto edit = [&](Study &s) {
+    for (Case &c : s.cases) {
+      if (c.id != id)
+        continue;
+      if (!name.isEmpty())
+        c.name = name;
+      // A ticked station keeps what the case already knew about it (its
+      // data folder).
+      QList<study::StationRef> next;
+      for (study::StationRef st : stations) {
+        for (const study::StationRef &old : c.stations)
+          if (old.code == st.code)
+            st.dataDir = old.dataDir;
+        next << st;
+      }
+      c.stations = next;
+      c.zone.kind =
+          fault ? study::Zone::Kind::Fault : study::Zone::Kind::Circle;
+      (fault ? c.zone.bufferKm : c.zone.radiusKm) = km;
+      c.spanDays = span;
+    }
+  };
+  // Nothing changed (a field lost focus): nothing to save or to ask.
+  Study after = ctx_.study->study();
+  edit(after);
+  if (after.toToml() == ctx_.study->study().toToml())
+    return;
+  const int stale = runsMadeStale(ctx_.study->study(), after, id);
+  if (stale > 0 &&
+      !confirm(this, tr("Change the case"),
+               tr("This change makes %n finished run(s) of this case stale; "
+                  "they would have to be run again. Change it anyway?",
+                  nullptr, stale))) {
+    showCase(); // put the fields back
+    return;
+  }
+  apply(edit);
 }
 
 void CasesPage::addFromCatalog() {
@@ -468,24 +776,19 @@ void CasesPage::addFromCatalog() {
     if (dialog.exec() != QDialog::Accepted || !dialog.result())
       return;
     Case c = *dialog.result();
-    QString error;
     QString id;
-    if (!ctx_.study->update(
-            [&](Study &s) {
-              c.id = s.freeCaseId(c.name);
-              id = c.id;
-              s.cases << c;
-            },
-            &error)) {
-      QMessageBox::warning(this, tr("Study"), error);
+    if (!apply([&](Study &s) {
+          c.id = s.freeCaseId(c.name);
+          id = c.id;
+          s.cases << c;
+        }))
       return;
-    }
     for (int i = 0; i < table_->rowCount(); ++i)
       if (table_->item(i, 0)->data(Qt::UserRole).toString() == id)
         table_->selectRow(i);
   } catch (const std::exception &e) {
-    QMessageBox::warning(this, tr("Earthquake catalog"),
-                         QString::fromUtf8(e.what()));
+    showBanner(tr("⚠ The earthquake catalog could not be read: %1")
+                   .arg(QString::fromUtf8(e.what())));
   }
 }
 
@@ -494,17 +797,13 @@ void CasesPage::addReference() {
   if (dialog.exec() != QDialog::Accepted || !dialog.result())
     return;
   Case c = *dialog.result();
-  QString error, id;
-  if (!ctx_.study->update(
-          [&](Study &s) {
-            c.id = s.freeCaseId(c.name);
-            id = c.id;
-            s.cases << c;
-          },
-          &error)) {
-    QMessageBox::warning(this, tr("Study"), error);
+  QString id;
+  if (!apply([&](Study &s) {
+        c.id = s.freeCaseId(c.name);
+        id = c.id;
+        s.cases << c;
+      }))
     return;
-  }
   for (int i = 0; i < table_->rowCount(); ++i)
     if (table_->item(i, 0)->data(Qt::UserRole).toString() == id)
       table_->selectRow(i);
@@ -520,7 +819,7 @@ void CasesPage::removeCase() {
           tr("Remove %1 from the study? Its result folders stay on disk.")
               .arg(c->name)) != QMessageBox::Yes)
     return;
-  ctx_.study->update([&id](Study &s) {
+  apply([&id](Study &s) {
     s.cases.removeIf([&id](const Case &x) { return x.id == id; });
   });
 }
@@ -531,15 +830,143 @@ void CasesPage::chooseCatalog() {
       tr("AFAD catalog (*.csv *.gz);;All files (*)"));
   if (path.isEmpty())
     return;
-  ctx_.study->update([&path](Study &s) { s.catalog = s.stored(path); });
+  apply([&path](Study &s) { s.catalog = s.stored(path); });
 }
 
-void CasesPage::chooseDataRoot() {
+void CasesPage::offsetChosen(int index) {
+  const Study &now = ctx_.study->study();
+  double hours = catalogTime_->itemData(index).toDouble();
+  if (!catalogTime_->itemData(index).isValid()) {
+    bool ok = false;
+    hours = QInputDialog::getDouble(
+        this, tr("Catalog time"),
+        tr("Hours the catalog's times are ahead of UTC:"),
+        now.catalogUtcOffsetHours, -12.0, 14.0, 1, &ok);
+    if (!ok) {
+      refresh();
+      return;
+    }
+  }
+  const double old = now.catalogUtcOffsetHours;
+  if (hours == old) {
+    refresh();
+    return;
+  }
+  int quakes = 0;
+  for (const Case &c : now.cases)
+    quakes += c.reference ? 0 : 1;
+  // With cases in the study, their times were read with the old offset:
+  // they are taken from the catalog again so they stay the same events.
+  QHash<QString, QDateTime> times;
+  int lost = 0;
+  if (quakes > 0) {
+    if (!confirm(this, tr("Catalog time"),
+                 tr("The times of the %n earthquake case(s) were read from "
+                    "the catalog with the old setting. They are read again "
+                    "with the new one, which moves them by %1 hours and "
+                    "makes their finished runs stale. Change it?",
+                    nullptr, quakes)
+                     .arg(old - hours))) {
+      refresh();
+      return;
+    }
+    try {
+      const std::vector<analysis::Event> events =
+          analysis::loadEvents(now.catalogPath(), hours);
+      for (const Case &c : now.cases) {
+        if (c.reference)
+          continue;
+        const double want = double(c.time.toSecsSinceEpoch()) +
+                            (old - hours) * 3600.0;
+        const analysis::Event *hit = nullptr;
+        for (const analysis::Event &e : events)
+          if (std::abs(e.epoch - want) < 2.0 &&
+              std::abs(e.lat - c.lat) < 1e-3 && std::abs(e.lon - c.lon) < 1e-3)
+            hit = &e;
+        if (hit)
+          times.insert(c.id, study::caseFromEvent(*hit).time);
+        else
+          ++lost;
+      }
+    } catch (const std::exception &) {
+      lost = quakes; // no catalog to read them from
+    }
+  }
+  if (apply([&](Study &s) {
+        s.catalogUtcOffsetHours = hours;
+        for (Case &c : s.cases)
+          if (times.contains(c.id))
+            c.time = times.value(c.id);
+      }) &&
+      lost > 0)
+    showBanner(tr("⚠ %n earthquake case(s) were not found in the catalog "
+                  "at the shifted time and keep the time they had. Check "
+                  "them against the catalog.",
+                  nullptr, lost));
+}
+
+void CasesPage::openWaveforms() {
+  WaveformsDialog dialog(ctx_, scan_, this);
+  dialog.exec();
+  updateWaveSummary();
+  showCase();
+}
+
+void CasesPage::chooseStationFolder() {
+  const QString id = currentId();
+  const QString code = selectedStation();
+  if (id.isEmpty() || code.isEmpty())
+    return;
   const QString path = QFileDialog::getExistingDirectory(
-      this, tr("Waveform folder"), ctx_.study->study().dir);
+      this, tr("Folder with the waveforms of %1").arg(code),
+      ctx_.study->study().dir);
   if (path.isEmpty())
     return;
-  ctx_.study->update([&path](Study &s) { s.addWaveformRoot(path); });
+  apply([&](Study &s) {
+    for (Case &c : s.cases)
+      if (c.id == id)
+        for (study::StationRef &st : c.stations)
+          if (st.code == code)
+            st.dataDir = s.stored(path);
+  });
+}
+
+void CasesPage::clearStationFolder() {
+  const QString id = currentId();
+  const QString code = selectedStation();
+  if (id.isEmpty() || code.isEmpty())
+    return;
+  apply([&](Study &s) {
+    for (Case &c : s.cases)
+      if (c.id == id)
+        for (study::StationRef &st : c.stations)
+          if (st.code == code)
+            st.dataDir.clear();
+  });
+}
+
+void CasesPage::getWaveforms() {
+  const Case *c = ctx_.study->study().findCase(currentId());
+  if (!c || !ctx_.nav)
+    return;
+  // What the Data page needs to plan the downloads: see DEVELOPING.
+  QStringList codes;
+  for (const study::StationRef &st : c->stations)
+    codes << st.code;
+  QVariantMap args;
+  args.insert(QStringLiteral("stations"), codes);
+  args.insert(QStringLiteral("start"),
+              c->spanStart().toUTC().toString(Qt::ISODate));
+  args.insert(QStringLiteral("end"), c->time.toUTC().toString(Qt::ISODate));
+  args.insert(QStringLiteral("case"), c->name);
+  // The network, where the waveform folders already show it.
+  for (const study::WaveStation &w :
+       study::WaveIndex::shared(ctx_.study->study().dir)->stations())
+    if (codes.contains(w.code) && !w.network.isEmpty()) {
+      args.insert(QStringLiteral("network"), w.network);
+      break;
+    }
+  ctx_.nav->show(QStringLiteral("tdvms"), args);
 }
 
 } // namespace skg

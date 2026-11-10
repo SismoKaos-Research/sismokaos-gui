@@ -1,5 +1,6 @@
 #include "study/waveindex.h"
 
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -567,6 +568,34 @@ ScanStats scanRoot(WaveIndex &index, const QString &rootId,
   if (hooks.progress)
     hooks.progress(done, stats.listed, QString());
   return stats;
+}
+
+namespace {
+void stampDirs(const QDir &dir, int depth, QCryptographicHash &hash) {
+  hash.addData(dir.path().toUtf8());
+  // A study folder inside the waveform folder changes whenever the study or
+  // its index is saved; that is not new data.
+  if (!QFileInfo::exists(dir.filePath(Study::kFileName)))
+    hash.addData(QByteArray::number(
+        QFileInfo(dir.path()).lastModified().toMSecsSinceEpoch()));
+  if (depth >= kMaxDepth)
+    return;
+  for (const QFileInfo &fi :
+       dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name)) {
+    const QString name = fi.fileName();
+    if (!name.startsWith(QLatin1Char('.')) &&
+        !name.startsWith(QLatin1Char('_')))
+      stampDirs(QDir(fi.filePath()), depth + 1, hash);
+  }
+}
+} // namespace
+
+QString folderStamp(const QString &rootPath) {
+  if (rootPath.isEmpty() || !QDir(rootPath).exists())
+    return QStringLiteral("missing");
+  QCryptographicHash hash(QCryptographicHash::Sha1);
+  stampDirs(QDir(rootPath), 0, hash);
+  return QString::fromLatin1(hash.result().toHex());
 }
 
 bool hasWaveforms(const Study &study, const StationRef &station) {

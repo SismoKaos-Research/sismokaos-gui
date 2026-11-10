@@ -133,6 +133,11 @@ QStringList waveFilesFor(const Study &study, const WaveIndex &index,
                          const StationRef &station, const QDateTime &from,
                          const QDateTime &to, QString *how = nullptr);
 
+// A short text that changes when files are added to or removed from the
+// folder or the sub-folders a scan enters (their names and modification
+// times), without reading any file: tells whether a scan is due.
+QString folderStamp(const QString &rootPath);
+
 // Whether a Features run would find anything to read for the station: its
 // folder exists, or the index knows the station.
 bool hasWaveforms(const Study &study, const StationRef &station);

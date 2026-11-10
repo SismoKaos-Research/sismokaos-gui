@@ -39,6 +39,7 @@
 #include "modules/indicators/indicatorsmodule.h"
 #include "modules/settings/settingsmodule.h"
 #include "modules/study/casedialogs.h"
+#include "modules/study/waveforms.h"
 #include "modules/study/runspage.h"
 #include "modules/study/studymodule.h"
 #include "modules/tdvms/mailboxdialog.h"
@@ -252,6 +253,12 @@ void TstHelp::everyOptionHasHelp() {
       if (table->item(i, 0)->toolTip().trimmed().isEmpty())
         missing << QStringLiteral("recipe %1: setting '%2' has no help")
                        .arg(r.tool, table->item(i, 0)->text());
+  }
+  {
+    WaveScan scan(ctx_);
+    WaveformsDialog d(ctx_, &scan);
+    qInfo() << "waveforms options:"
+            << audit(&d, QStringLiteral("waveforms"), &missing);
   }
   {
     MailboxDialog d(jobs_.get());

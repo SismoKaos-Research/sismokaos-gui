@@ -5,6 +5,10 @@
 #include <QAbstractItemView>
 #include <QComboBox>
 #include <QCompleter>
+#include <QDataStream>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QSpinBox>
 #include <QDir>
 #include <QDirIterator>
 #include <QDoubleSpinBox>
@@ -31,9 +35,11 @@
 #include "modules/study/casespage.h"
 #include "modules/study/comparepage.h"
 #include "modules/study/runspage.h"
+#include "modules/study/waveforms.h"
 #include "study/compare.h"
 #include "study/runs.h"
 #include "study/store.h"
+#include "study/waveindex.h"
 #include "tools/toolregistry.h"
 
 using namespace skg;
@@ -115,6 +121,8 @@ private slots:
   void runsPage();
   void recipeDialog();
   void comparePage();
+  void waveformsOnCases();
+  void catalogOffsetRereadsCaseTimes();
   void cleanupTestCase();
 
 private:
@@ -268,8 +276,29 @@ void TstStudyPages::addFromCatalog() {
   events->selectRow(0);
   // The built-in station list offers stations near the chosen event.
   auto *near = dialog.findChild<QTableWidget *>(QStringLiteral("stationTable"));
-  QVERIFY(near && near->rowCount() > 0);
+  QVERIFY(near && near->rowCount() > 3);
+  // With nothing chosen yet the three nearest start ticked, and each row
+  // says what the study's waveform folders hold of the station.
+  QCOMPARE(near->columnCount(), 5);
+  QCOMPARE(near->item(0, 4)->text(), QStringLiteral("not found"));
+  auto *ok = dialog.findChild<QDialogButtonBox *>()->button(
+      QDialogButtonBox::Ok);
+  auto *warning = dialog.findChild<QLabel *>(QStringLiteral("caseWarning"));
+  QVERIFY(ok && warning && ok->isEnabled());
+  // Without an earthquake selected there is nothing to add.
+  events->clearSelection();
+  QVERIFY(!ok->isEnabled());
+  events->selectRow(0);
+  QVERIFY(ok->isEnabled());
+  for (int i = 0; i < near->rowCount(); ++i)
+    QCOMPARE(near->item(i, 0)->checkState(),
+             i < 3 ? Qt::Checked : Qt::Unchecked);
+  // No station at all is allowed, but said.
+  for (int i = 0; i < 3; ++i)
+    near->item(i, 0)->setCheckState(Qt::Unchecked);
+  QVERIFY(warning->text().contains(QStringLiteral("No station is ticked")));
   near->item(0, 0)->setCheckState(Qt::Checked);
+  QVERIFY(!warning->text().contains(QStringLiteral("No station is ticked")));
   shot(dialog, QStringLiteral("add_from_catalog"));
   dialog.accept();
   QVERIFY(dialog.result().has_value());
@@ -442,6 +471,267 @@ void TstStudyPages::recipeDialog() {
   QCOMPARE(edited.settings.value("ma_windows").toList()[1].toInt(), 9);
   QCOMPARE(edited.settings.value("bollinger"), QVariant(true));
   QCOMPARE(edited.settings.value("mc"), s.recipes[0].settings.value("mc"));
+}
+
+namespace {
+
+// One 512-byte miniSEED 2 record of 12 hours at 1 Hz (header only matters).
+QByteArray halfDay(const QDateTime &start, const QByteArray &sta,
+                   const QByteArray &cha) {
+  QByteArray r;
+  QDataStream s(&r, QIODevice::WriteOnly);
+  s.setByteOrder(QDataStream::BigEndian);
+  s.writeRawData("000001D ", 8);
+  s.writeRawData(sta.leftJustified(5, ' ').constData(), 5);
+  s.writeRawData("  ", 2);
+  s.writeRawData(cha.constData(), 3);
+  s.writeRawData("TU", 2);
+  s << quint16(start.date().year()) << quint16(start.date().dayOfYear())
+    << quint8(start.time().hour()) << quint8(0) << quint8(0) << quint8(0)
+    << quint16(0);
+  s << quint16(43200) << qint16(1) << qint16(1);
+  s << quint8(0) << quint8(0) << quint8(0) << quint8(1);
+  s << qint32(0) << quint16(64) << quint16(48);
+  s << quint16(1000) << quint16(0) << quint8(11) << quint8(1) << quint8(9)
+    << quint8(0);
+  return r.leftJustified(512, '\0');
+}
+
+void writeDays(const QString &path, const QByteArray &sta,
+               const QDateTime &first, int count) {
+  QDir().mkpath(QFileInfo(path).absolutePath());
+  QFile f(path);
+  QVERIFY(f.open(QIODevice::WriteOnly));
+  for (int d = 0; d < count; ++d)
+    for (const char *cha : {"HHE", "HHN", "HHZ"})
+      for (int half = 0; half < 2; ++half)
+        f.write(halfDay(first.addDays(d).addSecs(half * 43200), sta, cha));
+}
+
+} // namespace
+
+void TstStudyPages::waveformsOnCases() {
+  // The user's own data, in a layout the application did not make: SYN1 in
+  // its folder, SYN2 in a folder named for something else, and a note.
+  const QString root = dir_.filePath("own-data");
+  const QDateTime inA(QDate(2019, 3, 1), QTime(0, 0), QTimeZone::UTC);
+  writeDays(root + "/SYN1/a.mseed", "SYN1", inA, 3);
+  writeDays(root + "/SYN1/old.mseed", "SYN1", inA.addYears(-3), 2);
+  writeDays(root + "/unsorted/x.dat", "SYN2",
+            QDateTime(QDate(2019, 12, 1), QTime(0, 0), QTimeZone::UTC), 2);
+  {
+    QFile note(root + "/unsorted/readme.txt");
+    QVERIFY(note.open(QIODevice::WriteOnly));
+    note.write("not waveforms\n");
+  }
+  QVERIFY(store_->update([&root](Study &s) { s.addWaveRoot(root); }));
+
+  Navigator nav;
+  AppContext ctx = ctx_;
+  ctx.nav = &nav;
+  QSignalSpy went(&nav, &Navigator::requested);
+  CasesPage page(ctx);
+  page.resize(1100, 820);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  auto *stations =
+      page.findChild<QTableWidget *>(QStringLiteral("stationTable"));
+  auto *summary = page.findChild<QLabel *>(QStringLiteral("waveSummary"));
+  QVERIFY(stations && summary);
+  // The page scans a folder it has no index of, in two passes, by itself.
+  const QString studyDir = store_->study().dir;
+  QTRY_VERIFY_WITH_TIMEOUT(WaveIndex::load(studyDir).hasStation("SYN2") &&
+                               WaveIndex::load(studyDir).pendingCoverage() == 0,
+                           20000);
+  const auto rowOf = [stations](const QString &code) {
+    for (int i = 0; i < stations->rowCount(); ++i)
+      if (stations->item(i, 1)->text() == code)
+        return i;
+    return -1;
+  };
+  // Case A: 270 days before 2019-04-02; three of them are in the folder,
+  // the 2016 file is not counted.
+  QVERIFY(rowOf("SYN1") >= 0);
+  QCOMPARE(stations->columnCount(), 5);
+  QTRY_COMPARE(stations->item(rowOf("SYN1"), 4)->text(),
+               QStringLiteral("found: 3 of 270 days in span"));
+  QTRY_VERIFY2(summary->text().contains(QStringLiteral("2 station")),
+               qPrintable(summary->text()));
+  QVERIFY2(summary->text().contains(QStringLiteral("1 file")),
+           qPrintable(summary->text())); // the note, skipped
+  shot(page, QStringLiteral("cases_waveforms"));
+  // Only the span's file would be read by a Features run of case A.
+  const Study &s = store_->study();
+  const QStringList files = waveFilesFor(
+      s, *WaveIndex::shared(s.dir), s.cases[0].stations[0],
+      s.cases[0].spanStart(), s.cases[0].time);
+  QCOMPARE(files, QStringList{root + "/SYN1/a.mseed"});
+  QCOMPARE(page.findChild<QPushButton *>(QStringLiteral("nextRecipes"))->text(),
+           QStringLiteral("Next: recipes →"));
+  // Case B's station is found although its folder is not named for it.
+  QVERIFY(hasWaveforms(s, s.cases[1].stations[0]));
+
+  // A download that lands in a folder the study already lists (the Data
+  // page then saves the study without changing it): the page notices the
+  // new file at its next refresh and reads just that one.
+  writeDays(root + "/SYN1/later.mseed", "SYN1", inA.addDays(9), 2);
+  QVERIFY(store_->update([&root](Study &st) { st.addWaveformRoot(root); }));
+  QTRY_COMPARE_WITH_TIMEOUT(stations->item(rowOf("SYN1"), 4)->text(),
+                            QStringLiteral("found: 5 of 270 days in span"),
+                            20000);
+  // Every station of the case has waveforms: recipes are the next step.
+  QCOMPARE(page.findChild<QPushButton *>(QStringLiteral("nextRecipes"))->text(),
+           QStringLiteral("Next: recipes →"));
+
+  // "Get waveforms" hands the case's stations and span to the Data page.
+  auto *get = page.findChild<QPushButton *>(QStringLiteral("getWaveforms"));
+  auto *next = page.findChild<QPushButton *>(QStringLiteral("nextRecipes"));
+  QVERIFY(get && next && get->isEnabled() && next->isEnabled());
+  get->click();
+  QCOMPARE(went.size(), 1);
+  QCOMPARE(went[0][0].toString(), QStringLiteral("tdvms"));
+  const QVariantMap args = went[0][1].toMap();
+  QCOMPARE(args.value("stations").toStringList(), QStringList{"SYN1"});
+  QCOMPARE(args.value("end").toString(), QStringLiteral("2019-04-02T14:00:00Z"));
+  QCOMPARE(args.value("start").toString(),
+           QStringLiteral("2018-07-06T14:00:00Z"));
+  QCOMPARE(args.value("network").toString(), QStringLiteral("TU"));
+  next->click();
+  QCOMPARE(went.size(), 2);
+  QCOMPARE(went[1][0].toString(), QStringLiteral("runs"));
+
+  // A change that would make finished runs stale asks first; "no" keeps the
+  // case and puts the field back.
+  auto *span = page.findChild<QSpinBox *>(QStringLiteral("caseSpan"));
+  QVERIFY(span);
+  QCOMPARE(span->value(), 270);
+  const auto saved = CasesPage::confirm;
+  int asked = 0;
+  bool answer = false;
+  CasesPage::confirm = [&](QWidget *, const QString &, const QString &text) {
+    ++asked;
+    if (!text.contains(QStringLiteral("stale")))
+      qWarning() << "unexpected question:" << text;
+    return answer;
+  };
+  span->setValue(200);
+  emit span->editingFinished();
+  QCOMPARE(asked, 1);
+  QCOMPARE(store_->study().cases[0].spanDays, 270);
+  QCOMPARE(span->value(), 270);
+  QVERIFY(CasesPage::runsMadeStale(store_->study(), store_->study(),
+                                   store_->study().cases[0].id) == 0);
+  answer = true;
+  span->setValue(200);
+  emit span->editingFinished();
+  QCOMPARE(asked, 2);
+  QCOMPARE(store_->study().cases[0].spanDays, 200);
+  QTRY_COMPARE(stations->item(rowOf("SYN1"), 4)->text(),
+               QStringLiteral("found: 5 of 200 days in span"));
+  // Leaving a field without changing it saves nothing and asks nothing.
+  emit span->editingFinished();
+  QCOMPARE(asked, 2);
+  CasesPage::confirm = saved;
+
+  // The review dialog lists what the headers say.
+  WaveScan scan(ctx);
+  WaveformsDialog dialog(ctx, &scan);
+  dialog.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&dialog));
+  auto *found = dialog.findChild<QTableWidget *>(QStringLiteral("waveStations"));
+  QVERIFY(found);
+  QCOMPARE(found->rowCount(), 2);
+  QCOMPARE(found->item(0, 0)->text(), QStringLiteral("SYN1"));
+  QCOMPARE(found->item(0, 1)->text(), QStringLiteral("TU"));
+  QCOMPARE(found->item(0, 2)->text(), QStringLiteral("HHE HHN HHZ"));
+  QCOMPARE(found->item(0, 4)->text(), QStringLiteral("2016-03-01"));
+  QCOMPARE(found->item(0, 5)->text(), QStringLiteral("2019-03-11"));
+  QCOMPARE(found->item(0, 6)->text(), QStringLiteral("7"));
+  QCOMPARE(found->item(0, 7)->text(), QStringLiteral("3"));
+  // Neither is in the built-in list, and SYN2 sits in a folder named
+  // differently: both are said.
+  QVERIFY(found->item(0, 9)->text().contains(QStringLiteral("no coordinates")));
+  QVERIFY(found->item(1, 9)->text().contains(QStringLiteral("unsorted")));
+  shot(dialog, QStringLiteral("waveforms_dialog"));
+  // Coordinates typed once make the station known to the study.
+  QVERIFY(store_->update([](Study &st) {
+    st.extraStations << ExtraStation{"SYN2", "TU", 38.4, 39.3, "typed"};
+  }));
+  QCOMPARE(found->item(1, 8)->text(), QStringLiteral("typed"));
+  QVERIFY(!found->item(1, 9)->text().contains(QStringLiteral("no coordinates")));
+}
+
+void TstStudyPages::catalogOffsetRereadsCaseTimes() {
+  // The cases were picked while the catalog's times were read as UTC. Told
+  // that they are Turkey time, the earthquake cases are the same events
+  // three hours earlier; the reference date, typed in UTC, stays.
+  CasesPage page(ctx_);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  auto *offset = page.findChild<QComboBox *>(QStringLiteral("catalogTime"));
+  QVERIFY(offset);
+  QCOMPARE(offset->currentData().toDouble(), 0.0);
+  const auto iso = [this](int i) {
+    return store_->study().cases[i].time.toString(Qt::ISODate);
+  };
+  QCOMPARE(iso(0), QStringLiteral("2019-04-02T14:00:00Z"));
+  QCOMPARE(iso(1), QStringLiteral("2019-12-30T22:10:00Z"));
+  const QString reference = iso(2);
+  QVERIFY(store_->study().cases[2].reference);
+  const auto saved = CasesPage::confirm;
+  int asked = 0;
+  bool answer = false;
+  CasesPage::confirm = [&](QWidget *, const QString &, const QString &) {
+    ++asked;
+    return answer;
+  };
+  // "No" changes nothing and puts the choice back.
+  offset->setCurrentIndex(1);
+  emit offset->activated(1);
+  QCOMPARE(asked, 1);
+  QCOMPARE(store_->study().catalogUtcOffsetHours, 0.0);
+  QCOMPARE(offset->currentData().toDouble(), 0.0);
+  QCOMPARE(iso(0), QStringLiteral("2019-04-02T14:00:00Z"));
+  // "Yes": the offset is saved and the times are read from the catalog again.
+  answer = true;
+  offset->setCurrentIndex(1);
+  emit offset->activated(1);
+  QCOMPARE(asked, 2);
+  QCOMPARE(store_->study().catalogUtcOffsetHours, 3.0);
+  QCOMPARE(iso(0), QStringLiteral("2019-04-02T11:00:00Z"));
+  QCOMPARE(iso(1), QStringLiteral("2019-12-30T19:10:00Z"));
+  QCOMPARE(iso(2), reference);
+  // The case is still the catalog's event: read with the new offset, the
+  // catalog has an earthquake at exactly that time and place.
+  const auto events = skg::analysis::loadEvents(
+      store_->study().catalogPath(), store_->study().catalogUtcOffsetHours);
+  const Case &a = store_->study().cases[0];
+  QVERIFY(std::any_of(events.begin(), events.end(), [&a](const auto &e) {
+    return std::abs(e.epoch - double(a.time.toSecsSinceEpoch())) < 1.0 &&
+           std::abs(e.lat - a.lat) < 1e-3;
+  }));
+  // And back again.
+  offset->setCurrentIndex(0);
+  emit offset->activated(0);
+  QCOMPARE(asked, 3);
+  QCOMPARE(iso(0), QStringLiteral("2019-04-02T14:00:00Z"));
+  QCOMPARE(iso(1), QStringLiteral("2019-12-30T22:10:00Z"));
+  // A case that is not in the catalog keeps its time, and the page says so.
+  QVERIFY(store_->update([](Study &s) { s.cases[1].lat += 1.0; }));
+  offset->setCurrentIndex(1);
+  emit offset->activated(1);
+  QCOMPARE(iso(0), QStringLiteral("2019-04-02T11:00:00Z"));
+  QCOMPARE(iso(1), QStringLiteral("2019-12-30T22:10:00Z"));
+  auto *banner = page.findChild<QLabel *>(QStringLiteral("banner"));
+  QVERIFY(banner && banner->isVisible());
+  QVERIFY2(banner->text().contains(QStringLiteral("1 earthquake case")),
+           qPrintable(banner->text()));
+  // An offset that is neither of the two usual ones is shown as it is.
+  QVERIFY(store_->update([](Study &s) { s.catalogUtcOffsetHours = 2.0; }));
+  QCOMPARE(offset->currentData().toDouble(), 2.0);
+  QVERIFY2(offset->currentText().contains(QStringLiteral("+2")),
+           qPrintable(offset->currentText()));
+  CasesPage::confirm = saved;
 }
 
 void TstStudyPages::comparePage() {

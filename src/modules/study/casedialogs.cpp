@@ -6,6 +6,7 @@
 #include <QCoreApplication>
 #include <QDateTimeEdit>
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -23,10 +24,13 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <exception>
 #include <numeric>
 
+#include "core/defaults.h"
 #include "core/ui.h"
+#include "study/waveindex.h"
 
 namespace skg {
 
@@ -121,16 +125,54 @@ void attachCodeCompleter(QLineEdit *edit,
 
 } // namespace
 
+bool hasWaveformsOf(const study::Study &study, const study::StationRef &s) {
+  return study::hasWaveforms(study, s);
+}
+
+QString waveformNote(const study::Study &study, const study::StationRef &s,
+                     const QDateTime &from, const QDateTime &to) {
+  const int total = int(std::max<qint64>(1, from.daysTo(to)));
+  if (!s.dataDir.isEmpty()) {
+    const QString dir = study.resolved(s.dataDir);
+    return QDir(dir).exists()
+               ? QCoreApplication::translate("skg::AddFromCatalogDialog", "own folder: %1").arg(dir)
+               : QCoreApplication::translate("skg::AddFromCatalogDialog", "⚠ folder not found: %1")
+                     .arg(dir);
+  }
+  const auto index = study::WaveIndex::shared(study.dir);
+  if (index->hasStation(s.code)) {
+    bool approx = false;
+    const int days = index->daysCovered(s.code, from, to, &approx);
+    return approx ? QCoreApplication::translate(
+                        "skg::AddFromCatalogDialog", "found: at least %1 of %2 days in span "
+                             "(coverage not read yet)")
+                        .arg(days)
+                        .arg(total)
+                  : QCoreApplication::translate(
+                        "skg::AddFromCatalogDialog", "found: %1 of %2 days in span")
+                        .arg(days)
+                        .arg(total);
+  }
+  if (study::hasWaveforms(study, s))
+    return QCoreApplication::translate("skg::AddFromCatalogDialog", "folder found, not scanned yet");
+  return QCoreApplication::translate("skg::AddFromCatalogDialog", "not found");
+}
+
 void fillStationTable(QTableWidget *table,
                       const QList<study::StationRef> &stations,
-                      const QStringList &ticked) {
+                      const QStringList &ticked,
+                      const StationNote &waveforms) {
   const QSignalBlocker block(table);
-  table->setColumnCount(4);
-  table->setHorizontalHeaderLabels(
-      {QCoreApplication::translate("skg::AddFromCatalogDialog", "Use"),
-       QCoreApplication::translate("skg::AddFromCatalogDialog", "Station"),
-       QCoreApplication::translate("skg::AddFromCatalogDialog", "Distance"),
-       QCoreApplication::translate("skg::AddFromCatalogDialog", "Azimuth")});
+  QStringList headers = {
+      QCoreApplication::translate("skg::AddFromCatalogDialog", "Use"),
+      QCoreApplication::translate("skg::AddFromCatalogDialog", "Station"),
+      QCoreApplication::translate("skg::AddFromCatalogDialog", "Distance"),
+      QCoreApplication::translate("skg::AddFromCatalogDialog", "Azimuth")};
+  if (waveforms)
+    headers << QCoreApplication::translate("skg::AddFromCatalogDialog",
+                                           "Waveforms");
+  table->setColumnCount(int(headers.size()));
+  table->setHorizontalHeaderLabels(headers);
   table->setRowCount(int(stations.size()));
   for (int i = 0; i < int(stations.size()); ++i) {
     const study::StationRef &s = stations[i];
@@ -149,6 +191,8 @@ void fillStationTable(QTableWidget *table,
     table->setItem(i, 3,
                    new QTableWidgetItem(
                        QStringLiteral("%1°").arg(s.azimuthDeg, 0, 'f', 0)));
+    if (waveforms)
+      table->setItem(i, 4, new QTableWidgetItem(waveforms(s)));
   }
   table->setColumnWidth(0, 64);
 }
@@ -170,12 +214,12 @@ QList<study::StationRef> tickedStations(const QTableWidget *table,
 
 AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
                                            QWidget *parent)
-    : QDialog(parent) {
+    : QDialog(parent), study_(study) {
   setWindowTitle(tr("Add a case from the catalog"));
   events_ =
       analysis::loadEvents(study.catalogPath(), study.catalogUtcOffsetHours);
   try {
-    stations_ = analysis::loadStations(study.stationListPath());
+    stations_ = study.stations();
   } catch (const std::exception &) {
     stations_.clear(); // the case can still be added, without stations
   }
@@ -234,7 +278,7 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   maxKm_ = new QDoubleSpinBox(this);
   maxKm_->setRange(10, 1000);
   maxKm_->setDecimals(0);
-  maxKm_->setValue(150);
+  maxKm_->setValue(defaults::kStationRadiusKm);
   maxKm_->setPrefix(tr("stations within "));
   maxKm_->setSuffix(tr(" km"));
   stationTable_ = plainTable(this);
@@ -249,18 +293,44 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
 
   auto *buttons = new QDialogButtonBox(
       QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  buttons->button(QDialogButtonBox::Ok)->setText(tr("Add case"));
-  ui::setPrimary(buttons->button(QDialogButtonBox::Ok));
+  ok_ = buttons->button(QDialogButtonBox::Ok);
+  ok_->setText(tr("Add case"));
+  ui::setPrimary(ok_);
   connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+  range_ = new QLabel(this);
+  range_->setObjectName(QStringLiteral("fieldLabel"));
+  if (!events_.empty()) {
+    const auto [lo, hi] = std::minmax_element(
+        events_.begin(), events_.end(),
+        [](const analysis::Event &a, const analysis::Event &b) {
+          return a.epoch < b.epoch;
+        });
+    const auto day = [](double epoch) {
+      return QDateTime::fromSecsSinceEpoch(qint64(epoch), QTimeZone::UTC)
+          .toString(QStringLiteral("yyyy-MM-dd"));
+    };
+    range_->setText(tr("The catalog covers %1 to %2 (%3 events).")
+                        .arg(day(lo->epoch), day(hi->epoch))
+                        .arg(events_.size()));
+  }
+  stationNote_ = new QLabel(this);
+  stationNote_->setObjectName(QStringLiteral("fieldLabel"));
+  warning_ = new QLabel(this);
+  warning_->setObjectName(QStringLiteral("caseWarning"));
+  warning_->setWordWrap(true);
 
   auto *layout = new QVBoxLayout(this);
   layout->addLayout(filter);
   layout->addLayout(nearRow);
   layout->addWidget(nearNote_);
   layout->addWidget(table_, 3);
+  layout->addWidget(range_);
   layout->addLayout(form);
   layout->addWidget(stationTable_, 2);
+  layout->addWidget(stationNote_);
+  layout->addWidget(warning_);
   layout->addWidget(buttons);
   resize(760, 720);
   ui::polishPage(this);
@@ -304,6 +374,10 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
           &AddFromCatalogDialog::eventChosen);
   connect(maxKm_, &QDoubleSpinBox::valueChanged, this,
           &AddFromCatalogDialog::eventChosen);
+  connect(span_, &QSpinBox::valueChanged, this,
+          &AddFromCatalogDialog::eventChosen);
+  connect(stationTable_, &QTableWidget::itemChanged, this,
+          &AddFromCatalogDialog::updateNotes);
   refill();
 }
 
@@ -406,6 +480,8 @@ void AddFromCatalogDialog::eventChosen() {
   if (!has) {
     near_.clear();
     fillStationTable(stationTable_, near_, {});
+    stationNote_->clear();
+    updateNotes();
     return;
   }
   const analysis::Event &e =
@@ -422,8 +498,93 @@ void AddFromCatalogDialog::eventChosen() {
     for (const analysis::Station &s : filterStations_)
       keep << s.code;
   }
-  near_ = study::nearestStations(stations_, e.lat, e.lon, radius);
-  fillStationTable(stationTable_, near_, keep);
+  const QList<study::StationRef> all = study::nearestStations(
+      stations_, e.lat, e.lon, radius, std::numeric_limits<int>::max());
+  near_ = all.mid(0, study::kStationCandidates);
+  // Ticked stations beyond the cut stay offered.
+  for (const study::StationRef &s : all.mid(study::kStationCandidates))
+    if (keep.contains(s.code))
+      near_ << s;
+  // Nothing chosen yet: start with the nearest stations that have
+  // waveforms, or just the nearest when none has.
+  if (keep.isEmpty()) {
+    for (const study::StationRef &s : std::as_const(near_))
+      if (keep.size() < 3 && hasWaveformsOf(study_, s))
+        keep << s.code;
+    if (keep.isEmpty())
+      for (const study::StationRef &s : near_.mid(0, 3))
+        keep << s.code;
+  }
+  const QDateTime t1 = QDateTime::fromSecsSinceEpoch(
+      qint64(std::floor(e.epoch)), QTimeZone::UTC);
+  const QDateTime t0 = t1.addDays(-span_->value());
+  fillStationTable(stationTable_, near_, keep,
+                   [this, t0, t1](const study::StationRef &s) {
+                     return waveformNote(study_, s, t0, t1);
+                   });
+  stationTable_->resizeColumnToContents(4);
+  stationNote_->setText(
+      all.size() > near_.size()
+          ? tr("The nearest %1 of %2 stations within %3 km are shown.")
+                .arg(near_.size())
+                .arg(all.size())
+                .arg(radius, 0, 'f', 0)
+          : tr("%n station(s) within %1 km.", nullptr, int(all.size()))
+                .arg(radius, 0, 'f', 0));
+  updateNotes();
+}
+
+void AddFromCatalogDialog::updateNotes() {
+  const int row = table_->currentRow();
+  const bool has = row >= 0 && row < int(shown_.size()) &&
+                   !table_->selectedItems().isEmpty();
+  ok_->setEnabled(has);
+  ok_->setToolTip(has ? QString()
+                      : ui::helpText(tr("Select an earthquake in the list "
+                                        "first.")));
+  QStringList notes;
+  if (has) {
+    const analysis::Event &e =
+        events_[static_cast<size_t>(shown_[static_cast<size_t>(row)])];
+    for (const study::Case &c : study_.cases)
+      if (!c.reference &&
+          std::abs(double(c.time.toSecsSinceEpoch()) - e.epoch) < 2.0 &&
+          std::abs(c.lat - e.lat) < 1e-3 && std::abs(c.lon - e.lon) < 1e-3)
+        notes << tr("⚠ This earthquake is already a case: %1.").arg(c.name);
+    if (tickedStations(stationTable_, near_).isEmpty())
+      notes << tr("⚠ No station is ticked: only the Indicators recipes will "
+                  "run for this case.");
+    // The span, and the longest window an Indicators recipe adds before it,
+    // against what the catalog covers.
+    double months = 0;
+    for (const study::Recipe &r : study_.recipes)
+      if (r.tool == QLatin1String("indicators"))
+        months = std::max(
+            months,
+            r.settings.value(QStringLiteral("window_months")).toDouble());
+    const double first =
+        std::min_element(events_.begin(), events_.end(),
+                         [](const analysis::Event &a,
+                            const analysis::Event &b) {
+                           return a.epoch < b.epoch;
+                         })
+            ->epoch;
+    const double need = e.epoch - (span_->value() + months * 30.44) * 86400.0;
+    if (need < first)
+      notes << tr("⚠ The span%1 starts on %2, before the catalog's first "
+                  "event (%3). The indicators would be computed on a "
+                  "shorter period.")
+                   .arg(months > 0 ? tr(" plus a %1 month window").arg(months)
+                                   : QString(),
+                        QDateTime::fromSecsSinceEpoch(qint64(need),
+                                                      QTimeZone::UTC)
+                            .toString(QStringLiteral("yyyy-MM-dd")),
+                        QDateTime::fromSecsSinceEpoch(qint64(first),
+                                                      QTimeZone::UTC)
+                            .toString(QStringLiteral("yyyy-MM-dd")));
+  }
+  warning_->setText(notes.join(QLatin1Char('\n')));
+  warning_->setVisible(!notes.isEmpty());
 }
 
 void AddFromCatalogDialog::accept() {

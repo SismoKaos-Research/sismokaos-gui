@@ -4,6 +4,7 @@
 
 #include <QDialog>
 
+#include <functional>
 #include <optional>
 #include <vector>
 
@@ -17,14 +18,24 @@ class QLineEdit;
 class QComboBox;
 class QDateTimeEdit;
 class QLabel;
+class QPushButton;
 
 namespace skg {
 
-// Fills a table with stations (Use, Station, Distance, Azimuth); `ticked`
-// codes start checked. Shared with the Cases page.
+// Fills a table with stations (Use, Station, Distance, Azimuth, and
+// Waveforms when `waveforms` is given: what the study's folders hold of the
+// station); `ticked` codes start checked. Shared with the Cases page.
+using StationNote = std::function<QString(const study::StationRef &)>;
 void fillStationTable(QTableWidget *table,
                       const QList<study::StationRef> &stations,
-                      const QStringList &ticked);
+                      const QStringList &ticked,
+                      const StationNote &waveforms = {});
+// "found: 340 of 365 days in span", "found: at least 12 of 365 days in span
+// (coverage not read yet)" or "not found", from the study's waveform index.
+QString waveformNote(const study::Study &study, const study::StationRef &s,
+                     const QDateTime &from, const QDateTime &to);
+// Whether the study's waveform folders hold anything of the station.
+bool hasWaveformsOf(const study::Study &study, const study::StationRef &s);
 QList<study::StationRef> tickedStations(const QTableWidget *table,
                                         const QList<study::StationRef> &all);
 
@@ -39,7 +50,11 @@ public:
 private:
   void refill();
   void eventChosen();
+  void updateNotes(); // warnings under the tables, and the Add button
 
+  const study::Study &study_;
+  QPushButton *ok_;
+  QLabel *range_, *stationNote_, *warning_;
   std::vector<analysis::Event> events_;
   std::vector<analysis::Station> stations_;
   std::vector<int> shown_; // row -> index into events_

@@ -104,6 +104,7 @@ private slots:
   void namesAreTheFallback();
   void studyKeepsFoldersAndStations();
   void stationXml();
+  void stampTellsWhenAScanIsDue();
   void scanSpeed();
 
 private:
@@ -388,6 +389,26 @@ void TstStudyWaveIndex::stationXml() {
   write(dir.filePath("bad.xml"), "<a><b></a>");
   QVERIFY_EXCEPTION_THROWN(readStationXml(dir.filePath("bad.xml")),
                            std::runtime_error);
+}
+
+void TstStudyWaveIndex::stampTellsWhenAScanIsDue() {
+  QTemporaryDir data;
+  write(data.filePath("AAA/a.mseed"), days("AAA", utc(2021, 3, 1), 1));
+  write(data.filePath("_campaigns/x.txt"), "x");
+  const QString before = folderStamp(data.path());
+  QCOMPARE(folderStamp(data.path()), before); // looking changes nothing
+  QTest::qWait(20);
+  // A file in a folder that is not scanned does not count.
+  write(data.filePath("_campaigns/y.txt"), "y");
+  QCOMPARE(folderStamp(data.path()), before);
+  // A new file in a station's folder, or a new folder, does.
+  write(data.filePath("AAA/b.mseed"), days("AAA", utc(2021, 3, 2), 1));
+  const QString second = folderStamp(data.path());
+  QVERIFY(second != before);
+  QTest::qWait(20);
+  write(data.filePath("BBB/c.mseed"), days("BBB", utc(2021, 3, 2), 1));
+  QVERIFY(folderStamp(data.path()) != second);
+  QCOMPARE(folderStamp(data.filePath("nowhere")), QStringLiteral("missing"));
 }
 
 void TstStudyWaveIndex::scanSpeed() {
