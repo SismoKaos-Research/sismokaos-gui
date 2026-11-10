@@ -14,6 +14,7 @@
 #include <string>
 
 #include "analysis/geo.h"
+#include "text/text.h"
 #include "toml.hpp"
 
 namespace skg::study {
@@ -180,6 +181,13 @@ QString slug(const QString &text) {
   bool dash = false;
   for (const QChar raw : text) {
     QChar c = fold.value(raw, raw);
+    if (c.unicode() >= 128) {
+      // Any other accented letter (â, ī, é): its base letter.
+      const QString base =
+          QString(raw).normalized(QString::NormalizationForm_D);
+      if (!base.isEmpty() && base[0].unicode() < 128)
+        c = base[0];
+    }
     if (c.unicode() < 128 && c.isLetterOrNumber()) {
       if (dash && !out.isEmpty())
         out += QLatin1Char('-');
@@ -617,6 +625,16 @@ Study Study::fromToml(const QString &text, const QString &dir) {
       c.depthKm = num(*t, "depth_km", c.depthKm);
       c.magnitude = num(*t, "magnitude", c.magnitude);
       c.place = str(*t, "place");
+      // A case made while place names still came through with "?" for the
+      // letters the event service lost ("Do?anyol"): the letters are put
+      // back in what is shown. The id, and so the case's folder, stays.
+      if (text::placeLooksDamaged(c.place)) {
+        const QString whole = text::repairPlace(c.place, c.lat, c.lon);
+        if (whole != c.place) {
+          c.name.replace(c.place, whole);
+          c.place = whole;
+        }
+      }
       c.spanDays = int(num(*t, "span_days", 365));
       c.zone.kind = str(*t, "zone") == QLatin1String("fault")
                         ? Zone::Kind::Fault

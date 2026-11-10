@@ -38,6 +38,7 @@ target_compile_options(skg_warnings INTERFACE
 #   modules/<name>  one GUI module (a tab) per directory
 #   app     the main window and main()
 add_subdirectory(third_party)
+add_subdirectory(src/text)
 add_subdirectory(src/jobs)
 add_subdirectory(src/tools)
 add_subdirectory(src/tdvms)

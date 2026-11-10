@@ -1,0 +1,22 @@
+{
+  "what": "populated places whose names hold a letter outside ASCII",
+  "source": "GeoNames cities500.zip, https://download.geonames.org/export/dump/",
+  "licence": "CC BY 4.0, https://creativecommons.org/licenses/by/4.0/",
+  "argv": [
+    "make_places.py",
+    "cities500.zip",
+    "places.tsv"
+  ],
+  "box_w_e_s_n": [
+    24.0,
+    48.0,
+    32.0,
+    44.0
+  ],
+  "input_sha256": "ec22f97ef8c7f7b2965d113aeea6d055f78c09876398a299f63f6a819ad4cce1",
+  "input_rows": 236978,
+  "output_rows": 4781,
+  "output_sha256": "9d1b8d97cac2ba68f4cdabe406e497c5a01a6aaef68d6dfcc43b6c61d29c1b72",
+  "made_utc": "2026-11-10T21:58:30Z",
+  "python": "3.13.16"
+}

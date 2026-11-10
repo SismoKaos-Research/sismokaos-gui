@@ -11,6 +11,7 @@
 #include "analysis/geo.h"
 #include "fx/catalog.h"
 #include "fx/csv.h"
+#include "text/text.h"
 
 namespace skg::analysis {
 
@@ -65,6 +66,9 @@ std::vector<Event> loadEvents(const QString &path,
     e.depthKm = fx::number(r, dep).value_or(0.0);
     e.type = typ >= 0 && typ < r.size() ? r[typ].trimmed() : QString();
     e.place = place >= 0 && place < r.size() ? r[place].trimmed() : QString();
+    // Letters an event service replaced by "?" are put back (text/text.h).
+    if (e.place.contains(QLatin1Char('?')))
+      e.place = text::repairPlace(e.place, e.lat, e.lon);
     e.id = id >= 0 && id < r.size() ? r[id].trimmed() : QString();
     out.push_back(e);
   }

@@ -15,6 +15,7 @@
 
 #include "tdvms/portal.h"
 #include "tdvms/settings.h"
+#include "text/text.h"
 #include <QFileInfo>
 #include <algorithm>
 
@@ -141,8 +142,10 @@ QList<CatalogEvent> parseEvents(const QByteArray &csv) {
     const QStringList &r = rows[i];
     if (r.size() <= std::max({cId, cTime, cMag, cLat, cLon, cDepth, cPlace}))
       continue;
-    out.append({r[cId], r[cTime], r[cMag].toDouble(), r[cLat].toDouble(),
-                r[cLon].toDouble(), r[cDepth].toDouble(), r[cPlace]});
+    // USGS writes "?" for the letters it cannot encode; they are put back.
+    const double lat = r[cLat].toDouble(), lon = r[cLon].toDouble();
+    out.append({r[cId], r[cTime], r[cMag].toDouble(), lat, lon,
+                r[cDepth].toDouble(), text::repairPlace(r[cPlace], lat, lon)});
   }
   return out;
 }

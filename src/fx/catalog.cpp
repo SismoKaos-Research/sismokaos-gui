@@ -9,6 +9,7 @@
 #include <stdexcept>
 
 #include "fx/mseed.h"
+#include "text/text.h"
 #include "miniz.h"
 #include <utility>
 
@@ -119,7 +120,8 @@ std::optional<double> number(const QStringList &row, int idx) {
 }
 
 QStringList lines(const QByteArray &text) {
-  QStringList out = QString::fromUtf8(text).split('\n');
+  // UTF-8, or the Turkish code page when the bytes are not (text/text.h).
+  QStringList out = text::decode(text).split(QLatin1Char('\n'));
   for (QString &l : out)
     if (l.endsWith('\r'))
       l.chop(1);
