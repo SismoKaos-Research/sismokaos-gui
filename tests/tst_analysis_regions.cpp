@@ -18,6 +18,7 @@
 #include "analysis/regionmap.h"
 #include "analysis/regionrun.h"
 #include "analysis/regions.h"
+#include "cbi/zones.h"
 
 using namespace skg::analysis;
 
@@ -547,6 +548,29 @@ void TstAnalysisRegions::faultSourcesAreNotDrawnAsActiveFaults() {
 
   const QString sources = regionMapTitle(QStringLiteral("geographic-sources"),
                                          QString(), QStringLiteral("en"));
+  // With SKG_SHOTS set to a folder, the map as the Regions pane draws it
+  // with the shipped layer is written there, to be looked at.
+  const QString shots = qEnvironmentVariable("SKG_SHOTS");
+  if (!shots.isEmpty()) {
+    std::vector<FaultLine> shipped;
+    for (const skg::cbi::FaultZone::Segment &s :
+         skg::cbi::shippedFaults().segments)
+      shipped.push_back(
+          {{QPointF(s.lon0, s.lat0), QPointF(s.lon1, s.lat1)}, QString()});
+    RegionMapSpec spec;
+    spec.lang = QStringLiteral("en");
+    spec.title = sources;
+    spec.points = &t.points;
+    spec.countries = &shippedCountries();
+    spec.cities = eafzCities();
+    spec.faults = &shipped;
+    spec.faultsLabel = skg::cbi::shippedFaultsLabel(spec.lang);
+    spec.credit = skg::cbi::shippedFaultsCredit(spec.lang);
+    spec.padDeg = 1.5;
+    renderImage(regionMapSize(100), [&](QPainter &p, const QRectF &rect) {
+      drawRegionMap(p, rect, spec);
+    }).save(shots + QStringLiteral("/regions_fault_sources.png"));
+  }
   QVERIFY(sources.contains(QLatin1String("Fault Sources")));
   QVERIFY(!sources.contains(QLatin1String("Active")));
   QVERIFY(regionMapTitle(QStringLiteral("geographic"), QString(),
