@@ -32,9 +32,12 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-          # The tag and CMakeLists.txt must agree; the binary reports the latter.
-          grep -q "project(sismokaos-gui VERSION $VERSION " CMakeLists.txt || {
-            echo "CMakeLists.txt does not say VERSION $VERSION"; exit 1; }
+          # A tag such as v0.4.0-beta.1 is a pre-release of 0.4.0: the number
+          # must agree with CMakeLists.txt, the suffix is handed to the build.
+          BASE="${VERSION%%-*}"
+          echo "VERSION_SUFFIX=${VERSION#"$BASE"}" >> "$GITHUB_ENV"
+          grep -q "project(sismokaos-gui VERSION $BASE " CMakeLists.txt || {
+            echo "CMakeLists.txt does not say VERSION $BASE"; exit 1; }
 
       # ayzek (third_party/ayzek) is C++23 and is compiled with zig through
       # Meson; see third_party/CMakeLists.txt and packaging/ayzek/.
@@ -92,7 +95,7 @@ jobs:
           if [ "$RUNNER_OS" = "macOS" ]; then
             EXTRA='-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0'
           fi
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSKG_BUNDLE_AYZEK=ON $EXTRA
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSKG_BUNDLE_AYZEK=ON "-DSKG_VERSION_SUFFIX=$VERSION_SUFFIX" $EXTRA
 
       - name: Build
         run: cmake --build build
@@ -185,3 +188,6 @@ jobs:
           files: artifacts/*
           generate_release_notes: true
           draft: false
+          # A pre-release is not "the latest release": installers and the
+          # in-app update check keep offering the last stable one.
+          prerelease: ${{ contains(github.ref_name, '-') }}

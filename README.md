@@ -70,6 +70,20 @@ beside the application (`update` on Linux and macOS, `update.ps1` on Windows).
 **A specific version.** `install.sh --version 0.2.0`, or on Windows
 `$env:SISMOKAOS_VERSION = "0.2.0"` before the one-liner.
 
+**A beta version.** Betas are published as pre-releases and are never
+installed or offered by default. Ask for one by its version:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/SismoKaos-Research/sismokaos-gui/main/install.sh | sh -s -- --version 0.4.0-beta.1
+```
+
+```powershell
+$env:SISMOKAOS_VERSION = "0.4.0-beta.1"; irm https://raw.githubusercontent.com/SismoKaos-Research/sismokaos-gui/main/install.ps1 | iex
+```
+
+A beta replaces the installed version and keeps your data. It tells you when
+its final release is out; `install.sh --version 0.3.0` goes back.
+
 **Uninstalling.** `install.sh --uninstall` or `.\install.ps1 -Uninstall`
 removes the application, the launcher and the shortcut, and keeps your data.
 

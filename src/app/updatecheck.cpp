@@ -33,7 +33,12 @@ bool UpdateCheck::isNewer(const QString &latest, const QString &current) {
     return QVersionNumber::fromString(s);
   };
   const QVersionNumber a = parse(latest), b = parse(current);
-  return !a.isNull() && !b.isNull() && QVersionNumber::compare(a, b) > 0;
+  if (a.isNull() || b.isNull())
+    return false;
+  const int order = QVersionNumber::compare(a, b);
+  // A pre-release (0.4.0-beta.1) is older than the release it leads to.
+  return order > 0 || (order == 0 && current.contains(QLatin1Char('-')) &&
+                       !latest.contains(QLatin1Char('-')));
 }
 
 QString UpdateCheck::updaterPath() {

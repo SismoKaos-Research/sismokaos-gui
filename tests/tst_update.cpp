@@ -15,6 +15,11 @@ private slots:
     QVERIFY(UpdateCheck::isNewer("0.1.10", "0.1.9"));
     QVERIFY(!UpdateCheck::isNewer("0.1.0", "0.1.0"));
     QVERIFY(!UpdateCheck::isNewer("v0.1.0", "0.1.0"));
+    // A beta is told about its own release, not about an older stable one.
+    QVERIFY(UpdateCheck::isNewer("v0.4.0", "0.4.0-beta.1"));
+    QVERIFY(!UpdateCheck::isNewer("v0.3.0", "0.4.0-beta.1"));
+    QVERIFY(!UpdateCheck::isNewer("v0.4.0-beta.1", "0.4.0-beta.1"));
+    QVERIFY(UpdateCheck::isNewer("v0.4.1", "0.4.0-beta.1"));
     QVERIFY(!UpdateCheck::isNewer("0.0.9", "0.1.0"));
     QVERIFY(!UpdateCheck::isNewer("", "0.1.0"));
     QVERIFY(!UpdateCheck::isNewer("latest", "0.1.0"));

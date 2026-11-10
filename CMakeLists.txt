@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.21)
-project(sismokaos-gui VERSION 0.3.0 LANGUAGES C CXX)
+project(sismokaos-gui VERSION 0.4.0 LANGUAGES C CXX)
+# A pre-release build names itself, e.g. -DSKG_VERSION_SUFFIX=-beta.1 gives
+# 0.4.0-beta.1; the release workflow takes it from the tag.
+set(SKG_VERSION_SUFFIX "" CACHE STRING "Appended to the version the application reports")
 
 # The chaos features are O(n^2) per window; an unoptimised build is 10x slower.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

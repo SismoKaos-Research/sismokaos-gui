@@ -5,7 +5,7 @@ qt_add_executable(sismokaos-gui
   app.qrc
 )
 target_link_libraries(sismokaos-gui PRIVATE skg_core ${SKG_MODULE_TARGETS} Qt6::Network skg_warnings)
-target_compile_definitions(sismokaos-gui PRIVATE SKG_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(sismokaos-gui PRIVATE SKG_VERSION="${PROJECT_VERSION}${SKG_VERSION_SUFFIX}")
 set_target_properties(sismokaos-gui PROPERTIES
   WIN32_EXECUTABLE ON
   MACOSX_BUNDLE ON
