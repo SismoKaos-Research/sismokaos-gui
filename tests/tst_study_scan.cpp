@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
+#include <QListWidget>
 #include <QPushButton>
 #include <QRandomGenerator>
 #include <QRegularExpression>
@@ -23,6 +24,7 @@
 #include <QtTest>
 
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <thread>
 #include <utility>
@@ -209,6 +211,7 @@ private slots:
   void runsAndEstimates();
   void cacheSparesASecondStudy();
   void cacheFollowsAMovedFolder();
+  void cacheFollowsADriveWithCoarseTimes();
   void cacheIsNotFooledByALookAlike();
   void cacheTellsTwinsApart();
   void cacheThatCannotBeWritten();
@@ -217,6 +220,10 @@ private slots:
   void waveScanUsesTheCache();
   void twoWaveScansAtOnce();
   void casesPageTakesUpACutShortScan();
+  void removingAFolderDuringAScan();
+  void stopAndWaitForAnEdit();
+  void anIndexThatCannotBeSavedIsNotLost();
+  void dialogAndAnEmptyFolder();
   void settingsPage();
   void scanBenchmark();
 
@@ -755,6 +762,99 @@ void TstStudyScan::cacheFollowsAMovedFolder() {
   QCOMPARE(fresh.pendingCoverage(), 0);
 }
 
+// The data copied to a drive whose file system keeps coarser times (FAT
+// rounds to two seconds, HFS+ to one, exFAT to a hundredth): the files come
+// back with their times rounded, and the cache still knows them, since the
+// content is the same.
+void TstStudyScan::cacheFollowsADriveWithCoarseTimes() {
+  QTemporaryDir cacheDir, drives;
+  ScanCache cache(cacheDir.path());
+  ScanOptions options;
+  options.cache = &cache;
+  const QString before = drives.filePath("laptop/data");
+  manyFiles(before, 9);
+  const auto setTimes = [](const QString &root, auto &&timeOf) {
+    QDirIterator it(root, QDir::Files, QDirIterator::Subdirectories);
+    int n = 0;
+    while (it.hasNext()) {
+      QFile f(it.next());
+      if (!f.open(QIODevice::ReadWrite) ||
+          !f.setFileTime(QDateTime::fromMSecsSinceEpoch(timeOf(n++)),
+                         QFileDevice::FileModificationTime))
+        return false;
+    }
+    return n > 0;
+  };
+  // Times a fine-grained file system would hold: odd seconds, milliseconds.
+  QVERIFY(setTimes(before, [](int n) {
+    return 1700000001900LL + qint64(n) * 61007LL;
+  }));
+  WaveIndex here;
+  scanBoth(here, "w1", before, options);
+  QCOMPARE(cache.usage().files, 9);
+
+  const auto copyTo = [&](const QString &to) {
+    QDirIterator it(before, QDir::Files, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+      const QString from = it.next();
+      const QString dest = to + QLatin1Char('/') +
+                           QDir(before).relativeFilePath(from);
+      if (!QDir().mkpath(QFileInfo(dest).absolutePath()) ||
+          !QFile::copy(from, dest))
+        return false;
+    }
+    return true;
+  };
+  struct Kind {
+    const char *name;
+    std::function<qint64(qint64)> keep; // what the drive makes of a time, ms
+  };
+  const QList<Kind> kinds{
+      {"fat-up", [](qint64 ms) { return (ms + 1999) / 2000 * 2000; }},
+      {"fat-down", [](qint64 ms) { return ms / 2000 * 2000; }},
+      {"hfs", [](qint64 ms) { return ms / 1000 * 1000; }},
+      {"exfat", [](qint64 ms) { return ms / 10 * 10; }},
+  };
+  for (const Kind &k : kinds) {
+    const QString after = drives.filePath(QLatin1String(k.name) + "/data");
+    QVERIFY(copyTo(after));
+    // The copy keeps each file's own time, as the drive can hold it.
+    {
+      QDirIterator it(after, QDir::Files, QDirIterator::Subdirectories);
+      while (it.hasNext()) {
+        const QString path = it.next();
+        const QString original =
+            before + QLatin1Char('/') + QDir(after).relativeFilePath(path);
+        const qint64 ms =
+            QFileInfo(original).lastModified().toMSecsSinceEpoch();
+        QFile f(path);
+        QVERIFY(f.open(QIODevice::ReadWrite));
+        QVERIFY(f.setFileTime(QDateTime::fromMSecsSinceEpoch(k.keep(ms)),
+                              QFileDevice::FileModificationTime));
+      }
+    }
+    WaveIndex there;
+    const ScanStats st =
+        scanRoot(there, "w1", after, ScanPass::Identity, {}, options);
+    QVERIFY2(st.cached == 9 && st.read == 0,
+             qPrintable(QStringLiteral("%1: %2 from the cache, %3 read")
+                            .arg(QLatin1String(k.name))
+                            .arg(st.cached)
+                            .arg(st.read)));
+    QCOMPARE(there.pendingCoverage(), 0);
+    // And the study's own index, when its folder is just re-pointed to the
+    // drive: nothing is read, nothing even asked of the cache.
+    WaveIndex moved = here;
+    const ScanStats again =
+        scanRoot(moved, "w1", after, ScanPass::Coverage, {}, options);
+    QVERIFY2(again.read == 0 && again.cached == 0,
+             qPrintable(QStringLiteral("%1: %2 read, %3 from the cache")
+                            .arg(QLatin1String(k.name))
+                            .arg(again.read)
+                            .arg(again.cached)));
+  }
+}
+
 void TstStudyScan::cacheIsNotFooledByALookAlike() {
   // Two files with the same name, size and time, holding different days.
   QTemporaryDir cacheDir, a, b;
@@ -1160,6 +1260,268 @@ void TstStudyScan::casesPageTakesUpACutShortScan() {
     QTest::qWait(100);
     QCOMPARE(jobs.rowCount(), 4);
   }
+}
+
+// A folder taken off the study while a scan runs does not come back into the
+// index with what the scan holds in memory, and the scan goes on with the
+// folders that are left. Whenever the removal lands (before the job reads,
+// while it reads, after it saved), the end is the same.
+void TstStudyScan::removingAFolderDuringAScan() {
+  QTemporaryDir dir, dataA, dataB;
+  manyFiles(dataA.path(), 12);
+  manyFiles(dataB.path(), 12);
+  QSettings settings(dir.filePath("s.ini"), QSettings::IniFormat);
+  JobModel jobs;
+  StudyStore store(&settings);
+  AppContext ctx;
+  ctx.jobs = &jobs;
+  ctx.settings = &settings;
+  ctx.study = &store;
+  WaveScan scan(ctx);
+  for (int round = 0; round < 6; ++round) {
+    QVERIFY(store.create(dir.filePath(QStringLiteral("s%1").arg(round)),
+                         QStringLiteral("s")));
+    QString idA, idB;
+    QVERIFY(store.update([&](Study &s) {
+      idA = s.addWaveRoot(dataA.path());
+      idB = s.addWaveRoot(dataB.path());
+    }));
+    const QString studyDir = store.study().dir;
+    scan.start();
+    QVERIFY(scan.running());
+    // Let the scan get some way in, differently each round.
+    QTest::qWait(round * 4);
+    QVERIFY(store.update([&](Study &s) {
+      s.waveRoots.removeIf([&](const WaveRoot &r) { return r.id == idB; });
+    }));
+    // When the scan had already ended, the page that follows the study
+    // starts one for the changed list (the Cases page does, by the stamp of
+    // the folders); a scan that was running is taken up again by itself.
+    if (!scan.running())
+      scan.start();
+    QVERIFY(QTest::qWaitFor(
+        [&] {
+          return !scan.running() &&
+                 WaveIndex::load(studyDir).pendingCoverage() == 0 &&
+                 WaveIndex::load(studyDir).fileCount() == 12;
+        },
+        30000));
+    const WaveIndex index = WaveIndex::load(studyDir);
+    QVERIFY2(!index.roots.contains(idB), "the removed folder is back");
+    QCOMPARE(index.roots.value(idA).size(), 12);
+    QVERIFY(!scan.stoppedByUser());
+    // A folder added now gets a new id, not the one that left.
+    QTemporaryDir dataC;
+    QString idC;
+    QVERIFY(store.update([&](Study &s) { idC = s.addWaveRoot(dataC.path()); }));
+    QVERIFY(idC != idB);
+    QVERIFY(QTest::qWaitFor([&] { return !scan.running(); }, 30000));
+  }
+}
+
+// For an edit of the folder list the scan is stopped and waited for; that is
+// not a stop by the user, and it can be started again at once.
+void TstStudyScan::stopAndWaitForAnEdit() {
+  QTemporaryDir dir, data;
+  manyFiles(data.path(), 30);
+  QSettings settings(dir.filePath("s.ini"), QSettings::IniFormat);
+  JobModel jobs;
+  StudyStore store(&settings);
+  AppContext ctx;
+  ctx.jobs = &jobs;
+  ctx.settings = &settings;
+  ctx.study = &store;
+  WaveScan scan(ctx);
+  QVERIFY(scan.stopAndWait()); // nothing running: at once
+  QVERIFY(store.create(dir.filePath("study"), "s"));
+  QVERIFY(store.update([&](Study &s) { s.addWaveRoot(data.path()); }));
+  const QString studyDir = store.study().dir;
+  scan.start();
+  QVERIFY(scan.running());
+  QVERIFY(scan.stopAndWait());
+  QVERIFY(!scan.running());
+  QVERIFY(!scan.stoppedByUser());
+  QVERIFY(scan.status().isEmpty());
+  // It did not go on to the coverage pass behind our back.
+  QTest::qWait(50);
+  QVERIFY(!scan.running());
+  scan.start();
+  QVERIFY(QTest::qWaitFor(
+      [&] {
+        return !scan.running() &&
+               WaveIndex::load(studyDir).fileCount() == 30 &&
+               WaveIndex::load(studyDir).pendingCoverage() == 0;
+      },
+      30000));
+}
+
+// A scan that cannot save its index at the end (here: the study folder does
+// not take a new file) says so and does not lose what it read: the next
+// scan starts from it, reads nothing again, and saves it.
+void TstStudyScan::anIndexThatCannotBeSavedIsNotLost() {
+#ifdef Q_OS_WIN
+  QSKIP("a folder cannot be made to refuse new files this way on Windows");
+#else
+  QTemporaryDir dir, data;
+  manyFiles(data.path(), 8);
+  QSettings settings(dir.filePath("s.ini"), QSettings::IniFormat);
+  JobModel jobs;
+  StudyStore store(&settings);
+  AppContext ctx;
+  ctx.jobs = &jobs;
+  ctx.settings = &settings;
+  ctx.study = &store;
+  WaveScan scan(ctx);
+  QVERIFY(store.create(dir.filePath("study"), "s"));
+  QVERIFY(store.update([&](Study &s) { s.addWaveRoot(data.path()); }));
+  const QString studyDir = store.study().dir;
+  const auto lock = [&](bool on) {
+    return QFile::setPermissions(
+        studyDir, on ? QFileDevice::ReadOwner | QFileDevice::ExeOwner
+                     : QFileDevice::ReadOwner | QFileDevice::WriteOwner |
+                           QFileDevice::ExeOwner);
+  };
+  QVERIFY(lock(true));
+  const auto unlock = qScopeGuard([&] { lock(false); });
+  {
+    QFile probe(studyDir + "/probe");
+    if (probe.open(QIODevice::WriteOnly)) {
+      probe.remove();
+      QSKIP("this user may write anywhere (root): nothing to refuse the save");
+    }
+  }
+  scan.start();
+  QVERIFY(QTest::qWaitFor([&] { return !scan.running(); }, 60000));
+  QVERIFY(!QFileInfo::exists(studyDir + "/" + WaveIndex::kFileName));
+  QCOMPARE(jobs.jobAt(jobs.rowCount() - 1)->state(), Job::State::Failed);
+  QString log = jobs.jobAt(jobs.rowCount() - 1)->log().join(QLatin1Char('\n'));
+  QVERIFY2(log.contains("could not be saved") && log.contains("kept in memory"),
+           qPrintable(log));
+  QVERIFY(!scan.status().isEmpty());
+
+  // The folder takes files again: the next scan saves what the first read.
+  QVERIFY(lock(false));
+  const int before = jobs.rowCount();
+  scan.start();
+  QVERIFY(QTest::qWaitFor(
+      [&] {
+        return !scan.running() &&
+               WaveIndex::load(studyDir).fileCount() == 8 &&
+               WaveIndex::load(studyDir).pendingCoverage() == 0;
+      },
+      60000));
+  log = jobs.jobAt(before)->log().join(QLatin1Char('\n'));
+  QVERIFY2(log.contains("0 read now"), qPrintable(log));
+#endif
+}
+
+// The dialog: a folder that holds nothing now (a drive that is not
+// connected) is said to be so and keeps what the study knew of it; "Scan
+// again" forgets it only when the user says so. Removing a folder works
+// while a scan runs.
+void TstStudyScan::dialogAndAnEmptyFolder() {
+  QTemporaryDir dir, data, other;
+  manyFiles(data.path(), 6);
+  manyFiles(other.path(), 6);
+  QSettings settings(dir.filePath("s.ini"), QSettings::IniFormat);
+  JobModel jobs;
+  StudyStore store(&settings);
+  AppContext ctx;
+  ctx.jobs = &jobs;
+  ctx.settings = &settings;
+  ctx.study = &store;
+  WaveScan scan(ctx);
+  QVERIFY(store.create(dir.filePath("study"), "s"));
+  QString id, idOther;
+  QVERIFY(store.update([&](Study &s) {
+    id = s.addWaveRoot(data.path());
+    idOther = s.addWaveRoot(other.path());
+  }));
+  const QString studyDir = store.study().dir;
+  const auto settled = [&](int files) {
+    return QTest::qWaitFor(
+        [&] {
+          return !scan.running() &&
+                 WaveIndex::load(studyDir).fileCount() == files &&
+                 WaveIndex::load(studyDir).pendingCoverage() == 0;
+        },
+        30000);
+  };
+  scan.start();
+  QVERIFY(settled(12));
+  QVERIFY(scan.unavailable().isEmpty());
+
+  // The drive goes: the folder is there, with nothing in it.
+  for (const QString &sub : QDir(data.path()).entryList(
+           QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
+    const QString path = data.filePath(sub);
+    QVERIFY(QFileInfo(path).isDir() ? QDir(path).removeRecursively()
+                                    : QFile::remove(path));
+  }
+  QVERIFY(QDir(data.path()).isEmpty());
+
+  WaveformsDialog dialog(ctx, &scan);
+  auto *folders = dialog.findChild<QListWidget *>("waveFolders");
+  QVERIFY(folders);
+  QPushButton *rescan = nullptr, *remove = nullptr;
+  for (QPushButton *b : dialog.findChildren<QPushButton *>()) {
+    if (b->text() == WaveformsDialog::tr("Scan again"))
+      rescan = b;
+    if (b->text() == WaveformsDialog::tr("Remove"))
+      remove = b;
+  }
+  QVERIFY(rescan && remove);
+  QCOMPARE(scan.unavailable(), QStringList{QDir(data.path()).path()});
+  QVERIFY2(folders->item(0)->text().contains("holds nothing now"),
+           qPrintable(folders->item(0)->text()));
+  QVERIFY(!folders->item(1)->text().contains("holds nothing now"));
+
+  // Scan again, and say "keep": nothing is forgotten, and the status says
+  // which folder is away.
+  QStringList asked;
+  dialog.confirmForget = [&asked](const QString &q) {
+    asked << q;
+    return false;
+  };
+  rescan->click();
+  QVERIFY(settled(12));
+  QCOMPARE(asked.size(), 1);
+  QVERIFY(asked.first().contains(QDir(data.path()).path()));
+  QVERIFY(WaveIndex::load(studyDir).roots.value(id).size() == 6);
+  QVERIFY2(scan.status().contains(QDir(data.path()).path()),
+           qPrintable(scan.status()));
+  const QString log =
+      jobs.jobAt(jobs.rowCount() - 1)->log().join(QLatin1Char('\n'));
+  QVERIFY2(log.contains("lists nothing now"), qPrintable(log));
+
+  // Scan again, and say "forget": the folder's files leave the index.
+  dialog.confirmForget = [&asked](const QString &q) {
+    asked << q;
+    return true;
+  };
+  rescan->click();
+  QVERIFY(settled(6));
+  QCOMPARE(asked.size(), 2);
+  QVERIFY(WaveIndex::load(studyDir).roots.value(id).isEmpty());
+  QVERIFY(scan.unavailable().isEmpty());
+  // Nothing away any more: no question.
+  rescan->click();
+  QVERIFY(settled(6));
+  QCOMPARE(asked.size(), 2);
+
+  // Remove the other folder while a scan runs: the button works, the scan
+  // is stopped for it, and the folder is gone from the study and the index.
+  manyFiles(other.path(), 9); // something new to read
+  scan.start();
+  QVERIFY(scan.running());
+  folders = dialog.findChild<QListWidget *>("waveFolders");
+  folders->setCurrentRow(1);
+  QVERIFY(remove->isEnabled());
+  remove->click();
+  QVERIFY(QTest::qWaitFor([&] { return !scan.running(); }, 30000));
+  QCOMPARE(store.study().waveRoots.size(), 1);
+  QCOMPARE(store.study().waveRoots.first().id, id);
+  QVERIFY(!WaveIndex::load(studyDir).roots.contains(idOther));
 }
 
 void TstStudyScan::settingsPage() {

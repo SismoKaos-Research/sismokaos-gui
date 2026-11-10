@@ -20,7 +20,12 @@
 #include <QVBoxLayout>
 
 #include <QElapsedTimer>
+#include <QEventLoop>
+#include <QMap>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QSettings>
+#include <QTimer>
 
 #include <algorithm>
 #include <cmath>
@@ -46,10 +51,71 @@ using study::WaveIndex;
 
 // ---- the scan ----
 
-WaveScan::WaveScan(AppContext ctx, QObject *parent)
-    : QObject(parent), ctx_(ctx) {}
+struct WaveScan::Live {
+  QMutex mutex;
+  QString dir; // the study the ids are of
+  QStringList ids;
+};
 
-void WaveScan::start() {
+namespace {
+
+// An index a scan could not save at its end (the file was held open by
+// something else for longer than the retries last): kept here so the next
+// scan of that study starts from it and saves it, instead of reading it all
+// again. Per study folder; any thread.
+QMutex &unsavedMutex() {
+  static QMutex m;
+  return m;
+}
+QMap<QString, WaveIndex> &unsavedIndexes() {
+  static QMap<QString, WaveIndex> map;
+  return map;
+}
+
+} // namespace
+
+WaveScan::WaveScan(AppContext ctx, QObject *parent)
+    : QObject(parent), ctx_(ctx), live_(std::make_shared<Live>()) {
+  if (ctx_.study)
+    connect(ctx_.study, &study::StudyStore::changed, this,
+            &WaveScan::studyChanged);
+}
+
+QString WaveScan::rootsKey() const {
+  QString key;
+  if (!ctx_.study || !ctx_.study->isOpen())
+    return key;
+  const Study &s = ctx_.study->study();
+  key = s.dir + QLatin1Char('\n');
+  for (const study::WaveRoot &r : s.waveRoots)
+    key += r.id + QLatin1Char('=') + s.resolved(r.path) + QLatin1Char('\n');
+  return key;
+}
+
+// The study changed while a scan may be running. The job is told which
+// folders are still listed (it drops the others before it saves); and when
+// the list itself changed, the scan is stopped and started again on the new
+// one, since it works on the list it was started with.
+void WaveScan::studyChanged() {
+  QStringList ids;
+  QString dir;
+  if (ctx_.study && ctx_.study->isOpen()) {
+    dir = ctx_.study->study().dir;
+    for (const study::WaveRoot &r : ctx_.study->study().waveRoots)
+      ids << r.id;
+  }
+  {
+    const QMutexLocker lock(&live_->mutex);
+    live_->dir = dir;
+    live_->ids = ids;
+  }
+  if (running() && !halting_ && rootsKey() != scannedRoots_) {
+    again_ = true;
+    job_->cancel();
+  }
+}
+
+void WaveScan::start(bool forgetEmpty) {
   if (running() || !ctx_.study || !ctx_.study->isOpen() || !ctx_.jobs)
     return;
   if (ctx_.study->study().waveRoots.isEmpty()) {
@@ -59,14 +125,44 @@ void WaveScan::start() {
     return;
   }
   stoppedByUser_ = false;
+  again_ = false;
+  forgetEmpty_ = forgetEmpty;
   run(ScanPass::Identity);
 }
 
 void WaveScan::cancel() {
   if (job_) {
     stoppedByUser_ = true;
+    again_ = false;
     job_->cancel();
   }
+}
+
+bool WaveScan::stopAndWait(int timeoutMs) {
+  if (!running())
+    return true;
+  halting_ = true;
+  again_ = false;
+  job_->cancel();
+  QEventLoop loop;
+  const QMetaObject::Connection c =
+      connect(this, &WaveScan::updated, &loop, [this, &loop] {
+        if (!running())
+          loop.quit();
+      });
+  QTimer::singleShot(timeoutMs, &loop, &QEventLoop::quit);
+  if (running())
+    loop.exec();
+  disconnect(c);
+  halting_ = false;
+  return !running();
+}
+
+QStringList WaveScan::unavailable() const {
+  if (!ctx_.study || !ctx_.study->isOpen())
+    return {};
+  const Study &s = ctx_.study->study();
+  return study::unavailableWaveRoots(s, *WaveIndex::shared(s.dir));
 }
 
 int WaveScan::workers(const QSettings *settings) {
@@ -103,6 +199,16 @@ void WaveScan::run(ScanPass pass) {
   const bool identity = pass == ScanPass::Identity;
   const int workers = WaveScan::workers(ctx_.settings);
   const QString cacheDir = study::ScanCache::sharedDir();
+  scannedRoots_ = rootsKey();
+  {
+    const QMutexLocker lock(&live_->mutex);
+    live_->dir = study.dir;
+    live_->ids.clear();
+    for (const study::WaveRoot &r : study.waveRoots)
+      live_->ids << r.id;
+  }
+  const std::shared_ptr<Live> live = live_;
+  const bool forgetEmpty = forgetEmpty_;
   // The stations cases are waiting for are read first.
   QStringList first;
   for (const study::Case &c : study.cases)
@@ -117,13 +223,43 @@ void WaveScan::run(ScanPass pass) {
                : tr("every record header in the waveform folders, %n file(s) "
                     "at a time",
                     nullptr, workers),
-      [study, pass, workers, cacheDir, first](TaskContext &t) -> int {
+      [study, pass, workers, cacheDir, first, live,
+       forgetEmpty](TaskContext &t) -> int {
         const bool identity = pass == ScanPass::Identity;
-        WaveIndex index = WaveIndex::load(study.dir);
-        // Folders the study no longer lists leave the index.
-        for (auto it = index.roots.begin(); it != index.roots.end();)
-          it = study.waveRootPath(it.key()).isEmpty() ? index.roots.erase(it)
-                                                      : std::next(it);
+        // What an earlier scan read but could not save comes first.
+        WaveIndex index;
+        bool carried = false;
+        {
+          const QMutexLocker lock(&unsavedMutex());
+          const auto it = unsavedIndexes().constFind(study.dir);
+          if (it != unsavedIndexes().constEnd()) {
+            index = *it;
+            carried = true;
+          }
+        }
+        if (!carried)
+          index = WaveIndex::load(study.dir);
+        // Folders the study no longer lists leave the index: at the start,
+        // and before every save, since the list can change while this runs
+        // (the scan is then stopped and started again, but what it saves on
+        // the way out must not bring a removed folder back).
+        const auto dropUnlisted = [&index, &live, &study] {
+          QStringList listed;
+          bool sameStudy = false;
+          {
+            const QMutexLocker lock(&live->mutex);
+            // Another study may have been opened meanwhile: its list says
+            // nothing about this one's folders.
+            sameStudy = live->dir == study.dir;
+            listed = live->ids;
+          }
+          for (auto it = index.roots.begin(); it != index.roots.end();)
+            it = study.waveRootPath(it.key()).isEmpty() ||
+                         (sameStudy && !listed.contains(it.key()))
+                     ? index.roots.erase(it)
+                     : std::next(it);
+        };
+        dropUnlisted();
         QList<study::ScanFolder> folders;
         for (const study::WaveRoot &root : study.waveRoots) {
           folders << study::ScanFolder{root.id, study.resolved(root.path)};
@@ -134,13 +270,28 @@ void WaveScan::run(ScanPass pass) {
         options.workers = workers;
         options.firstStations = first;
         options.cache = cacheDir.isEmpty() ? nullptr : &cache;
+        options.forgetEmptyFolders = forgetEmpty;
         QElapsedTimer clock;
         clock.start();
         // The speed over the last few seconds, for the time left.
         QList<QPair<qint64, qint64>> samples; // ms, bytes
         study::ScanHooks hooks;
         hooks.shouldStop = [&t] { return t.cancelled(); };
-        hooks.checkpoint = [&index, &study] { index.save(study.dir); };
+        // A save on the way that fails (the file is open elsewhere for a
+        // moment) is said once and made up for by the next one: the index
+        // in memory has everything.
+        bool saveWarned = false;
+        hooks.checkpoint = [&] {
+          dropUnlisted();
+          QString why;
+          if (!index.save(study.dir, &why, 2) && !saveWarned) {
+            saveWarned = true;
+            t.log(QStringLiteral("  note: the index could not be saved just "
+                                 "now (%1); it is saved again as the scan "
+                                 "goes on")
+                      .arg(why));
+          }
+        };
         if (identity) {
           hooks.progress = [&t](int done, int total, const QString &) {
             t.progress(total > 0 ? double(done) / total : 0.0,
@@ -200,10 +351,28 @@ void WaveScan::run(ScanPass pass) {
         for (const QString &path : s.missing)
           t.log(QStringLiteral("  error: the folder %1 does not exist")
                     .arg(path));
+        for (const QString &path : s.unavailable)
+          t.log(QStringLiteral("  note: %1 is there but lists nothing now (a "
+                               "drive that is not connected looks like "
+                               "this); what the study knew of it is kept")
+                    .arg(path));
+        dropUnlisted();
         QString error;
-        if (!index.save(study.dir, &error)) {
-          t.log(QStringLiteral("error: %1").arg(error));
+        if (!index.save(study.dir, &error, 12)) {
+          // Not lost: the next scan starts from what this one read.
+          {
+            const QMutexLocker lock(&unsavedMutex());
+            unsavedIndexes().insert(study.dir, index);
+          }
+          t.log(QStringLiteral("error: the index could not be saved (%1). "
+                               "What was read is kept in memory and saved "
+                               "by the next scan.")
+                    .arg(error));
           return 1;
+        }
+        {
+          const QMutexLocker lock(&unsavedMutex());
+          unsavedIndexes().remove(study.dir);
         }
         return !s.missing.isEmpty() || s.stopped ? 1 : 0;
       });
@@ -237,17 +406,41 @@ void WaveScan::run(ScanPass pass) {
     if (st == Job::State::Running || st == Job::State::Queued)
       return;
     job_.clear();
+    if (again_ && !halting_) {
+      // The study's folders changed under the scan: once more, on the list
+      // as it is now.
+      again_ = false;
+      status_.clear();
+      detail_.clear();
+      start(forgetEmpty_);
+      if (!running())
+        emit updated();
+      return;
+    }
+    if (halting_) {
+      // stopAndWait(): whoever asked goes on from here.
+      status_.clear();
+      detail_.clear();
+      emit updated();
+      return;
+    }
     if (st == Job::State::Done && pass == ScanPass::Identity) {
       // The stations are usable before the coverage is read: starting the
       // second job says so (it emits `updated` with a scan running again).
       run(ScanPass::Coverage);
       return;
     }
-    status_ = st == Job::State::Done
+    const QStringList away = unavailable();
+    status_ =
+        st == Job::State::Done
+            ? away.isEmpty()
                   ? QString()
-                  : st == Job::State::Cancelled
-                        ? tr("The scan was stopped; what it had read is kept.")
-                        : tr("The scan ended with errors; see the Jobs panel.");
+                  : tr("Not available now (a drive that is not connected?), "
+                       "what was known of it is kept: %1")
+                        .arg(away.join(QStringLiteral(", ")))
+            : st == Job::State::Cancelled
+                  ? tr("The scan was stopped; what it had read is kept.")
+                  : tr("The scan ended with errors; see the Jobs panel.");
     detail_ = status_;
     emit updated();
   });
@@ -424,7 +617,7 @@ WaveformsDialog::WaveformsDialog(AppContext ctx, WaveScan *scan,
   });
   connect(repoint_, &QPushButton::clicked, this, &WaveformsDialog::repoint);
   connect(remove_, &QPushButton::clicked, this, &WaveformsDialog::removeFolder);
-  connect(rescan_, &QPushButton::clicked, scan_, &WaveScan::start);
+  connect(rescan_, &QPushButton::clicked, this, &WaveformsDialog::rescan);
   connect(stop_, &QPushButton::clicked, scan_, &WaveScan::cancel);
   connect(coords_, &QPushButton::clicked, this,
           &WaveformsDialog::typeCoordinates);
@@ -461,10 +654,18 @@ void WaveformsDialog::refresh() {
   {
     const QSignalBlocker block(folders_);
     folders_->clear();
+    const QStringList away =
+        study::unavailableWaveRoots(s, *WaveIndex::shared(s.dir));
     for (const study::WaveRoot &r : s.waveRoots) {
       const QString path = s.resolved(r.path);
       auto *item = new QListWidgetItem(
-          QDir(path).exists() ? path : tr("%1  (not found)").arg(path),
+          !QDir(path).exists()
+              ? tr("%1  (not found)").arg(path)
+              : away.contains(QDir(path).path())
+                    ? tr("%1  (holds nothing now: a drive that is not "
+                         "connected? What was known of it is kept)")
+                          .arg(path)
+                    : path,
           folders_);
       item->setData(Qt::UserRole, r.id);
       if (r.id == keepFolder)
@@ -472,8 +673,9 @@ void WaveformsDialog::refresh() {
     }
   }
   const bool selected = folders_->currentItem() != nullptr;
-  repoint_->setEnabled(selected && !scan_->running());
-  remove_->setEnabled(selected && !scan_->running());
+  // Also while a scan runs: it is stopped first and started again after.
+  repoint_->setEnabled(selected);
+  remove_->setEnabled(selected);
   rescan_->setEnabled(!scan_->running() && !s.waveRoots.isEmpty());
   stop_->setVisible(scan_->running());
 
@@ -604,9 +806,15 @@ void WaveformsDialog::addFolder() {
 void WaveformsDialog::addFolders(const QStringList &paths) {
   if (paths.isEmpty())
     return;
+  // No scan works on a list of folders that is being changed.
+  const bool wasScanning = scan_->running();
+  scan_->stopAndWait();
   Study::RootsAdded r;
-  if (!edit([&](Study &s) { r = s.addWaveRoots(paths); }))
+  if (!edit([&](Study &s) { r = s.addWaveRoots(paths); })) {
+    if (wasScanning)
+      scan_->start();
     return;
+  }
   QStringList notes;
   if (!r.covered.isEmpty())
     notes << tr("Already covered by a listed folder: %1")
@@ -619,8 +827,30 @@ void WaveformsDialog::addFolders(const QStringList &paths) {
     problem_->setProperty("auto", false);
     problem_->setText(notes.join(QStringLiteral("\n")));
   }
-  if (!r.added.isEmpty())
+  if (!r.added.isEmpty() || wasScanning)
     scan_->start();
+}
+
+void WaveformsDialog::rescan() {
+  // A folder that is there but lists nothing keeps what the index knows of
+  // it (a drive that is not connected looks the same as files that were
+  // deleted). Forgetting it is the user's word.
+  const QStringList away = scan_->unavailable();
+  bool forget = false;
+  if (!away.isEmpty()) {
+    const QString question =
+        tr("These folders hold nothing now:\n\n%1\n\nIf a drive is just not "
+           "connected, keep what the study knows of them: connect it and "
+           "scan again. Forget their files only if they are really gone.\n\n"
+           "Forget what the study knows of these folders?")
+            .arg(away.join(QLatin1Char('\n')));
+    forget = confirmForget
+                 ? confirmForget(question)
+                 : QMessageBox::question(this, tr("Scan again"), question,
+                                         QMessageBox::Yes | QMessageBox::No,
+                                         QMessageBox::No) == QMessageBox::Yes;
+  }
+  scan_->start(forget);
 }
 
 void WaveformsDialog::dragEnterEvent(QDragEnterEvent *e) {
@@ -646,6 +876,7 @@ void WaveformsDialog::repoint() {
   if (path.isEmpty())
     return;
   const QString old = ctx_.study->study().waveRootPath(id);
+  scan_->stopAndWait();
   if (edit([&](Study &s) {
         // The same step as "locate missing inputs": whatever else the study
         // names under the folder that moved follows it.
@@ -656,21 +887,38 @@ void WaveformsDialog::repoint() {
             r.path = s.stored(path); // the old place is still there
       }))
     scan_->start();
+  else
+    scan_->start(); // not saved: what was stopped for the edit goes on
 }
 
 void WaveformsDialog::removeFolder() {
   if (!folders_->currentItem())
     return;
   const QString id = folders_->currentItem()->data(Qt::UserRole).toString();
+  // A scan that is running would write the folder back into the index from
+  // what it holds in memory: it is stopped first (and has saved), and goes
+  // on afterwards with the folders that are left.
+  const bool wasScanning = scan_->running();
+  if (!scan_->stopAndWait()) {
+    problem_->setProperty("auto", false);
+    problem_->setText(tr("The scan is still stopping; try again in a "
+                         "moment."));
+    return;
+  }
   if (!edit([&id](Study &s) {
         s.waveRoots.removeIf(
             [&id](const study::WaveRoot &r) { return r.id == id; });
-      }))
+      })) {
+    if (wasScanning)
+      scan_->start();
     return;
+  }
   // The index forgets the folder at once, not only at the next scan.
   WaveIndex index = WaveIndex::load(ctx_.study->study().dir);
   if (index.roots.remove(id) > 0)
     index.save(ctx_.study->study().dir);
+  if (wasScanning)
+    scan_->start();
   refresh();
 }
 
