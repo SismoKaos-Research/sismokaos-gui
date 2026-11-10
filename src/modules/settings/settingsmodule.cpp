@@ -1,5 +1,7 @@
 #include "modules/settings/settingsmodule.h"
 
+#include "core/theme.h"
+
 #include <QComboBox>
 #include <QEvent>
 #include <QFileDialog>
@@ -10,6 +12,7 @@
 #include <QLineEdit>
 #include <QLocale>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QVBoxLayout>
 
 #include "core/i18n.h"
@@ -154,8 +157,8 @@ private:
 
 class SettingsWidget : public QWidget {
 public:
-  SettingsWidget(AppContext &ctx, I18n *i18n, QWidget *parent)
-      : QWidget(parent), i18n_(i18n) {
+  SettingsWidget(AppContext &ctx, I18n *i18n, Theme *theme, QWidget *parent)
+      : QWidget(parent), i18n_(i18n), theme_(theme) {
     lang_ = new QComboBox(this);
     for (const QString &code : I18n::available())
       lang_->addItem(QLocale(code).nativeLanguageName(), code);
@@ -170,6 +173,27 @@ public:
     langLabel_ = new QLabel(langBox_);
     langLayout->addWidget(langLabel_);
     langLayout->addWidget(lang_, 1);
+    themeLabel_ = new QLabel(langBox_);
+    themeCombo_ = new QComboBox(this);
+    for (Theme::Mode m :
+         {Theme::Mode::System, Theme::Mode::Light, Theme::Mode::Dark})
+      themeCombo_->addItem(QString(), int(m));
+    themeCombo_->setCurrentIndex(themeCombo_->findData(int(theme_->mode())));
+    connect(themeCombo_, &QComboBox::currentIndexChanged, this, [this](int i) {
+      if (i >= 0)
+        theme_->setMode(Theme::Mode(themeCombo_->itemData(i).toInt()));
+    });
+    connect(theme_, &Theme::changed, this, [this] {
+      const QSignalBlocker block(themeCombo_);
+      themeCombo_->setCurrentIndex(themeCombo_->findData(int(theme_->mode())));
+    });
+    connect(i18n_, &I18n::languageChanged, this, [this](const QString &code) {
+      const QSignalBlocker block(lang_);
+      lang_->setCurrentIndex(lang_->findData(code));
+    });
+    langLayout->addSpacing(16);
+    langLayout->addWidget(themeLabel_);
+    langLayout->addWidget(themeCombo_, 1);
 
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(langBox_);
@@ -190,21 +214,28 @@ private:
   void retranslate() {
     langBox_->setTitle(tr("Interface"));
     langLabel_->setText(tr("Language"));
+    themeLabel_->setText(tr("Theme"));
+    themeCombo_->setItemText(0, tr("Follow the system"));
+    themeCombo_->setItemText(1, tr("Light"));
+    themeCombo_->setItemText(2, tr("Dark"));
   }
 
   I18n *i18n_;
+  Theme *theme_;
   QComboBox *lang_;
+  QComboBox *themeCombo_;
+  QLabel *themeLabel_;
   QGroupBox *langBox_;
   QLabel *langLabel_;
 };
 
 } // namespace
 
-SettingsModule::SettingsModule(I18n *i18n, QObject *parent)
-    : Module(parent), i18n_(i18n) {}
+SettingsModule::SettingsModule(I18n *i18n, Theme *theme, QObject *parent)
+    : Module(parent), i18n_(i18n), theme_(theme) {}
 
 QWidget *SettingsModule::createWidget(AppContext &ctx, QWidget *parent) {
-  return new SettingsWidget(ctx, i18n_, parent);
+  return new SettingsWidget(ctx, i18n_, theme_, parent);
 }
 
 } // namespace skg
