@@ -152,15 +152,11 @@ QString dateText(const QDateTime &t) {
   return t.toUTC().date().toString(Qt::ISODate);
 }
 
-// Why the indicators cannot be computed from the study's catalog although
-// it is there: its magnitudes start too far above the recipe's completeness
-// magnitude. Empty when they can.
-QString indicatorsCatalogProblem(const Study &s, const Recipe &r) {
-  if (boolOf(r, "estimate_mc", false))
-    return {};
-  const CatalogSummary cs =
-      catalogSummary(s.catalogPath(), s.catalogUtcOffsetHours);
-  const double mc = numOf(r, "mc", 1.3);
+// What to say of indicators computed from a catalog whose magnitudes start
+// far above the recipe's completeness magnitude. The run is not held back:
+// a real catalog can be thin in places, and the user decides what the
+// numbers are worth. Empty when the catalog reaches down far enough.
+QString indicatorsCatalogWarning(const CatalogSummary &cs, double mc) {
   if (!cs.ok || cs.floor <= mc + defaults::kMcFloorMargin)
     return {};
   return RunText::tr("the catalog lists earthquakes from about magnitude %1 "
@@ -276,9 +272,7 @@ QDateTime utcOf(double epoch) {
 
 void runIndicators(const Study &s, const Case &c, const Recipe &r,
                    const QString &dir, const RunHooks &hooks, RunRecord &rec) {
-  QString problem = catalogProblem(s);
-  if (problem.isEmpty())
-    problem = indicatorsCatalogProblem(s, r);
+  const QString problem = catalogProblem(s);
   if (!problem.isEmpty())
     fail(problem);
   const int windowMonths = std::max(1, intOf(r, "window_months", 12));
@@ -1351,13 +1345,8 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
   if (r.tool == kToolIndicators) {
     studyCatalog = true;
     blocked = catalogProblem(s);
-    if (!blocked.isEmpty()) {
+    if (!blocked.isEmpty())
       fix = Fix::Cases;
-    } else {
-      blocked = indicatorsCatalogProblem(s, r);
-      if (!blocked.isEmpty())
-        fix = Fix::Recipe;
-    }
   } else if (r.tool == kToolFeatures) {
     studyCatalog = calibrationOverride(r).isEmpty();
     const StationRef *st = stationOf(c, station);
@@ -1590,6 +1579,9 @@ QStringList runWarnings(const Study &s, const Case &c, const QString &station,
                            "indicators describe the large earthquakes only")
                    .arg(cs.floor, 0, 'f', 1)
                    .arg(cs.events);
+    } else if (const QString gap = indicatorsCatalogWarning(cs, mc);
+               !gap.isEmpty()) {
+      out << gap;
     } else if (cs.floor > mc) {
       out << RunText::tr("the catalog thins out below about magnitude %1, "
                          "above the recipe's completeness magnitude %2: the "

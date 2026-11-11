@@ -686,17 +686,17 @@ void TstStudyFixes::indicatorsNeedTheSmallEarthquakes() {
   r.id = QStringLiteral("ind");
   r.settings.insert(QStringLiteral("estimate_mc"), false);
   r.settings.insert(QStringLiteral("mc"), 1.3);
-  // Magnitudes from 4.4, counted from 1.3: the b-value cannot be had.
+  // Magnitudes from 4.4, counted from 1.3: the cell is not held back (a
+  // real catalog can be thin in places), but it says plainly what is wrong.
   Cell cell = cellOf(s, c, QString(), r);
-  QCOMPARE(cell.state, CellState::Blocked);
-  QCOMPARE(cell.fix, Fix::Recipe);
-  QVERIFY2(cell.why.contains(QStringLiteral("from about magnitude 4.4 up")) &&
-               cell.why.contains(QStringLiteral("completeness magnitude 1.3")),
-           qPrintable(cell.why));
-  QVERIFY_EXCEPTION_THROWN(
-      runCell(s, c, QString(), r, QStringLiteral("test"), {}),
-      std::runtime_error);
-  // Counted from 4.0: within the margin, so it runs, with a warning.
+  QVERIFY(cell.state != CellState::Blocked);
+  QVERIFY2(cell.warnings.join('\n').contains(
+               QStringLiteral("from about magnitude 4.4 up")) &&
+               cell.warnings.join('\n').contains(
+                   QStringLiteral("completeness magnitude 1.3")),
+           qPrintable(cell.warnings.join('\n')));
+  QCOMPARE(cell.warnings.size(), 1);
+  // Counted from 4.0: within the margin, a milder warning.
   r.settings.insert(QStringLiteral("mc"), 4.0);
   r.revision += 1;
   cell = cellOf(s, c, QString(), r);

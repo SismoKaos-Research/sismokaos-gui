@@ -316,12 +316,14 @@ as sparse, and the tools say what that means for them:
   windows by avoiding the catalog's earthquakes, and with such a catalog it
   only avoids those of that size and larger; smaller local ones sit inside
   the "quiet" windows unseen. The warning is in the run's log and record;
-- an **Indicators** cell waits when the recipe counts earthquakes from a
-  completeness magnitude more than 0.5 below where the catalog starts (a
-  b-value from magnitude 1.3 cannot be had from a list that starts at 4.4).
-  Raise the recipe's completeness magnitude, let it be estimated per case,
-  or use a full catalog. Within that margin, and when it is estimated, the
-  cell runs with a warning.
+- an **Indicators** cell runs, with a warning, when the recipe counts
+  earthquakes from a completeness magnitude below where the catalog starts.
+  More than 0.5 below, the warning says that the b-value lacks the
+  earthquakes in between (a b-value from magnitude 1.3 cannot be had from a
+  list that starts at 4.4) and what to do: raise the recipe's completeness
+  magnitude, let it be estimated per case, or use a full catalog. The run
+  is not held back, because a real catalog can be thin in places; what the
+  numbers are worth is yours to judge.
 
 A warning stays with the results: the cell shows ⚠ and says it on hover,
 and on Compare the scores made under it carry the same mark.
@@ -940,8 +942,8 @@ usually starts near magnitude 4 in this region: the row under the catalog on
 the Cases page says from about which magnitude a file really goes. With such
 a catalog the Features calibration avoids only the earthquakes it lists, so
 smaller local ones sit unseen inside its "quiet" windows (the run carries a
-warning), and the Indicators wait when the recipe counts from a completeness
-magnitude well below where the catalog starts. For b-values and the like,
+warning), and so do the Indicators when the recipe counts from a
+completeness magnitude below where the catalog starts. For b-values and the like,
 use a full catalog: an AFAD export. AFAD's public event web service returns
 only the latest 1,000 earthquakes, so the period has to be exported from
 AFAD's website by hand; cite AFAD as the source when you use its data.

@@ -30,7 +30,8 @@ inline constexpr int kRiskLabelDays = 90;
 // that size and larger, and small local ones sit inside them unseen.
 inline constexpr double kSparseCatalogMag = 3.0;
 // The indicators need events down to the recipe's completeness magnitude.
-// A catalog whose floor is above Mc by more than this cannot give them.
+// A catalog whose floor is above Mc by more than this gets the stronger of
+// the two warnings; the run is not held back.
 inline constexpr double kMcFloorMargin = 0.5;
 // A station with data on fewer days of the case's span than this share of
 // it is used with a warning.

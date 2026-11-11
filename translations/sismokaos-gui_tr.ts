@@ -454,7 +454,7 @@
     <message>
         <location filename="../src/modules/study/casedialogs.cpp" line="656"/>
         <source>What happens to a chosen earthquake that is already a case of this study. Replacing keeps the case&apos;s folder and results and gives it the span and stations chosen here; its finished runs then show as stale where those changed.</source>
-        <translation>Seçilen bir deprem zaten bu çalışmanın vakasıysa ne olacağı. Değiştirmek vakanın klasörünü ve sonuçlarını korur, ona burada seçilen süreyi ve istasyonları verir; bunların değiştiği yerlerde biten çalıştırmaları eskimiş görünür.</translation>
+        <translation>Seçilen bir deprem zaten bu çalışmanın vakasıysa ne olacağı. Değiştirmek vakanın klasörünü ve sonuçlarını korur, ona burada seçilen süreyi ve istasyonları verir; bunların değiştiği yerlerde biten koşuları eskimiş görünür.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casedialogs.cpp" line="662"/>
@@ -771,7 +771,7 @@
     <message>
         <location filename="../src/modules/analysis/analysismodule.cpp" line="554"/>
         <source>The feature table to analyse: a &lt;name&gt;_features.npy or .csv from the Features page. The run metadata beside it supplies the station code and the window length.</source>
-        <translation>İncelenecek öznitelik tablosu: Öznitelikler sayfasından bir &lt;ad&gt;_features.npy veya .csv. Yanındaki çalıştırma üstverisi istasyon kodunu ve pencere uzunluğunu sağlar.</translation>
+        <translation>İncelenecek öznitelik tablosu: Öznitelikler sayfasından bir &lt;ad&gt;_features.npy veya .csv. Yanındaki koşu üstverisi istasyon kodunu ve pencere uzunluğunu sağlar.</translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/analysismodule.cpp" line="558"/>
@@ -1103,7 +1103,7 @@
     <message>
         <location filename="../src/modules/tdvms/casedownloads.cpp" line="835"/>
         <source>The station has data on only a small part of the span; a run on it would rest on very little.</source>
-        <translation>İstasyonun, sürenin yalnızca küçük bir bölümünde verisi var; bununla yapılan bir çalıştırma çok az veriye dayanır.</translation>
+        <translation>İstasyonun, sürenin yalnızca küçük bir bölümünde verisi var; bununla yapılan bir koşu çok az veriye dayanır.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/casedownloads.cpp" line="841"/>
@@ -1384,7 +1384,7 @@
     <message>
         <location filename="../src/modules/tdvms/casedownloads.cpp" line="1095"/>
         <source>Opens the Runs page, the next step: choosing what to compute on the cases.</source>
-        <translation>Sıradaki adım olan Çalıştırmalar sayfasını açar: vakalar üzerinde neyin hesaplanacağını seçmek.</translation>
+        <translation>Sıradaki adım olan Koşular sayfasını açar: vakalar üzerinde neyin hesaplanacağını seçmek.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/casedownloads.cpp" line="1098"/>
@@ -1881,7 +1881,7 @@ Boş bir klasörde yeni bir çalışma başlatın ya da var olan birini açın.<
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="675"/>
         <source>Runs</source>
-        <translation>Çalıştırmalar</translation>
+        <translation>Koşular</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="678"/>
@@ -1891,7 +1891,7 @@ Boş bir klasörde yeni bir çalışma başlatın ya da var olan birini açın.<
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="682"/>
         <source>How many of the case&apos;s runs are finished and current, of how many the study&apos;s recipes make for it. The Runs page has the rest.</source>
-        <translation>Vakanın çalıştırmalarından kaçının bitmiş ve güncel olduğu; çalışmanın tariflerinin onun için kaç çalıştırma oluşturduğuyla birlikte. Kalanı Çalıştırmalar sayfasındadır.</translation>
+        <translation>Vakanın koşularından kaçının bitmiş ve güncel olduğu; çalışmanın tariflerinin onun için kaç koşu oluşturduğuyla birlikte. Kalanı Koşular sayfasındadır.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="686"/>
@@ -1948,22 +1948,22 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="739"/>
         <source>Step 3: goes to the Runs page, where recipes are made and run on the cases. Features recipes need the waveforms first; Indicators recipes do not.</source>
-        <translation>Adım 3: tariflerin oluşturulup vakalar üzerinde çalıştırıldığı Çalıştırmalar sayfasına gider. Öznitelik tarifleri önce dalga formlarını ister; Gösterge tarifleri istemez.</translation>
+        <translation>Adım 3: tariflerin oluşturulup vakalar üzerinde çalıştırıldığı Koşular sayfasına gider. Öznitelik tarifleri önce dalga formlarını ister; Gösterge tarifleri istemez.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="750"/>
         <source>Takes the selected cases out of the study (also the Delete key). Their result folders stay on disk, and More ▸ Put back brings a case back with its runs until the application is closed.</source>
-        <translation>Seçili vakaları çalışmadan çıkarır (Delete tuşu da). Sonuç klasörleri diskte kalır; uygulama kapatılana dek Diğer ▸ Geri koy bir vakayı çalıştırmalarıyla geri getirir.</translation>
+        <translation>Seçili vakaları çalışmadan çıkarır (Delete tuşu da). Sonuç klasörleri diskte kalır; uygulama kapatılana dek Diğer ▸ Geri koy bir vakayı koşularıyla geri getirir.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="753"/>
         <source>The case&apos;s name, as shown in the tables and the figures. Changes are saved at once. Renaming keeps the case&apos;s folder and its finished runs.</source>
-        <translation>Vakanın tablolarda ve şekillerde görünen adı. Değişiklikler hemen kaydedilir. Yeniden adlandırma vakanın klasörünü ve biten çalıştırmalarını korur.</translation>
+        <translation>Vakanın tablolarda ve şekillerde görünen adı. Değişiklikler hemen kaydedilir. Yeniden adlandırma vakanın klasörünü ve biten koşularını korur.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="757"/>
         <source>Tick the stations this case is studied from. Each ticked station is a row of its own on the Runs and Compare pages. Waveforms says how many days of the span the study&apos;s waveform folders hold for the station; the small bar shows the same share. Click the Distance or Waveforms heading to order the stations by it.</source>
-        <translation>Bu vakanın inceleneceği istasyonları işaretleyin. İşaretli her istasyon Çalıştırmalar ve Karşılaştır sayfalarında ayrı bir satırdır. Dalga formları, çalışmanın dalga formu klasörlerinde istasyon için sürenin kaç gününün bulunduğunu söyler; küçük çubuk aynı oranı gösterir. İstasyonları sıralamak için Uzaklık ya da Dalga formları başlığına tıklayın.</translation>
+        <translation>Bu vakanın inceleneceği istasyonları işaretleyin. İşaretli her istasyon Koşular ve Karşılaştır sayfalarında ayrı bir satırdır. Dalga formları, çalışmanın dalga formu klasörlerinde istasyon için sürenin kaç gününün bulunduğunu söyler; küçük çubuk aynı oranı gösterir. İstasyonları sıralamak için Uzaklık ya da Dalga formları başlığına tıklayın.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="850"/>
@@ -1994,12 +1994,12 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="977"/>
         <source>No recipe yet: they are made on the Runs page.</source>
-        <translation>Henüz tarif yok: tarifler Çalıştırmalar sayfasında oluşturulur.</translation>
+        <translation>Henüz tarif yok: tarifler Koşular sayfasında oluşturulur.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="978"/>
         <source>%1 of %2 run(s) are finished and current.</source>
-        <translation>%2 çalıştırmanın %1 tanesi bitmiş ve güncel.</translation>
+        <translation>%2 koşunun %1 tanesi bitmiş ve güncel.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="1044"/>
@@ -2034,7 +2034,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
         <location filename="../src/modules/study/casespage.cpp" line="1213"/>
         <source>⚠ %n ticked station(s) have waveforms, but none in this case&apos;s span: a run on them cannot start. Untick them, or get their data for the span.</source>
         <translation>
-            <numerusform>⚠ İşaretli %n istasyonun dalga formu var, ama bu vakanın süresinde yok: bunlarda çalıştırma başlayamaz. İşaretlerini kaldırın ya da süre için verilerini alın.</numerusform>
+            <numerusform>⚠ İşaretli %n istasyonun dalga formu var, ama bu vakanın süresinde yok: bunlarda koşu başlayamaz. İşaretlerini kaldırın ya da süre için verilerini alın.</numerusform>
         </translation>
     </message>
     <message>
@@ -2119,7 +2119,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
         <location filename="../src/modules/study/casespage.cpp" line="1424"/>
         <source>This change makes %n finished run(s) of this case stale; they would have to be run again. Change it anyway?</source>
         <translation>
-            <numerusform>Bu değişiklik, bu vakanın bitmiş %n çalıştırmasını eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
+            <numerusform>Bu değişiklik, bu vakanın bitmiş %n koşusunu eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
         </translation>
     </message>
     <message>
@@ -2141,7 +2141,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
         <location filename="../src/modules/study/casespage.cpp" line="1516"/>
         <source>Replacing makes %n finished run(s) of these cases stale; they would have to be run again. Replace them anyway?</source>
         <translation>
-            <numerusform>Değiştirmek bu vakaların %n bitmiş çalıştırmasını eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
+            <numerusform>Değiştirmek bu vakaların %n bitmiş koşusunu eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
         </translation>
     </message>
     <message>
@@ -2158,7 +2158,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
         <location filename="../src/modules/study/casespage.cpp" line="1574"/>
         <source>%n finished run(s) of them leave the tables. Their folders stay on disk.</source>
         <translation>
-            <numerusform>Bunların %n bitmiş çalıştırması tablolardan çıkar. Klasörleri diskte kalır.</numerusform>
+            <numerusform>Bunların %n bitmiş koşusu tablolardan çıkar. Klasörleri diskte kalır.</numerusform>
         </translation>
     </message>
     <message>
@@ -2169,12 +2169,12 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="1579"/>
         <source>Until the application is closed, More ▸ Put back brings a removed case back with its runs.</source>
-        <translation>Uygulama kapatılana dek Diğer ▸ Geri koy kaldırılan bir vakayı çalıştırmalarıyla geri getirir.</translation>
+        <translation>Uygulama kapatılana dek Diğer ▸ Geri koy kaldırılan bir vakayı koşularıyla geri getirir.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="1591"/>
         <source>Removed: %1. To bring a case back with its runs: More ▸ Put back.</source>
-        <translation>Kaldırıldı: %1. Bir vakayı çalıştırmalarıyla geri getirmek için: Diğer ▸ Geri koy.</translation>
+        <translation>Kaldırıldı: %1. Bir vakayı koşularıyla geri getirmek için: Diğer ▸ Geri koy.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="1636"/>
@@ -2187,7 +2187,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
         <location filename="../src/modules/study/casespage.cpp" line="1672"/>
         <source>This change makes %n finished run(s) of the selected cases stale; they would have to be run again. Change it anyway?</source>
         <translation>
-            <numerusform>Bu değişiklik seçili vakaların %n bitmiş çalıştırmasını eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
+            <numerusform>Bu değişiklik seçili vakaların %n bitmiş koşusunu eskitir; yeniden çalıştırılmaları gerekir. Yine de değiştirilsin mi?</numerusform>
         </translation>
     </message>
     <message>
@@ -2374,7 +2374,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
         <location filename="../src/modules/study/casespage.cpp" line="2019"/>
         <source>The times of the %n earthquake case(s) were read from the catalog with the old setting. They are read again with the new one, which moves them by %1 hours and makes their finished runs stale. Change it?</source>
         <translation>
-            <numerusform>%n deprem vakasının zamanı katalogdan eski ayarla okunmuştu. Yeni ayarla yeniden okunurlar; bu, zamanları %1 saat kaydırır ve bitmiş çalıştırmalarını eskitir. Değiştirilsin mi?</numerusform>
+            <numerusform>%n deprem vakasının zamanı katalogdan eski ayarla okunmuştu. Yeni ayarla yeniden okunurlar; bu, zamanları %1 saat kaydırır ve bitmiş koşularını eskitir. Değiştirilsin mi?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -2474,7 +2474,7 @@ Katalogdan ekle… yerleşik listeden ya da kendi kataloğunuzdan bir deprem se�
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="771"/>
         <source>How many days before the event are studied. The Indicators recipes use the catalog from one window before the span up to, but not including, the event. Changing it marks the case&apos;s finished runs stale.</source>
-        <translation>Olaydan önceki kaç günün incelendiği. Gösterge tarifleri, kataloğu süreden bir pencere öncesinden olaya kadar (olay hariç) kullanır. Değiştirilirse vakanın bitmiş çalıştırmaları eskimiş sayılır.</translation>
+        <translation>Olaydan önceki kaç günün incelendiği. Gösterge tarifleri, kataloğu süreden bir pencere öncesinden olaya kadar (olay hariç) kullanır. Değiştirilirse vakanın bitmiş koşuları eskimiş sayılır.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casespage.cpp" line="835"/>
@@ -2934,7 +2934,7 @@ Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
     <message>
         <location filename="../src/modules/classification/classificationmodule.cpp" line="500"/>
         <source>sfc run %1</source>
-        <translation>sfc çalıştırması %1</translation>
+        <translation>sfc koşusu %1</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/classification/classificationmodule.cpp" line="501"/>
@@ -2971,7 +2971,7 @@ Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
     <message>
         <location filename="../src/modules/classification/classificationmodule.cpp" line="558"/>
         <source>The run log appears here.</source>
-        <translation>Çalıştırma günlüğü burada görünür.</translation>
+        <translation>Koşu günlüğü burada görünür.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/classificationmodule.cpp" line="559"/>
@@ -3006,7 +3006,7 @@ Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
     <message>
         <location filename="../src/modules/classification/classificationmodule.cpp" line="576"/>
         <source>The steps of a run, in fixed order; tick the ones to do. split divides the days into training, validation and test; baseline, ann and trees train the models; compare puts their scores side by side; the others write figures.</source>
-        <translation>Bir çalıştırmanın adımları, sırası sabittir; yapılacak olanları işaretleyin. split günleri eğitim, doğrulama ve test olarak böler; baseline, ann ve trees modelleri eğitir; compare skorlarını yan yana koyar; diğerleri şekil yazar.</translation>
+        <translation>Bir koşunun adımları, sırası sabittir; yapılacak olanları işaretleyin. split günleri eğitim, doğrulama ve test olarak böler; baseline, ann ve trees modelleri eğitir; compare skorlarını yan yana koyar; diğerleri şekil yazar.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/classificationmodule.cpp" line="581"/>
@@ -3016,7 +3016,7 @@ Sayfanın üstünden bir katalog ve bir istasyon seçin.</translation>
     <message>
         <location filename="../src/modules/classification/classificationmodule.cpp" line="583"/>
         <source>Stops the run.</source>
-        <translation>Çalıştırmayı durdurur.</translation>
+        <translation>Koşuyu durdurur.</translation>
     </message>
 </context>
 <context>
@@ -3079,7 +3079,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1184"/>
         <source>Reads the runs from the disk again. Offered when a finished run could not be read (its files may have been open elsewhere, or still being written).</source>
-        <translation>Çalıştırmaları diskten yeniden okur. Biten bir çalıştırma okunamadığında önerilir (dosyaları başka yerde açık ya da hâlâ yazılıyor olabilir).</translation>
+        <translation>Koşuları diskten yeniden okur. Biten bir koşu okunamadığında önerilir (dosyaları başka yerde açık ya da hâlâ yazılıyor olabilir).</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1188"/>
@@ -3149,7 +3149,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1214"/>
         <source>Click a heading to sort; double-click a row to open its run folder. With the keyboard: Left and Right choose the sort column, Space turns the order, Up and Down choose a row, Enter opens it.</source>
-        <translation>Sıralamak için bir başlığa tıklayın; çalıştırma klasörünü açmak için bir satıra çift tıklayın. Klavyeyle: Sol ve Sağ sıralama sütununu seçer, Boşluk sırayı çevirir, Yukarı ve Aşağı satır seçer, Enter açar.</translation>
+        <translation>Sıralamak için bir başlığa tıklayın; koşu klasörünü açmak için bir satıra çift tıklayın. Klavyeyle: Sol ve Sağ sıralama sütununu seçer, Boşluk sırayı çevirir, Yukarı ve Aşağı satır seçer, Enter açar.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1218"/>
@@ -3171,7 +3171,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         <location filename="../src/modules/study/comparepage.cpp" line="1380"/>
         <location filename="../src/modules/study/comparepage.cpp" line="1397"/>
         <source>Go to Runs</source>
-        <translation>Çalıştırmalara git</translation>
+        <translation>Koşulara git</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1371"/>
@@ -3186,12 +3186,12 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1376"/>
         <source>None of the %1 rows has a finished run yet. Run the recipe on the Runs page.</source>
-        <translation>%1 satırın hiçbirinin bitmiş çalıştırması yok. Tarifi Çalıştırmalar sayfasında çalıştırın.</translation>
+        <translation>%1 satırın hiçbirinin bitmiş koşusu yok. Tarifi Koşular sayfasında çalıştırın.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1382"/>
         <source>%1 of %2 rows have a finished run. Click a column heading to sort; double-click a row to open its folder.</source>
-        <translation>%2 satırın %1 tanesinin bitmiş çalıştırması var. Sıralamak için bir sütun başlığına tıklayın; klasörünü açmak için bir satıra çift tıklayın.</translation>
+        <translation>%2 satırın %1 tanesinin bitmiş koşusu var. Sıralamak için bir sütun başlığına tıklayın; klasörünü açmak için bir satıra çift tıklayın.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1220"/>
@@ -3206,7 +3206,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="1366"/>
         <source>No classification recipe yet. Add one on the Runs page; it needs a features recipe to take its table from.</source>
-        <translation>Henüz sınıflandırma tarifi yok. Çalıştırmalar sayfasında bir tane ekleyin; tablosunu alacağı bir öznitelik tarifine ihtiyaç duyar.</translation>
+        <translation>Henüz sınıflandırma tarifi yok. Koşular sayfasında bir tane ekleyin; tablosunu alacağı bir öznitelik tarifine ihtiyaç duyar.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/study/comparepage.cpp" line="1391"/>
@@ -3229,7 +3229,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         <location filename="../src/modules/study/comparepage.cpp" line="1459"/>
         <source>⚠  Not drawn (%n run(s)): %1</source>
         <translation>
-            <numerusform>⚠  Çizilmedi (%n çalıştırma): %1</numerusform>
+            <numerusform>⚠  Çizilmedi (%n koşu): %1</numerusform>
         </translation>
     </message>
     <message>
@@ -3506,12 +3506,12 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="288"/>
         <source>r times the quiet std of each component, set by the calibration of the run</source>
-        <translation>her bileşenin sakin std’sinin r katı; çalıştırmanın kalibrasyonu belirler</translation>
+        <translation>her bileşenin sakin std’sinin r katı; koşunun kalibrasyonu belirler</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="369"/>
         <source>Run</source>
-        <translation>Çalıştırma</translation>
+        <translation>Koşu</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="370"/>
@@ -3526,7 +3526,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="372"/>
         <source>Bands (each is a run of its own; empty = one run with the settings above)</source>
-        <translation>Bantlar (her biri ayrı bir çalıştırma; boş = yukarıdaki ayarlarla tek çalıştırma)</translation>
+        <translation>Bantlar (her biri ayrı bir koşu; boş = yukarıdaki ayarlarla tek koşu)</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="376"/>
@@ -3551,7 +3551,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="382"/>
         <source>needed for a full run unless a calibration is reused</source>
-        <translation>bir kalibrasyon yeniden kullanılmıyorsa tam çalıştırma için gerekli</translation>
+        <translation>bir kalibrasyon yeniden kullanılmıyorsa tam koşu için gerekli</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="383"/>
@@ -3660,12 +3660,12 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="449"/>
         <source>The embedding delay: how many samples apart the values are that are combined into one point of the reconstructed state space. In a full run it is calibrated from the data and this is only the starting value.</source>
-        <translation>Gömme gecikmesi: yeniden kurulan durum uzayının bir noktasında birleştirilen değerlerin kaç örnek aralıklı olduğu. Tam çalıştırmada veriden kalibre edilir; bu yalnızca başlangıç değeridir.</translation>
+        <translation>Gömme gecikmesi: yeniden kurulan durum uzayının bir noktasında birleştirilen değerlerin kaç örnek aralıklı olduğu. Tam koşuda veriden kalibre edilir; bu yalnızca başlangıç değeridir.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="455"/>
         <source>The embedding dimension: how many delayed values make up one point of the reconstructed state space. Calibrated in a full run; this is the starting value.</source>
-        <translation>Gömme boyutu: yeniden kurulan durum uzayının bir noktasını kaç gecikmeli değerin oluşturduğu. Tam çalıştırmada kalibre edilir; bu başlangıç değeridir.</translation>
+        <translation>Gömme boyutu: yeniden kurulan durum uzayının bir noktasını kaç gecikmeli değerin oluşturduğu. Tam koşuda kalibre edilir; bu başlangıç değeridir.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="459"/>
@@ -3680,7 +3680,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="467"/>
         <source>The typical period of the signal in seconds. It keeps neighbours in the Rosenstein method apart in time and is its time unit. Calibrated in a full run; this is the starting value.</source>
-        <translation>Sinyalin tipik periyodu, saniye. Rosenstein yönteminde komşuları zamanda birbirinden uzak tutar ve yöntemin zaman birimidir. Tam çalıştırmada kalibre edilir; bu başlangıç değeridir.</translation>
+        <translation>Sinyalin tipik periyodu, saniye. Rosenstein yönteminde komşuları zamanda birbirinden uzak tutar ve yöntemin zaman birimidir. Tam koşuda kalibre edilir; bu başlangıç değeridir.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="472"/>
@@ -3700,12 +3700,12 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="484"/>
         <source>Sample entropy counts two patterns as alike when they differ by less than r times the signal&apos;s standard deviation. In a full run the tolerance is set from the quiet periods. Default 0.2.</source>
-        <translation>Örneklem entropisi, aralarındaki fark sinyalin standart sapmasının r katından küçük olan iki örüntüyü benzer sayar. Tam çalıştırmada tolerans sakin dönemlerden belirlenir. Varsayılan 0,2.</translation>
+        <translation>Örneklem entropisi, aralarındaki fark sinyalin standart sapmasının r katından küçük olan iki örüntüyü benzer sayar. Tam koşuda tolerans sakin dönemlerden belirlenir. Varsayılan 0,2.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="489"/>
         <source>The AFAD earthquake catalog (CSV or .csv.gz). The calibration uses it to find the periods without earthquakes. Needed for a full run unless a calibration is reused.</source>
-        <translation>AFAD deprem kataloğu (CSV veya .csv.gz). Kalibrasyon, depremsiz dönemleri bulmak için kullanır. Bir kalibrasyon yeniden kullanılmıyorsa tam çalıştırma için gereklidir.</translation>
+        <translation>AFAD deprem kataloğu (CSV veya .csv.gz). Kalibrasyon, depremsiz dönemleri bulmak için kullanır. Bir kalibrasyon yeniden kullanılmıyorsa tam koşu için gereklidir.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="494"/>
@@ -3780,7 +3780,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="537"/>
         <source>Optional frequency bands. Each row is a complete run of its own (band corners, rate, window, step, STA, LTA, split), written to a sub-folder named after the band. Edit a cell in place.</source>
-        <translation>İsteğe bağlı frekans bantları. Her satır başlı başına tam bir çalıştırmadır (bant köşeleri, hız, pencere, adım, STA, LTA, bölme) ve bandın adını taşıyan bir alt klasöre yazılır. Hücreyi yerinde düzenleyin.</translation>
+        <translation>İsteğe bağlı frekans bantları. Her satır başlı başına tam bir koşudur (bant köşeleri, hız, pencere, adım, STA, LTA, bölme) ve bandın adını taşıyan bir alt klasöre yazılır. Hücreyi yerinde düzenleyin.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="541"/>
@@ -4347,7 +4347,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="450"/>
         <source>Working directory of the run; the assessment table and the scores go here</source>
-        <translation>Çalıştırmanın çalışma klasörü; değerlendirme tablosu ve puanlar buraya yazılır</translation>
+        <translation>Koşunun çalışma klasörü; değerlendirme tablosu ve puanlar buraya yazılır</translation>
     </message>
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="453"/>
@@ -4392,7 +4392,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="468"/>
         <source>The run log appears here.</source>
-        <translation>Çalıştırma günlüğü burada görünür.</translation>
+        <translation>Koşu günlüğü burada görünür.</translation>
     </message>
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="469"/>
@@ -4412,7 +4412,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="481"/>
         <source>No run yet.</source>
-        <translation>Henüz çalıştırma yok.</translation>
+        <translation>Henüz koşu yok.</translation>
     </message>
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="484"/>
@@ -4512,7 +4512,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="545"/>
         <source>Opens the run&apos;s working directory in the file manager.</source>
-        <translation>Çalıştırmanın çalışma dizinini dosya yöneticisinde açar.</translation>
+        <translation>Koşunun çalışma dizinini dosya yöneticisinde açar.</translation>
     </message>
     <message>
         <location filename="../src/modules/earlywarning/earlywarningmodule.cpp" line="555"/>
@@ -4667,7 +4667,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="102"/>
         <source>Run</source>
-        <translation>Çalıştırma</translation>
+        <translation>Koşu</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="103"/>
@@ -4734,12 +4734,12 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="353"/>
         <source>Delete run</source>
-        <translation>Çalıştırmayı sil</translation>
+        <translation>Koşuyu sil</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="354"/>
         <source>Delete the run &apos;%1&apos;: its folder and its rows in experiments.csv?</source>
-        <translation>&apos;%1&apos; çalıştırması silinsin mi: klasörü ve experiments.csv’deki satırları?</translation>
+        <translation>&apos;%1&apos; koşusu silinsin mi: klasörü ve experiments.csv’deki satırları?</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
@@ -4771,7 +4771,7 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="385"/>
         <source>Delete run…</source>
-        <translation>Çalıştırmayı sil…</translation>
+        <translation>Koşuyu sil…</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="386"/>
@@ -4786,17 +4786,17 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="390"/>
         <source>Writes one self-contained HTML page with every run&apos;s scores, confusion matrices and figures, and opens it.</source>
-        <translation>Her çalıştırmanın skorlarını, karışıklık matrislerini ve şekillerini içeren tek bir bağımsız HTML sayfası yazar ve açar.</translation>
+        <translation>Her koşunun skorlarını, karışıklık matrislerini ve şekillerini içeren tek bir bağımsız HTML sayfası yazar ve açar.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="393"/>
         <source>Deletes the selected run&apos;s folder and its rows in experiments.csv. This cannot be undone.</source>
-        <translation>Seçili çalıştırmanın klasörünü ve experiments.csv içindeki satırlarını siler. Geri alınamaz.</translation>
+        <translation>Seçili koşunun klasörünü ve experiments.csv içindeki satırlarını siler. Geri alınamaz.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/experimentspane.cpp" line="396"/>
         <source>Opens the selected run&apos;s folder in the file manager.</source>
-        <translation>Seçili çalıştırmanın klasörünü dosya yöneticisinde açar.</translation>
+        <translation>Seçili koşunun klasörünü dosya yöneticisinde açar.</translation>
     </message>
 </context>
 <context>
@@ -5074,18 +5074,18 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
         <location filename="../src/modules/features/featuresmodule.cpp" line="357"/>
         <source>Dry run: %n run(s)</source>
         <translation>
-            <numerusform>Deneme: %n çalıştırma</numerusform>
+            <numerusform>Deneme: %n koşu</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="361"/>
         <source>(single run)</source>
-        <translation>(tek çalıştırma)</translation>
+        <translation>(tek koşu)</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="374"/>
         <source>A full run calibrates the chaos parameters on quiet periods, which needs the earthquake catalog (and the station list or position). Set them in the calibration group, or reuse a previous run&apos;s calibration.</source>
-        <translation>Tam çalıştırma, kaos parametrelerini sakin dönemlerde kalibre eder; bunun için deprem kataloğu (ve istasyon listesi ya da konumu) gerekir. Bunları kalibrasyon grubunda ayarlayın ya da önceki bir çalıştırmanın kalibrasyonunu yeniden kullanın.</translation>
+        <translation>Tam koşu, kaos parametrelerini sakin dönemlerde kalibre eder; bunun için deprem kataloğu (ve istasyon listesi ya da konumu) gerekir. Bunları kalibrasyon grubunda ayarlayın ya da önceki bir koşunun kalibrasyonunu yeniden kullanın.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="384"/>
@@ -5101,7 +5101,7 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
         <location filename="../src/modules/features/featuresmodule.cpp" line="386"/>
         <source>%n run(s) over %1 into %2</source>
         <translation>
-            <numerusform>%1 üzerinde %n çalıştırma, çıktı: %2</numerusform>
+            <numerusform>%1 üzerinde %n koşu, çıktı: %2</numerusform>
         </translation>
     </message>
     <message>
@@ -5129,7 +5129,7 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="434"/>
         <source>run</source>
-        <translation>çalıştırma</translation>
+        <translation>koşu</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="445"/>
@@ -5139,7 +5139,7 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="475"/>
         <source>Run: calibrate on quiet periods, then extract features per band. Preprocess: filtered, decimated E/N/Z as float32 only. The log goes to the jobs panel and the Status tab.</source>
-        <translation>Çalıştırma: sakin dönemlerde kalibre et, sonra bant bant öznitelik çıkar. Ön işleme: yalnızca süzülmüş, seyreltilmiş E/N/Z, float32 olarak. Günlük işler paneline ve Durum sekmesine yazılır.</translation>
+        <translation>Koşu: sakin dönemlerde kalibre et, sonra bant bant öznitelik çıkar. Ön işleme: yalnızca süzülmüş, seyreltilmiş E/N/Z, float32 olarak. Günlük işler paneline ve Durum sekmesine yazılır.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="480"/>
@@ -5184,7 +5184,7 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="499"/>
         <source>reuse a previous run&apos;s calibration</source>
-        <translation>önceki bir çalıştırmanın kalibrasyonunu yeniden kullan</translation>
+        <translation>önceki bir koşunun kalibrasyonunu yeniden kullan</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="500"/>
@@ -5204,7 +5204,7 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="504"/>
         <source>The run log appears here.</source>
-        <translation>Çalıştırma günlüğü burada görünür.</translation>
+        <translation>Koşu günlüğü burada görünür.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="505"/>
@@ -5234,12 +5234,12 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="512"/>
         <source>The folder with the miniSEED files of one station (E, N and Z components). Zip archives in it are unpacked for the run; other files are skipped.</source>
-        <translation>Tek bir istasyonun miniSEED dosyalarını (E, N ve Z bileşenleri) içeren klasör. İçindeki zip arşivleri çalıştırma için açılır; diğer dosyalar atlanır.</translation>
+        <translation>Tek bir istasyonun miniSEED dosyalarını (E, N ve Z bileşenleri) içeren klasör. İçindeki zip arşivleri koşu için açılır; diğer dosyalar atlanır.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="516"/>
         <source>Where the feature tables and the run&apos;s records are written. Empty: a folder named results under the data directory.</source>
-        <translation>Öznitelik tablolarının ve çalıştırma kayıtlarının yazıldığı yer. Boş: veri dizini altında results adlı bir klasör.</translation>
+        <translation>Öznitelik tablolarının ve koşu kayıtlarının yazıldığı yer. Boş: veri dizini altında results adlı bir klasör.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="520"/>
@@ -5259,12 +5259,12 @@ Bir proje klasörü seçin ve adımları çalıştırın.</translation>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="529"/>
         <source>Takes the chaos parameters from the calibration file of an earlier run (same station, same sampling rate) instead of calibrating again. The catalog is then not needed.</source>
-        <translation>Yeniden kalibre etmek yerine kaos parametrelerini daha önceki bir çalıştırmanın (aynı istasyon, aynı örnekleme hızı) kalibrasyon dosyasından alır. O zaman katalog gerekmez.</translation>
+        <translation>Yeniden kalibre etmek yerine kaos parametrelerini daha önceki bir koşunun (aynı istasyon, aynı örnekleme hızı) kalibrasyon dosyasından alır. O zaman katalog gerekmez.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="534"/>
         <source>The &lt;name&gt;_calibration.json of the earlier run whose calibration is reused.</source>
-        <translation>Kalibrasyonu yeniden kullanılacak önceki çalıştırmanın &lt;ad&gt;_calibration.json dosyası.</translation>
+        <translation>Kalibrasyonu yeniden kullanılacak önceki koşunun &lt;ad&gt;_calibration.json dosyası.</translation>
     </message>
     <message>
         <location filename="../src/modules/features/featuresmodule.cpp" line="537"/>
@@ -5738,7 +5738,7 @@ Ekleyin ya da dosya yöneticisinden klasörleri buraya bırakın.</translation>
         <source>No results yet.
 Run the indicators, or open an earlier run&apos;s folder.</source>
         <translation>Henüz sonuç yok.
-Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü açın.</translation>
+Göstergeleri çalıştırın ya da önceki bir koşunun klasörünü açın.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="143"/>
@@ -5748,22 +5748,22 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="144"/>
         <source>Open an earlier run…</source>
-        <translation>Önceki bir çalıştırmayı aç…</translation>
+        <translation>Önceki bir koşuyu aç…</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="146"/>
         <source>Opens the shown run&apos;s folder in the file manager.</source>
-        <translation>Gösterilen çalıştırmanın klasörünü dosya yöneticisinde açar.</translation>
+        <translation>Gösterilen koşunun klasörünü dosya yöneticisinde açar.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="148"/>
         <source>Shows the table and figures of a run folder written earlier.</source>
-        <translation>Daha önce yazılmış bir çalıştırma klasörünün tablosunu ve şekillerini gösterir.</translation>
+        <translation>Daha önce yazılmış bir koşu klasörünün tablosunu ve şekillerini gösterir.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="151"/>
         <source>No run yet. Run the indicators or open an earlier output folder.</source>
-        <translation>Henüz çalıştırma yok. Göstergeleri çalıştırın ya da önceki bir çıktı klasörünü açın.</translation>
+        <translation>Henüz koşu yok. Göstergeleri çalıştırın ya da önceki bir çıktı klasörünü açın.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/indicators/resultspane.cpp" line="196"/>
@@ -5775,7 +5775,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/resultspane.cpp" line="229"/>
         <source>Output folder of an indicators run</source>
-        <translation>Bir gösterge çalıştırmasının çıktı klasörü</translation>
+        <translation>Bir gösterge koşusunun çıktı klasörü</translation>
     </message>
 </context>
 <context>
@@ -6049,7 +6049,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="410"/>
         <source>The run log appears here.</source>
-        <translation>Çalıştırma günlüğü burada görünür.</translation>
+        <translation>Koşu günlüğü burada görünür.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="411"/>
@@ -6059,7 +6059,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="412"/>
         <source>Settings and run</source>
-        <translation>Ayarlar ve çalıştırma</translation>
+        <translation>Ayarlar ve koşu</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="413"/>
@@ -6174,7 +6174,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="492"/>
         <source>The folder under which each run makes its own folder, named after the catalog, the selection, the window and the step.</source>
-        <translation>Her çalıştırmanın; katalog, seçim, pencere ve adıma göre adlandırılmış kendi klasörünü altında oluşturduğu klasör.</translation>
+        <translation>Her koşunun; katalog, seçim, pencere ve adıma göre adlandırılmış kendi klasörünü altında oluşturduğu klasör.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="495"/>
@@ -6194,7 +6194,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="502"/>
         <source>Stops the run.</source>
-        <translation>Çalıştırmayı durdurur.</translation>
+        <translation>Koşuyu durdurur.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="582"/>
@@ -6301,7 +6301,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="853"/>
         <source>The run did not finish; see the log.</source>
-        <translation>Çalıştırma tamamlanmadı; günlüğe bakın.</translation>
+        <translation>Koşu tamamlanmadı; günlüğe bakın.</translation>
     </message>
     <message>
         <location filename="../src/modules/indicators/indicatorsmodule.cpp" line="858"/>
@@ -6520,7 +6520,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/analysis/labelspane.cpp" line="132"/>
         <source>Length of one feature window in seconds. An earthquake is assigned to the window its origin time falls in. Filled from the table&apos;s run metadata when that is found.</source>
-        <translation>Bir öznitelik penceresinin saniye cinsinden uzunluğu. Bir deprem, oluş zamanının düştüğü pencereye atanır. Bulunursa tablonun çalıştırma üstverisinden doldurulur.</translation>
+        <translation>Bir öznitelik penceresinin saniye cinsinden uzunluğu. Bir deprem, oluş zamanının düştüğü pencereye atanır. Bulunursa tablonun koşu üstverisinden doldurulur.</translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/labelspane.cpp" line="136"/>
@@ -6661,12 +6661,12 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/modules/tdvms/mailboxdialog.cpp" line="91"/>
         <source>The default number of requests a campaign keeps open at the portal at once; a run can change it.</source>
-        <translation>Bir kampanyanın portalda aynı anda açık tuttuğu varsayılan istek sayısı; bir çalıştırma bunu değiştirebilir.</translation>
+        <translation>Bir kampanyanın portalda aynı anda açık tuttuğu varsayılan istek sayısı; bir koşu bunu değiştirebilir.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/mailboxdialog.cpp" line="94"/>
         <source>Where to send a notice when a run needs attention: an ntfy topic URL, or the word desktop for a system notification. Several, separated by commas. Empty: no notices.</source>
-        <translation>Bir çalıştırma ilgi gerektirdiğinde bildirimin nereye gönderileceği: bir ntfy konu URL&apos;si ya da sistem bildirimi için desktop sözcüğü. Birden çoksa virgülle ayırın. Boş: bildirim yok.</translation>
+        <translation>Bir koşu ilgi gerektirdiğinde bildirimin nereye gönderileceği: bir ntfy konu URL&apos;si ya da sistem bildirimi için desktop sözcüğü. Birden çoksa virgülle ayırın. Boş: bildirim yok.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/mailboxdialog.cpp" line="105"/>
@@ -6763,7 +6763,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/app/mainwindow.cpp" line="700"/>
         <source>Quitting stops them. What a run has not finished is lost and starts again next time; finished runs are kept.</source>
-        <translation>Çıkmak onları durdurur. Bir çalıştırmanın bitirmediği kaybolur ve bir dahaki sefere baştan başlar; biten çalıştırmalar korunur.</translation>
+        <translation>Çıkmak onları durdurur. Bir koşunun bitirmediği kaybolur ve bir dahaki sefere baştan başlar; biten koşular korunur.</translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="735"/>
@@ -6827,7 +6827,7 @@ Göstergeleri çalıştırın ya da önceki bir çalıştırmanın klasörünü 
     <message>
         <location filename="../src/app/mainwindow.cpp" line="872"/>
         <source>Ends the application without waiting for the step to finish. Results that were finished are safe; the temporary files of the stopped runs stay on disk until &quot;Clean up leftovers&quot; on the Runs page removes them.</source>
-        <translation>Uygulamayı, adımın bitmesini beklemeden sonlandırır. Bitmiş sonuçlar güvendedir; durdurulan çalıştırmaların geçici dosyaları, Çalıştırmalar sayfasındaki &quot;Artıkları temizle&quot; onları kaldırana dek diskte kalır.</translation>
+        <translation>Uygulamayı, adımın bitmesini beklemeden sonlandırır. Bitmiş sonuçlar güvendedir; durdurulan koşuların geçici dosyaları, Koşular sayfasındaki &quot;Artıkları temizle&quot; onları kaldırana dek diskte kalır.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/app/mainwindow.cpp" line="889"/>
@@ -6909,7 +6909,7 @@ Bir iş, içinde bulunduğu adımın sonunda durur. Çoğu adım saniyeler için
     <message>
         <location filename="../src/app/mainwindow.cpp" line="966"/>
         <source>On Runs, create a recipe and run it; Compare shows the results side by side. Every option explains itself when the pointer rests on it.</source>
-        <translation>Çalıştırmalar&apos;da bir tarif oluşturup çalıştırın; Karşılaştır sonuçları yan yana gösterir. İmleç üzerinde durunca her seçenek kendini açıklar.</translation>
+        <translation>Koşular&apos;da bir tarif oluşturup çalıştırın; Karşılaştır sonuçları yan yana gösterir. İmleç üzerinde durunca her seçenek kendini açıklar.</translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="971"/>
@@ -7229,7 +7229,7 @@ Bir iş, içinde bulunduğu adımın sonunda durur. Çoğu adım saniyeler için
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="675"/>
         <source>Values keep their kind: true/false, a number, text, or a list separated by commas. Changing a setting makes the recipe&apos;s earlier runs stale.</source>
-        <translation>Değerler türünü korur: true/false, sayı, metin ya da virgülle ayrılmış liste. Bir ayarı değiştirmek, tarifin önceki çalıştırmalarını eskitir.</translation>
+        <translation>Değerler türünü korur: true/false, sayı, metin ya da virgülle ayrılmış liste. Bir ayarı değiştirmek, tarifin önceki koşularını eskitir.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="681"/>
@@ -7274,7 +7274,7 @@ Bir iş, içinde bulunduğu adımın sonunda durur. Çoğu adım saniyeler için
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="744"/>
         <source>The recipe&apos;s name: the column heading on the Runs page and the entry in the Compare lists. The result folders use an id made from the first name, which does not change on a rename.</source>
-        <translation>Tarifin adı: Çalıştırmalar sayfasındaki sütun başlığı ve Karşılaştır listelerindeki giriş. Sonuç klasörleri ilk addan üretilen bir kimlik kullanır; ad değişince bu değişmez.</translation>
+        <translation>Tarifin adı: Koşular sayfasındaki sütun başlığı ve Karşılaştır listelerindeki giriş. Sonuç klasörleri ilk addan üretilen bir kimlik kullanır; ad değişince bu değişmez.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="772"/>
@@ -7404,7 +7404,7 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
     <message>
         <location filename="../src/modules/study/casedialogs.cpp" line="1457"/>
         <source>Tick the stations the date is studied from. A station that has waveforms, but none in the span before this date, is not ticked to start with: a run on it could not start.</source>
-        <translation>Tarihin inceleneceği istasyonları işaretleyin. Dalga formu olan ama bu tarihten önceki sürede hiç olmayan bir istasyon başlangıçta işaretlenmez: onunla bir çalıştırma başlayamaz.</translation>
+        <translation>Tarihin inceleneceği istasyonları işaretleyin. Dalga formu olan ama bu tarihten önceki sürede hiç olmayan bir istasyon başlangıçta işaretlenmez: onunla bir koşu başlayamaz.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/casedialogs.cpp" line="1546"/>
@@ -7414,7 +7414,7 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
     <message>
         <location filename="../src/modules/study/casedialogs.cpp" line="1554"/>
         <source>⚠ %1: waveforms, but none in the span before this date. A run on such a station cannot start.</source>
-        <translation>⚠ %1: dalga formu var, ama bu tarihten önceki sürede hiç yok. Böyle bir istasyonla çalıştırma başlayamaz.</translation>
+        <translation>⚠ %1: dalga formu var, ama bu tarihten önceki sürede hiç yok. Böyle bir istasyonla koşu başlayamaz.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/study/casedialogs.cpp" line="1568"/>
@@ -7582,7 +7582,7 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="514"/>
         <source>The run did not finish; see the log.</source>
-        <translation>Çalıştırma tamamlanmadı; günlüğe bakın.</translation>
+        <translation>Koşu tamamlanmadı; günlüğe bakın.</translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="563"/>
@@ -7747,12 +7747,12 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="660"/>
         <source>Where the maps, the catalog of each region, the summary table and the run record are written.</source>
-        <translation>Haritaların, her bölgenin kataloğunun, özet tablosunun ve çalıştırma kaydının yazıldığı yer.</translation>
+        <translation>Haritaların, her bölgenin kataloğunun, özet tablosunun ve koşu kaydının yazıldığı yer.</translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="662"/>
         <source>Which of the run&apos;s maps is shown: the study area, or the regions of one method.</source>
-        <translation>Çalıştırmanın haritalarından hangisinin gösterildiği: çalışma alanı ya da bir yöntemin bölgeleri.</translation>
+        <translation>Koşunun haritalarından hangisinin gösterildiği: çalışma alanı ya da bir yöntemin bölgeleri.</translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="665"/>
@@ -7762,7 +7762,7 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="667"/>
         <source>Stops the run.</source>
-        <translation>Çalıştırmayı durdurur.</translation>
+        <translation>Koşuyu durdurur.</translation>
     </message>
     <message>
         <location filename="../src/modules/analysis/regionspane.cpp" line="669"/>
@@ -7848,7 +7848,7 @@ Bir çalışmada her vaka olağan olarak çalışmanın kataloğuyla kalibre edi
         <location filename="../src/modules/analysis/regionspane.cpp" line="689"/>
         <location filename="../src/modules/analysis/regionspane.cpp" line="695"/>
         <source>The run log appears here.</source>
-        <translation>Çalıştırma günlüğü burada görünür.</translation>
+        <translation>Koşu günlüğü burada görünür.</translation>
     </message>
 </context>
 <context>
@@ -7933,12 +7933,12 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     <message>
         <location filename="../src/modules/study/runlog.cpp" line="34"/>
         <source>Run log</source>
-        <translation>Çalıştırma günlüğü</translation>
+        <translation>Koşu günlüğü</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runlog.cpp" line="45"/>
         <source>The run has not written anything yet.</source>
-        <translation>Çalıştırma henüz bir şey yazmadı.</translation>
+        <translation>Koşu henüz bir şey yazmadı.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runlog.cpp" line="49"/>
@@ -7968,7 +7968,7 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     <message>
         <location filename="../src/modules/study/runlog.cpp" line="62"/>
         <source>While ticked, the view stays at the end as the run writes new lines. Scrolling up to read unticks it; tick it again to go back to the end.</source>
-        <translation>İşaretliyken, çalıştırma yeni satırlar yazdıkça görünüm sonda kalır. Okumak için yukarı kaydırmak işareti kaldırır; sona dönmek için yeniden işaretleyin.</translation>
+        <translation>İşaretliyken, koşu yeni satırlar yazdıkça görünüm sonda kalır. Okumak için yukarı kaydırmak işareti kaldırır; sona dönmek için yeniden işaretleyin.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runlog.cpp" line="68"/>
@@ -8018,7 +8018,7 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     <message>
         <location filename="../src/modules/study/runlog.cpp" line="147"/>
         <source>No log yet: the run has not started writing.</source>
-        <translation>Henüz günlük yok: çalıştırma yazmaya başlamadı.</translation>
+        <translation>Henüz günlük yok: koşu yazmaya başlamadı.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/study/runlog.cpp" line="156"/>
@@ -8170,7 +8170,7 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     <message>
         <location filename="../src/modules/study/studymodule.h" line="29"/>
         <source>Runs</source>
-        <translation>Çalıştırmalar</translation>
+        <translation>Koşular</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studymodule.h" line="31"/>
@@ -8264,7 +8264,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1269"/>
         <source>Changes the settings of the selected column&apos;s recipe. A changed setting raises the revision and marks its finished runs stale; you are asked first when there are any.</source>
-        <translation>Seçili sütunun tarifinin ayarlarını değiştirir. Değişen bir ayar sürümü artırır ve bitmiş çalıştırmalarını eskitir; böyle çalıştırma varsa önce size sorulur.</translation>
+        <translation>Seçili sütunun tarifinin ayarlarını değiştirir. Değişen bir ayar sürümü artırır ve bitmiş koşularını eskitir; böyle koşu varsa önce size sorulur.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1273"/>
@@ -8274,7 +8274,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1276"/>
         <source>Shows what the selected cell&apos;s last run wrote (run.log in its folder), also for a run that failed.</source>
-        <translation>Seçili hücrenin son çalıştırmasının yazdıklarını (klasöründeki run.log) gösterir; başarısız bir çalıştırma için de.</translation>
+        <translation>Seçili hücrenin son koşusunun yazdıklarını (klasöründeki run.log) gösterir; başarısız bir koşu için de.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1279"/>
@@ -8329,7 +8329,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1549"/>
         <source>Every cell has a finished run.</source>
-        <translation>Her hücrenin bitmiş bir çalıştırması var.</translation>
+        <translation>Her hücrenin bitmiş bir koşusu var.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1551"/>
@@ -8346,7 +8346,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1654"/>
         <source>⋯  Queued, number %1 of %2: it starts when a run before it has ended (%3 run at a time)</source>
-        <translation>⋯  Sırada, %2 içinde %1.: önündeki bir çalıştırma bitince başlar (aynı anda %3 çalışır)</translation>
+        <translation>⋯  Sırada, %2 içinde %1.: önündeki bir koşu bitince başlar (aynı anda %3 çalışır)</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1703"/>
@@ -8361,7 +8361,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1707"/>
         <source>Select a cell to see why it is waiting, what its last run said, or where its files are. The arrow keys move, Enter runs.</source>
-        <translation>Neden beklediğini, son çalıştırmasının ne dediğini ya da dosyalarının nerede olduğunu görmek için bir hücre seçin. Ok tuşları gezdirir, Enter çalıştırır.</translation>
+        <translation>Neden beklediğini, son koşusunun ne dediğini ya da dosyalarının nerede olduğunu görmek için bir hücre seçin. Ok tuşları gezdirir, Enter çalıştırır.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1513"/>
@@ -8402,7 +8402,7 @@ A study is a folder that holds the cases, the recipes and every result. Start or
 
 Save the change?</source>
         <translation>
-            <numerusform>&quot;%1&quot; tarifinin bir ayarını değiştirmek bitmiş %n çalıştırmayı eskitir (kendisininkileri ve onlara dayananları). Yeniden çalıştırılana kadar diskte kalırlar.
+            <numerusform>&quot;%1&quot; tarifinin bir ayarını değiştirmek bitmiş %n koşuyu eskitir (kendisininkileri ve onlara dayananları). Yeniden çalıştırılana kadar diskte kalırlar.
 
 Değişiklik kaydedilsin mi?</numerusform>
         </translation>
@@ -8410,7 +8410,7 @@ Değişiklik kaydedilsin mi?</numerusform>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1928"/>
         <source>Remove the recipe &quot;%1&quot;? The folders of its runs stay on disk.</source>
-        <translation>&quot;%1&quot; tarifi kaldırılsın mı? Çalıştırmalarının klasörleri diskte kalır.</translation>
+        <translation>&quot;%1&quot; tarifi kaldırılsın mı? Koşularının klasörleri diskte kalır.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/study/runspage.cpp" line="1932"/>
@@ -8444,9 +8444,9 @@ Değişiklik kaydedilsin mi?</numerusform>
         <source>&quot;%1&quot; already has a finished run on %2. Run it again?
 
 The finished results stay as they are until the new run has succeeded; a run that is stopped or fails leaves them untouched.</source>
-        <translation>&quot;%1&quot; tarifinin %2 üzerinde bitmiş bir çalıştırması var. Yeniden çalıştırılsın mı?
+        <translation>&quot;%1&quot; tarifinin %2 üzerinde bitmiş bir koşusu var. Yeniden çalıştırılsın mı?
 
-Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kalır; durdurulan ya da başarısız olan bir çalıştırma onlara dokunmaz.</translation>
+Bitmiş sonuçlar, yeni koşu başarılı olana kadar olduğu gibi kalır; durdurulan ya da başarısız olan bir koşu onlara dokunmaz.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1762"/>
@@ -8462,12 +8462,12 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1159"/>
         <source>⚠  Nothing can be run into this study now: its folder is not held by this window. Either the folder cannot be written (read-only media, a drive that is full or was unplugged), or the study is open in another window, which is where runs are started. Results that are there can still be looked at.</source>
-        <translation>⚠  Bu çalışmaya şimdi hiçbir şey çalıştırılamaz: klasörünü bu pencere elinde tutmuyor. Ya klasöre yazılamıyor (salt okunur ortam, dolu ya da çıkarılmış bir sürücü) ya da çalışma başka bir pencerede açık ve çalıştırmalar orada başlatılıyor. Var olan sonuçlara yine de bakılabilir.</translation>
+        <translation>⚠  Bu çalışmaya şimdi hiçbir şey çalıştırılamaz: klasörünü bu pencere elinde tutmuyor. Ya klasöre yazılamıyor (salt okunur ortam, dolu ya da çıkarılmış bir sürücü) ya da çalışma başka bir pencerede açık ve koşular orada başlatılıyor. Var olan sonuçlara yine de bakılabilir.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1186"/>
         <source>Runs the selected features cell with a new calibration. A features run keeps its calibration (the chaos parameters fitted on the station&apos;s quiet periods) and a later run of the same cell uses it again as long as the data, the catalog, the station, the span and the calibration settings are the same; this button makes it afresh all the same.</source>
-        <translation>Seçili öznitelik hücresini yeni bir kalibrasyonla çalıştırır. Bir öznitelik çalıştırması kalibrasyonunu (istasyonun sakin dönemlerinde uydurulan kaos parametreleri) saklar; veri, katalog, istasyon, süre ve kalibrasyon ayarları aynı kaldıkça aynı hücrenin sonraki çalıştırması onu yeniden kullanır. Bu düğme kalibrasyonu yine de baştan yapar.</translation>
+        <translation>Seçili öznitelik hücresini yeni bir kalibrasyonla çalıştırır. Bir öznitelik koşusu kalibrasyonunu (istasyonun sakin dönemlerinde uydurulan kaos parametreleri) saklar; veri, katalog, istasyon, süre ve kalibrasyon ayarları aynı kaldıkça aynı hücrenin sonraki koşusu onu yeniden kullanır. Bu düğme kalibrasyonu yine de baştan yapar.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1198"/>
@@ -8481,7 +8481,7 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
         <location filename="../src/modules/study/runspage.cpp" line="1740"/>
         <location filename="../src/modules/study/runspage.cpp" line="2354"/>
         <source>Stop this run</source>
-        <translation>Bu çalıştırmayı durdur</translation>
+        <translation>Bu koşuyu durdur</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/study/runspage.cpp" line="1201"/>
@@ -8500,7 +8500,7 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1205"/>
         <source>Shows only the rows whose case name or station contains this text. The buttons then act on the rows shown; runs of hidden rows go on.</source>
-        <translation>Yalnızca vaka adı ya da istasyonu bu metni içeren satırları gösterir. Düğmeler o zaman gösterilen satırlara uygulanır; gizli satırların çalıştırmaları sürer.</translation>
+        <translation>Yalnızca vaka adı ya da istasyonu bu metni içeren satırları gösterir. Düğmeler o zaman gösterilen satırlara uygulanır; gizli satırların koşuları sürer.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1211"/>
@@ -8535,7 +8535,7 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1222"/>
         <source>Shows what the study&apos;s results take on disk, per case and recipe, and what is left over (working folders of runs that crashed, files of failed runs, results of removed cases and recipes), with a way to remove the leftovers.</source>
-        <translation>Çalışmanın sonuçlarının diskte vaka ve tarif başına ne kadar yer tuttuğunu ve nelerin artık olarak kaldığını (çöken çalıştırmaların çalışma klasörleri, başarısız çalıştırmaların dosyaları, kaldırılan vaka ve tariflerin sonuçları) gösterir; artıkları kaldırmanın bir yolunu sunar.</translation>
+        <translation>Çalışmanın sonuçlarının diskte vaka ve tarif başına ne kadar yer tuttuğunu ve nelerin artık olarak kaldığını (çöken koşuların çalışma klasörleri, başarısız koşuların dosyaları, kaldırılan vaka ve tariflerin sonuçları) gösterir; artıkları kaldırmanın bir yolunu sunar.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1227"/>
@@ -8546,7 +8546,7 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1229"/>
         <source>What ran, when, for how long and how it ended, read from the run folders: also what ran while you were away. A stopped run leaves nothing and is not listed.</source>
-        <translation>Neyin, ne zaman, ne kadar süre çalıştığı ve nasıl bittiği; çalıştırma klasörlerinden okunur: siz yokken çalışanlar da. Durdurulan bir çalıştırma geride bir şey bırakmaz ve listelenmez.</translation>
+        <translation>Neyin, ne zaman, ne kadar süre çalıştığı ve nasıl bittiği; koşu klasörlerinden okunur: siz yokken çalışanlar da. Durdurulan bir koşu geride bir şey bırakmaz ve listelenmez.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1233"/>
@@ -8581,7 +8581,7 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1237"/>
         <source>Latest first; click a heading to sort. A double click selects the run&apos;s cell in the table above.</source>
-        <translation>En yeni en üstte; sıralamak için bir başlığa tıklayın. Çift tıklama, çalıştırmanın hücresini yukarıdaki tabloda seçer.</translation>
+        <translation>En yeni en üstte; sıralamak için bir başlığa tıklayın. Çift tıklama, koşunun hücresini yukarıdaki tabloda seçer.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1248"/>
@@ -8591,12 +8591,12 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1253"/>
         <source>Stops the runs this page started and empties the queue: the waiting cells are what they were before. A stopped run leaves nothing behind; what was finished before stays as it was.</source>
-        <translation>Bu sayfanın başlattığı çalıştırmaları durdurur ve sırayı boşaltır: bekleyen hücreler önceki durumlarına döner. Durdurulan çalıştırma geride bir şey bırakmaz; daha önce biten olduğu gibi kalır.</translation>
+        <translation>Bu sayfanın başlattığı koşuları durdurur ve sırayı boşaltır: bekleyen hücreler önceki durumlarına döner. Durdurulan koşu geride bir şey bırakmaz; daha önce biten olduğu gibi kalır.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1257"/>
         <source>Runs the recipe of the selected cell on its case and station. A cell that is already done is run again only after you confirm; its results are replaced when the new run has succeeded. On a cell that is running the button stops that one run, on a queued one it takes it out of the queue; the other runs go on. With several cells selected (Ctrl or Shift and a click) it runs them all. A right click on a cell, a row or a heading has more.</source>
-        <translation>Seçili hücrenin tarifini onun vakası ve istasyonu üzerinde çalıştırır. Zaten bitmiş bir hücre ancak siz onaylayınca yeniden çalıştırılır; sonuçları, yeni çalıştırma başarılı olunca değiştirilir. Çalışan bir hücrede düğme yalnızca o çalıştırmayı durdurur, sıradaki bir hücreyi sıradan çıkarır; diğer çalıştırmalar sürer. Birkaç hücre seçiliyken (Ctrl ya da Shift ile tıklama) hepsini çalıştırır. Bir hücreye, satıra ya da başlığa sağ tıklayınca daha fazlası vardır.</translation>
+        <translation>Seçili hücrenin tarifini onun vakası ve istasyonu üzerinde çalıştırır. Zaten bitmiş bir hücre ancak siz onaylayınca yeniden çalıştırılır; sonuçları, yeni koşu başarılı olunca değiştirilir. Çalışan bir hücrede düğme yalnızca o koşuyu durdurur, sıradaki bir hücreyi sıradan çıkarır; diğer koşular sürer. Birkaç hücre seçiliyken (Ctrl ya da Shift ile tıklama) hepsini çalıştırır. Bir hücreye, satıra ya da başlığa sağ tıklayınca daha fazlası vardır.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1360"/>
@@ -8631,7 +8631,7 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1525"/>
         <source>Started %1: %2 of %3 done</source>
-        <translation>%1 başladı: %3 çalıştırmanın %2 tanesi bitti</translation>
+        <translation>%1 başladı: %3 koşunun %2 tanesi bitti</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1531"/>
@@ -8646,12 +8646,12 @@ Bitmiş sonuçlar, yeni çalıştırma başarılı olana kadar olduğu gibi kal�
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1677"/>
         <source>last run ended %1, took %2</source>
-        <translation>son çalıştırma %1 bitti, %2 sürdü</translation>
+        <translation>son koşu %1 bitti, %2 sürdü</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="1680"/>
         <source>last run ended %1</source>
-        <translation>son çalıştırma %1 bitti</translation>
+        <translation>son koşu %1 bitti</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/modules/study/runspage.cpp" line="1734"/>
@@ -8727,13 +8727,13 @@ Add a features recipe with the default settings first? (It can be edited afterwa
         <location filename="../src/modules/study/runspage.cpp" line="2179"/>
         <source>%n of them already have a finished run and are run again; their results stay as they are until the new run has succeeded.</source>
         <translation>
-            <numerusform>Bunların %n tanesinin zaten bitmiş bir çalıştırması var ve yeniden çalıştırılır; sonuçları, yeni çalıştırma başarılı olana dek olduğu gibi kalır.</numerusform>
+            <numerusform>Bunların %n tanesinin zaten bitmiş bir koşusu var ve yeniden çalıştırılır; sonuçları, yeni koşu başarılı olana dek olduğu gibi kalır.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="2184"/>
         <source>%1 run at a time; the others wait in the queue.</source>
-        <translation>Aynı anda %1 çalıştırma; diğerleri sırada bekler.</translation>
+        <translation>Aynı anda %1 koşu; diğerleri sırada bekler.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/runspage.cpp" line="2187"/>
@@ -8876,7 +8876,7 @@ Yine de hepsi çalıştırılsın mı?</translation>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="224"/>
         <source>No finished run: nothing to score yet.</source>
-        <translation>Biten çalıştırma yok: henüz skorlanacak bir şey yok.</translation>
+        <translation>Biten koşu yok: henüz skorlanacak bir şey yok.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="226"/>
@@ -8961,7 +8961,7 @@ Yine de hepsi çalıştırılsın mı?</translation>
         <source>No series to draw yet.
 Run an indicators or a features recipe on the Runs page, then choose it above.</source>
         <translation>Henüz çizilecek seri yok.
-Çalıştırmalar sayfasında bir gösterge ya da öznitelik tarifi çalıştırın, sonra yukarıdan seçin.</translation>
+Koşular sayfasında bir gösterge ya da öznitelik tarifi çalıştırın, sonra yukarıdan seçin.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/comparepage.cpp" line="777"/>
@@ -9169,7 +9169,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="112"/>
         <source>Which sensor of a station is read when its files hold several: the first two letters of the channel code, such as HH (broadband) or HN (accelerometer), with a location code in front when needed (00.HH). Empty: the only sensor there is; with several, the one with the most data in the span, and the run says which it took. Never two at once.</source>
-        <translation>Bir istasyonun dosyaları birden çok algılayıcı içerdiğinde hangisinin okunacağı: kanal kodunun ilk iki harfi, örneğin HH (geniş bant) ya da HN (ivmeölçer); gerekirse önünde konum koduyla (00.HH). Boş: var olan tek algılayıcı; birden çoksa sürede en çok verisi olan, çalıştırma hangisini aldığını yazar. Asla ikisi birden okunmaz.</translation>
+        <translation>Bir istasyonun dosyaları birden çok algılayıcı içerdiğinde hangisinin okunacağı: kanal kodunun ilk iki harfi, örneğin HH (geniş bant) ya da HN (ivmeölçer); gerekirse önünde konum koduyla (00.HH). Boş: var olan tek algılayıcı; birden çoksa sürede en çok verisi olan, koşu hangisini aldığını yazar. Asla ikisi birden okunmaz.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="120"/>
@@ -9209,7 +9209,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="142"/>
         <source>For a features recipe with frequency bands: the name of the band whose table is used. Empty uses the table of the run without bands.</source>
-        <translation>Frekans bantlı bir öznitelik tarifi için: tablosu kullanılacak bandın adı. Boş bırakılırsa bantsız çalıştırmanın tablosu kullanılır.</translation>
+        <translation>Frekans bantlı bir öznitelik tarifi için: tablosu kullanılacak bandın adı. Boş bırakılırsa bantsız koşunun tablosu kullanılır.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="146"/>
@@ -9289,7 +9289,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="184"/>
         <source>Starting value of the random numbers (the split of days, the models). The same seed repeats the same run.</source>
-        <translation>Rastgele sayıların başlangıç değeri (günlerin bölünmesi, modeller). Aynı tohum aynı çalıştırmayı yineler.</translation>
+        <translation>Rastgele sayıların başlangıç değeri (günlerin bölünmesi, modeller). Aynı tohum aynı koşuyu yineler.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="188"/>
@@ -9465,7 +9465,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="158"/>
         <source>Run name</source>
-        <translation>Çalıştırma adı</translation>
+        <translation>Koşu adı</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="159"/>
@@ -9640,12 +9640,12 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="526"/>
         <source>Starting value of the random numbers (the split of days, the models). The same seed repeats the same run.</source>
-        <translation>Rastgele sayıların başlangıç değeri (günlerin bölünmesi, modeller). Aynı tohum aynı çalıştırmayı yineler.</translation>
+        <translation>Rastgele sayıların başlangıç değeri (günlerin bölünmesi, modeller). Aynı tohum aynı koşuyu yineler.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="530"/>
         <source>Names this experiment; its files go to models/&lt;run name&gt;. Running a name again adds rows to experiments.csv and the latest per model counts.</source>
-        <translation>Bu deneye ad verir; dosyaları models/&lt;çalıştırma adı&gt; altına gider. Aynı adı yeniden çalıştırmak experiments.csv dosyasına satır ekler ve her model için en sonuncusu geçerlidir.</translation>
+        <translation>Bu deneye ad verir; dosyaları models/&lt;koşu adı&gt; altına gider. Aynı adı yeniden çalıştırmak experiments.csv dosyasına satır ekler ve her model için en sonuncusu geçerlidir.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="534"/>
@@ -9675,7 +9675,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="556"/>
         <source>Also writes the trained models into the run&apos;s folder. Unticked, only the scores, reports and figures are kept.</source>
-        <translation>Eğitilmiş modelleri de çalıştırmanın klasörüne yazar. İşaretli değilse yalnızca skorlar, raporlar ve şekiller tutulur.</translation>
+        <translation>Eğitilmiş modelleri de koşunun klasörüne yazar. İşaretli değilse yalnızca skorlar, raporlar ve şekiller tutulur.</translation>
     </message>
     <message>
         <location filename="../src/modules/classification/settingspane.cpp" line="559"/>
@@ -9765,7 +9765,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/settings/settingsmodule.cpp" line="409"/>
         <source>Study runs</source>
-        <translation>Çalışma çalıştırmaları</translation>
+        <translation>Çalışma koşuları</translation>
     </message>
     <message>
         <location filename="../src/modules/settings/settingsmodule.cpp" line="410"/>
@@ -9775,7 +9775,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/settings/settingsmodule.cpp" line="412"/>
         <source>How many cells of the Runs page run at the same time; the others wait in the queue and show Queued. Default %1. A feature extraction uses several processor cores and unpacks its waveform files, so more at once is not always faster: raise it on a machine with many cores and a fast disk, lower it if the computer gets sluggish. It takes effect when the next cell starts.</source>
-        <translation>Çalıştırmalar sayfasında aynı anda kaç hücrenin çalışacağı; diğerleri sırada bekler ve Sırada görünür. Varsayılan %1. Öznitelik çıkarımı birkaç işlemci çekirdeği kullanır ve dalga formu dosyalarını açar; bu yüzden aynı anda daha fazlası her zaman daha hızlı değildir: çok çekirdekli ve hızlı diskli bir makinede artırın, bilgisayar ağırlaşırsa azaltın. Bir sonraki hücre başlarken geçerli olur.</translation>
+        <translation>Koşular sayfasında aynı anda kaç hücrenin çalışacağı; diğerleri sırada bekler ve Sırada görünür. Varsayılan %1. Öznitelik çıkarımı birkaç işlemci çekirdeği kullanır ve dalga formu dosyalarını açar; bu yüzden aynı anda daha fazlası her zaman daha hızlı değildir: çok çekirdekli ve hızlı diskli bir makinede artırın, bilgisayar ağırlaşırsa azaltın. Bir sonraki hücre başlarken geçerli olur.</translation>
     </message>
     <message>
         <location filename="../src/modules/settings/settingsmodule.cpp" line="420"/>
@@ -9820,7 +9820,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/settings/settingsmodule.cpp" line="443"/>
         <source>Stops the computer from going to sleep on its own while a job runs, so that a run over night is not suspended half way. The screen may still switch off, and closing a laptop&apos;s lid still suspends it. It takes effect with the next job. Off by default.</source>
-        <translation>Bir iş çalışırken bilgisayarın kendiliğinden uykuya geçmesini engeller; böylece gece süren bir çalıştırma yarıda askıya alınmaz. Ekran yine kapanabilir ve bir dizüstünün kapağını kapatmak onu yine askıya alır. Bir sonraki işle birlikte geçerli olur. Varsayılan olarak kapalıdır.</translation>
+        <translation>Bir iş çalışırken bilgisayarın kendiliğinden uykuya geçmesini engeller; böylece gece süren bir koşu yarıda askıya alınmaz. Ekran yine kapanabilir ve bir dizüstünün kapağını kapatmak onu yine askıya alır. Bir sonraki işle birlikte geçerli olur. Varsayılan olarak kapalıdır.</translation>
     </message>
     <message>
         <location filename="../src/modules/settings/settingsmodule.cpp" line="449"/>
@@ -9963,7 +9963,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="54"/>
         <source>◔  in use by a run</source>
-        <translation>◔  bir çalıştırma kullanıyor</translation>
+        <translation>◔  bir koşu kullanıyor</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="57"/>
@@ -9973,12 +9973,12 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="59"/>
         <source>⚠  leftover: working folder of a run that did not end</source>
-        <translation>⚠  artık: bitmeyen bir çalıştırmanın çalışma klasörü</translation>
+        <translation>⚠  artık: bitmeyen bir koşunun çalışma klasörü</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="62"/>
         <source>⚠  leftover: files of a failed run</source>
-        <translation>⚠  artık: başarısız bir çalıştırmanın dosyaları</translation>
+        <translation>⚠  artık: başarısız bir koşunun dosyaları</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="64"/>
@@ -10003,7 +10003,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="89"/>
         <source>A leftover is something no finished result of the study needs: the working folder of a run that crashed, what a failed run left (with its log), archives a run unpacked, and results of cases, stations or recipes that were removed from the study. Finished results and kept calibrations are never removed here.</source>
-        <translation>Artık, çalışmanın biten hiçbir sonucunun gerek duymadığı şeydir: çöken bir çalıştırmanın çalışma klasörü, başarısız bir çalıştırmanın bıraktıkları (günlüğüyle birlikte), bir çalıştırmanın açtığı arşivler ve çalışmadan kaldırılan vakaların, istasyonların ya da tariflerin sonuçları. Biten sonuçlar ve saklanan kalibrasyonlar burada asla kaldırılmaz.</translation>
+        <translation>Artık, çalışmanın biten hiçbir sonucunun gerek duymadığı şeydir: çöken bir koşunun çalışma klasörü, başarısız bir koşunun bıraktıkları (günlüğüyle birlikte), bir koşunun açtığı arşivler ve çalışmadan kaldırılan vakaların, istasyonların ya da tariflerin sonuçları. Biten sonuçlar ve saklanan kalibrasyonlar burada asla kaldırılmaz.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="97"/>
@@ -10048,7 +10048,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="117"/>
         <source>Lists exactly what would be removed, with sizes, and removes it after you confirm. Finished results, kept calibrations and anything of a run that is queued or going on are left alone.</source>
-        <translation>Tam olarak neyin kaldırılacağını boyutlarıyla listeler ve siz onaylayınca kaldırır. Biten sonuçlara, saklanan kalibrasyonlara ve sırada ya da sürmekte olan bir çalıştırmaya ait hiçbir şeye dokunulmaz.</translation>
+        <translation>Tam olarak neyin kaldırılacağını boyutlarıyla listeler ve siz onaylayınca kaldırır. Biten sonuçlara, saklanan kalibrasyonlara ve sırada ya da sürmekte olan bir koşuya ait hiçbir şeye dokunulmaz.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="120"/>
@@ -10083,7 +10083,7 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="219"/>
         <source>This study has no run folders yet.</source>
-        <translation>Bu çalışmanın henüz çalıştırma klasörü yok.</translation>
+        <translation>Bu çalışmanın henüz koşu klasörü yok.</translation>
     </message>
     <message>
         <location filename="../src/modules/study/studydisk.cpp" line="220"/>
@@ -10128,7 +10128,7 @@ Biten sonuçlara dokunulmaz.</numerusform>
         <source>%n folder(s) could not be removed (in use by a run, or by another program):
 %1</source>
         <translation>
-            <numerusform>%n klasör kaldırılamadı (bir çalıştırma ya da başka bir program kullanıyor):
+            <numerusform>%n klasör kaldırılamadı (bir koşu ya da başka bir program kullanıyor):
 %1</numerusform>
         </translation>
     </message>
@@ -10160,7 +10160,7 @@ Biten sonuçlara dokunulmaz.</numerusform>
     <message>
         <location filename="../src/studyui/studyinputs.cpp" line="197"/>
         <source>&quot;%1&quot; is now a recipe of the study. Run it on the cases from the Runs page.</source>
-        <translation>&quot;%1&quot; artık çalışmanın bir tarifi. Çalıştırmalar sayfasından vakalar üzerinde çalıştırın.</translation>
+        <translation>&quot;%1&quot; artık çalışmanın bir tarifi. Koşular sayfasından vakalar üzerinde çalıştırın.</translation>
     </message>
     <message>
         <location filename="../src/studyui/studyinputs.cpp" line="211"/>
@@ -10195,7 +10195,7 @@ Biten sonuçlara dokunulmaz.</numerusform>
     <message>
         <location filename="../src/studyui/studyinputs.cpp" line="224"/>
         <source>Saves this page&apos;s current settings under a name in the study, so the same analysis can be run on every case from the Runs page.</source>
-        <translation>Bu sayfanın geçerli ayarlarını çalışmada bir ad altında kaydeder; böylece aynı analiz Çalıştırmalar sayfasından her vakada çalıştırılabilir.</translation>
+        <translation>Bu sayfanın geçerli ayarlarını çalışmada bir ad altında kaydeder; böylece aynı analiz Koşular sayfasından her vakada çalıştırılabilir.</translation>
     </message>
 </context>
 <context>
@@ -10530,7 +10530,7 @@ Biten sonuçlara dokunulmaz.</numerusform>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="490"/>
         <source>A run holds %1: pid %2, ledger %3</source>
-        <translation>%1 adresini bir çalıştırma tutuyor: pid %2, defter %3</translation>
+        <translation>%1 adresini bir koşu tutuyor: pid %2, defter %3</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="502"/>
@@ -10702,7 +10702,7 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="953"/>
         <source>A run is in progress: Fetch and the run settings are off until it ends or you press Stop.</source>
-        <translation>Bir çalıştırma sürüyor: İndir ve çalıştırma ayarları, bitene ya da siz Durdur&apos;a basana dek kapalıdır.</translation>
+        <translation>Bir koşu sürüyor: İndir ve koşu ayarları, bitene ya da siz Durdur&apos;a basana dek kapalıdır.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="956"/>
@@ -10774,7 +10774,7 @@ Mevcut arşivin üzerine yazılsın mı?</translation>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1011"/>
         <source>Shows every download with its requests, the run settings, the coverage view and the FDSN form: the expert view of this page.</source>
-        <translation>Her indirmeyi istekleriyle, çalıştırma ayarlarını, kapsam görünümünü ve FDSN formunu gösterir: bu sayfanın uzman görünümü.</translation>
+        <translation>Her indirmeyi istekleriyle, koşu ayarlarını, kapsam görünümünü ve FDSN formunu gösterir: bu sayfanın uzman görünümü.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1013"/>
@@ -10856,7 +10856,7 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1036"/>
         <source>The run log appears here.</source>
-        <translation>Çalıştırma günlüğü burada görünür.</translation>
+        <translation>Koşu günlüğü burada görünür.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1037"/>
@@ -10951,7 +10951,7 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1094"/>
         <source>The run ends by itself when no chunk is pending or submitted any more. Unticked, it keeps cycling until you press Stop.</source>
-        <translation>Hiçbir parça bekleyen ya da gönderilmiş durumda kalmayınca çalıştırma kendiliğinden biter. İşaretli değilse Durdur&apos;a basana kadar döngü sürer.</translation>
+        <translation>Hiçbir parça bekleyen ya da gönderilmiş durumda kalmayınca koşu kendiliğinden biter. İşaretli değilse Durdur&apos;a basana kadar döngü sürer.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1097"/>
@@ -10966,12 +10966,12 @@ Bir veri klasörü seçin, ardından indirilecek istasyon ve tarihleri planlamak
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1104"/>
         <source>Starts the run as a job. It appears in the Jobs panel and the log below shows each cycle.</source>
-        <translation>Çalıştırmayı bir iş olarak başlatır. İşler panelinde görünür ve aşağıdaki günlük her döngüyü gösterir.</translation>
+        <translation>Koşuyu bir iş olarak başlatır. İşler panelinde görünür ve aşağıdaki günlük her döngüyü gösterir.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1107"/>
         <source>Ends the run after the current cycle.</source>
-        <translation>Çalıştırmayı, sürmekte olan döngüden sonra bitirir.</translation>
+        <translation>Koşuyu, sürmekte olan döngüden sonra bitirir.</translation>
     </message>
     <message>
         <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1109"/>
@@ -11913,7 +11913,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="723"/>
         <source>the feature run wrote no table</source>
-        <translation>öznitelik çalıştırması tablo yazmadı</translation>
+        <translation>öznitelik koşusu tablo yazmadı</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="730"/>
@@ -11943,7 +11943,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="808"/>
         <source>the features run has no table %1</source>
-        <translation>öznitelik çalıştırmasında %1 tablosu yok</translation>
+        <translation>öznitelik koşusunda %1 tablosu yok</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="841"/>
@@ -11953,7 +11953,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="935"/>
         <source>the features run has no readable %1, which says how long its windows are: run the features again</source>
-        <translation>öznitelik çalıştırmasında, pencerelerinin uzunluğunu söyleyen okunabilir bir %1 yok: öznitelikleri yeniden çalıştırın</translation>
+        <translation>öznitelik koşusunda, pencerelerinin uzunluğunu söyleyen okunabilir bir %1 yok: öznitelikleri yeniden çalıştırın</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="975"/>
@@ -11968,7 +11968,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1004"/>
         <source>the run trained no model</source>
-        <translation>çalıştırma hiçbir model eğitmedi</translation>
+        <translation>koşu hiçbir model eğitmedi</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1337"/>
@@ -11988,12 +11988,12 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1411"/>
         <source>recorded with an earlier version of the application, which noted less about a run: run it again</source>
-        <translation>uygulamanın, çalıştırma hakkında daha az şey kaydeden eski bir sürümüyle kaydedilmiş: yeniden çalıştırın</translation>
+        <translation>uygulamanın, koşu hakkında daha az şey kaydeden eski bir sürümüyle kaydedilmiş: yeniden çalıştırın</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1415"/>
         <source>the recipe was edited after this run (revision %1, now %2)</source>
-        <translation>tarif bu çalıştırmadan sonra düzenlendi (sürüm %1, şimdi %2)</translation>
+        <translation>tarif bu koşudan sonra düzenlendi (sürüm %1, şimdi %2)</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1426"/>
@@ -12008,22 +12008,22 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1439"/>
         <source>made by an earlier version: windows that end after the earthquake are no longer counted as before it, and the window length is taken from the features run. Run it again</source>
-        <translation>önceki bir sürümle yapıldı: depremden sonra biten pencereler artık depremden önce sayılmıyor ve pencere uzunluğu öznitelik çalıştırmasından alınıyor. Yeniden çalıştırın</translation>
+        <translation>önceki bir sürümle yapıldı: depremden sonra biten pencereler artık depremden önce sayılmıyor ve pencere uzunluğu öznitelik koşusundan alınıyor. Yeniden çalıştırın</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1445"/>
         <source>the case, its station or the catalog&apos;s time offset was changed after this run</source>
-        <translation>vaka, istasyonu ya da kataloğun zaman farkı bu çalıştırmadan sonra değişti</translation>
+        <translation>vaka, istasyonu ya da kataloğun zaman farkı bu koşudan sonra değişti</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1453"/>
         <source>the catalog file has changed since this run</source>
-        <translation>katalog dosyası bu çalıştırmadan sonra değişti</translation>
+        <translation>katalog dosyası bu koşudan sonra değişti</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1457"/>
         <source>the waveform files for the case&apos;s span have changed since this run (new or replaced files)</source>
-        <translation>vakanın süresindeki dalga formu dosyaları bu çalıştırmadan sonra değişti (yeni ya da değiştirilmiş dosyalar)</translation>
+        <translation>vakanın süresindeki dalga formu dosyaları bu koşudan sonra değişti (yeni ya da değiştirilmiş dosyalar)</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1461"/>
@@ -12033,12 +12033,12 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1464"/>
         <source>its features were run again after this run</source>
-        <translation>öznitelikleri bu çalıştırmadan sonra yeniden çalıştırıldı</translation>
+        <translation>öznitelikleri bu koşudan sonra yeniden çalıştırıldı</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1490"/>
         <source>a later run failed and was set aside: %1</source>
-        <translation>sonraki bir çalıştırma başarısız oldu ve kenara ayrıldı: %1</translation>
+        <translation>sonraki bir koşu başarısız oldu ve kenara ayrıldı: %1</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1574"/>
@@ -12073,7 +12073,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1712"/>
         <source>the run finished, but cannot replace the earlier one in %1: %2. The finished run is kept, complete, in %3; close the file and run the cell again, and it is put in place without being computed again</source>
-        <translation>çalıştırma bitti, ama %1 içindeki öncekinin yerini alamıyor: %2. Biten çalıştırma eksiksiz olarak %3 içinde saklanıyor; dosyayı kapatıp hücreyi yeniden çalıştırın, yeniden hesaplanmadan yerine konur</translation>
+        <translation>koşu bitti, ama %1 içindeki öncekinin yerini alamıyor: %2. Biten koşu eksiksiz olarak %3 içinde saklanıyor; dosyayı kapatıp hücreyi yeniden çalıştırın, yeniden hesaplanmadan yerine konur</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1718"/>
@@ -12088,7 +12088,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1727"/>
         <source>the run finished, but cannot be moved from %1 into place; it is kept there, complete. Run the cell again to put it in place</source>
-        <translation>çalıştırma bitti, ama %1 içinden yerine taşınamıyor; orada eksiksiz olarak saklanıyor. Yerine koymak için hücreyi yeniden çalıştırın</translation>
+        <translation>koşu bitti, ama %1 içinden yerine taşınamıyor; orada eksiksiz olarak saklanıyor. Yerine koymak için hücreyi yeniden çalıştırın</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1759"/>
@@ -12098,7 +12098,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1781"/>
         <source>A finished run of this cell (%1) was waiting in %2, where it stayed when it could not replace the folder. It is moved into place now; nothing is computed again.</source>
-        <translation>Bu hücrenin biten bir çalıştırması (%1), klasörün yerini alamadığında kaldığı %2 içinde bekliyordu. Şimdi yerine taşınıyor; hiçbir şey yeniden hesaplanmıyor.</translation>
+        <translation>Bu hücrenin biten bir koşusu (%1), klasörün yerini alamadığında kaldığı %2 içinde bekliyordu. Şimdi yerine taşınıyor; hiçbir şey yeniden hesaplanmıyor.</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="1793"/>
@@ -12108,7 +12108,7 @@ Bir sürücü yalnızca bağlı değilse, çalışmanın onlar hakkında bildikl
     <message>
         <location filename="../src/study/runs.cpp" line="1798"/>
         <source>warning: the run log cannot be written: %1</source>
-        <translation>uyarı: çalıştırma günlüğü yazılamıyor: %1</translation>
+        <translation>uyarı: koşu günlüğü yazılamıyor: %1</translation>
     </message>
     <message>
         <location filename="../src/study/runs.cpp" line="321"/>

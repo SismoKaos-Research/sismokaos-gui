@@ -13,13 +13,13 @@ translations).
 | case | vaka | ? "olgu" or "örnek olay" are alternatives |
 | recipe | tarif | ? "ayar seti" is an alternative |
 | span (look-back of a case) | süre | ? "geriye bakış süresi" is more exact but long |
-| run (noun: of a recipe on a case, or of a tool on its own page) | çalıştırma | ? one word on every page since 0.4.0; the tool pages said "koşu" before ("koşu" is common in machine-learning talk, "çalıştırma" in software) |
-| Run (button) / Run name | Çalıştır / Çalıştırma adı | |
-| run again / Stop this run | yeniden çalıştır / bu çalıştırmayı durdur | |
-| Runs (page) | Çalıştırmalar | |
+| run (noun: of a recipe on a case, or of a tool on its own page) | koşu | one word on every page; chosen over "çalıştırma" on 2026-11-11. The verb stays "çalıştır" |
+| Run (button) / Run name | Çalıştır / Koşu adı | |
+| run again / Stop this run | yeniden çalıştır / bu koşuyu durdur | |
+| Runs (page) | Koşular | |
 | Compare (page) | Karşılaştır | |
 | done / missing / stale / waiting / failed | tamam / eksik / eskimiş / bekliyor / başarısız | ? "eskimiş" for stale |
-| makes N runs stale | N çalıştırmayı eskitir | ? |
+| makes N runs stale | N koşuyu eskitir | ? |
 | revision (of a recipe) | sürüm | |
 | study inputs | çalışma girdileri | |
 | set up the study | çalışmayı kur | |
@@ -32,7 +32,7 @@ translations).
 | baseline (model) | temel (model) | ? "karşılaştırma tabanı", "referans model" |
 | series | seri | |
 | reference date | referans tarih | |
-| Data / Runs (columns of the cases table) | Veri / Çalıştırmalar | |
+| Data / Runs (columns of the cases table) | Veri / Koşular | |
 | duplicate (a case, a recipe) | çoğalt | |
 | put back (a removed case) | geri koy | |
 | More (menu of further actions) | Diğer | ? "Daha fazla" |
