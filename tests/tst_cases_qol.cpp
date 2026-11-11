@@ -521,6 +521,7 @@ void TstCasesQol::duplicates() {
 void TstCasesQol::keepOpenAndRemembered() {
   auto b = bench();
   QList<Case> handed;
+  QSize left;
   {
     AddFromCatalogDialog dialog(b->study(), nullptr, {}, b->settings.get());
     dialog.show();
@@ -570,6 +571,8 @@ void TstCasesQol::keepOpenAndRemembered() {
     QCOMPARE(b->study().cases.size(), 2);
     events->horizontalHeader()->sectionClicked(0);
     dialog.resize(1300, 820);
+    // What it really became: a system with wider fonts may not allow 1300.
+    left = dialog.size();
     dialog.reject();
   }
   // The next time in this study: as it was left.
@@ -582,7 +585,7 @@ void TstCasesQol::keepOpenAndRemembered() {
                  ->horizontalHeader()
                  ->sortIndicatorSection(),
              0);
-    QCOMPARE(dialog.size(), QSize(1300, 820));
+    QCOMPARE(dialog.size(), left);
   }
   // Another study starts from the defaults, with the same settings file.
   auto other = bench();
