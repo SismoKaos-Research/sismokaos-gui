@@ -633,6 +633,9 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   // archives that run past both its ends (weeks past the earthquake, for the
   // one that holds it), and neither the features nor the parameters fitted
   // for them may see what was recorded after the event.
+  // The span is half-open, [span start, case time): the sample at the span's
+  // start is read, the one at exactly the case's time is not. It is the
+  // same period spanCalendarDays() counts the days of.
   cfg.startEpoch = double(c.spanStart().toSecsSinceEpoch());
   cfg.endEpoch = double(c.time.toSecsSinceEpoch());
   // One sensor of the station: the recipe's, or the only one, or the one

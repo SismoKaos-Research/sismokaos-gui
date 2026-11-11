@@ -1055,7 +1055,8 @@ void TstStudyFixes::calibrationIsRedoneWhenItsInputsChange() {
   Seen h;
   QVERIFY(run(h));
   QCOMPARE(reason(h), QStringLiteral("Calibration redone: the span changed"));
-  // The waveform files: one of them replaced by a copy with another time.
+  // The waveform files. The same file with another time (a copy to another
+  // drive, a restore) is the same data: the calibration is taken again.
   const QString waves = QDir(f.s.dir).filePath("waves/" + f.station);
   const QString one =
       QDir(waves).entryList({QStringLiteral("*HHN*.mseed")}).first();
@@ -1064,6 +1065,19 @@ void TstStudyFixes::calibrationIsRedoneWhenItsInputsChange() {
     QVERIFY(file.open(QIODevice::ReadWrite));
     QVERIFY(file.setFileTime(QDateTime::currentDateTimeUtc().addSecs(-86400),
                              QFileDevice::FileModificationTime));
+  }
+  Seen sameData;
+  QVERIFY(run(sameData));
+  QVERIFY2(reason(sameData).startsWith(QStringLiteral("Calibration reused")),
+           qPrintable(reason(sameData)));
+  // Other content under the same name and size is another input.
+  {
+    QFile file(QDir(waves).filePath(one));
+    QVERIFY(file.open(QIODevice::ReadWrite));
+    const qint64 at = file.size() - 1;
+    char last = 0;
+    QVERIFY(file.seek(at) && file.getChar(&last));
+    QVERIFY(file.seek(at) && file.putChar(char(last ^ 0x55)));
   }
   Seen i;
   QVERIFY(run(i));
