@@ -43,7 +43,8 @@ private:
     text_->setText(module_->description());
     const QStringList t = module_->requiredTools();
     tools_->setText(t.isEmpty() ? QString()
-                                : tr("Tools: %1").arg(t.join(", ")));
+                                : PlaceholderModule::tr("Tools: %1")
+                                      .arg(t.join(", ")));
   }
 
   const PlaceholderModule *module_;

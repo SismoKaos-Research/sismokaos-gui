@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en" sourcelanguage="en">
 <context>
+    <name>QPlatformTheme</name>
+    <message>
+        <location filename="../tests/tst_shell.cpp" line="347"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ayzek</name>
     <message>
         <location filename="../src/ayzek/launcher.cpp" line="128"/>
@@ -47,194 +55,376 @@
 <context>
     <name>skg::AddFromCatalogDialog</name>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="59"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="67"/>
         <source> days before the event</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="211"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="221"/>
         <source>Use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="212"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="222"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="213"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="223"/>
         <source>Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="214"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="224"/>
         <source>Azimuth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="233"/>
-        <location filename="../src/modules/study/casedialogs.cpp" line="563"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="243"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="973"/>
         <source>%1 km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="273"/>
-        <source>Add a case from the catalog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="290"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="358"/>
         <source>place contains…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="303"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="415"/>
         <source>only near station(s): codes separated by commas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="311"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="423"/>
         <source>within </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="332"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="444"/>
         <source>Origin time (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="332"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="444"/>
         <source>M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="333"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="445"/>
         <source>Depth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="333"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="445"/>
         <source>Nearest station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="334"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="446"/>
         <source>Place</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="346"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="466"/>
         <source>stations within </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="312"/>
-        <location filename="../src/modules/study/casedialogs.cpp" line="347"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="392"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="424"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="467"/>
         <source> km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="150"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="160"/>
         <source>own folder: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="151"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="161"/>
         <source>⚠ folder not found: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="163"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="173"/>
         <source>⚠ data, but none in the span (it has %1 to %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="172"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="182"/>
         <source>about %1 of %2 days in span — exact scan running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="177"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="187"/>
         <source>found: at least %1 of %2 days in span (coverage not read yet)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="182"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="192"/>
         <source>found: %1 of %2 days in span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="188"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="198"/>
         <source>folder found, not scanned yet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="189"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="199"/>
         <source>not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="200"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="210"/>
         <source>⚠ little of the span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="216"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="226"/>
         <source>Waveforms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="317"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="321"/>
+        <source>Add cases from the catalog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="390"/>
+        <source>any depth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="391"/>
+        <source>depth ≤ </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="397"/>
+        <source>only where my waveforms cover the span (estimated)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="399"/>
+        <source>only where my waveforms cover the span</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="402"/>
+        <source>from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="404"/>
+        <source>to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="429"/>
         <source>Stations I have data for</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="354"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="453"/>
+        <source>Show more</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="472"/>
+        <source>start with the nearest </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="483"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="496"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="355"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="483"/>
+        <source>Earthquake</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="483"/>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="497"/>
         <source>Span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="356"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="585"/>
+        <source>Lists only earthquakes of at least this magnitude. Lower it to see smaller events.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="587"/>
+        <source>Lists only earthquakes whose place name in the catalog contains this text, e.g. a province. Capitals and Turkish letters do not matter: &quot;izmir&quot; finds İzmir, &quot;dogan&quot; finds Doğanyol.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="591"/>
+        <source>Lists only earthquakes on or after this day (UTC). It starts at the first day of the catalog.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="593"/>
+        <source>Lists only earthquakes on or before this day (UTC). It starts at the last day of the catalog.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="595"/>
+        <source>Lists only earthquakes no deeper than this, in km. At 0 the depth does not matter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="599"/>
+        <source>Lists only earthquakes for which a station you have waveforms of, within the station distance below, has data in the span before the earthquake. No station with waveforms is known yet: add a waveform folder on the Cases page first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="604"/>
+        <source>Lists only earthquakes you can study with the data you have: a station you have waveforms of lies within the station distance below and has data in the span before the earthquake. While the exact scan of the waveform folders is still running, this goes by the periods in the file names and says &quot;estimated&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="628"/>
+        <source>The catalog&apos;s earthquakes that pass the filters. Click a column heading to sort by it. Select the one to study, or several with Ctrl or Shift to add them together.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="632"/>
+        <source>The list shows the first rows of the current order only, to stay quick. This shows four times as many.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="634"/>
+        <source>The case&apos;s name in tables and figures. Filled from the earthquake&apos;s place and year; change it freely. With several earthquakes chosen, each name is changed in the table below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="640"/>
+        <source>Stations of the station list within this distance of the epicentre are offered.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="643"/>
+        <source>How many stations each earthquake starts with: the nearest ones that have waveforms in the span, or, when none has, the nearest ones whose data is still to be got. With one earthquake chosen they are ticked in the table below, with several they are listed per earthquake and can be changed there.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="987"/>
+        <source>%1 earthquakes, the first %2 shown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="1283"/>
+        <source>⚠ %n of the chosen earthquakes are already cases.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="1286"/>
+        <source>⚠ %n of them would have no station: only the Indicators recipes run for those.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="1290"/>
+        <source>⚠ For %n of them the span starts before the catalog&apos;s first event; the indicators would be computed on a shorter period.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1356"/>
+        <source>Added: %1. Choose the next ones, or close.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1365"/>
+        <source>⚠ They could not be added; the Cases page says why.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="483"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="498"/>
         <source>Stations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="361"/>
-        <source>Add case</source>
+        <location filename="../src/modules/study/casedialogs.cpp" line="502"/>
+        <source>leave them out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="380"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="503"/>
+        <source>replace them: new span and stations, same results folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="505"/>
+        <source>add them again as separate cases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="507"/>
+        <source>Already in the study:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="516"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1225"/>
+        <source>Add case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="521"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1224"/>
+        <source>Add %n case(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="523"/>
+        <source>Add and keep open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="528"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="539"/>
         <source>Built-in list of large earthquakes: %1 to %2, %3 events of magnitude 5 and above. Enough to pick the cases; the analyses of small earthquakes need the study&apos;s own catalog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="385"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="544"/>
         <source>The catalog covers %1 to %2 (%3 events).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="415"/>
-        <source>Lists only earthquakes of at least this magnitude. Lower it to see smaller events; the table shows at most the 500 largest.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="418"/>
-        <source>Lists only earthquakes whose place name in the catalog contains this text, e.g. a province.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="422"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="612"/>
         <source>Fills the filter with the stations found in the study&apos;s waveform folders. None are known yet: add a waveform folder on the Cases page first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casedialogs.cpp" line="425"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="615"/>
         <source>Fills the filter with the %n station(s) found in the study&apos;s waveform folders, so only earthquakes you can study with the data you have are listed.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -242,70 +432,73 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="430"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="620"/>
         <source>Lists only earthquakes close to at least one of these stations, e.g. the ones you have waveforms for. Type station codes of the built-in AFAD list separated by commas; codes are completed as you type. Those stations start ticked for the earthquake you pick.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="435"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="625"/>
         <source>How close to one of the stations above an earthquake must be to be listed, in km.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="438"/>
-        <source>The catalog&apos;s earthquakes that pass the filters, largest first. Select the one to study.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="440"/>
-        <source>The case&apos;s name in tables and figures. Filled from the earthquake&apos;s place and year; change it freely.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="443"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="638"/>
         <source>How many days before the earthquake are studied. It can be changed later on the Cases page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="445"/>
-        <source>Stations of the built-in AFAD list within this distance of the epicentre are offered in the table below.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="449"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="650"/>
         <source>Tick the stations the earthquake is studied from. Distance and azimuth are from the epicentre to the station.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="514"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="653"/>
+        <source>One row per chosen earthquake, with what it would be added as. Double-click a name to change it, or a station list to type other station codes, separated by commas.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="656"/>
+        <source>What happens to a chosen earthquake that is already a case of this study. Replacing keeps the case&apos;s folder and results and gives it the span and stations chosen here; its finished runs then show as stale where those changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="662"/>
+        <source>Adds what is chosen and leaves this dialog open with its filters, to go on to the next earthquakes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="882"/>
         <source>not in the station list: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="537"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="910"/>
         <source>%1 · %2 km</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="572"/>
-        <source>%1 earthquakes, the largest %2 shown</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casedialogs.cpp" line="575"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="990"/>
         <source>%n earthquake(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="1007"/>
+        <source>%n earthquakes: each is named in the table below</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="635"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1046"/>
         <source>The nearest %1 of %2 stations within %3 km are shown.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casedialogs.cpp" line="639"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1050"/>
         <source>%n station(s) within %1 km.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -313,27 +506,65 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="650"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1166"/>
+        <source>⚠ already a case (%1): left out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1168"/>
+        <source>⚠ already a case (%1): replaced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1169"/>
+        <source>⚠ already a case (%1): added again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1172"/>
+        <source>⚠ not in the station list: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1175"/>
+        <source>⚠ no station: Indicators only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="1182"/>
+        <source>%n station(s) without waveforms in the span yet</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1229"/>
         <source>Select an earthquake in the list first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="660"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1230"/>
+        <source>Every chosen earthquake is already a case of this study. Choose under &quot;Already in the study&quot; whether to replace them or to add them again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1258"/>
         <source>⚠ This earthquake is already a case: %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="662"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1262"/>
         <source>⚠ No station is ticked: only the Indicators recipes will run for this case.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="681"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1266"/>
         <source>⚠ The span%1 starts on %2, before the catalog&apos;s first event (%3). The indicators would be computed on a shorter period.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="684"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1269"/>
         <source> plus a %1 month window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -673,6 +904,532 @@
     </message>
 </context>
 <context>
+    <name>skg::CaseDownloads</name>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="505"/>
+        <source>The download is running. Stop it to change what is asked for.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="509"/>
+        <source>This study&apos;s folder cannot be written to, so the application does not hold the study and nothing is downloaded into it. Open it from a place you can write to.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="528"/>
+        <source>Nothing is waiting. %n request(s) failed: press Retry failed to ask for them again.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="532"/>
+        <source>Nothing to download: the study has every day of the span for these stations, or it has been asked for already.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="535"/>
+        <source>Nothing is waiting to be downloaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="539"/>
+        <source>Not enough room on the disk of the study: about %1 are needed and %2 are free. Free some space, or set &quot;Do not download&quot; for some stations.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="545"/>
+        <source>These stations are asked for at AFAD, which answers by e-mail: set up the mailbox first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="548"/>
+        <source>Another download is using the mailbox address right now. It has to end before this one can ask AFAD.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="637"/>
+        <source>waveforms from AFAD: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="638"/>
+        <source>%1 request slot(s) from %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="653"/>
+        <source>waveforms from FDSN: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="654"/>
+        <source>the waiting days, into the study&apos;s downloads folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="661"/>
+        <source>%n day(s) were on disk already</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="676"/>
+        <source>done: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="698"/>
+        <source>The download could not be prepared: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="741"/>
+        <source>Stopped. What was not fetched yet stays asked for: press the button again to go on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="744"/>
+        <source>The download ended with %n request(s) still open; see the Jobs panel for why, then press the button again.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="748"/>
+        <source>Finished, but %n request(s) failed. The table says which and why; Retry failed asks for them again.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="752"/>
+        <source>Finished. The study reads the new files now; the Cases page shows them when it has.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="763"/>
+        <source>Where this station&apos;s waveforms are asked for. The rule: a station that AFAD&apos;s portal lists with an instrument is asked for there, in requests of %1 days that AFAD answers by e-mail; any other station is asked for at an FDSN service (%2, channels %3; both can be changed in the FDSN form under All downloads), one file per day and no mailbox. Change it here if you know better, or leave a station out.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="778"/>
+        <source>left out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="783"/>
+        <source>%1 of %n request(s) answered</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="785"/>
+        <source>%1 of %n day(s) done</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="788"/>
+        <source>waiting for the mailbox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="790"/>
+        <source>%n request(s) fetched</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="791"/>
+        <source>%n day(s) fetched</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="794"/>
+        <source>%n without data at the source</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="796"/>
+        <source>%n failed (%1)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="797"/>
+        <source>no reason given</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="812"/>
+        <source>AFAD&apos;s portal does not list %1 with an instrument, so it is asked for at the FDSN service.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="823"/>
+        <source>⚠ none in the span (it has %1 to %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="827"/>
+        <source>none of %n day(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="828"/>
+        <source>at least %1 of %n day(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="831"/>
+        <source>about %1 of %n day(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="832"/>
+        <source>%1 of %n day(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="834"/>
+        <source>⚠ %1: too little to run on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="835"/>
+        <source>The station has data on only a small part of the span; a run on it would rest on very little.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="841"/>
+        <source>Some of this station&apos;s files have only been looked at quickly; the exact count follows when the study has read them.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="865"/>
+        <source>AFAD portal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="866"/>
+        <source>FDSN service</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="867"/>
+        <source>Do not download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="878"/>
+        <source>%n request(s) open</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="879"/>
+        <source>%n day(s) open</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="881"/>
+        <source>nothing: all there</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="887"/>
+        <source>fetched; the study has not read the files yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="890"/>
+        <source>%n day(s) to get; what failed can be asked for again</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="894"/>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="901"/>
+        <source>%n day(s) to get, asked for already</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="896"/>
+        <source>%1 day(s) to get: %n new request(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="903"/>
+        <source>%1 day(s) to get: %n new day(s) to ask for</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="911"/>
+        <source>Failed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="953"/>
+        <source>Waveforms for a case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="954"/>
+        <source>To download what a case needs, select the case on the Cases page and press &quot;Next: get waveforms&quot;. This page then lists its stations, what the study already has and what is missing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="958"/>
+        <source>Go to Cases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="964"/>
+        <source>%1 to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="970"/>
+        <source>Get waveforms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="971"/>
+        <source>Get waveforms for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="972"/>
+        <source>%n station(s), %1. The table says what the study&apos;s waveform folders hold for these days and what is missing. One button asks for all of it and files it in the study.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="979"/>
+        <source>An unfinished download of this study</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="980"/>
+        <source>Requests made earlier for this study are still open. Resume to go on where it stopped; nothing is asked for twice.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="985"/>
+        <source>Station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="985"/>
+        <source>In the study</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="985"/>
+        <source>Get it from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="986"/>
+        <source>Still to get</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="986"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1004"/>
+        <source>%n request(s) to AFAD (about %1)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1008"/>
+        <source>%n day(s) from the FDSN service (about %1)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1013"/>
+        <source>To download: %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1013"/>
+        <source>; </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1016"/>
+        <source>Free on the study&apos;s disk: %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1023"/>
+        <source>The files go into the study&apos;s folder, under &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1028"/>
+        <source>Sizes are rough: what this download has fetched per day so far, or, before anything was fetched, %1 per station and day from AFAD and %2 from an FDSN service. The folder is %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1041"/>
+        <source>Mailbox for AFAD&apos;s links: %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1043"/>
+        <source>AFAD&apos;s portal does not hand out files directly: it e-mails a link for each request. The application reads those e-mails from a mailbox you set up once. Until then the %n station(s) asked for at AFAD wait; stations from the FDSN service are fetched right away.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1049"/>
+        <source>Change the mailbox…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1050"/>
+        <source>Set up the mailbox…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1057"/>
+        <source>Resume the download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1058"/>
+        <source>Download the missing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1061"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1063"/>
+        <source>Retry failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1066"/>
+        <source>Downloading. The table follows the requests; the full log is in the Jobs panel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1074"/>
+        <source>Back to Cases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1075"/>
+        <source>Next: recipes →</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1076"/>
+        <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1079"/>
+        <source>Writes the requests for every station in the table, files what arrives under the study&apos;s downloads folder, adds that folder to the study&apos;s waveform folders and starts the transfers as jobs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1083"/>
+        <source>Stops the transfers. What was not fetched stays asked for and is taken up when you press the button again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1086"/>
+        <source>Puts the failed requests of these stations back in line and starts the download again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1089"/>
+        <source>The login of the mailbox AFAD&apos;s e-mails arrive in (IMAP server, user, password). It is kept on this computer only.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1092"/>
+        <source>Opens the Cases page on this case, where the Waveforms column shows what the study has once the new files are read.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1095"/>
+        <source>Opens the Runs page, the next step: choosing what to compute on the cases.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/casedownloads.cpp" line="1098"/>
+        <source>Closes this panel. Requests already made stay; an unfinished download is offered again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>skg::CaseMap</name>
     <message>
         <location filename="../src/modules/study/casemap.cpp" line="139"/>
@@ -803,114 +1560,133 @@
 <context>
     <name>skg::CasePreview</name>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="383"/>
+        <location filename="../src/modules/study/casemap.cpp" line="384"/>
         <source>%1 · the list is limited to earthquakes within %2 km of it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="409"/>
+        <location filename="../src/modules/study/casemap.cpp" line="418"/>
         <source>No earthquake passes the filters.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casemap.cpp" line="420"/>
+        <source>%n earthquake(s) chosen. Hold Ctrl and click another to add it to the choice or take it out.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="411"/>
+        <location filename="../src/modules/study/casemap.cpp" line="424"/>
         <source>The earthquakes of the list. Click one to select it; drag to move the map, turn the wheel to zoom.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="413"/>
+        <location filename="../src/modules/study/casemap.cpp" line="426"/>
         <source>The earthquakes within %1 km of the stations named. Click one to select it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="418"/>
+        <location filename="../src/modules/study/casemap.cpp" line="431"/>
         <source>Earthquake of the list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="421"/>
+        <location filename="../src/modules/study/casemap.cpp" line="434"/>
         <source>Station of the filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="425"/>
+        <location filename="../src/modules/study/casemap.cpp" line="438"/>
         <source>Within %1 km of one</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="430"/>
-        <location filename="../src/modules/study/casemap.cpp" line="544"/>
+        <location filename="../src/modules/study/casemap.cpp" line="443"/>
+        <location filename="../src/modules/study/casemap.cpp" line="567"/>
         <source>Fault source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="448"/>
-        <location filename="../src/modules/study/casemap.cpp" line="527"/>
+        <location filename="../src/modules/study/casemap.cpp" line="462"/>
+        <location filename="../src/modules/study/casemap.cpp" line="548"/>
+        <source>Reference place</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casemap.cpp" line="464"/>
+        <location filename="../src/modules/study/casemap.cpp" line="550"/>
         <source>Epicentre</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="449"/>
+        <location filename="../src/modules/study/casemap.cpp" line="465"/>
         <source>Epicentre · M %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="496"/>
+        <location filename="../src/modules/study/casemap.cpp" line="512"/>
         <source>%1 km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="498"/>
+        <location filename="../src/modules/study/casemap.cpp" line="514"/>
         <source>%1 · %2 · outside the zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="502"/>
+        <location filename="../src/modules/study/casemap.cpp" line="518"/>
         <source> · ticked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="502"/>
+        <location filename="../src/modules/study/casemap.cpp" line="518"/>
         <source> · click to tick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="506"/>
+        <location filename="../src/modules/study/casemap.cpp" line="522"/>
         <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="516"/>
+        <location filename="../src/modules/study/casemap.cpp" line="532"/>
         <source>⚠ Outside the %1 km catalog zone: %2. The earthquakes counted for this case are those of the zone, not those around such a station. Untick it, or widen the zone on the Cases page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="522"/>
+        <location filename="../src/modules/study/casemap.cpp" line="540"/>
+        <source>The preview follows what you tick. Click a station to tick or untick it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casemap.cpp" line="542"/>
         <source>The preview follows what you tick. Click a station to tick or untick it, or another earthquake (grey) to choose that one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="529"/>
+        <location filename="../src/modules/study/casemap.cpp" line="552"/>
         <source>Station in use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="531"/>
+        <location filename="../src/modules/study/casemap.cpp" line="554"/>
         <source>Candidate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="534"/>
+        <location filename="../src/modules/study/casemap.cpp" line="557"/>
         <source>Candidate with waveforms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="537"/>
+        <location filename="../src/modules/study/casemap.cpp" line="560"/>
         <source>In use, outside the zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casemap.cpp" line="540"/>
+        <location filename="../src/modules/study/casemap.cpp" line="563"/>
         <source>Catalog zone</source>
         <translation type="unfinished"></translation>
     </message>
@@ -931,231 +1707,361 @@
 <context>
     <name>skg::CasesPage</name>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="416"/>
+        <location filename="../src/modules/study/casespage.cpp" line="620"/>
         <source>A study runs the same analyses on several earthquakes and puts the results side by side.
 Start a new study in an empty folder, or open an existing one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="419"/>
-        <source>New study…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casespage.cpp" line="420"/>
-        <source>Open study…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casespage.cpp" line="421"/>
+        <location filename="../src/modules/study/casespage.cpp" line="623"/>
         <source>Study inputs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="422"/>
-        <location filename="../src/modules/study/casespage.cpp" line="1024"/>
+        <location filename="../src/modules/study/casespage.cpp" line="624"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1912"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1984"/>
         <source>Earthquake catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="424"/>
+        <location filename="../src/modules/study/casespage.cpp" line="626"/>
         <source>AFAD catalog export, CSV or .gz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="423"/>
+        <location filename="../src/modules/study/casespage.cpp" line="625"/>
         <source>Waveforms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="425"/>
+        <location filename="../src/modules/study/casespage.cpp" line="508"/>
+        <source>⚠ The study file could not be read again: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="627"/>
         <source>Use my own file…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="426"/>
+        <location filename="../src/modules/study/casespage.cpp" line="628"/>
         <source>Get the catalog…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="427"/>
+        <location filename="../src/modules/study/casespage.cpp" line="629"/>
         <source>Update…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="428"/>
+        <location filename="../src/modules/study/casespage.cpp" line="630"/>
         <source>Study inputs…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="429"/>
+        <location filename="../src/modules/study/casespage.cpp" line="631"/>
         <source>Waveforms…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="430"/>
+        <location filename="../src/modules/study/casespage.cpp" line="632"/>
         <source>times in UTC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="431"/>
+        <location filename="../src/modules/study/casespage.cpp" line="633"/>
         <source>times in Turkey time (+3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="432"/>
+        <location filename="../src/modules/study/casespage.cpp" line="634"/>
         <source>another offset…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="433"/>
+        <location filename="../src/modules/study/casespage.cpp" line="635"/>
         <source>Choose folder…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="434"/>
+        <location filename="../src/modules/study/casespage.cpp" line="636"/>
         <source>Use the study&apos;s folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="435"/>
+        <location filename="../src/modules/study/casespage.cpp" line="637"/>
         <source>Add from catalog…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="436"/>
+        <location filename="../src/modules/study/casespage.cpp" line="638"/>
         <source>Add reference date…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="437"/>
+        <location filename="../src/modules/study/casespage.cpp" line="639"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="438"/>
+        <location filename="../src/modules/study/casespage.cpp" line="640"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="642"/>
+        <source>Reads the study file again as it is on disk now, with what was changed elsewhere. The change refused here is not kept.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="644"/>
+        <source>More</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="646"/>
+        <source>What else can be done with the selected cases: duplicate one, change the span or the stations of several at once, get their waveforms together, and put back cases removed since the application was started. The same list opens with a right click on the table.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="651"/>
+        <source>filter cases… (Ctrl+F)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="652"/>
+        <source>Shows only the cases whose name, place, date or stations contain this text. Capitals and Turkish letters do not matter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="655"/>
+        <source>Show the scan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="657"/>
+        <source>The waveform folders are being read. This opens the Jobs panel, where the scan shows how far it is and can be stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="659"/>
+        <source>Tick nearest with data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="661"/>
+        <source>Ticks the three nearest stations that have waveforms in this case&apos;s span, in addition to those already ticked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="663"/>
+        <source>Untick all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="665"/>
+        <source>Unticks every station of this case. Their results stay on disk and come back when a station is ticked again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="667"/>
         <source>Station coverage…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="440"/>
+        <location filename="../src/modules/study/casespage.cpp" line="669"/>
         <source>A map of what your stations cover: the area within a distance of the stations you have waveforms of (or of the stations ticked in the cases), and which earthquakes of the catalog fall inside it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="444"/>
+        <location filename="../src/modules/study/casespage.cpp" line="674"/>
         <source>Case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="444"/>
+        <location filename="../src/modules/study/casespage.cpp" line="674"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="445"/>
+        <location filename="../src/modules/study/casespage.cpp" line="674"/>
         <source>Origin time (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="445"/>
+        <location filename="../src/modules/study/casespage.cpp" line="674"/>
         <source>M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="446"/>
+        <location filename="../src/modules/study/casespage.cpp" line="674"/>
         <source>Depth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="446"/>
+        <location filename="../src/modules/study/casespage.cpp" line="675"/>
         <source>Stations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="446"/>
-        <location filename="../src/modules/study/casespage.cpp" line="456"/>
+        <location filename="../src/modules/study/casespage.cpp" line="675"/>
+        <location filename="../src/modules/study/casespage.cpp" line="694"/>
         <source>Span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="448"/>
+        <location filename="../src/modules/study/casespage.cpp" line="675"/>
+        <source>Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="675"/>
+        <source>Runs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="678"/>
+        <source>How many of the case&apos;s ticked stations have waveforms in its span, of how many are ticked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="682"/>
+        <source>How many of the case&apos;s runs are finished and current, of how many the study&apos;s recipes make for it. The Runs page has the rest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="686"/>
         <source>No cases yet.
 Add from catalog… picks an earthquake, from the built-in list or your own catalog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="460"/>
+        <location filename="../src/modules/study/casespage.cpp" line="698"/>
         <source>The earthquake catalog of this study. Without a file of its own the study uses the built-in list of large earthquakes, which is enough to pick cases. The Indicators and the Features calibration count small earthquakes and need a full catalog: an AFAD export, or a download.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="466"/>
+        <location filename="../src/modules/study/casespage.cpp" line="704"/>
         <source>Chooses a catalog file of your own: an AFAD export as CSV, plain or .gz. Cases are picked from it and the analyses read their events from it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="470"/>
+        <location filename="../src/modules/study/casespage.cpp" line="708"/>
         <source>Downloads the earthquakes around this study&apos;s cases from an FDSN event service into the study folder and makes that file the study&apos;s catalog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="474"/>
+        <location filename="../src/modules/study/casespage.cpp" line="712"/>
         <source>Brings the built-in lists up to date over the network: the stations from the AFAD portal and the large earthquakes from USGS.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="478"/>
+        <location filename="../src/modules/study/casespage.cpp" line="716"/>
         <source>The catalog and the waveform folders of the study in one dialog, as when the study was created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="485"/>
+        <location filename="../src/modules/study/casespage.cpp" line="723"/>
         <source>For the Features recipes: the folders holding the waveforms you already have, and what was found in them. The station of each file is read from its miniSEED headers, so any folder layout works. Not needed for Indicators.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="491"/>
+        <location filename="../src/modules/study/casespage.cpp" line="729"/>
         <source>For the selected, ticked station: use the files of one folder you choose, whatever the study&apos;s waveform folders hold. For data whose headers carry a different station code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="495"/>
+        <location filename="../src/modules/study/casespage.cpp" line="733"/>
         <source>Drops the folder chosen for the selected station, so its files are looked up in the study&apos;s waveform folders again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="498"/>
+        <location filename="../src/modules/study/casespage.cpp" line="736"/>
         <source>Step 2: opens the Data page with this case&apos;s stations and span filled in, to download what is missing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="501"/>
+        <location filename="../src/modules/study/casespage.cpp" line="739"/>
         <source>Step 3: goes to the Runs page, where recipes are made and run on the cases. Features recipes need the waveforms first; Indicators recipes do not.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="517"/>
-        <source>Tick the stations this case is studied from. Each ticked station is a row of its own on the Runs and Compare pages. Waveforms says how many days of the span the study&apos;s waveform folders hold for the station.</source>
+        <location filename="../src/modules/study/casespage.cpp" line="750"/>
+        <source>Takes the selected cases out of the study (also the Delete key). Their result folders stay on disk, and More ▸ Put back brings a case back with its runs until the application is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="591"/>
+        <location filename="../src/modules/study/casespage.cpp" line="753"/>
+        <source>The case&apos;s name, as shown in the tables and the figures. Changes are saved at once. Renaming keeps the case&apos;s folder and its finished runs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="757"/>
+        <source>Tick the stations this case is studied from. Each ticked station is a row of its own on the Runs and Compare pages. Waveforms says how many days of the span the study&apos;s waveform folders hold for the station; the small bar shows the same share. Click the Distance or Waveforms heading to order the stations by it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="850"/>
         <source>%1 events, %2 to %3, magnitudes from about %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="598"/>
+        <location filename="../src/modules/study/casespage.cpp" line="857"/>
         <source>⚠ Sparse: fine for choosing cases. The calibration of the features only avoids earthquakes of that size and larger, and the indicators need the small ones too: use a full catalog (an AFAD export) for those.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="748"/>
+        <location filename="../src/modules/study/casespage.cpp" line="939"/>
+        <location filename="../src/modules/study/casespage.cpp" line="941"/>
+        <source>%1 of %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="970"/>
+        <source>No station is ticked: only the Indicators recipes run for this case.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="972"/>
+        <source>%1 of the %2 ticked station(s) have waveforms in the span.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="977"/>
+        <source>No recipe yet: they are made on the Runs page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="978"/>
+        <source>%1 of %2 run(s) are finished and current.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1044"/>
+        <source>⚠  Nothing can be changed in this study from here: its folder is not held by this window. Either the folder cannot be written (read-only media, a drive that is full or was unplugged), or the study is open in another window, which is where it is changed. It can still be looked at.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1088"/>
+        <source>%1 of %2 cases shown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1110"/>
+        <source>%n cases selected: More has what can be done with them together</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1206"/>
         <source>⚠ No station is ticked: only the Indicators recipes run for this case. Tick the stations it is studied from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="751"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1209"/>
         <source>⚠ %n ticked station(s) have no waveforms in the study&apos;s folders. Add the folder under Waveforms…, or get the data.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1163,7 +2069,7 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="755"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1213"/>
         <source>⚠ %n ticked station(s) have waveforms, but none in this case&apos;s span: a run on them cannot start. Untick them, or get their data for the span.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1171,32 +2077,32 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="813"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1267"/>
         <source>Next: get waveforms →</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="814"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1268"/>
         <source>Get more waveforms…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="815"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1269"/>
         <source>Go on to recipes →</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="816"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1270"/>
         <source>Next: recipes →</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="858"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1312"/>
         <source>No waveform folder yet. Add the folder that holds your miniSEED files, or download with the Data page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="866"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1320"/>
         <source>%n folder(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1204,7 +2110,7 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="868"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1322"/>
         <source>%n station(s) found</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1212,7 +2118,7 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="871"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1325"/>
         <source>⚠ %n folder(s) not found (moved?)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1220,7 +2126,7 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="874"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1328"/>
         <source>%n file(s) skipped</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1228,27 +2134,32 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="880"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1334"/>
         <source>coverage estimated from the file names; not read exactly yet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="882"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1336"/>
         <source>coverage not read yet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="908"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1370"/>
+        <source>⚠ The study file was changed on disk since this window read it (by another window, or by hand), so the change was not saved over it. Reload to see the study as it is now, then make the change again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1374"/>
         <source>⚠ The study could not be saved, so the change was not kept: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="956"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1423"/>
         <source>Change the case</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="957"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1424"/>
         <source>This change makes %n finished run(s) of this case stale; they would have to be run again. Change it anyway?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1256,23 +2167,265 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="985"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1438"/>
+        <source>Reading the earthquake catalog…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1456"/>
         <source>⚠ The earthquake catalog could not be read: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1037"/>
-        <location filename="../src/modules/study/casespage.cpp" line="1058"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1515"/>
+        <source>Replace the cases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1516"/>
+        <source>Replacing makes %n finished run(s) of these cases stale; they would have to be run again. Replace them anyway?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1570"/>
+        <source>Remove cases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1571"/>
+        <source>Remove %1 from the study?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1574"/>
+        <source>%n finished run(s) of them leave the tables. Their folders stay on disk.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1577"/>
+        <source>Their folders, if any, stay on disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1579"/>
+        <source>Until the application is closed, More ▸ Put back brings a removed case back with its runs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1591"/>
+        <source>Removed: %1. To bring a case back with its runs: More ▸ Put back.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1636"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1768"/>
+        <source>Change the span</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1637"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1672"/>
+        <source>This change makes %n finished run(s) of the selected cases stale; they would have to be run again. Change it anyway?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1671"/>
+        <source>Change the stations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1686"/>
+        <source>%1 (copy)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1729"/>
+        <source>No further station near this case has waveforms in its span. Get the data first (Next: get waveforms), or add the folder under Waveforms….</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1758"/>
+        <source>Duplicate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1762"/>
+        <source>Change the span…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1769"/>
+        <source>Days before the event, for the %n selected case(s):</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1775"/>
+        <source>Choose the stations by a rule…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1779"/>
+        <source>Choose the stations by a rule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1789"/>
+        <source>Nearest stations with data in the span</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1790"/>
+        <source>Within</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1792"/>
+        <source>Each of the %n selected case(s) gets the stations nearest to it that have waveforms in its own span; when none has, the nearest whose data is still to be got. What is ticked now is replaced.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1807"/>
+        <source>How many stations each case gets.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1808"/>
+        <source>Only stations within this distance of the case&apos;s epicentre are considered.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1815"/>
+        <source>Get waveforms for the %n selected case(s)…</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1819"/>
+        <source>The study on disk…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1822"/>
+        <source>Put back a removed case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1877"/>
+        <source>⚠ Nothing was taken: this study cannot be changed from this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1908"/>
+        <source>⚠ %1 could not be read as an earthquake catalog (an AFAD export as CSV, plain or .gz).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1913"/>
+        <source>Use %1 as this study&apos;s earthquake catalog?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1916"/>
+        <source>%1 events, %2 to %3, magnitudes from about %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1923"/>
+        <source>That is sparse: enough to choose cases, not for the indicators or the calibration of the features.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1928"/>
+        <source>The catalog is now %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1932"/>
+        <source>Waveform folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1933"/>
+        <source>Add %n folder(s) to this study&apos;s waveform folders? They are then read for the stations and days they hold.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1940"/>
+        <source>The study already lists those folders.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1941"/>
+        <source>%n waveform folder(s) added; they are being read.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1948"/>
+        <source>⚠ %1 names no station with coordinates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1952"/>
+        <source>Station coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1953"/>
+        <source>Take the coordinates of the %n station(s) in %1 into this study? Stations the built-in list does not have can then be ticked for a case.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casespage.cpp" line="1967"/>
+        <source>%n station(s) now have coordinates from %1.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1975"/>
+        <source>⚠ Not used: %1. A catalog is a .csv or .gz file, station coordinates a StationXML (.xml) file, waveforms a folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="1997"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2018"/>
         <source>Catalog time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1038"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1998"/>
         <source>Hours the catalog&apos;s times are ahead of UTC:</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="1059"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2019"/>
         <source>The times of the %n earthquake case(s) were read from the catalog with the old setting. They are read again with the new one, which moves them by %1 hours and makes their finished runs stale. Change it?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1280,7 +2433,7 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="1097"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2057"/>
         <source>⚠ %n earthquake case(s) were not found in the catalog at the shifted time and keep the time they had. Check them against the catalog.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1288,143 +2441,139 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1131"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2091"/>
         <source>Downloading the catalog; progress is in the Jobs panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1137"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2097"/>
         <source>catalog refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1138"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2098"/>
         <source>stations from the portal, M5+ events from USGS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1164"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2124"/>
         <source>⚠ The built-in lists could not be updated: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1177"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2138"/>
         <source>Folder with the waveforms of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="451"/>
+        <location filename="../src/modules/study/casespage.cpp" line="2244"/>
+        <source>The selected cases have no ticked station to get waveforms for.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casespage.cpp" line="689"/>
         <source>STATIONS NEAR THE EPICENTRE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="452"/>
+        <location filename="../src/modules/study/casespage.cpp" line="690"/>
         <source>Catalog zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="453"/>
+        <location filename="../src/modules/study/casespage.cpp" line="691"/>
         <source>Circle around the epicentre, radius</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="454"/>
+        <location filename="../src/modules/study/casespage.cpp" line="692"/>
         <source>Fault zone (East Anatolian), buffer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="455"/>
+        <location filename="../src/modules/study/casespage.cpp" line="693"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1787"/>
         <source> km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="457"/>
+        <location filename="../src/modules/study/casespage.cpp" line="695"/>
         <source> days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="481"/>
+        <location filename="../src/modules/study/casespage.cpp" line="719"/>
         <source>Whether the times in the catalog file are UTC or Turkey time (UTC+3). AFAD exports are UTC. A wrong choice shifts every event by three hours.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="506"/>
-        <location filename="../src/modules/study/casespage.cpp" line="624"/>
+        <location filename="../src/modules/study/casespage.cpp" line="744"/>
+        <location filename="../src/modules/study/casespage.cpp" line="883"/>
         <source>Adds a case by picking an earthquake from the study&apos;s catalog and ticking the stations near it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="509"/>
+        <location filename="../src/modules/study/casespage.cpp" line="747"/>
         <source>Adds a case with no earthquake: a date at a place, studied the same way so it can be read beside the earthquakes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="512"/>
-        <source>Takes the selected case out of the study. Its result folders stay on disk.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casespage.cpp" line="514"/>
-        <source>The case&apos;s name, as shown in the tables and the figures. Changes are saved at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casespage.cpp" line="522"/>
+        <location filename="../src/modules/study/casespage.cpp" line="763"/>
         <source>Which catalog events count for this case in the Indicators recipes: those within a circle around the epicentre, or those within a buffer on both sides of the shipped East Anatolian fault traces.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="526"/>
+        <location filename="../src/modules/study/casespage.cpp" line="767"/>
         <source>Radius of the circle, or width of the buffer on each side of the fault traces, in km. Larger takes in more events.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="530"/>
+        <location filename="../src/modules/study/casespage.cpp" line="771"/>
         <source>How many days before the event are studied. The Indicators recipes use the catalog from one window before the span up to, but not including, the event. Changing it marks the case&apos;s finished runs stale.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="576"/>
+        <location filename="../src/modules/study/casespage.cpp" line="835"/>
         <source>Built-in list: M ≥ %1 since %2, updated %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="577"/>
+        <location filename="../src/modules/study/casespage.cpp" line="836"/>
         <source>Built-in list: M ≥ %1 since %2, as shipped (to %3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="617"/>
+        <location filename="../src/modules/study/casespage.cpp" line="876"/>
         <source>The catalog file is not where the study says it is: %1. Choose it again above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="621"/>
+        <location filename="../src/modules/study/casespage.cpp" line="880"/>
         <source>Adds a case by picking an earthquake from the built-in list of large earthquakes and ticking the stations near it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="633"/>
+        <location filename="../src/modules/study/casespage.cpp" line="892"/>
         <source>times in UTC%1%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="655"/>
+        <location filename="../src/modules/study/casespage.cpp" line="944"/>
         <source>reference</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="655"/>
+        <location filename="../src/modules/study/casespage.cpp" line="944"/>
         <source>earthquake</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="660"/>
+        <location filename="../src/modules/study/casespage.cpp" line="950"/>
         <source>%1 km</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/casespage.cpp" line="663"/>
+        <location filename="../src/modules/study/casespage.cpp" line="955"/>
         <source>%n day(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1432,37 +2581,28 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="678"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1016"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1095"/>
         <source>%1 cases · %2 station rows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="705"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1129"/>
         <source> UTC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="710"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1134"/>
         <source>Reference date · %1 · %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="711"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1135"/>
         <source>M %1 · %2 · depth %3 km · %4%5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1013"/>
-        <source>Remove case</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1014"/>
-        <source>Remove %1 from the study? Its result folders stay on disk.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/casespage.cpp" line="1025"/>
+        <location filename="../src/modules/study/casespage.cpp" line="1984"/>
         <source>AFAD catalog (*.csv *.gz);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1470,104 +2610,104 @@ Add from catalog… picks an earthquake, from the built-in list or your own cata
 <context>
     <name>skg::CatalogFetchDialog</name>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="354"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="363"/>
         <source>Get the catalog for this study</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="358"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="367"/>
         <source>Downloads the earthquakes around the cases of this study from an FDSN event service into the study folder, with a record of the request, and makes the file the study&apos;s catalog.
 
 How far down in magnitude a service goes differs. Outside the United States USGS lists mostly the larger earthquakes (roughly magnitude 4 and above), which is too few events for b-values; what the download holds is reported when it ends. AFAD&apos;s own catalog goes much lower, but its public web service only returns the latest 1000 earthquakes: export the period from AFAD&apos;s website (deprem.afad.gov.tr) and choose the file with “Use my own file…” instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="377"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="386"/>
         <source>Another FDSN event service…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="429"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="438"/>
         <source>Service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="430"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="439"/>
         <source>Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="431"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="440"/>
         <source>Period (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="432"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="441"/>
         <source>Latitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="433"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="442"/>
         <source>Longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="434"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="443"/>
         <source>Smallest magnitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="442"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="451"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="456"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="465"/>
         <source>Where the earthquakes are asked from. USGS needs no account and its data are in the public domain. Another service can be given by its address; check its terms of use first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="460"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="469"/>
         <source>The query address of an FDSN event service (…/fdsnws/event/1/query). It must answer in the FDSN text format without an account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="464"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="473"/>
         <source>The period to download, in UTC. Proposed from the cases: the earliest span start, minus the longest Indicators window, to the last earthquake.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="468"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="477"/>
         <source>South and north edge of the area. Proposed from the cases&apos; zones with a margin.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="471"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="480"/>
         <source>West and east edge of the area. Proposed from the cases&apos; zones with a margin.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="474"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="483"/>
         <source>Earthquakes below this magnitude are not downloaded. A low value gives the analyses more events; the service may not have them. Default 1.0.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="522"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="531"/>
         <source>Give the address of the service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="524"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="533"/>
         <source>Give the address of the service, starting with https://.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="526"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="535"/>
         <source>The period ends before it starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="528"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="537"/>
         <source>The area is empty: the first value must be the smaller one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1954,150 +3094,180 @@ Choose a catalog and a station at the top of the page.</source>
 <context>
     <name>skg::ComparePage</name>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="843"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1167"/>
         <source>No study is open.
 A study is a folder that holds the cases, the recipes and every result. Start or open one with the buttons above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="846"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1170"/>
         <source>Scores of</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="848"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1172"/>
         <source>Test days. The model is the one that did best on the validation days; the baseline is the best of logistic regression and the SVMs, chosen the same way.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="851"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1175"/>
         <source>Export table…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="852"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1176"/>
+        <source>Copy table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1178"/>
+        <source>Copies the score table as it is shown, with a heading line and tabs between the columns, ready to paste into a spreadsheet. Numbers are written with a decimal point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1181"/>
+        <source>◔  reading the results…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1182"/>
+        <source>Read again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1184"/>
+        <source>Reads the runs from the disk again. Offered when a finished run could not be read (its files may have been open elsewhere, or still being written).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1188"/>
+        <source>Point at the plot to read each series&apos; value on a day: a guide follows the pointer to the nearest day with a value. With the plot selected (Tab, or a click), Left and Right move the guide point by point and Escape removes it. A click on a name in the legend hides that series or shows it again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1193"/>
         <source>Series of</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="853"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1194"/>
         <source>column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="854"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1195"/>
         <source>Aligned by days before each case&apos;s event</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="855"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1196"/>
         <source>Export figure…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="856"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1197"/>
         <source>FITTED PER CASE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="857"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1198"/>
         <source>WHERE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="859"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1200"/>
         <source>Shows or hides the map of the cases. Each case has the colour of its curve and its row; a reference date is a hollow diamond.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="861"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1202"/>
         <source>marker size: magnitude · ◇ reference date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="862"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1203"/>
         <source>The cases of the study appear here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="863"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1204"/>
         <source>What each case fitted for itself in this recipe; everything else in the recipe is identical.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="866"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1207"/>
         <source>The classification recipe whose scores are listed: one row per case and station, with the baseline beside the best model.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="870"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1211"/>
         <source>Writes the score rows as shown to a CSV file, by default in the study&apos;s exports folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="873"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1214"/>
         <source>Click a heading to sort; double-click a row to open its run folder. With the keyboard: Left and Right choose the sort column, Space turns the order, Up and Down choose a row, Enter opens it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="877"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1218"/>
         <source>Opens the page where what is missing is done.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="886"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1227"/>
         <source>Which series are drawn when there are more than eight (the figure has eight colours). Untick one to tick another.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="889"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1230"/>
         <source>Writes the series figure to a PNG or an SVG file, by default in the study&apos;s exports folder. The file is always on a white background, whatever the theme.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="977"/>
-        <location filename="../src/modules/study/comparepage.cpp" line="988"/>
-        <location filename="../src/modules/study/comparepage.cpp" line="1005"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1369"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1380"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1397"/>
         <source>Go to Runs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="979"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1371"/>
         <source>The study has no case with a station yet. Stations are ticked on the Cases page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="982"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1374"/>
         <source>Go to Cases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="984"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1376"/>
         <source>None of the %1 rows has a finished run yet. Run the recipe on the Runs page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="990"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1382"/>
         <source>%1 of %2 rows have a finished run. Click a column heading to sort; double-click a row to open its folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="879"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1220"/>
         <source>The indicators or features recipe whose values are drawn below, one line per case.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="882"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1223"/>
         <source>The column that is drawn: an indicator such as the b-value, or a feature (the median of each day). Every case is placed on days before its own event.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="974"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1366"/>
         <source>No classification recipe yet. Add one on the Runs page; it needs a features recipe to take its table from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/comparepage.cpp" line="999"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1391"/>
         <source>⚠ marks %n row(s) whose scores were made under a warning (a sparse catalog, little data): point at the row to read it.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2105,17 +3275,17 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1036"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1428"/>
         <source>Case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1038"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1430"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/comparepage.cpp" line="1066"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1459"/>
         <source>⚠  Not drawn (%n run(s)): %1</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2123,59 +3293,66 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1110"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1503"/>
         <source>Series: %1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1144"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1537"/>
         <source>there is no series to draw</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1159"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1552"/>
         <source>the SVG could not be started</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1164"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1557"/>
         <source>nothing was written</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1175"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1568"/>
         <source>the image could not be written</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1183"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1577"/>
+        <source>Written: %1 · &lt;a href=&quot;%2&quot;&gt;Open file&lt;/a&gt; · &lt;a href=&quot;%3&quot;&gt;Open folder&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/comparepage.cpp" line="1599"/>
+        <source>Copied: %n row(s) of the score table, ready to paste.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="1611"/>
         <source>Export the score table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1184"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1611"/>
         <source>CSV (*.csv)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1189"/>
-        <location filename="../src/modules/study/comparepage.cpp" line="1209"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1616"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1635"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1192"/>
-        <location filename="../src/modules/study/comparepage.cpp" line="1212"/>
-        <source>Written: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1201"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1627"/>
         <source>Export the figure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="1202"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="1628"/>
         <source>PNG image (*.png);;SVG drawing (*.svg)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3506,12 +4683,57 @@ A study is a folder that holds the cases, the recipes and every result. Start or
 <context>
     <name>skg::ExperimentsPane</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="279"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="88"/>
+        <source>(no settings.toml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="102"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="103"/>
+        <source>Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="104"/>
+        <source>Best model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="105"/>
+        <source>val F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="106"/>
+        <source>test F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="107"/>
+        <source>test acc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="108"/>
+        <source>test AUC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="109"/>
+        <source>Settings different from the project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="290"/>
         <source>No experiments yet: set the project and run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/classification/experimentspane.cpp" line="294"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="305"/>
         <source>%1: %n model(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -3519,83 +4741,83 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="297"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="308"/>
         <source>; the project&apos;s settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="298"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="309"/>
         <source>; changed: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="333"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="344"/>
         <source>Cannot read %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="342"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="353"/>
         <source>Delete run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="343"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="354"/>
         <source>Delete the run &apos;%1&apos;: its folder and its rows in experiments.csv?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="359"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
         <source>Report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="359"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="370"/>
         <source>Could not write the report.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="371"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="382"/>
         <source>No experiments yet.
 Choose a project folder and run the steps.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="372"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="383"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="373"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="384"/>
         <source>HTML report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="374"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="385"/>
         <source>Delete run…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="375"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="386"/>
         <source>Open folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="377"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="388"/>
         <source>Reads the project&apos;s experiments from disk again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="379"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="390"/>
         <source>Writes one self-contained HTML page with every run&apos;s scores, confusion matrices and figures, and opens it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="382"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="393"/>
         <source>Deletes the selected run&apos;s folder and its rows in experiments.csv. This cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="385"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="396"/>
         <source>Opens the selected run&apos;s folder in the file manager.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3638,32 +4860,32 @@ Choose a project folder and run the steps.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="116"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="120"/>
         <source>Days are recorded in %1 and filed under %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="139"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="145"/>
         <source>Choose or create a campaign first: the days are recorded in it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="142"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="148"/>
         <source>Give the station code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="144"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="150"/>
         <source>The day after the last must be later than the first day.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="164"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="170"/>
         <source>fdsn %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="165"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="171"/>
         <source>%n day(s) of %1 from %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -3671,87 +4893,87 @@ Choose a project folder and run the steps.</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="175"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="181"/>
         <source>%1: %2 day(s) added, %3 already on disk, %4 back to pending; %5 to fetch from %6 into %7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="212"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="218"/>
         <source>done: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="243"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="249"/>
         <source>only add the days, do not fetch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="244"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="250"/>
         <source>put this station&apos;s failed days back first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="245"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="251"/>
         <source>Fetch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="247"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="253"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="249"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="255"/>
         <source>The station code at the FDSN service, e.g. SVRC. One station per pull.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="251"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="257"/>
         <source>The FDSN network code of the station. KO is KOERI&apos;s network.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="254"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="260"/>
         <source>Which channels to fetch, as an FDSN pattern; ? stands for any one letter. BH? is the three broadband components (BHE, BHN, BHZ).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="257"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="263"/>
         <source>Address of the FDSN dataselect service. The default is KOERI&apos;s.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="259"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="265"/>
         <source>The first UTC day to fetch. Whole days are fetched, one file per day.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="261"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="267"/>
         <source>The day after the last one to fetch: this day itself is not fetched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="264"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="270"/>
         <source>How many times a day is tried before it is marked failed, with a growing pause between tries. Default 5.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="266"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="272"/>
         <source>Adds the days to the FDSN ledger as pending without downloading anything now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="269"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="275"/>
         <source>Before fetching, puts the days of this station that failed earlier back to pending so they are tried again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="273"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="279"/>
         <source>Adds the days to the campaign&apos;s FDSN ledger and downloads the pending ones, oldest first, as a job.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="276"/>
+        <location filename="../src/modules/tdvms/fdsnpane.cpp" line="282"/>
         <source>Stops the pull; the days not yet fetched stay pending.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4332,17 +5554,17 @@ Add them, or drop folders here from the file manager.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="132"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="133"/>
         <source>Folders of waveforms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="164"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="171"/>
         <source>Already covered by a listed folder: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="167"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="174"/>
         <source>Now covered by a folder that holds it, so taken off the list: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5152,50 +6374,129 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
 <context>
     <name>skg::JobModel</name>
     <message>
-        <location filename="../src/jobs/jobmodel.cpp" line="92"/>
+        <location filename="../src/jobs/jobmodel.cpp" line="121"/>
         <source>failed (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobmodel.cpp" line="126"/>
+        <location filename="../src/jobs/jobmodel.cpp" line="167"/>
         <source>Job</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobmodel.cpp" line="128"/>
+        <location filename="../src/jobs/jobmodel.cpp" line="169"/>
         <source>Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobmodel.cpp" line="130"/>
+        <location filename="../src/jobs/jobmodel.cpp" line="171"/>
         <source>State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobmodel.cpp" line="132"/>
+        <location filename="../src/jobs/jobmodel.cpp" line="173"/>
         <source>Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobmodel.cpp" line="134"/>
+        <location filename="../src/jobs/jobmodel.cpp" line="175"/>
+        <source>Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/jobs/jobmodel.cpp" line="177"/>
         <source>Elapsed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::JobNotifier</name>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="84"/>
+        <location filename="../src/app/notifier.cpp" line="125"/>
+        <source>A job failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="85"/>
+        <source>%1 failed after %2. The other jobs go on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="125"/>
+        <source>A job has finished</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="126"/>
+        <source>%1 failed after %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="127"/>
+        <source>%1 finished after %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="129"/>
+        <source>The jobs have ended, some failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="130"/>
+        <source>All jobs have finished</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="131"/>
+        <source>%1 finished</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="133"/>
+        <source>%1 failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/notifier.cpp" line="135"/>
+        <source>%1 stopped</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>skg::JobsPanel</name>
     <message>
-        <location filename="../src/jobs/jobspanel.cpp" line="129"/>
+        <location filename="../src/jobs/jobspanel.cpp" line="150"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobspanel.cpp" line="130"/>
+        <location filename="../src/jobs/jobspanel.cpp" line="151"/>
         <source>Copy log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/jobs/jobspanel.cpp" line="131"/>
+        <location filename="../src/jobs/jobspanel.cpp" line="152"/>
+        <source>Clear finished</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/jobs/jobspanel.cpp" line="154"/>
+        <source>Takes the jobs that have ended out of this list. Their results and the logs written beside them stay where they are.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/jobs/jobspanel.cpp" line="156"/>
+        <source>Stops the selected job.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/jobs/jobspanel.cpp" line="157"/>
+        <source>Copies the selected job&apos;s output to the clipboard.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/jobs/jobspanel.cpp" line="158"/>
         <source>Select a job to see its output.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5265,52 +6566,52 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
 <context>
     <name>skg::LedgerModel</name>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="88"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="91"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="90"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="93"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="92"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="95"/>
         <source>End</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="94"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="97"/>
         <source>State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="96"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="99"/>
         <source>Slot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="98"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="101"/>
         <source>Tries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="100"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="103"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="102"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="105"/>
         <source>Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="104"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="107"/>
         <source>Submitted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="106"/>
+        <location filename="../src/modules/tdvms/ledgermodel.cpp" line="109"/>
         <source>Fetched</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5435,184 +6736,359 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
 <context>
     <name>skg::MainWindow</name>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="350"/>
+        <location filename="../src/app/mainwindow.cpp" line="459"/>
         <source>About sismokaos-gui</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="351"/>
+        <location filename="../src/app/mainwindow.cpp" line="460"/>
         <source>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;A desktop front end for the sismokaos tools: feature extraction, classification and AFAD/TDVMS downloads.&lt;br&gt;Qt %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="356"/>
+        <location filename="../src/app/mainwindow.cpp" line="465"/>
         <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="201"/>
+        <location filename="../src/app/mainwindow.cpp" line="234"/>
         <source>Started: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="206"/>
+        <location filename="../src/app/mainwindow.cpp" line="240"/>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="421"/>
+        <location filename="../src/app/mainwindow.cpp" line="440"/>
+        <source>Diagnostics copied to the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="553"/>
+        <source>No study has been opened yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="675"/>
+        <source>• %1, running for %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/app/mainwindow.cpp" line="682"/>
+        <source>… and %n more</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/app/mainwindow.cpp" line="686"/>
+        <source>%n job(s) are still running:</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/app/mainwindow.cpp" line="690"/>
+        <source>%n more are queued and will not run.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="694"/>
+        <source>Quitting stops them. What a run has not finished is lost and starts again next time; finished runs are kept.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="729"/>
         <source>Jobs ▾</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="421"/>
+        <location filename="../src/app/mainwindow.cpp" line="729"/>
         <source>Jobs ▴</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="428"/>
+        <location filename="../src/app/mainwindow.cpp" line="736"/>
         <source>%n job(s) running</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="443"/>
-        <source>No jobs running</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="449"/>
-        <source>show what went wrong</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="484"/>
-        <source>Jobs still running</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="485"/>
-        <source>%n job(s) are still running. Quit and stop them?</source>
+        <location filename="../src/app/mainwindow.cpp" line="739"/>
+        <source>%n queued</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="524"/>
+        <location filename="../src/app/mainwindow.cpp" line="754"/>
+        <source>No jobs running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="760"/>
+        <source>show what went wrong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="803"/>
+        <source>Jobs still running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="806"/>
+        <source>Stop them and quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="808"/>
+        <source>Keep running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="858"/>
         <source>STUDY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="526"/>
+        <location filename="../src/app/mainwindow.cpp" line="860"/>
         <source>TOOLS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="527"/>
+        <location filename="../src/app/mainwindow.cpp" line="861"/>
         <source>Seismology toolkit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="529"/>
+        <location filename="../src/app/mainwindow.cpp" line="863"/>
         <source>No study is open. A study is a folder that keeps the earthquakes you compare, their settings and their results.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="531"/>
+        <location filename="../src/app/mainwindow.cpp" line="865"/>
         <source>New study…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="533"/>
+        <location filename="../src/app/mainwindow.cpp" line="867"/>
+        <location filename="../src/app/mainwindow.cpp" line="906"/>
         <source>Starts a study in a folder you choose; its results are written there.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="535"/>
+        <location filename="../src/app/mainwindow.cpp" line="869"/>
         <source>Open study…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="537"/>
+        <location filename="../src/app/mainwindow.cpp" line="871"/>
         <source>Opens an existing study folder (the one holding study.toml).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="539"/>
+        <location filename="../src/app/mainwindow.cpp" line="873"/>
         <source>Dismiss</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="544"/>
+        <location filename="../src/app/mainwindow.cpp" line="878"/>
         <source>Jobs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="547"/>
+        <location filename="../src/app/mainwindow.cpp" line="885"/>
+        <source>First time here?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="886"/>
+        <source>New study… and choose an empty folder: the study and all its results live there.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="889"/>
+        <source>On Cases, add an earthquake from the built-in list and tick the stations near it; then add the folder with your waveforms, or get them on the Data page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="893"/>
+        <source>On Runs, create a recipe and run it; Compare shows the results side by side. Every option explains itself when the pointer rests on it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="898"/>
+        <source>The manual walks through a first study in ten minutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="900"/>
+        <source>Got it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="902"/>
+        <source>Hides these first steps for good. The manual stays under Help.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="903"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="548"/>
+        <location filename="../src/app/mainwindow.cpp" line="904"/>
+        <source>&amp;New study…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="908"/>
+        <source>&amp;Open study…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="910"/>
+        <source>Opens an existing study folder (the one holding study.toml). A study folder can also be dropped on the window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="912"/>
+        <source>Open &amp;recent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="913"/>
+        <source>Study &amp;inputs…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="915"/>
+        <source>The earthquake catalog and the waveform folders of the open study.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="917"/>
+        <source>Open the study &amp;folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="919"/>
+        <source>Shows the open study&apos;s folder, with its results, in the file manager.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="921"/>
+        <source>Re&amp;load the study from disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="923"/>
+        <source>Reads study.toml again, after it was edited outside the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="925"/>
+        <source>&amp;Close study</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="926"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="549"/>
+        <location filename="../src/app/mainwindow.cpp" line="927"/>
+        <source>Open the &amp;manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="929"/>
+        <source>The manual of this version, on the web, at the first-study walk-through.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="931"/>
+        <source>&amp;Report a problem…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="933"/>
+        <source>Opens the report form on the web and copies the diagnostics, so they can be pasted into it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="935"/>
+        <source>Copy &amp;diagnostics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="937"/>
+        <source>Copies the version, the system and the size of the open study to the clipboard, for a problem report. It holds no personal paths and no addresses.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="940"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="550"/>
+        <location filename="../src/app/mainwindow.cpp" line="941"/>
         <source>&amp;Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="551"/>
+        <location filename="../src/app/mainwindow.cpp" line="942"/>
         <source>&amp;Theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="552"/>
+        <location filename="../src/app/mainwindow.cpp" line="943"/>
         <source>Follow the system</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="552"/>
+        <location filename="../src/app/mainwindow.cpp" line="943"/>
         <source>Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="553"/>
+        <location filename="../src/app/mainwindow.cpp" line="944"/>
         <source>Dark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="556"/>
+        <location filename="../src/app/mainwindow.cpp" line="947"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="557"/>
+        <location filename="../src/app/mainwindow.cpp" line="948"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="558"/>
+        <location filename="../src/app/mainwindow.cpp" line="949"/>
         <source>Check for &amp;updates…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="559"/>
+        <location filename="../src/app/mainwindow.cpp" line="950"/>
         <source>Check for updates at start</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>skg::PlaceholderWidget</name>
+    <name>skg::PlaceholderModule</name>
     <message>
         <location filename="../src/modules/placeholder/placeholdermodule.cpp" line="46"/>
         <source>Tools: %1</source>
@@ -5737,102 +7213,102 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
 <context>
     <name>skg::RecipeDialog</name>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="459"/>
+        <location filename="../src/modules/study/runspage.cpp" line="609"/>
         <source>Recipe: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="464"/>
+        <location filename="../src/modules/study/runspage.cpp" line="614"/>
         <source>Setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="464"/>
+        <location filename="../src/modules/study/runspage.cpp" line="614"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="491"/>
+        <location filename="../src/modules/study/runspage.cpp" line="641"/>
         <source>(none)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="497"/>
+        <location filename="../src/modules/study/runspage.cpp" line="647"/>
         <source>%1 (no longer in the study)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="508"/>
+        <location filename="../src/modules/study/runspage.cpp" line="658"/>
         <source>Values keep their kind: true/false, a number, text, or a list separated by commas. Changing a setting makes the recipe&apos;s earlier runs stale.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="514"/>
+        <location filename="../src/modules/study/runspage.cpp" line="664"/>
         <source>&quot;Features recipe&quot; is the recipe whose feature table is classified. Classes are ranges of days before the event.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="517"/>
+        <location filename="../src/modules/study/runspage.cpp" line="667"/>
         <source>The study has no features recipe yet, and a classification needs one to take its table from: add a Features recipe, then choose it here. Classes are ranges of days before the event.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="523"/>
+        <location filename="../src/modules/study/runspage.cpp" line="673"/>
         <source>&quot;Features configuration&quot; is a config.json of the Features page; load it with the button below. Empty uses the defaults.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="531"/>
+        <location filename="../src/modules/study/runspage.cpp" line="681"/>
         <source>Load a file into the selected setting…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="533"/>
+        <location filename="../src/modules/study/runspage.cpp" line="683"/>
         <source>Reads a text file (a config.json, a project.toml) into the selected setting. Only settings that hold text take a file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="542"/>
+        <location filename="../src/modules/study/runspage.cpp" line="692"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="558"/>
+        <location filename="../src/modules/study/runspage.cpp" line="708"/>
         <source>Use the study&apos;s catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="561"/>
+        <location filename="../src/modules/study/runspage.cpp" line="711"/>
         <source>Takes the configuration&apos;s own calibration catalog out, so that this recipe reads the study&apos;s catalog like every other.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="577"/>
+        <location filename="../src/modules/study/runspage.cpp" line="727"/>
         <source>The recipe&apos;s name: the column heading on the Runs page and the entry in the Compare lists. The result folders use an id made from the first name, which does not change on a rename.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="605"/>
+        <location filename="../src/modules/study/runspage.cpp" line="755"/>
         <source>Calibration catalog: the study&apos;s.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="606"/>
+        <location filename="../src/modules/study/runspage.cpp" line="756"/>
         <source>⚠  Calibration catalog: the configuration&apos;s own, %1. This recipe does not read the study&apos;s catalog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="649"/>
+        <location filename="../src/modules/study/runspage.cpp" line="799"/>
         <source>Select the setting the file is for first (a setting that holds text).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="657"/>
+        <location filename="../src/modules/study/runspage.cpp" line="807"/>
         <source>Only a text setting can take a file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="677"/>
+        <location filename="../src/modules/study/runspage.cpp" line="828"/>
         <source>This configuration names a calibration catalog of its own:
 %1
 
@@ -5840,17 +7316,17 @@ In a study every case is normally calibrated on the study&apos;s catalog. Which 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="684"/>
+        <location filename="../src/modules/study/runspage.cpp" line="835"/>
         <source>The study&apos;s catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="685"/>
+        <location filename="../src/modules/study/runspage.cpp" line="836"/>
         <source>The configuration&apos;s own</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="715"/>
+        <location filename="../src/modules/study/runspage.cpp" line="866"/>
         <source>%1: &quot;%2&quot; is not the kind of value this setting takes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5858,83 +7334,116 @@ In a study every case is normally calibrated on the study&apos;s catalog. Which 
 <context>
     <name>skg::ReferenceDateDialog</name>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="756"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1373"/>
         <source>Add a reference date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="758"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1380"/>
         <source>A reference date is a case with no earthquake: the same recipes run on the span before it, so it can be read beside the earthquakes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="763"/>
-        <location filename="../src/modules/study/casedialogs.cpp" line="829"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1385"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1488"/>
         <source>Reference</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="772"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1396"/>
         <source>the place and stations of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="773"/>
-        <source>these coordinates, no stations yet</source>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1397"/>
+        <source>these coordinates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="795"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1410"/>
+        <source> days before the date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1420"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="796"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1421"/>
         <source>Date (UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="797"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1422"/>
         <source>Place</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="798"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1423"/>
         <source>Latitude, longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="799"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1424"/>
         <source>Span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="802"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1427"/>
         <source>Add case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="811"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1443"/>
         <source>The case&apos;s name in tables and figures.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="812"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1444"/>
         <source>The date and time (UTC) that takes the place of an earthquake&apos;s origin time: days are counted back from it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="815"/>
-        <source>Where the reference date is studied: the epicentre, zone and stations of an existing case, or coordinates of its own with stations ticked later on the Cases page.</source>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1447"/>
+        <source>Where the reference date is studied: the epicentre, zone and stations of an existing case, or coordinates of its own with the stations near them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="819"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1457"/>
+        <source>Tick the stations the date is studied from. A station that has waveforms, but none in the span before this date, is not ticked to start with: a run on it could not start.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1546"/>
+        <source>⚠ No station is ticked: only the Indicators recipes will run for this case.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1554"/>
+        <source>⚠ %1: waveforms, but none in the span before this date. A run on such a station cannot start.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/casedialogs.cpp" line="1568"/>
+        <source>%n station(s) of %1 are not ticked here.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1574"/>
+        <source>⚠ The span before this date overlaps the span of %1 itself (%2 to %3).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1451"/>
         <source>Latitude and longitude in degrees (north and east positive) of the place, when it is not taken from an existing case.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/casedialogs.cpp" line="822"/>
+        <location filename="../src/modules/study/casedialogs.cpp" line="1454"/>
         <source>How many days before the date are studied. It can be changed later on the Cases page.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6430,108 +7939,240 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
     </message>
 </context>
 <context>
-    <name>skg::RunMatrix</name>
+    <name>skg::RunLogDialog</name>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="217"/>
-        <source>◔  Running %1%</source>
+        <location filename="../src/modules/study/runlog.cpp" line="34"/>
+        <source>Run log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="218"/>
-        <source>◔  Running</source>
+        <location filename="../src/modules/study/runlog.cpp" line="45"/>
+        <source>The run has not written anything yet.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="222"/>
-        <source>⋯  Queued %1</source>
+        <location filename="../src/modules/study/runlog.cpp" line="49"/>
+        <source>find in the log…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="222"/>
-        <source>⋯  Queued</source>
+        <location filename="../src/modules/study/runlog.cpp" line="51"/>
+        <source>Type a word (error, warning, a file name) and press Enter: the next place it occurs in is selected. Enter again goes on to the one after.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="225"/>
-        <source>✓  Done</source>
+        <location filename="../src/modules/study/runlog.cpp" line="54"/>
+        <source>Find next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="225"/>
-        <source>✓  Done  ⚠</source>
+        <location filename="../src/modules/study/runlog.cpp" line="56"/>
+        <source>Selects the next place the text on the left occurs in, starting again at the top after the last one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="227"/>
-        <source>○  Missing</source>
+        <location filename="../src/modules/study/runlog.cpp" line="58"/>
+        <source>Follow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="229"/>
-        <source>↻  Stale</source>
+        <location filename="../src/modules/study/runlog.cpp" line="62"/>
+        <source>While ticked, the view stays at the end as the run writes new lines. Scrolling up to read unticks it; tick it again to go back to the end.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="231"/>
-        <source>✕  Failed</source>
+        <location filename="../src/modules/study/runlog.cpp" line="68"/>
+        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="233"/>
-        <source>⏸  Waiting</source>
+        <location filename="../src/modules/study/runlog.cpp" line="70"/>
+        <source>Reads the file again now. It is also read by itself every second while this window is open.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="343"/>
-        <source>Queued: waiting for %1, which it is run after</source>
+        <location filename="../src/modules/study/runlog.cpp" line="72"/>
+        <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="345"/>
-        <source>Queued, number %1 in the queue</source>
+        <location filename="../src/modules/study/runlog.cpp" line="75"/>
+        <source>Copies the selected lines, or the whole log when nothing is selected, to the clipboard (for a problem report, say).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="77"/>
+        <source>Open in editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="79"/>
+        <source>Opens run.log in the program this computer uses for text files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="80"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="114"/>
+        <source>&quot;%1&quot; is not in the log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="146"/>
+        <source>Cannot read the file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="147"/>
+        <source>No log yet: the run has not started writing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/runlog.cpp" line="156"/>
+        <location filename="../src/modules/study/runlog.cpp" line="192"/>
+        <source>%n line(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runlog.cpp" line="178"/>
+        <source>(the beginning is left out; the whole log is in the file)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>skg::RunsModel</name>
+    <name>skg::RunMatrix</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
-        <source>Run</source>
+        <location filename="../src/modules/study/runspage.cpp" line="262"/>
+        <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="95"/>
-        <source>Models</source>
+        <location filename="../src/modules/study/runspage.cpp" line="300"/>
+        <source>◔  Running %1%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
-        <source>Best model</source>
+        <location filename="../src/modules/study/runspage.cpp" line="301"/>
+        <source>◔  Running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="96"/>
-        <source>val F1</source>
+        <location filename="../src/modules/study/runspage.cpp" line="305"/>
+        <source>⋯  Queued %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="97"/>
-        <source>test F1</source>
+        <location filename="../src/modules/study/runspage.cpp" line="305"/>
+        <source>⋯  Queued</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="97"/>
-        <source>test acc</source>
+        <location filename="../src/modules/study/runspage.cpp" line="308"/>
+        <source>✓  Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="98"/>
-        <source>test AUC</source>
+        <location filename="../src/modules/study/runspage.cpp" line="308"/>
+        <source>✓  Done  ⚠</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="98"/>
-        <source>Settings different from the project</source>
+        <location filename="../src/modules/study/runspage.cpp" line="310"/>
+        <source>○  Missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="312"/>
+        <source>↻  Stale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="314"/>
+        <source>✕  Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="316"/>
+        <source>⏸  Waiting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="427"/>
+        <source>Queued: waiting for %1, which it is run after</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="429"/>
+        <source>Queued, number %1 in the queue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="433"/>
+        <source>running for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>skg::RunWords</name>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="14"/>
+        <source>%1 s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="17"/>
+        <source>%1 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="20"/>
+        <source>%1 h %2 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="21"/>
+        <source>%1 h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="23"/>
+        <source>%1 d %2 h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="23"/>
+        <source>%1 d</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="44"/>
+        <source>Times are this computer&apos;s local time (%1).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="53"/>
+        <source>%1 GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="55"/>
+        <source>%1 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="57"/>
+        <source>%1 kB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runtext.cpp" line="58"/>
+        <source>%1 B</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6551,22 +8192,22 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
 <context>
     <name>skg::RunsPage</name>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="65"/>
+        <location filename="../src/modules/study/runspage.cpp" line="74"/>
         <source>Indicators</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="67"/>
+        <location filename="../src/modules/study/runspage.cpp" line="76"/>
         <source>Features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="69"/>
+        <location filename="../src/modules/study/runspage.cpp" line="78"/>
         <source>Classification</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="93"/>
+        <location filename="../src/modules/study/runspage.cpp" line="102"/>
         <source>(text, %n line(s))</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6574,142 +8215,140 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="915"/>
-        <location filename="../src/modules/study/runspage.cpp" line="919"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1239"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1171"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1175"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1721"/>
         <source>Run the selected cell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="923"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1219"/>
         <source>New recipe  ▾</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="924"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1224"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1220"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1697"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2408"/>
         <source>Edit recipe…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="925"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1431"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1221"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1915"/>
         <source>Remove recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="927"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1223"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2369"/>
         <source>Open folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="928"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1224"/>
         <source>A recipe is one tool&apos;s saved settings; the same recipe on every case is the same analysis.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="903"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1159"/>
         <source>No study is open.
 A study is a folder that holds the cases, the recipes and every result. Start or open one with the buttons above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="906"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1162"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="926"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1222"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2356"/>
         <source>Show log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="940"/>
-        <source>Runs the recipe of the selected cell on its case and station. A cell that is already done is run again only after you confirm; its results are replaced when the new run has succeeded.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/runspage.cpp" line="944"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1244"/>
         <source>Adds a recipe: one tool&apos;s settings under a name, run on every case. Indicators run once per case; Features and Classification once per station. A classification needs a features recipe.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="948"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1248"/>
         <source>Changes the settings of the selected column&apos;s recipe. A changed setting raises the revision and marks its finished runs stale; you are asked first when there are any.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="952"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1252"/>
         <source>Takes the selected column&apos;s recipe out of the study. The result folders stay on disk.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="955"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1255"/>
         <source>Shows what the selected cell&apos;s last run wrote (run.log in its folder), also for a run that failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="958"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1258"/>
         <source>Opens the selected cell&apos;s result folder in the file manager.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="960"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1260"/>
         <source>Opens the page where the next step is done.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="962"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1262"/>
         <source>Setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="962"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1262"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="962"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1262"/>
         <source>Across cases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1086"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1478"/>
         <source>Run missing and stale (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1095"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1495"/>
         <source>%1 running, %2 queued (%3 at a time; the number is on the Settings page).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1101"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1520"/>
         <source>This study has no cases yet. A case is an earthquake (or a reference date) and the stations it is studied from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1104"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1523"/>
         <source>Add cases…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1106"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1525"/>
         <source>No recipes yet. Use New recipe to save one tool&apos;s settings; the recipe is then run on every case.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1109"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1528"/>
         <source>Every cell has a finished run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1111"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1530"/>
         <source>Compare the results</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1113"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1532"/>
         <source>%n cell(s) are waiting for something. Select one to see what it needs and where that is set.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6717,62 +8356,60 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1177"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1633"/>
         <source>⋯  Queued, number %1 of %2: it starts when a run before it has ended (%3 run at a time)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1190"/>
-        <source>last run %1 UTC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1209"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1682"/>
         <source>No recipes yet. Use New recipe to add one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1211"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1684"/>
         <source>No cases yet: the rows of this table are the study&apos;s cases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1213"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1686"/>
         <source>Select a cell to see why it is waiting, what its last run said, or where its files are. The arrow keys move, Enter runs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1219"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1492"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1692"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2380"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2396"/>
         <source>Go to Cases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1220"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1693"/>
         <source>Opens the Cases page, where the catalog, the stations and the waveform folder are set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1225"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1698"/>
         <source>Opens this recipe&apos;s settings, where what it waits for is chosen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1229"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1702"/>
         <source>Select the cell it needs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1230"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1703"/>
         <source>Selects the features cell this classification waits for, so that it can be run or looked at.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1391"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1875"/>
         <source>Edit recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1392"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1876"/>
         <source>Changing a setting of &quot;%1&quot; makes %n finished run(s) stale (its own, and those that build on them). They stay on disk until they are run again.
 
 Save the change?</source>
@@ -6782,12 +8419,12 @@ Save the change?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1423"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1907"/>
         <source>Remove the recipe &quot;%1&quot;? The folders of its runs stay on disk.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1427"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1911"/>
         <source>%n recipe(s) take their feature table from it and will wait until they are given another features recipe: %1.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6795,181 +8432,524 @@ Save the change?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1532"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1948"/>
+        <source>recipe &quot;%1&quot; on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1949"/>
+        <source>recipe &quot;%1&quot; on %2, station %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2132"/>
+        <source>None of those cells can be run now: they are running, queued, or waiting for something.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2139"/>
         <source>Run again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1533"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2140"/>
         <source>&quot;%1&quot; already has a finished run on %2. Run it again?
 
 The finished results stay as they are until the new run has succeeded; a run that is stopped or fails leaves them untouched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1595"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1611"/>
-        <source>Run log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1596"/>
-        <source>Cannot read %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1606"/>
-        <source>(the beginning is left out; the whole log is in the file)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1259"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1741"/>
         <source>RECIPE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="907"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1163"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2346"/>
         <source>Recalibrate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="909"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1138"/>
+        <source>⚠  Nothing can be run into this study now: its folder is not held by this window. Either the folder cannot be written (read-only media, a drive that is full or was unplugged), or the study is open in another window, which is where runs are started. Results that are there can still be looked at.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1165"/>
         <source>Runs the selected features cell with a new calibration. A features run keeps its calibration (the chaos parameters fitted on the station&apos;s quiet periods) and a later run of the same cell uses it again as long as the data, the catalog, the station, the span and the calibration settings are the same; this button makes it afresh all the same.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="921"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1238"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1177"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1720"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2336"/>
         <source>Take out of the queue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="931"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1178"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1719"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2333"/>
+        <source>Stop this run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/runspage.cpp" line="1180"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1718"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2326"/>
+        <source>Run the %n selected cell(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1182"/>
+        <source>show rows with… (case or station)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1184"/>
+        <source>Shows only the rows whose case name or station contains this text. The buttons then act on the rows shown; runs of hidden rows go on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1190"/>
+        <source>All rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1191"/>
+        <source>Rows with a failed or waiting cell</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1192"/>
+        <source>Rows with a cell that is not done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1193"/>
+        <source>Rows that are running or queued</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1196"/>
+        <source>Which rows are shown: all of them, or only those that need attention. &quot;Not done&quot; is missing, stale, failed or waiting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1199"/>
+        <source>Study on disk…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1201"/>
+        <source>Shows what the study&apos;s results take on disk, per case and recipe, and what is left over (working folders of runs that crashed, files of failed runs, results of removed cases and recipes), with a way to remove the leftovers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1206"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1399"/>
+        <source>Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1208"/>
+        <source>What ran, when, for how long and how it ended, read from the run folders: also what ran while you were away. A stopped run leaves nothing and is not listed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
+        <source>Ended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
+        <source>Case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
+        <source>Station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1213"/>
+        <source>Outcome</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1214"/>
+        <source>Took</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1214"/>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1216"/>
+        <source>Latest first; click a heading to sort. A double click selects the run&apos;s cell in the table above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1227"/>
         <source>Queues every cell that is missing or stale. A few run at a time (the number is on the Settings page), the others show Queued; it goes on to the cells they unblock (a classification after its features).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="936"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1232"/>
         <source>Stops the runs this page started and empties the queue: the waiting cells are what they were before. A stopped run leaves nothing behind; what was finished before stays as it was.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1263"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1236"/>
+        <source>Runs the recipe of the selected cell on its case and station. A cell that is already done is run again only after you confirm; its results are replaced when the new run has succeeded. On a cell that is running the button stops that one run, on a queued one it takes it out of the queue; the other runs go on. With several cells selected (Ctrl or Shift and a click) it runs them all. A right click on a cell, a row or a heading has more.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1339"/>
+        <source>%1 of %2 rows shown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1369"/>
+        <source>✓  Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1369"/>
+        <source>✓  Done  ⚠</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1370"/>
+        <source>✕  Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1385"/>
+        <source>started %1, ended %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1400"/>
+        <source>Activity (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1504"/>
+        <source>Started %1: %2 of %3 done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1510"/>
+        <source>, about %1 left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1646"/>
+        <source>running for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1656"/>
+        <source>last run ended %1, took %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1659"/>
+        <source>last run ended %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/runspage.cpp" line="1713"/>
+        <source>%n cell(s) selected. Run them with the button, or right-click for more (stop, open the folders).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1745"/>
         <source>RECIPE · %1 · %2 · REVISION %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1274"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1756"/>
         <source>⚠  none chosen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1275"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1757"/>
         <source>⚠  %1 (no longer in the study)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1280"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1762"/>
         <source>the defaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1282"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1297"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1764"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1779"/>
         <source>fitted per case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1283"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1293"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1765"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1775"/>
         <source>fixed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1290"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1772"/>
         <source>the study&apos;s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1291"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1773"/>
         <source>⚠  the configuration&apos;s own: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1325"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1807"/>
         <source>New recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1326"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1808"/>
         <source>A classification is trained on the feature table of a features recipe, and this study has none yet.
 
 Add a features recipe with the default settings first? (It can be edited afterwards.)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/runspage.cpp" line="2155"/>
+        <source>Run %n cell(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/runspage.cpp" line="2158"/>
+        <source>%n of them already have a finished run and are run again; their results stay as they are until the new run has succeeded.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1338"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1359"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1405"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1439"/>
-        <source>Recipe</source>
+        <location filename="../src/modules/study/runspage.cpp" line="2163"/>
+        <source>%1 run at a time; the others wait in the queue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1462"/>
-        <source>recipe %1 on %2</source>
+        <location filename="../src/modules/study/runspage.cpp" line="2166"/>
+        <source>While they run they need about %1 of temporary space for unpacked archives.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2169"/>
+        <source>Run cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2201"/>
+        <source>needs about %1 of temporary space for unpacked archives, and %2 are free on the study&apos;s disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2206"/>
+        <source>⚠  Not started: this %1. Free some space (&quot;Study on disk…&quot; lists leftovers), or run fewer cells at a time.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2213"/>
+        <source>Little disk space</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2214"/>
+        <source>This %1. That leaves little room for the results themselves.
+
+Run all the same?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2272"/>
+        <source>Duplicate recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2273"/>
+        <source>A copy of &quot;%1&quot; with the same settings, to change one of them in. Its name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2276"/>
+        <source>%1 (copy)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2328"/>
+        <source>Stop the selected cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2339"/>
+        <source>Run again…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2340"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2373"/>
+        <source>Copy the folder&apos;s path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2390"/>
+        <source>Run this row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2392"/>
+        <source>Run this case (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2405"/>
+        <source>Run this recipe on every row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2412"/>
+        <source>Duplicate recipe…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2416"/>
+        <source>Remove recipe…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2589"/>
+        <source>⚠  %1 waits for disk space: it needs about %2 of temporary space, %3 are free.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="2596"/>
+        <source>⚠  %1 was not started: it needs about %2 of temporary space and %3 are free on the study&apos;s disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="1205"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1213"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1820"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1842"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1889"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1923"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2292"/>
+        <source>Recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>skg::ScoreTable</name>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="193"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="215"/>
+        <source>%1, station %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="217"/>
+        <source>A reference date (no earthquake).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="220"/>
+        <source>Magnitude %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="221"/>
+        <source>Magnitude %1, %2 km from the station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="224"/>
+        <source>No finished run: nothing to score yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="226"/>
+        <source>Best model on the validation days: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="227"/>
+        <source>Test F1 %1 (baseline %2: %3, difference %4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="230"/>
+        <source>Test AUC %1 (baseline %2, difference %3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="235"/>
         <source>These scores were made with:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="298"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="335"/>
         <source>Case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="299"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="336"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="300"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="337"/>
         <source>M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="301"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="338"/>
         <source>Dist. (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="302"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="339"/>
         <source>Best model</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="303"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="340"/>
         <source>Test F1  (model over baseline)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="304"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="341"/>
         <source>Test AUC  (model over baseline)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="368"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="405"/>
         <source>missing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="389"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="426"/>
         <source>no baseline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6977,23 +8957,33 @@ Add a features recipe with the default settings first? (It can be edited afterwa
 <context>
     <name>skg::SeriesPlot</name>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="451"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="634"/>
+        <source>the event&apos;s day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="635"/>
+        <source>%1%2 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/comparepage.cpp" line="714"/>
         <source>No series to draw yet.
 Run an indicators or a features recipe on the Runs page, then choose it above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="490"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="777"/>
         <source>+%1 more not drawn (choose with Series)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="544"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="839"/>
         <source>Days before the event</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/comparepage.cpp" line="556"/>
+        <location filename="../src/modules/study/comparepage.cpp" line="851"/>
         <source>event</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7715,12 +9705,12 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
 <context>
     <name>skg::SettingsWidget</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="305"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="375"/>
         <source>Scan results are not kept between studies in this session.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="311"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="381"/>
         <source>Scan results kept for %n waveform file(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -7728,102 +9718,157 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="315"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="385"/>
         <source>⚠ Some of it could not be removed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="345"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="454"/>
         <source>Waveform scan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="346"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="455"/>
         <source>Files read at once</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="348"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="457"/>
         <source>Automatic (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="349"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="458"/>
         <source>Clear scan cache</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="351"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="460"/>
         <source>How many waveform files the exact coverage scan reads at the same time. Automatic leaves two processor cores free and uses at most six, since beyond that the disk is usually the limit. Lower it if the computer gets sluggish during a scan; on a slow external drive a higher number rarely helps. It takes effect with the next scan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="325"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="395"/>
         <source>The exact coverage of every waveform file that was scanned is kept for this user, so a second study on the same data, or the same folder added again or moved to another drive, does not read the files again. This removes those results; the studies&apos; own indexes are not touched, and nothing of your data is deleted. The files are simply read again when needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="313"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="383"/>
         <source>%1 MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="320"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="390"/>
         <source>The results are in %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="334"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="409"/>
         <source>Study runs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="335"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="410"/>
         <source>Runs at the same time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="337"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="412"/>
         <source>How many cells of the Runs page run at the same time; the others wait in the queue and show Queued. Default %1. A feature extraction uses several processor cores and unpacks its waveform files, so more at once is not always faster: raise it on a machine with many cores and a fast disk, lower it if the computer gets sluggish. It takes effect when the next cell starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="361"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="420"/>
+        <source>Long jobs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="421"/>
+        <source>Tell me when jobs end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="422"/>
+        <source>after at least</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="423"/>
+        <source> s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="424"/>
+        <source>Keep the computer awake while jobs run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="426"/>
+        <source>Shows a desktop notification, and makes the taskbar or dock entry ask for attention, when a long job or the last of several ends or fails while this window is not in front. Clicking the notification brings the window back on that job. On a desktop without a notification area only the taskbar entry reacts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="433"/>
+        <source>Only work that took at least this long is announced, in seconds; shorter jobs end while you are still looking. Default 60. With 0 every job is announced.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="440"/>
+        <source>Not available on this system: it has no systemd-inhibit command, which is how the application would ask for it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="443"/>
+        <source>Stops the computer from going to sleep on its own while a job runs, so that a run over night is not suspended half way. The screen may still switch off, and closing a laptop&apos;s lid still suspends it. It takes effect with the next job. Off by default.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="449"/>
+        <source>Advanced: the original command-line tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="451"/>
+        <source>Where the original Python tools are found, for running them beside the application. Nothing in the other pages needs them.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="470"/>
         <source>Interface</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="362"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="471"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="363"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="472"/>
         <source>Theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="364"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="473"/>
         <source>Follow the system</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="365"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="474"/>
         <source>Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="366"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="475"/>
         <source>Dark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="368"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="477"/>
         <source>The language of the application. It changes at once.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="371"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="480"/>
         <source>Light or dark colours, or whichever the system is set to.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7900,6 +9945,194 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     </message>
 </context>
 <context>
+    <name>skg::StudyDiskDialog</name>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="44"/>
+        <source>Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="46"/>
+        <source>Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="48"/>
+        <source>Classification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="54"/>
+        <source>◔  in use by a run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="57"/>
+        <source>✓  result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="59"/>
+        <source>⚠  leftover: working folder of a run that did not end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="62"/>
+        <source>⚠  leftover: files of a failed run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="64"/>
+        <source>kept calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="66"/>
+        <source>⚠  leftover: unpacked archives</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="68"/>
+        <source>⚠  leftover: no longer in the study</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="78"/>
+        <source>Study on disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="89"/>
+        <source>A leftover is something no finished result of the study needs: the working folder of a run that crashed, what a failed run left (with its log), archives a run unpacked, and results of cases, stations or recipes that were removed from the study. Finished results and kept calibrations are never removed here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="97"/>
+        <source>Case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="97"/>
+        <source>Station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="97"/>
+        <source>Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="98"/>
+        <source>Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="98"/>
+        <source>What</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="98"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="111"/>
+        <source>One line per result folder. Click a heading to sort (by size, say); a double click opens the folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="114"/>
+        <source>Clean up leftovers…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="117"/>
+        <source>Lists exactly what would be removed, with sizes, and removes it after you confirm. Finished results, kept calibrations and anything of a run that is queued or going on are left alone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="120"/>
+        <source>Measure again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="122"/>
+        <source>Reads the sizes from the disk again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="123"/>
+        <source>Open the study folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="125"/>
+        <source>Opens the study&apos;s folder in the file manager.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="126"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="169"/>
+        <source>Measuring the study&apos;s folders…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="219"/>
+        <source>This study has no run folders yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="220"/>
+        <source>Results %1 · leftovers %2 · in use or kept %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="225"/>
+        <source>%1 free on the study&apos;s disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/studydisk.cpp" line="250"/>
+        <source>… and %n more</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studydisk.cpp" line="251"/>
+        <location filename="../src/modules/study/studydisk.cpp" line="262"/>
+        <source>Clean up leftovers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/studydisk.cpp" line="252"/>
+        <source>Remove %n leftover folder(s), %1 in all, from the study folder? This cannot be undone.
+
+%2
+
+Finished results are not touched.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/modules/study/studydisk.cpp" line="263"/>
+        <source>%n folder(s) could not be removed (in use by a run, or by another program):
+%1</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>skg::StudyInputsBar</name>
     <message>
         <location filename="../src/studyui/studyinputs.cpp" line="151"/>
@@ -7967,128 +10200,128 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
 <context>
     <name>skg::StudySetupDialog</name>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="193"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="200"/>
         <source>Set up the study</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="197"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="204"/>
         <source>Both parts can be left as they are and changed later on the Cases page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="203"/>
-        <location filename="../src/modules/study/studysetup.cpp" line="302"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="210"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="311"/>
         <source>Earthquake catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="204"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="211"/>
         <source>Start with the built-in list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="206"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="213"/>
         <source>Use my own file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="210"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="217"/>
         <source>%1 earthquakes of magnitude %2 and above since %3, updated %4. Enough to pick the earthquakes of the study. The Indicators and the Features calibration count small earthquakes and need a full catalog, which can be chosen or downloaded later.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="224"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="231"/>
         <source>AFAD catalog export, CSV or .gz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="230"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="237"/>
         <source>times in UTC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="231"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="238"/>
         <source>times in Turkey time (+3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="242"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="249"/>
         <source>Waveform folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="244"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="251"/>
         <source>Folders of miniSEED you already have, plain files or zip archives, in any layout. Waveforms downloaded with the Data page are added by themselves.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="257"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="265"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="258"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="266"/>
         <source>Not now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="272"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="280"/>
         <source>The list of large earthquakes that comes with the application, so cases can be added at once.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="274"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="282"/>
         <source>A catalog file of your own, for example an AFAD export: used for picking the cases and by the analyses.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="278"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="286"/>
         <source>The catalog file: an AFAD export as CSV, plain or .gz.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="279"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="287"/>
         <source>Whether the times in the catalog file are UTC or Turkey time (UTC+3). A wrong choice shifts every event by three hours.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="303"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="311"/>
         <source>AFAD catalog (*.csv *.gz);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="344"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="353"/>
         <source>⚠ The study could not be saved: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="546"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="555"/>
         <source>Earthquake catalog download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="548"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="557"/>
         <source>%1, %2 to %3, M ≥ %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="584"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="593"/>
         <source>The catalog download was stopped; nothing was written.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="586"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="595"/>
         <source>The catalog download failed: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="595"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="604"/>
         <source>The catalog was written to %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studysetup.cpp" line="612"/>
+        <location filename="../src/modules/study/studysetup.cpp" line="621"/>
         <source>The catalog now has %1 earthquakes, most of them of magnitude %2 and above (the smallest is %3). Check that this goes low enough for the Indicators before running them.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8096,129 +10329,134 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
 <context>
     <name>skg::StudySwitcher</name>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="41"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="44"/>
         <source>Study: %1  ▾</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="42"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="45"/>
         <source>No study open  ▾</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="62"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="65"/>
         <source>The earthquake catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="64"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="67"/>
         <source>The station list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="66"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="69"/>
         <source>A waveform folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="68"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="71"/>
         <source>A station&apos;s waveform folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="70"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="73"/>
         <source>A fault file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="88"/>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="131"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="91"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="134"/>
         <source>Study inputs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="89"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="92"/>
         <source>%1 of this study is not where it was:
 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="92"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="95"/>
         <source>If it moved (another disk, another folder), show where it is now. Everything else that moved with it is found from that.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="95"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="98"/>
         <source>Locate…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="96"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="99"/>
         <source>Skip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="103"/>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="105"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="106"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="108"/>
         <source>Where is %1 now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="150"/>
-        <source>Study</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="155"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="164"/>
         <source>New study…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="156"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="165"/>
         <source>Open study…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="158"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="167"/>
         <source>Close study</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="164"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="186"/>
+        <source>Opening it here while it is in use there lets the two write over each other&apos;s results.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="189"/>
+        <source>Open anyway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="215"/>
         <source>Folder for the new study (its results are written here)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="170"/>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="182"/>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="189"/>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="195"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="221"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="230"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="237"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="243"/>
         <source>New study</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="171"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="222"/>
         <source>%1 already holds a study. Open it instead?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="183"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="231"/>
         <source>%1 is not empty. A study writes one folder per earthquake there, beside what the folder holds now. Use it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="189"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="237"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="209"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="258"/>
         <source>Open a study folder (the one holding study.toml)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="175"/>
-        <location filename="../src/modules/study/studyswitcher.cpp" line="214"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="183"/>
+        <location filename="../src/modules/study/studyswitcher.cpp" line="201"/>
         <source>Open study</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8226,12 +10464,12 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
 <context>
     <name>skg::TdvmsModule</name>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.h" line="38"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.h" line="42"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.h" line="40"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.h" line="44"/>
         <source>AFAD/TDVMS download campaigns and FDSN pulls</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8239,133 +10477,145 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
 <context>
     <name>skg::TdvmsWidget</name>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="117"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="131"/>
         <source> s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="129"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="144"/>
         <source>Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="130"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="145"/>
         <source>Slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="131"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="146"/>
         <source>Interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="261"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="615"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="827"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="320"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="787"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1038"/>
         <source>Reset to pending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="291"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="368"/>
         <source>Folder with the campaigns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="340"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="436"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1025"/>
+        <source>▾ All downloads (advanced)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="437"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1026"/>
+        <source>▸ All downloads (advanced)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="478"/>
         <source>%1 has no chunks yet. Plan a station.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="352"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="490"/>
         <source>A run holds %1: pid %2, ledger %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="363"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="385"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="502"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="525"/>
         <source>New campaign</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="364"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="503"/>
         <source>Name (lowercase letters, digits, - and _):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="370"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="510"/>
         <source>Where to keep the downloads (cancel for the campaign folder)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="380"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="520"/>
         <source>cannot create %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="513"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="684"/>
         <source>plan %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="514"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="685"/>
         <source>%1 from %2 to %3 in %4-day windows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="529"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="700"/>
         <source>the portal does not list &apos;%1&apos;. It lists %2 stations as bare codes. Closest by prefix: %3. Untick the check to plan it anyway.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="535"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="706"/>
         <source>(none)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="541"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="712"/>
         <source>%1 is network %2, instrument %3%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="544"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="715"/>
         <source> -- strong motion, an accelerometer rather than a broadband</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="548"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="719"/>
         <source>could not reach the station list (%1); planning %2 unverified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="560"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="731"/>
         <source>planned %1 new chunk(s) for %2; ledger holds %3 chunk(s), %4 pending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="586"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="758"/>
         <source>Archive to file against its window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="587"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="759"/>
         <source>Archives (*.zip *.part);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="594"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="600"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="602"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="766"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="772"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="774"/>
         <source>Ingest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="595"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="767"/>
         <source>%1
 Overwrite the existing archive?</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="616"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="788"/>
         <source>Put %n chunk(s) back to pending?
 %1</source>
         <translation type="unfinished">
@@ -8374,105 +10624,131 @@ Overwrite the existing archive?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="621"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="793"/>
         <source>reset by hand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="642"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="649"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="654"/>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="818"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="814"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="821"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="826"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1029"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="643"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="815"/>
         <source>A base address is needed (the mailbox user, usually).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="655"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="827"/>
         <source>No mailbox credentials are set, so links cannot be read and nothing will be downloaded. Submit anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="671"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="851"/>
         <source>run %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="673"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="853"/>
         <source>%1 slot(s) from %2 on %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="709"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="890"/>
         <source>catalog refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="710"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="891"/>
         <source>stations from the portal, M5+ events from USGS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="715"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="896"/>
         <source>%1: %2 stations; %3: %4 events</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="752"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="934"/>
         <source>Running. Progress and output are in the Jobs panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="754"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="936"/>
         <source>Mailbox: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="755"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="937"/>
         <source>No mailbox credentials set (Mailbox…).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="758"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="940"/>
         <source>%1 is now one of the study&apos;s waveform folders.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="777"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="948"/>
+        <source>Plan station, Ingest archive, Reset and Fetch need a campaign: choose one in the list above, or make one with New campaign…. For a case of the open study, the panel at the top does all of this in one step.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="953"/>
+        <source>A run is in progress: Fetch and the run settings are off until it ends or you press Stop.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="956"/>
+        <source>The study&apos;s download is asking AFAD with this mailbox address: Fetch is off until it ends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="959"/>
+        <source>Stop is off because nothing is running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="964"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1009"/>
+        <source>Plan from AFAD needs a campaign: open or create one below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="979"/>
         <source>New campaign…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="778"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="980"/>
         <source>Plan station…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="779"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="981"/>
         <source>Ingest archive…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="780"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="982"/>
         <source>Show in the Jobs panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="782"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="984"/>
         <source>Opens the Jobs panel at the bottom of the window, where every download shows its progress and its full log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="787"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="989"/>
         <source>%1 to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="793"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="995"/>
         <source>Stations chosen on the map: %n. Set the period in the form you use.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8480,7 +10756,7 @@ Overwrite the existing archive?</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="797"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="999"/>
         <source>Waveforms wanted: %n station(s), %1</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8488,7 +10764,7 @@ Overwrite the existing archive?</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="800"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1002"/>
         <source>Waveforms wanted for %1: %n station(s), %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8496,208 +10772,213 @@ Overwrite the existing archive?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="804"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1011"/>
+        <source>Shows every download with its requests, the run settings, the coverage view and the FDSN form: the expert view of this page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1013"/>
         <source>Plan from AFAD…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="805"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1014"/>
         <source>Fill the FDSN form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="806"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1015"/>
         <source>Dismiss</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="808"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1017"/>
         <source>The station of the case to download next. The plan dialog and the FDSN form start on it and on the case&apos;s span.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="811"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1020"/>
         <source>Opens the plan dialog on this station and the case&apos;s span, to request the archives from AFAD&apos;s portal.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="814"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1023"/>
         <source>Puts this station and the case&apos;s span into the FDSN tab, to pull the days from an FDSN service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="822"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1033"/>
         <source>Mailbox…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="823"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1034"/>
         <source>Fetch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="773"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="975"/>
         <source>No campaign open.
 Choose a data folder, then New campaign… to plan the stations and dates to download.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="775"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="977"/>
         <source>folder holding the campaigns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="816"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1027"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="817"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1028"/>
         <source>Refresh catalogs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="819"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1030"/>
         <source>stop when every chunk has an outcome</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="820"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1031"/>
         <source>one cycle only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="821"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1032"/>
         <source>dry run (no mail flagged, no submissions)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="825"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1036"/>
         <source>The run log appears here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="826"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1037"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="828"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1039"/>
         <source>Chunks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="829"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1040"/>
         <source>Coverage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="830"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1041"/>
         <source>FDSN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="831"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1042"/>
         <source>Map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="833"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1044"/>
         <source>Where the stations are: every station of the portal, and the ones chosen for download. Click a station to choose it or take it out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="839"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1050"/>
         <source>all states</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="846"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1057"/>
         <source>The folder that holds your download campaigns. Each campaign is a sub-folder under campaigns/ with its ledger (the list of requests) and the downloaded archives.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="849"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1060"/>
         <source>The campaign shown and run: one set of stations and time windows to download.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="852"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1063"/>
         <source>Starts a campaign: a name and, if the archives should go to another disk, the download folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="855"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1066"/>
         <source>Adds chunks to the campaign: a station and the time windows to request for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="858"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1069"/>
         <source>Files an archive you obtained by other means against the chunk whose window it matches.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="861"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1072"/>
         <source>Reads the campaign&apos;s ledger from disk again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="863"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1074"/>
         <source>Downloads the current station list from the portal and the M5+ events from USGS, used by the plan dialog and the coverage view.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="867"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1078"/>
         <source>The IMAP login of the mailbox the portal writes to, the default number of slots and where to send notifications.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="870"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1081"/>
         <source>The e-mail address requests are made with, usually the mailbox user. The portal mails the download links to plus-addresses of it (you+a1@…), one per slot.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="874"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1085"/>
         <source>How many requests may be open at the portal at once. Each slot is a plus-address of its own, so every reply can be matched to its request. More slots download faster, up to what the portal accepts per address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="879"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1090"/>
         <source>Seconds between two cycles. A cycle reads the inbox, downloads the links that arrived, frees stale slots and submits new requests. Default 60 s.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="883"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1094"/>
         <source>The run ends by itself when no chunk is pending or submitted any more. Unticked, it keeps cycling until you press Stop.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="886"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1097"/>
         <source>Does a single cycle (read the inbox, download, free slots, submit) and stops.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="889"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1100"/>
         <source>Reads the mailbox and works out what it would do, but marks no mail as handled and submits no request. For checking the setup.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="893"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1104"/>
         <source>Starts the run as a job. It appears in the Jobs panel and the log below shows each cycle.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="896"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1107"/>
         <source>Ends the run after the current cycle.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="898"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1109"/>
         <source>Shows only the chunks in one state: pending (not yet requested), submitted (waiting for the mail), fetched, nodata, failed, retired or claimed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="902"/>
+        <location filename="../src/modules/tdvms/tdvmsmodule.cpp" line="1113"/>
         <source>Puts the selected chunks back to pending so they are requested again, for example after a failure.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8705,67 +10986,67 @@ Choose a data folder, then New campaign… to plan the stations and dates to dow
 <context>
     <name>skg::ToolBox</name>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="84"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="90"/>
         <source>Executable of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="93"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="99"/>
         <source>Project directory of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="102"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="108"/>
         <source>asking %1 for its version...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="125"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="131"/>
         <source>Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="126"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="132"/>
         <source>executable (optional; found on PATH or in the project&apos;s .venv otherwise)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="129"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="135"/>
         <source>project directory (the checkout with pyproject.toml)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="130"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="136"/>
         <source>Executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="131"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="137"/>
         <source>Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="132"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="138"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="134"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="140"/>
         <source>Optional: the tool&apos;s command-line executable, for running the original tool beside the application. Empty looks on the PATH and in the project&apos;s .venv. Nothing in the other pages needs it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="139"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="145"/>
         <source>Optional: the tool&apos;s project directory, a checkout with its pyproject.toml. Its .venv is searched for the executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="143"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="149"/>
         <source>Asks the tool for its version to see whether it can be run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/settings/settingsmodule.cpp" line="154"/>
+        <location filename="../src/modules/settings/settingsmodule.cpp" line="160"/>
         <source>the configured path is not an executable file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8811,37 +11092,37 @@ Choose a data folder, then New campaign… to plan the stations and dates to dow
 <context>
     <name>skg::TrialsModel</name>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="169"/>
         <source>Model</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="169"/>
         <source>train F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="158"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="169"/>
         <source>val F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="170"/>
         <source>test F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="170"/>
         <source>test acc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="159"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="170"/>
         <source>test AUC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/classification/experimentspane.cpp" line="160"/>
+        <location filename="../src/modules/classification/experimentspane.cpp" line="171"/>
         <source>Parameters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8849,69 +11130,83 @@ Choose a data folder, then New campaign… to plan the stations and dates to dow
 <context>
     <name>skg::UpdateCheck</name>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="109"/>
-        <location filename="../src/app/updatecheck.cpp" line="120"/>
-        <location filename="../src/app/updatecheck.cpp" line="127"/>
+        <location filename="../src/app/updatecheck.cpp" line="184"/>
+        <location filename="../src/app/updatecheck.cpp" line="211"/>
+        <location filename="../src/app/updatecheck.cpp" line="218"/>
         <source>Check for updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="110"/>
+        <location filename="../src/app/updatecheck.cpp" line="185"/>
         <source>Could not reach GitHub: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="121"/>
+        <location filename="../src/app/updatecheck.cpp" line="212"/>
         <source>No release has been published yet.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="128"/>
+        <location filename="../src/app/updatecheck.cpp" line="219"/>
         <source>sismokaos-gui %1 is the latest version.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <location filename="../src/app/updatecheck.cpp" line="235"/>
+        <source>%n job(s) are still running. Updating closes the application, which stops them; what they have finished is kept.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="140"/>
+        <location filename="../src/app/updatecheck.cpp" line="249"/>
+        <source>The application did not close, so the update was not started.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/updatecheck.cpp" line="270"/>
         <source>Update available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="141"/>
+        <location filename="../src/app/updatecheck.cpp" line="271"/>
         <source>sismokaos-gui %1 is available (this is %2).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="145"/>
+        <location filename="../src/app/updatecheck.cpp" line="275"/>
         <source>No updater was found beside the application; the release page has the downloads.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="147"/>
+        <location filename="../src/app/updatecheck.cpp" line="277"/>
         <source>Update now closes the application, replaces it with the new version and starts it again. Your settings and data are kept.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="155"/>
+        <location filename="../src/app/updatecheck.cpp" line="285"/>
         <source>Update now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="157"/>
+        <location filename="../src/app/updatecheck.cpp" line="287"/>
         <source>Open release page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="158"/>
+        <location filename="../src/app/updatecheck.cpp" line="288"/>
         <source>Later</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="165"/>
+        <location filename="../src/app/updatecheck.cpp" line="234"/>
+        <location filename="../src/app/updatecheck.cpp" line="293"/>
         <source>Update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/updatecheck.cpp" line="166"/>
+        <location filename="../src/app/updatecheck.cpp" line="256"/>
         <source>The updater could not be started: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8919,47 +11214,47 @@ Choose a data folder, then New campaign… to plan the stations and dates to dow
 <context>
     <name>skg::WaveScan</name>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="113"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="219"/>
         <source>Waveforms: which stations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="113"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="219"/>
         <source>Waveforms: coverage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="84"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="180"/>
         <source>%1 GB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="85"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="181"/>
         <source>%1 MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="91"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="187"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="93"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="189"/>
         <source>%1 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="94"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="190"/>
         <source>%1 h %2 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="115"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="221"/>
         <source>the names and the first record of every file in the waveform folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/waveforms.cpp" line="117"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="223"/>
         <source>every record header in the waveform folders, %n file(s) at a time</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8967,65 +11262,70 @@ Choose a data folder, then New campaign… to plan the stations and dates to dow
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="147"/>
-        <location filename="../src/modules/study/waveforms.cpp" line="172"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="298"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="323"/>
         <source>%1 of %2 files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="162"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="313"/>
         <source>%1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="166"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="317"/>
         <source>%1/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="169"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="320"/>
         <source>about %1 left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="206"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="381"/>
         <source>Looking for stations…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="206"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="381"/>
         <source>Reading coverage…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="213"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="388"/>
         <source>%1%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="215"/>
-        <location filename="../src/modules/study/waveforms.cpp" line="219"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="390"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="394"/>
         <source>Looking for stations: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="217"/>
-        <location filename="../src/modules/study/waveforms.cpp" line="220"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="392"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="395"/>
         <source>Reading coverage: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="218"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="393"/>
         <source>Reading coverage: %1, %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="243"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="438"/>
+        <source>Not available now (a drive that is not connected?), what was known of it is kept: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="442"/>
         <source>The scan was stopped; what it had read is kept.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="244"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="443"/>
         <source>The scan ended with errors; see the Jobs panel.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9033,259 +11333,267 @@ Choose a data folder, then New campaign… to plan the stations and dates to dow
 <context>
     <name>skg::WaveformsDialog</name>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="264"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="463"/>
         <source>Waveforms of this study</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="266"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="465"/>
         <source>Folders holding the waveforms you already have. Any layout works: the station, the channels and the times are read from the miniSEED headers, plain files or zip archives, not from folder or file names. Other files are listed as skipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="278"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="477"/>
         <source>Add folders…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="280"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="479"/>
         <source>Moved…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="281"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="480"/>
+        <location filename="../tests/tst_study_scan.cpp" line="1506"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="282"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="481"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="849"/>
+        <location filename="../tests/tst_study_scan.cpp" line="1504"/>
         <source>Scan again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="283"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="482"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="304"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="503"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="304"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="503"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="304"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="503"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="304"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="503"/>
         <source>Rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="305"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="504"/>
         <source>First day</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="305"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="504"/>
         <source>Last day</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="305"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="504"/>
         <source>Days with data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="305"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="504"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="306"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="505"/>
         <source>Coordinates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="306"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="505"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="316"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="515"/>
         <source>No stations yet.
 Add the folder that holds your miniSEED files, or drop it here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="322"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="521"/>
         <source>Type coordinates…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="323"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="522"/>
         <source>Load StationXML…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="325"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="524"/>
         <source>Find earthquakes near these…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="331"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="530"/>
         <source>Station coverage…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="334"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="533"/>
         <source>A map of what the selected stations cover (all of them when none is selected): the area within a distance of them and the earthquakes of the catalog that fall inside it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="355"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="554"/>
         <source>The waveform folders of this study. Each is scanned through all its sub-folders, except those whose name starts with _ or a dot.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="358"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="557"/>
         <source>Adds one or several folders of miniSEED files (plain or zipped) and scans them. Hold Ctrl or Shift to pick more than one. A folder of station folders (stations/CODE/…) is added once, as a whole; folders can also be dropped on this window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="363"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="562"/>
         <source>Goes on to adding a case, listing only the earthquakes close to the stations selected in the table (all stations when none is selected).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="367"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="566"/>
         <source>Tells the study that the selected folder now lives somewhere else, for example on another drive. Files that did not change are not read again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="371"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="570"/>
         <source>Takes the selected folder out of the study. Nothing on disk is deleted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="374"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="573"/>
         <source>Looks at the folders again. Only new or changed files are read.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="376"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="575"/>
         <source>Stops the scan. What it has read so far is kept.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="378"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="577"/>
         <source>One row per station found in the files. Last day and Days with data are exact once the coverage has been read. Until then they are an estimate from the periods in the file names, marked ≈ (gaps are not known yet), or a dash when the names carry no period.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="384"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="583"/>
         <source>For a station the station list does not know: type its latitude and longitude once. They are kept in the study and used for distances and for the Features calibration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="388"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="587"/>
         <source>Reads station coordinates from a StationXML file (as FDSN data centres provide) for the stations the station list does not know.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="392"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="591"/>
         <source>Lists the files that were not recognised as miniSEED, with the reason.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="443"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="642"/>
         <source>The study could not be saved: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="461"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="663"/>
         <source>%1  (not found)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="503"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="665"/>
+        <source>%1  (holds nothing now: a drive that is not connected? What was known of it is kept)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="711"/>
         <source>%1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="504"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="712"/>
         <source>unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="507"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="715"/>
         <source>station list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="512"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="720"/>
         <source>StationXML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="513"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="721"/>
         <source>typed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="520"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="728"/>
         <source>⚠ no coordinates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="523"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="731"/>
         <source>⚠ mixed sample rates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="525"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="733"/>
         <source>⚠ in a folder named %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="528"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="736"/>
         <source>shares files with other stations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="540"/>
-        <location filename="../src/modules/study/waveforms.cpp" line="544"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="748"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="752"/>
         <source>≈ %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="541"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="749"/>
         <source>≥ %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="560"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="768"/>
         <source>Skipped files (%1)…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="567"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="775"/>
         <source>%1 stations in %2 files; coverage not read yet for %3 of them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="572"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="780"/>
         <source>%1 stations in %2 files; coverage read for all.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/waveforms.cpp" line="577"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="785"/>
         <source>%n file(s) shown by an estimate from their names until then (≈)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9293,7 +11601,7 @@ Add the folder that holds your miniSEED files, or drop it here.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/waveforms.cpp" line="584"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="792"/>
         <source>⚠ %n station(s) are not in the station list. Select the row and type the coordinates, or load a StationXML file; without them the station cannot be offered for a case.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9301,67 +11609,83 @@ Add the folder that holds your miniSEED files, or drop it here.</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="595"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="803"/>
         <source>Folders of waveforms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="606"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="820"/>
         <source>Already covered by a listed folder: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="609"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="823"/>
         <source>Now covered by a folder that holds it, so taken off the list (its files are read again once): %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="638"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="842"/>
+        <source>These folders hold nothing now:
+
+%1
+
+If a drive is just not connected, keep what the study knows of them: connect it and scan again. Forget their files only if they are really gone.
+
+Forget what the study knows of these folders?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="874"/>
         <source>Where the folder is now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="678"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="903"/>
+        <source>The scan is still stopping; try again in a moment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/waveforms.cpp" line="931"/>
         <source>Coordinates of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="691"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="944"/>
         <source>Latitude (°N)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="692"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="945"/>
         <source>Longitude (°E)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="700"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="953"/>
         <source>Latitude of the station in decimal degrees, north positive.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="702"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="955"/>
         <source>Longitude of the station in decimal degrees, east positive.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="717"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="970"/>
         <source>StationXML file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="718"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="971"/>
         <source>StationXML (*.xml);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="740"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="993"/>
         <source>%1 of the %2 stations in the file are in the waveform folders and now have coordinates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/waveforms.cpp" line="757"/>
+        <location filename="../src/modules/study/waveforms.cpp" line="1010"/>
         <source>Files that were skipped</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9683,67 +12007,67 @@ Add the folder that holds your miniSEED files, or drop it here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1326"/>
+        <location filename="../src/study/runs.cpp" line="1335"/>
         <source>its features: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1339"/>
+        <location filename="../src/study/runs.cpp" line="1348"/>
         <source>the catalog lists earthquakes from about magnitude %1 up (%2 events): the completeness magnitude will be estimated near that, and the indicators describe the large earthquakes only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1346"/>
+        <location filename="../src/study/runs.cpp" line="1355"/>
         <source>the catalog thins out below about magnitude %1, above the recipe&apos;s completeness magnitude %2: the b-value is computed on a range the catalog does not fill</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1356"/>
+        <location filename="../src/study/runs.cpp" line="1365"/>
         <source>the catalog lists earthquakes from about magnitude %1 up (%2 events): the quiet windows of the calibration only avoid earthquakes of that size and larger; smaller local ones are not excluded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1366"/>
+        <location filename="../src/study/runs.cpp" line="1375"/>
         <source>%1 has waveforms on about %2 of the %3 days of the span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1368"/>
+        <location filename="../src/study/runs.cpp" line="1377"/>
         <source>%1 has waveforms on only %2 of the %3 days of the span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1410"/>
+        <location filename="../src/study/runs.cpp" line="1419"/>
         <source>cannot create %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1426"/>
+        <location filename="../src/study/runs.cpp" line="1435"/>
         <source>warning: the run log cannot be written: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1454"/>
+        <location filename="../src/study/runs.cpp" line="1463"/>
         <source>warning: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1463"/>
+        <location filename="../src/study/runs.cpp" line="1472"/>
         <source>unknown tool %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1490"/>
+        <location filename="../src/study/runs.cpp" line="1499"/>
         <source>cannot write %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1499"/>
+        <location filename="../src/study/runs.cpp" line="1508"/>
         <source>cannot replace %1 with the new run, which is kept in %2 (is a file of the folder open?)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1505"/>
+        <location filename="../src/study/runs.cpp" line="1514"/>
         <source>cannot move the finished run from %1 into place</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9751,22 +12075,38 @@ Add the folder that holds your miniSEED files, or drop it here.</source>
 <context>
     <name>skg::study::StudyStore</name>
     <message>
-        <location filename="../src/study/store.cpp" line="34"/>
-        <source>%1 already holds a study</source>
+        <location filename="../src/study/store.cpp" line="59"/>
+        <source>This study is open on another computer (%1, by %2). Close it there first. If that computer no longer has it open (it crashed or was switched off), it can be opened here anyway.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/study/store.cpp" line="67"/>
+        <source>This study is already open in another window (%1, process %2). A study is open in one window at a time, so that two do not write its results over each other. Close it there first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/store.cpp" line="120"/>
+        <source>%1 already holds a study</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/store.cpp" line="174"/>
+        <location filename="../src/study/store.cpp" line="184"/>
         <source>No study is open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/store.cpp" line="98"/>
+        <location filename="../src/study/store.cpp" line="191"/>
+        <source>The study file changed on disk since it was read, so this change was not saved over it. Reload the study (File &gt; Reload the study from disk) and make the change again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/store.cpp" line="226"/>
         <source>The study that was open last, %1, is not there any more (a moved folder or an unplugged disk).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/store.cpp" line="108"/>
+        <location filename="../src/study/store.cpp" line="236"/>
         <source>The study in %1 could not be opened: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9774,47 +12114,47 @@ Add the folder that holds your miniSEED files, or drop it here.</source>
 <context>
     <name>skg::study::StudyText</name>
     <message>
-        <location filename="../src/study/study.cpp" line="212"/>
+        <location filename="../src/study/study.cpp" line="213"/>
         <source>the study has no folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="214"/>
+        <location filename="../src/study/study.cpp" line="215"/>
         <source>cannot create %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="562"/>
+        <location filename="../src/study/study.cpp" line="661"/>
         <source>study.toml, line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="569"/>
+        <location filename="../src/study/study.cpp" line="668"/>
         <source>study.toml has schema %1; this version reads 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="615"/>
+        <location filename="../src/study/study.cpp" line="718"/>
         <source>study.toml: a case has no id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="617"/>
+        <location filename="../src/study/study.cpp" line="720"/>
         <source>study.toml: two cases have the id %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="621"/>
+        <location filename="../src/study/study.cpp" line="724"/>
         <source>study.toml: case %1 has no valid time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="675"/>
+        <location filename="../src/study/study.cpp" line="778"/>
         <source>study.toml: a recipe has no id or no tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="678"/>
+        <location filename="../src/study/study.cpp" line="781"/>
         <source>study.toml: two recipes have the id %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9822,17 +12162,17 @@ Add the folder that holds your miniSEED files, or drop it here.</source>
 <context>
     <name>skg::study::WaveText</name>
     <message>
-        <location filename="../src/study/waveindex.cpp" line="920"/>
+        <location filename="../src/study/waveindex.cpp" line="987"/>
         <source>the folder %1 does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/waveindex.cpp" line="1091"/>
+        <location filename="../src/study/waveindex.cpp" line="1209"/>
         <source>cannot open %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/waveindex.cpp" line="1133"/>
+        <location filename="../src/study/waveindex.cpp" line="1251"/>
         <source>%1 names no station with coordinates</source>
         <translation type="unfinished"></translation>
     </message>

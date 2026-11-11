@@ -2,6 +2,7 @@
 
 #include "core/ui.h"
 
+#include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDir>
 #include <QDirIterator>
@@ -84,18 +85,28 @@ public:
     case Changes:
       return r.changes ? (r.changes->isEmpty() ? QStringLiteral("-")
                                                : r.changes->join(", "))
-                       : QStringLiteral("(no settings.toml)");
+                       : QCoreApplication::translate("skg::ExperimentsPane",
+                                                     "(no settings.toml)");
     }
     return {};
   }
   QVariant headerData(int s, Qt::Orientation o, int role) const override {
     if (o != Qt::Horizontal || role != Qt::DisplayRole)
       return {};
-    static const QStringList h{
-        tr("Run"),        tr("Models"),
-        tr("Best model"), tr("val F1"),
-        tr("test F1"),    tr("test acc"),
-        tr("test AUC"),   tr("Settings different from the project")};
+    // No Q_OBJECT here, so tr() would look the texts up under the base
+    // class and never find them; they are filed under the pane. Not cached:
+    // the language can change while the application runs.
+    const auto t = [](const char *text) {
+      return QCoreApplication::translate("skg::ExperimentsPane", text);
+    };
+    const QStringList h{t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "Run")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "Models")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "Best model")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "val F1")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "test F1")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "test acc")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "test AUC")),
+                        t(QT_TRANSLATE_NOOP("skg::ExperimentsPane", "Settings different from the project"))};
     return h.value(s);
   }
 
