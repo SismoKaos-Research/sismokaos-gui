@@ -64,6 +64,8 @@ QString Watch::stalled(const QList<Row> &rows) const {
       .arg(oldest / 3600, 0, 'f', 1);
 }
 
+const QString kCompleteSuffix = QStringLiteral(": complete");
+
 void Watch::after(const CycleResult &result) {
   if (!notify_)
     return;
@@ -138,7 +140,7 @@ void Watch::after(const CycleResult &result) {
         if (str(r, "state") == QLatin1String("fetched"))
           gb += bytesOf(r) / 1e9;
       }
-      notify_(name_ + QStringLiteral(": complete"),
+      notify_(name_ + kCompleteSuffix,
               QStringLiteral(
                   "%1 fetched (%2 GB), %3 no data, %4 failed, %5 retired.")
                   .arg(by.value("fetched"))
@@ -181,6 +183,14 @@ Notify makeNotifier(const QStringList &targets, Http *http,
     }
   };
 }
+
+// The run's lines end up on screen and in bug reports: the addresses in
+// them are masked (the slot's tag stays, it is what tells requests apart).
+namespace {
+void say(TaskContext &ctx, const QString &line) {
+  ctx.log(maskAddresses(line));
+}
+} // namespace
 
 // --- the loop --------------------------------------------------------------
 
@@ -227,7 +237,7 @@ void loop(TaskContext &ctx, Ledger &ledger, Pool &pool,
   while (!ctx.cancelled()) {
     const QString s = stamp();
     auto log = [&](const QString &m) {
-      ctx.log(QStringLiteral("[%1] %2").arg(s, m));
+      say(ctx, QStringLiteral("[%1] %2").arg(s, m));
     };
     const CycleResult result =
         runCycle(ledger, pool, cfg, mailbox, portal, http, log,
@@ -282,7 +292,7 @@ TaskJob::Work campaignWork(const Campaign &campaign, const RunOptions &opt,
   return [campaign, opt, desktop](TaskContext &ctx) -> int {
     Ledger ledger(campaign.ledgerPath);
     if (ledger.rows().isEmpty()) {
-      ctx.log(QStringLiteral("[ERROR] %1 is empty. Plan a station first.")
+      say(ctx, QStringLiteral("[ERROR] %1 is empty. Plan a station first.")
                   .arg(ledger.path()));
       return 2;
     }
@@ -296,7 +306,7 @@ TaskJob::Work campaignWork(const Campaign &campaign, const RunOptions &opt,
             opt.address, ledger.path(),
             describe(opt, outDir, QStringLiteral("run")));
       } catch (const PoolHeld &e) {
-        ctx.log(
+        say(ctx, 
             QStringLiteral(
                 "[ERROR] %1 is already being worked (%2). Two runs on one "
                 "address share its slots and its inbox. Stop that run first.")
@@ -306,16 +316,16 @@ TaskJob::Work campaignWork(const Campaign &campaign, const RunOptions &opt,
     }
     SupervisorConfig cfg = opt.supervisor;
     cfg.outDir = outDir;
-    auto log = [&ctx](const QString &m) { ctx.log(m); };
+    auto log = [&ctx](const QString &m) { say(ctx, m); };
     RunPieces pieces = makePieces(opt, desktop, log);
     std::unique_ptr<Watch> watch;
     if (!cfg.dryRun && pieces.notify)
       watch =
           std::make_unique<Watch>(pieces.notify, campaign.name, ledger, pool);
     if (cfg.dryRun)
-      ctx.log(QStringLiteral(
+      say(ctx, QStringLiteral(
           "dry run -- no mail flagged, no ledger writes, no submissions"));
-    ctx.log(QStringLiteral("%1 slot(s) from %2; ledger %3; archives to %4%5")
+    say(ctx, QStringLiteral("%1 slot(s) from %2; ledger %3; archives to %4%5")
                 .arg(pool.size())
                 .arg(opt.address, ledger.path(), outDir,
                      opt.notifyTargets.isEmpty()
@@ -323,13 +333,13 @@ TaskJob::Work campaignWork(const Campaign &campaign, const RunOptions &opt,
                          : QStringLiteral("; notifying %1")
                                .arg(opt.notifyTargets.join(", "))));
     if (!pieces.mailbox)
-      ctx.log(QStringLiteral(
+      say(ctx, QStringLiteral(
           "no mailbox credentials: links will not be read until they are set"));
     loop(ctx, ledger, pool, cfg, pieces.mailbox.get(), pieces.portal.get(),
          pieces.http.get(), opt.intervalSeconds, opt.once, opt.exitWhenDone,
          watch.get());
     if (ctx.cancelled())
-      ctx.log(QStringLiteral(
+      say(ctx, QStringLiteral(
           "stopped. Nothing is lost -- the ledger is the state, and every "
           "in-flight chunk is reclaimed by the next run."));
     return 0;
@@ -348,16 +358,16 @@ TaskJob::Work queueWork(const QList<Campaign> &campaigns, const RunOptions &opt,
           opt.address, campaigns.first().ledgerPath,
           describe(opt, campaigns.first().raw, QStringLiteral("queue")));
     } catch (const PoolHeld &e) {
-      ctx.log(QStringLiteral("[ERROR] %1 is already being worked (%2).")
+      say(ctx, QStringLiteral("[ERROR] %1 is already being worked (%2).")
                   .arg(opt.address, e.what()));
       return 3;
     }
-    auto log = [&ctx](const QString &m) { ctx.log(m); };
+    auto log = [&ctx](const QString &m) { say(ctx, m); };
     RunPieces pieces = makePieces(opt, desktop, log);
     QStringList names;
     for (const Campaign &c : campaigns)
       names << c.name;
-    ctx.log(QStringLiteral("queue: %1; %2 slot(s) from %3")
+    say(ctx, QStringLiteral("queue: %1; %2 slot(s) from %3")
                 .arg(names.join(" -> "))
                 .arg(pool.size())
                 .arg(opt.address));
@@ -367,12 +377,12 @@ TaskJob::Work queueWork(const QList<Campaign> &campaigns, const RunOptions &opt,
       Ledger ledger(c.ledgerPath);
       const QList<Row> rows = ledger.rows();
       if (rows.isEmpty()) {
-        ctx.log(QStringLiteral("== %1: %2 is empty, skipping")
+        say(ctx, QStringLiteral("== %1: %2 is empty, skipping")
                     .arg(c.name, c.ledgerPath));
         continue;
       }
       if (ledger.complete()) {
-        ctx.log(
+        say(ctx, 
             QStringLiteral("== %1: already complete, skipping").arg(c.name));
         continue;
       }
@@ -383,7 +393,7 @@ TaskJob::Work queueWork(const QList<Campaign> &campaigns, const RunOptions &opt,
         pending += str(r, "state") == QLatin1String("pending");
         inflight += kInFlight.contains(str(r, "state"));
       }
-      ctx.log(QStringLiteral("== %1: %2 pending, %3 in flight; archives to %4")
+      say(ctx, QStringLiteral("== %1: %2 pending, %3 in flight; archives to %4")
                   .arg(c.name)
                   .arg(pending)
                   .arg(inflight)
@@ -397,7 +407,7 @@ TaskJob::Work queueWork(const QList<Campaign> &campaigns, const RunOptions &opt,
            pieces.http.get(), opt.intervalSeconds, false, true, watch.get());
     }
     if (!ctx.cancelled()) {
-      ctx.log(QStringLiteral("queue finished"));
+      say(ctx, QStringLiteral("queue finished"));
       if (pieces.notify)
         pieces.notify(QStringLiteral("tdvms: queue finished"),
                       QStringLiteral("%1: every chunk has an outcome.")

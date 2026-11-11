@@ -17,10 +17,8 @@ const QRegularExpression kMemberRe(QStringLiteral(
     R"(^(?:[A-Z0-9]{2})_([A-Z0-9]+)_(\d{8})_(\d{6})_(\d{8})_(\d{6}))"));
 
 QDateTime stamp(const QString &ddmmyyyy, const QString &hhmmss) {
-  QDateTime t = QDateTime::fromString(ddmmyyyy + hhmmss,
-                                      QStringLiteral("ddMMyyyyHHmmss"));
-  t.setTimeZone(QTimeZone::utc());
-  return t;
+  return naiveUtc(ddmmyyyy, QStringLiteral("ddMMyyyy"), hhmmss,
+                  QStringLiteral("HHmmss"));
 }
 } // namespace
 

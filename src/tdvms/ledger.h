@@ -37,6 +37,16 @@ QString nowStamp();
 std::optional<double> ageSeconds(const QString &stamp,
                                  const QDateTime &reference = {});
 QDateTime parseStamp(const QString &stamp);
+// A zone-less time, "yyyy-MM-dd" or "yyyy-MM-ddTHH:mm:ss[.zzz]", read as
+// UTC. It is put together from its date and its time of day: reading it as
+// local time first and relabelling it shifts every time that falls in the
+// hour a local clock skips when summer time begins. Invalid when the text is
+// not such a time.
+QDateTime naiveUtc(const QString &text);
+// The same from separate date and time texts in the given formats
+// ("ddMMyyyy", "HHmmss").
+QDateTime naiveUtc(const QString &date, const QString &dateFormat,
+                   const QString &time, const QString &timeFormat);
 
 // Field helpers: JSON null and a missing key both read as empty.
 QString str(const Row &row, const char *key);

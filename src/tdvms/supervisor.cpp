@@ -109,12 +109,6 @@ struct Ctx {
   bool stopping() const { return shouldStop && shouldStop(); }
 };
 
-QDateTime naiveUtc(const QString &iso) {
-  QDateTime t = QDateTime::fromString(iso, Qt::ISODate);
-  t.setTimeZone(QTimeZone::utc());
-  return t;
-}
-
 void freeSlot(Pool &pool, const QString &email) {
   if (Slot *s = pool.get(email))
     s->holding.reset();

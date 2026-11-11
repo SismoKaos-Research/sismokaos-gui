@@ -36,17 +36,48 @@ QString nowStamp() {
          QStringLiteral("+00:00");
 }
 
+QDateTime naiveUtc(const QString &text) {
+  const QString t = text.trimmed();
+  const QDate date = QDate::fromString(t.left(10), Qt::ISODate);
+  if (!date.isValid())
+    return {};
+  if (t.size() == 10)
+    return QDateTime(date, QTime(0, 0), QTimeZone::utc());
+  if (t.size() < 16 || (t[10] != QLatin1Char('T') && t[10] != QLatin1Char(' ')))
+    return {};
+  const QString clock = t.mid(11);
+  QTime time = QTime::fromString(clock, Qt::ISODateWithMs);
+  if (!time.isValid())
+    time = QTime::fromString(clock, Qt::ISODate);
+  if (!time.isValid())
+    return {};
+  return QDateTime(date, time, QTimeZone::utc());
+}
+
+QDateTime naiveUtc(const QString &date, const QString &dateFormat,
+                   const QString &time, const QString &timeFormat) {
+  const QDate d = QDate::fromString(date, dateFormat);
+  const QTime t = QTime::fromString(time, timeFormat);
+  if (!d.isValid() || !t.isValid())
+    return {};
+  return QDateTime(d, t, QTimeZone::utc());
+}
+
 QDateTime parseStamp(const QString &stamp) {
   if (stamp.isEmpty())
     return {};
+  // A stamp that names its zone ("Z", "+00:00") is an instant as it stands.
+  // One without is UTC, as in Python; it is never read as local time, which
+  // would move it when it falls in a skipped hour.
+  const QString clock = stamp.mid(10);
+  const bool zoned = stamp.endsWith(QLatin1Char('Z')) ||
+                     clock.contains(QLatin1Char('+')) ||
+                     clock.contains(QLatin1Char('-'));
+  if (!zoned)
+    return naiveUtc(stamp);
   QDateTime t = QDateTime::fromString(stamp, Qt::ISODateWithMs);
   if (!t.isValid())
     t = QDateTime::fromString(stamp, Qt::ISODate);
-  if (!t.isValid())
-    return {};
-  if (t.timeSpec() == Qt::LocalTime && !stamp.contains('+') &&
-      !stamp.endsWith('Z') && stamp.count('-') <= 2)
-    t.setTimeZone(QTimeZone::utc()); // naive stamps are UTC, as in Python
   return t;
 }
 

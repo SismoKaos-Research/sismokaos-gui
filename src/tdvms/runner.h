@@ -32,6 +32,10 @@ struct RunOptions {
   QStringList notifyTargets;
 };
 
+// How the title of the "every request has an outcome" notification ends. A
+// sink that announces the end of the job by other means can leave it out.
+extern const QString kCompleteSuffix; // ": complete"
+
 // A notification sink: the GUI shows a tray message and/or posts to ntfy.
 using Notify =
     std::function<void(const QString &title, const QString &body, bool urgent)>;

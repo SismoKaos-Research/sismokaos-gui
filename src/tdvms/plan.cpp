@@ -18,12 +18,10 @@ namespace {
 QDateTime naive(const QString &iso) {
   // Ledger times are naive local-less timestamps; treat them as UTC so day
   // arithmetic never crosses a DST change.
-  QDateTime t = QDateTime::fromString(iso, Qt::ISODate);
-  if (!t.isValid())
-    t = QDateTime::fromString(iso, QStringLiteral("yyyy-MM-dd"));
+  // (Put together from date and time of day: see naiveUtc in ledger.h.)
+  const QDateTime t = naiveUtc(iso);
   if (!t.isValid())
     throw std::invalid_argument(("not an ISO date: " + iso).toStdString());
-  t.setTimeZone(QTimeZone::utc());
   return t;
 }
 
