@@ -153,7 +153,7 @@ bool hasWaveformsIn(const study::Study &study, const study::StationRef &s,
 
 QString waveformNote(const study::Study &study, const study::StationRef &s,
                      const QDateTime &from, const QDateTime &to) {
-  const int total = int(std::max<qint64>(1, from.daysTo(to)));
+  const int total = std::max(1, study::spanCalendarDays(from, to));
   if (!s.dataDir.isEmpty()) {
     const QString dir = study.resolved(s.dataDir);
     return QDir(dir).exists()

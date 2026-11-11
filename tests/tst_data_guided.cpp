@@ -445,9 +445,9 @@ void TstDataGuided::aCaseListsStationsAndWhatIsMissing() {
   QCOMPARE(table->rowCount(), 2);
   // AAA: the study has four days of the span as the case has it (its
   // first file ends before the span begins that day); BBB: none.
-  QVERIFY2(cell(table, "AAA", 1).startsWith("4 of 13"),
+  QVERIFY2(cell(table, "AAA", 1).startsWith("4 of 14"),
            qPrintable(cell(table, "AAA", 1)));
-  QVERIFY2(cell(table, "BBB", 1).startsWith("none of 13"),
+  QVERIFY2(cell(table, "BBB", 1).startsWith("none of 14"),
            qPrintable(cell(table, "BBB", 1)));
   // The source follows the rule: AAA is on the portal's list, BBB is not.
   auto *fromA = child<QComboBox>(page, "guideFrom_AAA");
@@ -551,7 +551,7 @@ void TstDataGuided::theCountIsTheOneCasesAndRunsShow() {
   QVERIFY2(cell(table, "EEE", 3).startsWith("14 day"),
            qPrintable(cell(table, "EEE", 3)));
   // A station the study knows nothing of: plainly none.
-  QVERIFY(cell(table, "BBB", 1).startsWith("none of 13"));
+  QVERIFY(cell(table, "BBB", 1).startsWith("none of 14"));
 }
 
 // A study is held by the window that opened it (a lock file in its folder).
@@ -910,7 +910,7 @@ void TstDataGuided::theMapAddsStationsToTheList() {
   QCOMPARE(guide->stations(),
            (QStringList{QStringLiteral("AAA"), QStringLiteral("CCC")}));
   QCOMPARE(table->rowCount(), 2);
-  QVERIFY(cell(table, "CCC", 1).startsWith("none of 13"));
+  QVERIFY(cell(table, "CCC", 1).startsWith("none of 14"));
   QCOMPARE(map->selected().size(), 2);
   // A second click takes it out again.
   emit map->toggled(QStringLiteral("CCC"));

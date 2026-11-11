@@ -190,6 +190,12 @@ struct SpanData {
 };
 SpanData spanData(const WaveIndex &index, const QString &station,
                   const QDateTime &from, const QDateTime &to);
+// How many UTC calendar days the period [from, to) touches: what the days
+// with data are counted out of, so "N of M days" can never have N above M.
+// A year from midnight to midnight is 365 (366 in a leap year); the same
+// year from 14:00 to 14:00 touches one day more; a period of less than a
+// day is 1, or 2 across a midnight; an empty or reversed one is 0.
+int spanCalendarDays(const QDateTime &from, const QDateTime &to);
 
 // How many finished runs of `before` are no longer finished and current in
 // `after` (the same study after an edit): what a change would make stale.

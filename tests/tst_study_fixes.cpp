@@ -440,7 +440,7 @@ void TstStudyFixes::littleDataInTheSpanIsAWarning() {
   const SpanData thin =
       spanData(*WaveIndex::shared(s.dir), "THIN", c.spanStart(), c.time);
   QCOMPARE(thin.days, 3);
-  QCOMPARE(thin.spanDays, 365);
+  QCOMPARE(thin.spanDays, 366); // the days a 365-day span from 17:55 touches
   QVERIFY(thin.thin());
   const SpanData early =
       spanData(*WaveIndex::shared(s.dir), "EARLY", c.spanStart(), c.time);
@@ -450,7 +450,7 @@ void TstStudyFixes::littleDataInTheSpanIsAWarning() {
   const Cell cell = cellOf(s, c, QStringLiteral("THIN"), f);
   QCOMPARE(cell.state, CellState::Missing);
   QVERIFY2(cell.warnings.join('\n').contains(QStringLiteral(
-               "THIN has waveforms on only 3 of the 365 days of the span")),
+               "THIN has waveforms on only 3 of the 366 days of the span")),
            qPrintable(cell.warnings.join('\n')));
   QVERIFY(cellOf(s, c, QStringLiteral("EARLY"), f).warnings.isEmpty());
   QVERIFY(double(3) < defaults::kMinSpanCoverage * 365);

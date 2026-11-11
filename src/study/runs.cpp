@@ -1288,10 +1288,19 @@ bool SpanData::thin() const {
          double(days) < defaults::kMinSpanCoverage * double(spanDays);
 }
 
+int spanCalendarDays(const QDateTime &from, const QDateTime &to) {
+  if (!from.isValid() || !to.isValid() || to <= from)
+    return 0;
+  // The last instant of the period is just before `to`.
+  const QDate first = from.toUTC().date();
+  const QDate last = to.toUTC().addMSecs(-1).date();
+  return int(first.daysTo(last)) + 1;
+}
+
 SpanData spanData(const WaveIndex &index, const QString &station,
                   const QDateTime &from, const QDateTime &to) {
   SpanData d;
-  d.spanDays = int(std::max<qint64>(0, from.daysTo(to)));
+  d.spanDays = spanCalendarDays(from, to);
   for (const WaveStation &ws : index.stations()) {
     if (ws.code.compare(station, Qt::CaseInsensitive) != 0)
       continue;

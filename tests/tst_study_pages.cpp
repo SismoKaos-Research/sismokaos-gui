@@ -988,7 +988,7 @@ void TstStudyPages::waveformsOnCases() {
   QVERIFY(rowOf("SYN1") >= 0);
   QCOMPARE(stations->columnCount(), 5);
   QTRY_COMPARE(stations->item(rowOf("SYN1"), 4)->text(),
-               QStringLiteral("found: 3 of 270 days in span  ⚠ little of the span"));
+               QStringLiteral("found: 3 of 271 days in span  ⚠ little of the span"));
   QTRY_VERIFY2(summary->text().contains(QStringLiteral("2 station")),
                qPrintable(summary->text()));
   QVERIFY2(summary->text().contains(QStringLiteral("1 file")),
@@ -1011,7 +1011,7 @@ void TstStudyPages::waveformsOnCases() {
   writeDays(root + "/SYN1/later.mseed", "SYN1", inA.addDays(9), 2);
   QVERIFY(store_->update([&root](Study &st) { st.addWaveformRoot(root); }));
   QTRY_COMPARE_WITH_TIMEOUT(stations->item(rowOf("SYN1"), 4)->text(),
-                            QStringLiteral("found: 5 of 270 days in span  ⚠ little of the span"),
+                            QStringLiteral("found: 5 of 271 days in span  ⚠ little of the span"),
                             20000);
   // Every station of the case has waveforms: recipes are the next step.
   QCOMPARE(page.findChild<QPushButton *>(QStringLiteral("nextRecipes"))->text(),
@@ -1061,7 +1061,7 @@ void TstStudyPages::waveformsOnCases() {
   QCOMPARE(asked, 2);
   QCOMPARE(store_->study().cases[0].spanDays, 200);
   QTRY_COMPARE(stations->item(rowOf("SYN1"), 4)->text(),
-               QStringLiteral("found: 5 of 200 days in span  ⚠ little of the span"));
+               QStringLiteral("found: 5 of 201 days in span  ⚠ little of the span"));
   // Leaving a field without changing it saves nothing and asks nothing.
   emit span->editingFinished();
   QCOMPARE(asked, 2);
@@ -1114,7 +1114,7 @@ void TstStudyPages::waveformsOnCases() {
   writeDays(root + "/SYN1/last.mseed", "SYN1", inA.addDays(20), 2);
   QVERIFY(store_->update([&root](Study &st) { st.addWaveformRoot(root); }));
   QTRY_COMPARE_WITH_TIMEOUT(stations->item(rowOf("SYN1"), 4)->text(),
-                            QStringLiteral("found: 7 of 200 days in span  ⚠ little of the span"),
+                            QStringLiteral("found: 7 of 201 days in span  ⚠ little of the span"),
                             20000);
 }
 
