@@ -334,6 +334,51 @@ opens the disk dialog, and `SeriesPlot::readout` is the guide's text on the
 Compare plot. The page reports how many cells wait through
 `reportQueue()` into `ctx.queue` (see "Shell services").
 
+### What a run reads, and when it is stale
+
+- **Signatures are versioned.** `runSignature()` in `study/runs.cpp` writes
+  `indicators|v2|…`, `features|v2|…` and `classification|v2|…`. A record
+  without `|v2|` is stale with a reason of its own per tool (what changed in
+  that tool's results). When a change alters what a tool computes, raise the
+  version and word the reason; do not let old and new numbers stand as
+  equally current.
+- **The span is half-open**, `[span start, case time)`: `runFeatures` sets
+  `fx::Config::startEpoch` and `endEpoch` (JSON `from`/`to`), and
+  `preprocessDirectory` leaves out data before the first and at or after the
+  second, cutting a record that straddles an end. `spanCalendarDays()`
+  describes the same span.
+- **One sensor.** `fx::Config::channels` names the sensor family (`HH`,
+  `00.HH`); empty takes the only one, else the one with most data and a
+  warning. Records are indexed as `RecordRef` (32 bytes, with a channel
+  number into the run's `ChannelTable`), not with a string per record.
+  `study::sensorChoices(study)` fills the recipe dialog's editable drop-down
+  for the `channels` key from the index.
+- **Inputs are identified by content.** The run stamp and the calibration
+  key use `ScanCache::identityLine(path, onlyIfKnown)`: name, size and a
+  content fingerprint, never the file's time. With `onlyIfKnown` nothing is
+  read, which is how the matrix is drawn without touching a file; a file
+  this session has not read yet is then taken as unchanged until a scan or
+  a run reads it.
+- **The mainshock** is found by `eventOfCase` (same place and magnitude, or
+  the largest event within 15 h, 1° and 1 magnitude unit); failing that,
+  a large event in the 15 h before the case's time cuts the span and warns.
+- **Classification** takes `win_sec` from the metadata the features run
+  wrote (`<stem>_run_metadata.json`), failing clearly without it, and drops
+  a window that ends after the event.
+- **Folders of a live run.** `runCell` registers its folders in `LiveRuns`
+  for as long as it works, and refuses to run when another live process
+  holds the study's lock. Staging is a fresh `.unzipped-XXXXXX` per call
+  holding a lock file; `fx::stagingInUse(dir)` says whether a staging folder
+  belongs to a run that is alive, and both the next run and `cleanUp` leave
+  such a folder alone, as they do a finished run that waits in `.tmp` to be
+  put in place (`RunHooks::renameFolder` is the test seam for a swap that
+  fails).
+- **Stopping and quitting.** A stop during any phase leaves nothing
+  (`fx::Stopped`). `~TaskJob` waits for its thread however long; the main
+  window's `waitForStoppingJobs()` shows the *Stopping…* window while it
+  does, and `quitWithoutWaiting` (a hook, so tests can observe it) is what
+  *Quit now* calls after ten seconds. One libsvm fit cannot be interrupted.
+
 ### Adding cases
 
 `AddFromCatalogDialog` returns `results()`, a list of cases, and
@@ -531,12 +576,15 @@ then `toUTC()` or `setTimeZone(UTC)`: the first reads the string in the
 computer's zone, the second moves times that fall in a local daylight-saving
 gap. Build the time from its date and time parts with `QTimeZone::UTC`:
 `tdvms::naiveUtc()` in the download code and, in the analysis code,
-`fx::parseIsoUtc()` (the two do the same job in libraries that do not depend
-on each other). The catalog's `catalog_utc_offset_hours` is applied once, in
-`analysis::loadEvents`, and every tool reads the catalog through it. Tests
-that touch times must pass in any zone; the time-sensitive suites are also
-registered a second time with `TZ=Europe/Istanbul` (the `_istanbul` entries
-in `tests/CMakeLists.txt`), since the CI machines run in UTC.
+`fx::parseIsoUtc()` (`fx/csv.h`; the two do the same job in libraries that do
+not depend on each other). The catalog's `catalog_utc_offset_hours` is
+applied once, in `analysis::loadEvents`, and every tool reads the catalog
+through it: a Features run hands the calibration a UTC copy written from
+those events, never the original file. Tests that touch times must pass in
+any zone; the time-sensitive suites are also registered a second time with
+`TZ=Europe/Istanbul` (the `<name>_istanbul` entries in
+`tests/CMakeLists.txt`), since the CI machines run in UTC. The variable has
+no effect on Windows, where those entries run in the system's zone.
 
 **Text from outside.** Catalog files are decoded with `text::decode()`
 (UTF-8, else Windows-1254), never Latin-1. Place names an event service

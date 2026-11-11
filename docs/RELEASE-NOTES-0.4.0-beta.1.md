@@ -95,8 +95,8 @@ differ from the same analysis in this version. Do not put old and new
 numbers side by side.
 
 Version 0.3.0 had no studies. If you have a study from an earlier
-development build, **every run in it reads as stale once**, with the reason
-on the cell: run them again.
+development build, **every run in it, of all three tools, reads as stale
+once**, with the reason on the cell: run them again.
 
 - **Catalog times.** A time with no time zone in a catalog is now read as
   UTC on every computer. Before, it was read in the computer's own zone, so
@@ -105,8 +105,9 @@ on the cell: run them again.
   on the tool pages as well as in a study.
 - **The earthquake stays out of its own span.** It is now found in the
   catalog also when the case was picked from another list or the catalog's
-  clock is shifted. Before, in those situations the earthquake and its first
-  aftershocks could be counted as events before it.
+  clock is shifted, within 15 hours. Before, in those situations the
+  earthquake and its first aftershocks could be counted as events before
+  it.
 - **Classification windows.** A window that ends after the earthquake is no
   longer counted as "before" it. Before, an earthquake in the first minutes
   of an hour left a few windows that held the shaking in the first class.
@@ -123,11 +124,26 @@ on the cell: run them again.
   warning, when the study's catalog does not go down to small magnitudes
   (the built-in list, a USGS download).
 
-Also fixed, without a change to correct results: a download that broke off
-part way was kept as a complete file; archives under a folder with Turkish
-letters in its name could not be read on Windows; an unplugged drive could
-empty a study's waveform index; two windows on one study could overwrite
-each other.
+Also fixed, without a change to correct results:
+
+- a download that broke off part way was kept as a complete file;
+- archives under a folder with Turkish letters in its name could not be read
+  on Windows;
+- an unplugged drive could empty a study's waveform index;
+- two windows on one study could overwrite each other;
+- a `.gz` catalog made of several parts was read only as far as its last
+  part's length said, silently;
+- two files of the same name in different folders of one archive overwrote
+  each other when unpacked, so one of them was lost;
+- a second copy of the application could delete the unpacked files of a run
+  that was still at work (Windows and macOS);
+- a long Features run needed several gigabytes of memory for its list of
+  records: 137 bytes per record before, 32 now, as measured on a test index;
+- a finished run whose result could not replace the old one, because a file
+  was open in another program, was computed again; it is now kept and put in
+  place by the next run;
+- quitting during a run could end the application abruptly; it now waits,
+  showing what is still stopping.
 
 ## Known limits
 

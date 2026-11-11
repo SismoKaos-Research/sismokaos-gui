@@ -666,7 +666,12 @@ results, kept calibrations and anything of a run that is queued or going on
 are left alone.
 
 While this window does not hold the study, nothing can be started or queued;
-the line above the matrix says why.
+the line above the matrix says why. The runs themselves refuse as well when
+another running copy of the application holds the study.
+
+Unpacked archives and working folders belong to one run. Another run, and
+*Clean up leftovers…*, leave alone what a run at work is using and a
+finished result that still waits in its `.tmp` to be put in place.
 
 **One progress bar per run.** A Features run goes through up to three
 phases: *Unpacking the archives* (when the station's files are zips; done
@@ -719,8 +724,12 @@ with an earlier version of the application reads as stale and says so: run
 it again. With version 0.4 that is every earlier run, once, because what a
 run reads and how times are read changed; see
 [What the numbers mean](#what-the-numbers-mean-and-what-changed). Whether
-the waveform files changed is judged by their content, not by their dates,
-so data copied to another drive does not make runs stale.
+the waveform files changed is judged by their name, size and content, not by
+their dates, so data copied to another drive, or restored with other dates,
+does not make runs stale or a calibration be made again. The content is
+taken from what a scan or a run has read of a file: a file replaced by
+another of the same name and size is noticed by a cell only after *Scan
+again*, or a run, has read it.
 
 A finished run whose result could not take its folder's place, because a
 file of the old result was open in another program, is kept: the message
@@ -878,9 +887,11 @@ moved every such event three hours.
 **The earthquake stays out of its own span.** The span of a case ends at the
 earthquake and does not include it. The earthquake is looked up in the
 study's catalog also when the case was picked from another list (the
-built-in one, say) or the catalog's clock is off by hours; if a large event
-sits just before the case's time and cannot be told from the earthquake, the
-span is cut at it and the run carries a warning.
+built-in one, say) or the catalog's clock is off: the largest event within
+15 hours, about a degree and a magnitude unit of the case counts as the
+earthquake. If none matches and a large event sits within the 15 hours
+before the case's time, the span is cut at that event and the run carries a
+warning.
 
 **Features read the span, and one sensor.**
 
@@ -889,12 +900,15 @@ span is cut at it and the run carries a warning.
   parameters therefore sees only what came before the earthquake, never the
   aftershocks. Earlier versions read whole files, and with three-week
   archives that included up to three weeks after it. On the Features page
-  itself the whole folder is read unless you give *Read from* and *Read up
-  to*.
+  itself the whole folder is read unless you give *Read from (UTC)* and
+  *Read up to (UTC)*. The span is half-open: data at the span's start is
+  read, data at the earthquake's time is not.
 - A station's files can hold more than one sensor (a broadband and an
   accelerometer, or two location codes). One is read: the one named in the
-  recipe's *Channels* setting; else the only one there is; else the one with
-  the most data in the span, with a warning that says which were left out.
+  recipe's *Channels* setting (a list of the sensors the study's waveform
+  folders hold for its stations, which also takes a typed value such as
+  `HH`); else the only one there is; else the one with the most data in the
+  span, with a warning that says which were left out.
   Earlier versions wrote all of them into the same series when their sample
   rates agreed, which gave a mixture of the two.
 
@@ -904,13 +918,21 @@ on. Earlier versions cut by the hour in which a window started, so an
 earthquake in the first minutes of an hour left a few windows holding the
 shaking in the first class.
 
-**Runs made before these changes are stale once.** A Features run made by an
-earlier version says so and why ("read the whole waveform files … and every
-sensor in them"), its kept calibration is not used again, and a
-Classification follows its Features. Indicators and Classification runs are
-marked the same way, since the reading of times, the cut at the earthquake
-and the cut of the windows can change their numbers. Run them again; do not
-set old and new numbers side by side.
+**Runs made before these changes are stale once**, for all three tools, each
+with its reason on the cell:
+
+- Features: "made by an earlier version, which read the whole waveform files
+  (also what they hold after the earthquake) and every sensor in them:
+  features are now limited to the case's span and to one sensor of the
+  station". Its kept calibration is not used again.
+- Indicators: "made by an earlier version: times in the catalog are now read
+  as UTC whatever this computer's time zone, and the earthquake itself is
+  kept out of the span whichever catalog it was picked from".
+- Classification: "made by an earlier version: windows that end after the
+  earthquake are no longer counted as before it, and the window length is
+  taken from the features run".
+
+Run them again; do not set old and new numbers side by side.
 
 **A sparse catalog limits what can be said.** The built-in list (magnitude 5
 and above) is for picking earthquakes only. A catalog downloaded from USGS
@@ -1168,14 +1190,17 @@ study](#tool-pages-and-the-open-study)).
 - **Config**: a `config.json`. *Load…* reads one in either layout (the Rust
   tool's keys or the Python tool's upper-case keys), *Save* writes the
   settings currently shown. Without a config file the defaults are used.
-- **Read from (UTC)** and **Read up to (UTC)**, both optional: only the
-  records of that period are read, also for the calibration. Left empty, the
-  whole folder is read. A study's Features recipes set them to the case's
-  span by themselves.
+- **Read from (UTC)** and **Read up to (UTC)**, both optional, as a date or
+  a date and time (`2020-01-24` or `2020-01-24T17:55:00`): only data
+  recorded at or after the first and before the second is read, also for the
+  calibration. Left empty, the whole folder is read. A study's Features
+  recipes set them to the case's span by themselves.
 - **Channels**, optional: which sensor of the station to read when its files
-  hold more than one (a pattern such as `HH?` or `HN?`). Left empty, the
-  only one is read, or the one with the most data, with a warning naming the
-  ones left out. Two sensors are never mixed into one series.
+  hold more than one: the first two letters of the channel code, such as
+  `HH` (broadband) or `HN` (accelerometer), with a location code in front
+  when needed (`00.HH`). Left empty, the only one is read, or the one with
+  the most data, with a warning naming the ones left out. Two sensors are
+  never mixed into one series.
 
 ### Settings
 
@@ -1697,7 +1722,12 @@ Stated plainly, so that nobody finds them the hard way:
 - **What does not stop at once.** A stop is taken up between the steps of a
   run. Unpacking stops inside an archive and model training between rounds,
   but one fit of a support vector machine cannot be interrupted and is
-  waited for, also when quitting.
+  waited for. On quitting, a *Stopping…* window names the jobs that are
+  still winding down; after ten seconds it offers *Quit now*, which ends
+  the application without waiting for them.
+- **A replaced waveform file of the same name and size** is not noticed by
+  the Runs page until *Scan again*, or a run, has read it; file dates are
+  deliberately not used to tell files apart.
 - **The bar of a Features run** divides its phases by fixed shares, a guess
   from one real session; the time left is that of the current phase only.
 - **Downloads from an FDSN service** all use the one service and channel
