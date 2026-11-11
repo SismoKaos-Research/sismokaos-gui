@@ -882,8 +882,7 @@ void WaveformsDialog::repoint() {
         // names under the folder that moved follows it.
         s.relocate(old, path);
         for (study::WaveRoot &r : s.waveRoots)
-          if (r.id == id && QDir::cleanPath(s.resolved(r.path)) !=
-                                QDir::cleanPath(path))
+          if (r.id == id && !study::sameFolder(s.resolved(r.path), path))
             r.path = s.stored(path); // the old place is still there
       }))
     scan_->start();

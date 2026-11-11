@@ -20,15 +20,9 @@ StudyStore::StudyStore(QSettings *settings, QObject *parent)
 
 StudyStore::~StudyStore() = default; // releases the lock
 
-namespace {
-
-bool sameFolder(const QString &a, const QString &b) {
-  const QString ca = QFileInfo(a).canonicalFilePath();
-  const QString cb = QFileInfo(b).canonicalFilePath();
-  return !ca.isEmpty() && ca == cb;
-}
-
-} // namespace
+// "The same study folder" below is study::sameFolder (study.h): as the file
+// system sees it, so another spelling of the folder (letter case where the
+// volume ignores it, a link) is not taken for another study.
 
 std::unique_ptr<QLockFile> StudyStore::takeLock(const QString &dir,
                                                 bool breakLock, bool *unlocked,
