@@ -90,6 +90,9 @@ private:
   void addReference();
   void chooseCatalog();
   void applyFilter();
+  // Whether the study can be changed from this window (it holds its lock).
+  bool editable() const;
+  void updateEditable();
   void fillMenu(QMenu *menu);
   void saveTableState();
   void fitColumns();
@@ -123,8 +126,9 @@ private:
 
   QStackedWidget *stack_;
   QLabel *noStudy_;
-  QPushButton *newStudy_, *openStudy_;
   QLabel *banner_;
+  QLabel *lockNote_;   // why nothing can be changed, when nothing can
+  QPushButton *reload_; // the study file changed on disk: read it again
   QGroupBox *inputs_;
   QLabel *catalogLabel_, *dataLabel_, *waveSummary_;
   QLineEdit *catalog_;

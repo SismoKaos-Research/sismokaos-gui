@@ -51,6 +51,7 @@
 #include "modules/study/casedialogs.h"
 #include "modules/study/casemap.h"
 #include "modules/study/coveragedialog.h"
+#include "modules/study/studydisk.h"
 #include "modules/study/studysetup.h"
 #include "modules/study/studyswitcher.h"
 #include "modules/study/waveforms.h"
@@ -69,37 +70,6 @@ using study::Case;
 using study::Study;
 
 namespace {
-
-// File and folder pickers that start where the same dialog was left last
-// time. LOCAL STAND-IN for ui::pickFile / ui::pickFolder (the shell stream
-// adds those with the same arguments): swap the calls and delete this.
-namespace localPick {
-QString startDir(QSettings *settings, const QString &key,
-                 const QString &fallback) {
-  const QString last =
-      settings ? settings->value(QStringLiteral("dialogs/") + key).toString()
-               : QString();
-  return !last.isEmpty() && QDir(last).exists() ? last : fallback;
-}
-QString pickFile(QWidget *parent, QSettings *settings, const QString &key,
-                 const QString &title, const QString &fallbackDir,
-                 const QString &filter) {
-  const QString path = QFileDialog::getOpenFileName(
-      parent, title, startDir(settings, key, fallbackDir), filter);
-  if (!path.isEmpty() && settings)
-    settings->setValue(QStringLiteral("dialogs/") + key,
-                       QFileInfo(path).absolutePath());
-  return path;
-}
-QString pickFolder(QWidget *parent, QSettings *settings, const QString &key,
-                   const QString &title, const QString &fallbackDir) {
-  const QString path = QFileDialog::getExistingDirectory(
-      parent, title, startDir(settings, key, fallbackDir));
-  if (!path.isEmpty() && settings)
-    settings->setValue(QStringLiteral("dialogs/") + key, path);
-  return path;
-}
-} // namespace localPick
 
 constexpr int kSortRole = Qt::UserRole + 1;     // what a cell sorts by
 constexpr int kCoverageRole = Qt::UserRole + 2; // 0..1 of the span, or < 0
@@ -235,19 +205,11 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   noStudy_->setObjectName(QStringLiteral("bigHint"));
   noStudy_->setAlignment(Qt::AlignCenter);
   noStudy_->setWordWrap(true);
-  newStudy_ = new QPushButton(empty);
-  ui::setPrimary(newStudy_);
-  openStudy_ = new QPushButton(empty);
-  auto *emptyButtons = new QHBoxLayout;
-  emptyButtons->addStretch(1);
-  emptyButtons->addWidget(newStudy_);
-  emptyButtons->addWidget(openStudy_);
-  emptyButtons->addStretch(1);
+  // New study and Open study are in the bar the window draws above every
+  // study page; a second pair here would only be in the way.
   auto *emptyLayout = new QVBoxLayout(empty);
   emptyLayout->addStretch(2);
   emptyLayout->addWidget(noStudy_);
-  emptyLayout->addSpacing(12);
-  emptyLayout->addLayout(emptyButtons);
   emptyLayout->addStretch(3);
   stack_->addWidget(empty);
 
@@ -312,6 +274,13 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   banner_->setObjectName(QStringLiteral("banner"));
   banner_->setWordWrap(true);
   banner_->hide();
+  reload_ = new QPushButton(main);
+  reload_->setObjectName(QStringLiteral("reloadStudy"));
+  reload_->hide();
+  lockNote_ = new QLabel(main);
+  lockNote_->setObjectName(QStringLiteral("lockNote"));
+  lockNote_->setWordWrap(true);
+  lockNote_->hide();
 
   add_ = new QPushButton(main);
   ui::setPrimary(add_);
@@ -493,7 +462,11 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
 
   auto *mainLayout = new QVBoxLayout(main);
   mainLayout->setContentsMargins(0, 0, 0, 0);
-  mainLayout->addWidget(banner_);
+  auto *bannerRow = new QHBoxLayout;
+  bannerRow->addWidget(banner_, 1);
+  bannerRow->addWidget(reload_, 0, Qt::AlignTop);
+  mainLayout->addLayout(bannerRow);
+  mainLayout->addWidget(lockNote_);
   mainLayout->addWidget(inputs_);
   mainLayout->addLayout(bar);
   mainLayout->addWidget(split, 1);
@@ -503,10 +476,6 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(stack_);
 
-  connect(newStudy_, &QPushButton::clicked, this,
-          [this] { StudySwitcher::newStudy(this, ctx_.study); });
-  connect(openStudy_, &QPushButton::clicked, this,
-          [this] { StudySwitcher::openStudy(this, ctx_.study); });
   connect(catalogBrowse_, &QPushButton::clicked, this,
           &CasesPage::chooseCatalog);
   connect(catalogGet_, &QPushButton::clicked, this, &CasesPage::getCatalog);
@@ -529,6 +498,14 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   connect(scan_, &WaveScan::updated, this, [this] {
     updateWaveSummary();
     showCase();
+  });
+  connect(reload_, &QPushButton::clicked, this, [this] {
+    QString error;
+    reload_->hide();
+    if (ctx_.study->reload(&error))
+      showBanner(QString());
+    else
+      showBanner(tr("⚠ The study file could not be read again: %1").arg(error));
   });
   connect(scanJob_, &QPushButton::clicked, this, [this] {
     if (ctx_.nav)
@@ -581,6 +558,11 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
               const QString id = args.value(QStringLiteral("case")).toString();
               const QString code =
                   args.value(QStringLiteral("station")).toString();
+              // A filter must not hide the case the user is sent to.
+              for (int i = 0; !id.isEmpty() && i < table_->rowCount(); ++i)
+                if (table_->item(i, 0)->data(Qt::UserRole).toString() == id &&
+                    table_->isRowHidden(i))
+                  filter_->clear();
               for (int i = 0; !id.isEmpty() && i < table_->rowCount(); ++i)
                 if (table_->item(i, 0)->data(Qt::UserRole).toString() == id) {
                   table_->selectRow(i);
@@ -638,8 +620,6 @@ void CasesPage::retranslate() {
       tr("A study runs the same analyses on several earthquakes and puts "
          "the results side by side.\nStart a new study in an empty folder, "
          "or open an existing one."));
-  newStudy_->setText(tr("New study…"));
-  openStudy_->setText(tr("Open study…"));
   inputs_->setTitle(tr("Study inputs"));
   catalogLabel_->setText(tr("Earthquake catalog"));
   dataLabel_->setText(tr("Waveforms"));
@@ -657,6 +637,10 @@ void CasesPage::retranslate() {
   add_->setText(tr("Add from catalog…"));
   addRef_->setText(tr("Add reference date…"));
   remove_->setText(tr("Remove"));
+  reload_->setText(tr("Reload"));
+  reload_->setToolTip(ui::helpText(
+      tr("Reads the study file again as it is on disk now, with what was "
+         "changed elsewhere. The change refused here is not kept.")));
   more_->setText(tr("More"));
   more_->setToolTip(ui::helpText(
       tr("What else can be done with the selected cases: duplicate one, "
@@ -1033,6 +1017,7 @@ void CasesPage::refresh() {
   updating_ = false;
   applyFilter();
   showCase();
+  updateEditable();
 }
 
 void CasesPage::fitColumns() {
@@ -1042,6 +1027,38 @@ void CasesPage::fitColumns() {
   table_->resizeColumnsToContents();
   table_->setColumnWidth(0, std::min(table_->columnWidth(0), 190));
   table_->setColumnWidth(5, std::min(table_->columnWidth(5), 110));
+}
+
+bool CasesPage::editable() const {
+  return ctx_.study->isOpen() && ctx_.study->holdsLock();
+}
+
+void CasesPage::updateEditable() {
+  // Without the study's lock nothing can be saved: say why once, and do not
+  // offer what would only fail.
+  const bool can = editable();
+  const bool open = ctx_.study->isOpen();
+  lockNote_->setVisible(open && !can);
+  if (open && !can) {
+    lockNote_->setText(
+        tr("⚠  Nothing can be changed in this study from here: its folder is "
+           "not held by this window. Either the folder cannot be written "
+           "(read-only media, a drive that is full or was unplugged), or the "
+           "study is open in another window, which is where it is changed. "
+           "It can still be looked at."));
+    lockNote_->setStyleSheet(
+        QStringLiteral("QLabel { color: %1; }")
+            .arg(ctx_.theme->statusColor(QStringLiteral("serious")).name()));
+  }
+  for (QWidget *w : std::initializer_list<QWidget *>{
+           addRef_, more_, catalogBrowse_, catalogGet_, catalogUpdate_,
+           catalogTime_, setup_, waveButton_})
+    w->setEnabled(can);
+  if (!can) {
+    add_->setEnabled(false);
+    remove_->setEnabled(false);
+    detail_->setEnabled(false);
+  }
 }
 
 void CasesPage::saveTableState() {
@@ -1087,8 +1104,8 @@ void CasesPage::showCase() {
   const Study &s = ctx_.study->study();
   const Case *c = s.findCase(currentId());
   const int chosen = int(selectedIds().size());
-  detail_->setEnabled(c != nullptr);
-  remove_->setEnabled(chosen > 0);
+  detail_->setEnabled(c != nullptr && editable());
+  remove_->setEnabled(chosen > 0 && editable());
   name_->setPlaceholderText(
       chosen > 1 ? tr("%n cases selected: More has what can be done with "
                       "them together",
@@ -1213,6 +1230,7 @@ void CasesPage::showCase() {
   map_->setStudy(s, spec);
   updating_ = false;
   updateStationButtons();
+  updateEditable();
 }
 
 QString CasesPage::selectedStation() const {
@@ -1343,13 +1361,21 @@ bool CasesPage::apply(const std::function<void(Study &)> &edit) {
       banner_->setProperty("saveError", false);
       showBanner(QString());
     }
+    reload_->hide();
     return true;
   }
   banner_->setProperty("saveError", true);
-  showBanner(tr("⚠ The study could not be saved, so the change was not "
-                "kept: %1")
-                 .arg(error));
-  refresh(); // back to what is on disk
+  const bool elsewhere = ctx_.study->changedOnDisk();
+  showBanner(elsewhere
+                 ? tr("⚠ The study file was changed on disk since this window "
+                      "read it (by another window, or by hand), so the change "
+                      "was not saved over it. Reload to see the study as it "
+                      "is now, then make the change again.")
+                 : tr("⚠ The study could not be saved, so the change was not "
+                      "kept: %1")
+                       .arg(error));
+  reload_->setVisible(elsewhere);
+  refresh(); // back to what this window knows
   return false;
 }
 
@@ -1781,6 +1807,7 @@ void CasesPage::fillMenu(QMenu *menu) {
     ui::setHelp(count, tr("How many stations each case gets."));
     ui::setHelp(km, tr("Only stations within this distance of the case's "
                        "epicentre are considered."));
+    ui::polishPage(&dialog);
     if (dialog.exec() == QDialog::Accepted)
       applyStationRule(ids, count->value(), km->value());
   });
@@ -1789,6 +1816,9 @@ void CasesPage::fillMenu(QMenu *menu) {
   get->setEnabled(n > 0 && ctx_.nav);
   connect(get, &QAction::triggered, this, [this, ids] { getWaveformsFor(ids); });
   menu->addSeparator();
+  QAction *disk = menu->addAction(tr("The study on disk…"));
+  connect(disk, &QAction::triggered, this,
+          [this] { showStudyOnDisk(ctx_, this); });
   QMenu *back = menu->addMenu(tr("Put back a removed case"));
   back->setEnabled(!removed_.isEmpty());
   for (int i = 0; i < int(removed_.size()); ++i) {
@@ -1797,21 +1827,43 @@ void CasesPage::fillMenu(QMenu *menu) {
   }
 }
 
+namespace {
+// A study folder, or its file: the window opens those, wherever they are
+// dropped.
+bool isStudy(const QString &path) {
+  const QFileInfo fi(path);
+  return fi.isDir() ? QFileInfo::exists(QDir(path).filePath(Study::kFileName))
+                    : fi.fileName() == Study::kFileName;
+}
+} // namespace
+
 void CasesPage::dragEnterEvent(QDragEnterEvent *e) {
-  if (!ctx_.study->isOpen() || !e->mimeData()->hasUrls())
+  e->ignore(); // unless taken below, it is the window's
+  if (!e->mimeData()->hasUrls())
     return;
-  for (const QUrl &u : e->mimeData()->urls())
-    if (u.isLocalFile()) {
-      e->acceptProposedAction();
-      return;
-    }
+  bool any = false;
+  for (const QUrl &u : e->mimeData()->urls()) {
+    if (!u.isLocalFile())
+      continue;
+    if (isStudy(u.toLocalFile()))
+      return; // a study: not an input of this one
+    any = true;
+  }
+  if (any && ctx_.study->isOpen())
+    e->acceptProposedAction();
 }
 
 void CasesPage::dropEvent(QDropEvent *e) {
   QStringList paths;
-  for (const QUrl &u : e->mimeData()->urls())
-    if (u.isLocalFile())
-      paths << u.toLocalFile();
+  for (const QUrl &u : e->mimeData()->urls()) {
+    if (!u.isLocalFile())
+      continue;
+    if (isStudy(u.toLocalFile())) {
+      e->ignore();
+      return;
+    }
+    paths << u.toLocalFile();
+  }
   if (paths.isEmpty())
     return;
   e->acceptProposedAction();
@@ -1821,6 +1873,11 @@ void CasesPage::dropEvent(QDropEvent *e) {
 void CasesPage::handleDrop(const QStringList &paths) {
   if (!ctx_.study->isOpen())
     return;
+  if (!editable()) {
+    showBanner(tr("⚠ Nothing was taken: this study cannot be changed from "
+                  "this window."));
+    return;
+  }
   QStringList folders, catalogs, xml, other;
   for (const QString &path : paths) {
     const QFileInfo fi(path);
@@ -1922,9 +1979,10 @@ void CasesPage::handleDrop(const QStringList &paths) {
 }
 
 void CasesPage::chooseCatalog() {
-  const QString path = localPick::pickFile(
-      this, ctx_.settings, QStringLiteral("catalog"), tr("Earthquake catalog"),
-      ctx_.study->study().dir, tr("AFAD catalog (*.csv *.gz);;All files (*)"));
+  const QString path = ui::pickFile(
+      this, ctx_.settings, QStringLiteral("cases/catalog"),
+      tr("Earthquake catalog"), tr("AFAD catalog (*.csv *.gz);;All files (*)"),
+      ctx_.study->study().dir);
   if (path.isEmpty())
     return;
   apply([&path](Study &s) { s.catalog = s.stored(path); });
@@ -2075,8 +2133,8 @@ void CasesPage::chooseStationFolder() {
   const QString code = selectedStation();
   if (id.isEmpty() || code.isEmpty())
     return;
-  const QString path = localPick::pickFolder(
-      this, ctx_.settings, QStringLiteral("stationFolder"),
+  const QString path = ui::pickFolder(
+      this, ctx_.settings, QStringLiteral("cases/stationFolder"),
       tr("Folder with the waveforms of %1").arg(code),
       ctx_.study->study().dir);
   if (path.isEmpty())
@@ -2119,6 +2177,14 @@ void CasesPage::getWaveforms() {
   args.insert(QStringLiteral("end"), c->time.toUTC().toString(Qt::ISODate));
   args.insert(QStringLiteral("case"), c->name);
   args.insert(QStringLiteral("cases"), QStringList{c->name});
+  args.insert(QStringLiteral("requests"),
+              QVariantList{QVariantMap{
+                  {QStringLiteral("case"), c->name},
+                  {QStringLiteral("stations"), codes},
+                  {QStringLiteral("start"),
+                   c->spanStart().toUTC().toString(Qt::ISODate)},
+                  {QStringLiteral("end"),
+                   c->time.toUTC().toString(Qt::ISODate)}}});
   // Where the case is, for the Data page's map.
   args.insert(QStringLiteral("lat"), c->lat);
   args.insert(QStringLiteral("lon"), c->lon);
@@ -2146,6 +2212,7 @@ void CasesPage::getWaveformsFor(const QStringList &ids) {
   }
   QStringList codes, names;
   QDateTime start, end;
+  QVariantList requests; // what each case needs: its stations over its span
   const Case *only = nullptr;
   for (const QString &id : ids) {
     const Case *c = s.findCase(id);
@@ -2153,9 +2220,19 @@ void CasesPage::getWaveformsFor(const QStringList &ids) {
       continue;
     only = names.isEmpty() ? c : nullptr;
     names << c->name;
-    for (const study::StationRef &st : c->stations)
+    QStringList own;
+    for (const study::StationRef &st : c->stations) {
+      own << st.code;
       if (!codes.contains(st.code))
         codes << st.code;
+    }
+    if (!own.isEmpty())
+      requests << QVariantMap{
+          {QStringLiteral("case"), c->name},
+          {QStringLiteral("stations"), own},
+          {QStringLiteral("start"),
+           c->spanStart().toUTC().toString(Qt::ISODate)},
+          {QStringLiteral("end"), c->time.toUTC().toString(Qt::ISODate)}};
     if (!start.isValid() || c->spanStart() < start)
       start = c->spanStart();
     if (!end.isValid() || c->time > end)
@@ -2176,6 +2253,9 @@ void CasesPage::getWaveformsFor(const QStringList &ids) {
   args.insert(QStringLiteral("end"), end.toUTC().toString(Qt::ISODate));
   args.insert(QStringLiteral("case"), names.join(QStringLiteral(", ")));
   args.insert(QStringLiteral("cases"), names);
+  // The whole period above is only the frame: each station is wanted for
+  // the spans of the cases that tick it, no more.
+  args.insert(QStringLiteral("requests"), requests);
   if (only) {
     args.insert(QStringLiteral("lat"), only->lat);
     args.insert(QStringLiteral("lon"), only->lon);

@@ -27,6 +27,8 @@ class QMimeData;
 class QPushButton;
 class QRadioButton;
 
+class QSettings;
+
 namespace skg {
 
 class Job;
@@ -52,6 +54,11 @@ class FolderList : public QWidget {
   Q_OBJECT
 public:
   explicit FolderList(const QString &startDir, QWidget *parent = nullptr);
+  // The picker then starts where it was last used, kept under `key`.
+  void rememberIn(QSettings *settings, const QString &key) {
+    settings_ = settings;
+    key_ = key;
+  }
   QStringList folders() const;
   // Adds what is not listed yet, and not inside a listed folder; a listed
   // folder inside a new one leaves the list. `note()` says what happened.
@@ -68,6 +75,8 @@ protected:
 
 private:
   QString startDir_;
+  QSettings *settings_ = nullptr;
+  QString key_;
   QListWidget *list_;
   QPushButton *add_, *remove_;
   QLabel *note_;

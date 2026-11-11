@@ -129,7 +129,14 @@ FolderList::FolderList(const QString &startDir, QWidget *parent)
          "deleted.")));
 
   connect(add_, &QPushButton::clicked, this, [this] {
-    addFolders(pickFolders(this, tr("Folders of waveforms"), startDir_));
+    const QStringList picked =
+        pickFolders(this, tr("Folders of waveforms"),
+                    settings_ ? ui::dialogFolder(settings_, key_, startDir_)
+                              : startDir_);
+    if (!picked.isEmpty() && settings_)
+      ui::rememberDialogFolder(settings_, key_,
+                               QFileInfo(picked.first()).absolutePath());
+    addFolders(picked);
   });
   connect(remove_, &QPushButton::clicked, this, [this] {
     qDeleteAll(list_->selectedItems());
@@ -248,6 +255,7 @@ StudySetupDialog::StudySetupDialog(study::StudyStore *store, QWidget *parent)
   later_->setObjectName(QStringLiteral("fieldLabel"));
   later_->setWordWrap(true);
   folders_ = new FolderList(s.dir, waveBox);
+  folders_->rememberIn(store->settings(), QStringLiteral("cases/waveformFolders"));
   auto *waveLayout = new QVBoxLayout(waveBox);
   waveLayout->addWidget(later_);
   waveLayout->addWidget(folders_);
@@ -298,9 +306,10 @@ StudySetupDialog::StudySetupDialog(study::StudyStore *store, QWidget *parent)
 }
 
 void StudySetupDialog::chooseCatalog() {
-  const QString path = QFileDialog::getOpenFileName(
-      this, tr("Earthquake catalog"), store_->study().dir,
-      tr("AFAD catalog (*.csv *.gz);;All files (*)"));
+  const QString path = ui::pickFile(
+      this, store_->settings(), QStringLiteral("cases/catalog"),
+      tr("Earthquake catalog"), tr("AFAD catalog (*.csv *.gz);;All files (*)"),
+      store_->study().dir);
   if (path.isEmpty())
     return;
   catalog_->setText(QDir::toNativeSeparators(path));
