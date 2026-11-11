@@ -36,6 +36,7 @@
 #include "core/defaults.h"
 #include "core/module.h"
 #include "core/theme.h"
+#include "fx/config.h"
 #include "fx/npy.h"
 #include "jobs/job.h"
 #include "jobs/jobmodel.h"
@@ -404,6 +405,7 @@ void TstStudyPages::runsPage() {
     QVERIFY(QDir().mkpath(dir));
     QVERIFY(fx::writeNpy(QDir(dir).filePath("features.npy"),
                          fxTable(c.time, seed++)));
+    QVERIFY(fx::Config().save(QDir(dir).filePath("x_run_metadata.json")));
     RunRecord rec;
     rec.tool = kToolFeatures;
     rec.recipe = fea.id;

@@ -285,6 +285,9 @@ void TstStudyRuns::classificationOnAFabricatedTable() {
     QVERIFY(QDir().mkpath(dir));
     QVERIFY(fx::writeNpy(QDir(dir).filePath("SYN1_features.npy"),
                          fxTable(c.time, 40, seed++)));
+    // What the feature run writes beside its table: the window length is
+    // read from it.
+    QVERIFY(fx::Config().save(QDir(dir).filePath("SYN1_run_metadata.json")));
     RunRecord rec;
     rec.tool = kToolFeatures;
     rec.recipe = features_.id;
@@ -748,7 +751,9 @@ void TstStudyRuns::featuresOnASmallStation() {
       QDir(cell.dir).filePath(cell.record->outputs.value("features").toString());
   QVERIFY2(QFileInfo::exists(table), qPrintable(table));
   QVERIFY(QFileInfo::exists(cell.log));
-  QVERIFY(!QFileInfo::exists(QDir(cell.dir).filePath("catalog_utc.csv")));
+  // The calibration reads the study's catalog as every tool does, from a
+  // copy in UTC (also when the catalog is in UTC already).
+  QVERIFY(QFileInfo::exists(QDir(cell.dir).filePath("catalog_utc.csv")));
   // Which waveform files were read is noted (names, sizes, times). A file
   // of another station changes nothing; a new file for this station and
   // span makes the run stale, and says so.

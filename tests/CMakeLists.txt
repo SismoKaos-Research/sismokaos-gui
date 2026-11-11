@@ -75,3 +75,13 @@ target_link_libraries(tst_help PRIVATE skg_core skg_mod_study skg_mod_tdvms skg_
 skg_test(tst_shell tst_shell.cpp)
 target_link_libraries(tst_shell PRIVATE skg_shell skg_core skg_mod_study Qt6::Widgets Qt6::Network)
 target_compile_definitions(tst_shell PRIVATE SKG_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+skg_test(tst_correctness tst_correctness.cpp)
+target_link_libraries(tst_correctness PRIVATE miniz)
+# The same checks, and the run tests that read catalogs, on a machine that is
+# not in UTC: CI runners are, and a time read as local time passes there. On
+# Windows TZ does not move a process's zone, so these repeat the UTC runs.
+foreach(zoned tst_correctness tst_study_runs tst_study_setup tst_cbi_core tst_sfc_core)
+  add_test(NAME ${zoned}_istanbul COMMAND ${zoned})
+  set_tests_properties(${zoned}_istanbul PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;TZ=Europe/Istanbul")
+endforeach()

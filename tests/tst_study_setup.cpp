@@ -341,9 +341,22 @@ void TstStudySetup::caseFromAnotherCatalogIsRecognised() {
   events[2].lon = 39.1;
   events[2].mag = 5.1; // an aftershock
   QCOMPARE(eventOfCase(c, events), &events[1]);
-  // Nothing near in time: not found, rather than the wrong event.
-  events[1].epoch = t - 900;
+  // The other agency's catalog three hours off (its time offset set wrong):
+  // still the same earthquake, and still kept out of its own span.
+  events[1].epoch = t - 3 * 3600.0 - 2.7;
+  QCOMPARE(eventOfCase(c, events), &events[1]);
+  // Nothing within the hours an offset can move it: not found, rather than
+  // the wrong event.
+  events[1].epoch = t - 16 * 3600.0;
   QVERIFY(eventOfCase(c, events) == nullptr);
+  QVERIFY(largeEventJustBefore(c, events) == nullptr);
+  // An event much larger than the case within the hours before it is not
+  // "the same within a magnitude unit", yet no forerunner to count either.
+  events[1].epoch = t - 3 * 3600.0;
+  events[1].mag = 7.9;
+  QVERIFY(eventOfCase(c, events) == nullptr);
+  QCOMPARE(largeEventJustBefore(c, events), &events[1]);
+  events[1].mag = 6.8;
   // The exact match still wins over a larger neighbour.
   events[1].epoch = t - 2.7;
   events[0].epoch = t;
