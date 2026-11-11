@@ -394,6 +394,7 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
   };
 
   RunResult result;
+  popt.channels = &result.channels;
   Inputs unpacked; // removed when the run ends, however it ends
   if (archives && !unpackOnce(cfg, popt, phases, unpackPhase, unpacked)) {
     result.stopped = true;
@@ -415,12 +416,18 @@ RunResult runPipeline(Config cfg, const RunHooks &hooks) {
                    .arg(cfg.calibrationFile, cal.station));
   } else {
     phases.begin(calibratePhase);
-    cal = calibrate(cfg, popt, [&](int done, int total) {
-      if (hooks.progress)
-        hooks.progress(done, total);
-      phases.report(total > 0 ? double(done) / total : 0.0,
-                    records(done, total));
-    });
+    try {
+      cal = calibrate(cfg, popt, [&](int done, int total) {
+        if (hooks.progress)
+          hooks.progress(done, total);
+        phases.report(total > 0 ? double(done) / total : 0.0,
+                      records(done, total));
+      });
+    } catch (const Stopped &) {
+      // Asked to stop while calibrating: no calibration, and no failure.
+      result.stopped = true;
+      return result;
+    }
   }
   for (const QString &line : cal.describe())
     say(hooks, line);

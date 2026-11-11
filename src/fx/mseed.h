@@ -39,20 +39,38 @@ RecordHeader parseHeader(const QByteArray &data, int offset = 0);
 std::vector<double> decodeRecord(const QByteArray &record,
                                  const RecordHeader &hdr);
 
-struct RecordRef {
-  int file = 0; // index into the file list
-  qint64 offset = 0;
-  int length = 0;
-  double startEpoch = 0;
-  char component = 0;
-  int count = 0;
-  double rate = 0;
-  QString channelId;
+// The channels met while indexing. A record names its channel by a small
+// number into this table instead of carrying the text and the rate itself:
+// a station-year of 512-byte records is tens of millions of records, and
+// the index of all of them is held in memory for the length of a run.
+struct ChannelTable {
+  struct Channel {
+    QString id;      // NET.STA.LOC.CHA
+    double rate = 0; // samples per second
+    char component = 0;
+    // What is the same for the three components of one sensor: the id with
+    // the channel's last letter left off (NET.STA.LOC.HH).
+    QString family() const { return id.left(id.size() - 1); }
+  };
+  QList<Channel> channels;
+  // The number of the header's channel at its rate, added when it is new.
+  quint16 idOf(const RecordHeader &h);
 };
+
+struct RecordRef {
+  qint64 offset = 0;
+  double startEpoch = 0;
+  qint32 file = 0; // index into the file list
+  qint32 length = 0;
+  quint16 count = 0;   // samples (16 bits in the record header too)
+  quint16 channel = 0; // index into the ChannelTable it was indexed with
+};
+static_assert(sizeof(RecordRef) <= 32, "the record index is kept small");
 
 // Every data record of the file with an E/N/Z component and a positive rate.
 // Throws std::runtime_error on a file that is not miniSEED.
-QList<RecordRef> indexFile(const QString &path, int fileIndex);
+std::vector<RecordRef> indexFile(const QString &path, int fileIndex,
+                                 ChannelTable &channels);
 
 // Days since 1970 of a proleptic Gregorian date.
 qint64 daysFromCivil(int y, int m, int d);

@@ -4,6 +4,7 @@
 #include <QtEndian>
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <stdexcept>
 
@@ -261,11 +262,27 @@ std::vector<double> decodeRecord(const QByteArray &rec, const RecordHeader &h) {
   return out;
 }
 
-QList<RecordRef> indexFile(const QString &path, int fileIndex) {
+quint16 ChannelTable::idOf(const RecordHeader &h) {
+  const QString id = h.channelId();
+  for (int i = 0; i < channels.size(); ++i)
+    if (channels[i].id == id && std::abs(channels[i].rate - h.sampleRate) < 1e-9)
+      return quint16(i);
+  if (channels.size() >= 65535)
+    throw std::runtime_error("more than 65535 channels in the input files");
+  channels.append({id, h.sampleRate, h.component()});
+  return quint16(channels.size() - 1);
+}
+
+std::vector<RecordRef> indexFile(const QString &path, int fileIndex,
+                                 ChannelTable &channels) {
   QFile f(path);
   if (!f.open(QIODevice::ReadOnly))
     throw std::runtime_error(("cannot open " + path).toStdString());
-  QList<RecordRef> out;
+  std::vector<RecordRef> out;
+  // The last channel seen, since records of one channel come in runs.
+  QString lastId;
+  double lastRate = 0;
+  quint16 lastChannel = 0;
   qint64 pos = 0;
   const qint64 size = f.size();
   while (pos + 64 <= size) {
@@ -283,11 +300,15 @@ QList<RecordRef> indexFile(const QString &path, int fileIndex) {
       r.offset = pos;
       r.length = h.recordLength;
       r.startEpoch = h.startEpoch;
-      r.component = h.component();
-      r.count = h.sampleCount;
-      r.rate = h.sampleRate;
-      r.channelId = h.channelId();
-      out << r;
+      r.count = quint16(h.sampleCount);
+      const QString id = h.channelId();
+      if (out.empty() || id != lastId || h.sampleRate != lastRate) {
+        lastChannel = channels.idOf(h);
+        lastId = id;
+        lastRate = h.sampleRate;
+      }
+      r.channel = lastChannel;
+      out.push_back(r);
     }
     pos += h.recordLength;
   }

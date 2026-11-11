@@ -1,9 +1,12 @@
 #include "fx/preprocess.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QTemporaryDir>
+#include <QTimeZone>
 
 #include <algorithm>
 #include <cmath>
@@ -15,6 +18,7 @@
 #include "fx/mseed.h"
 #include "miniz.h"
 #include "core/nativepath.h"
+#include <QMap>
 #include <QSet>
 #include <utility>
 
@@ -32,10 +36,54 @@ double filterContextSeconds(double freqmin) {
   return std::max(kFilterContextSeconds, settleSeconds(freqmin));
 }
 
+Inputs::Inputs() = default;
+Inputs::Inputs(Inputs &&) noexcept = default;
+Inputs &Inputs::operator=(Inputs &&other) noexcept {
+  if (this != &other) {
+    lock.reset();
+    if (!stagingDir.isEmpty())
+      QDir(stagingDir).removeRecursively();
+    files = std::move(other.files);
+    stagingDir = std::move(other.stagingDir);
+    other.stagingDir.clear();
+    lock = std::move(other.lock);
+  }
+  return *this;
+}
+
 Inputs::~Inputs() {
+  lock.reset(); // the lock file goes with the folder
   if (!stagingDir.isEmpty())
     QDir(stagingDir).removeRecursively();
 }
+
+namespace {
+const QString kStagingLock = QStringLiteral(".lock");
+
+// Staging folders nothing uses any more. One in use holds its lock file
+// locked (QLockFile knows a lock whose process is gone from one that is
+// held, on every platform); a folder without a lock file is from an older
+// version of the application, which named them by process id, and is
+// removed once it has not been touched for an hour.
+void removeDeadStaging(const QDir &root) {
+  for (const QFileInfo &d :
+       root.entryInfoList({QStringLiteral(".unzipped-*")},
+                          QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot)) {
+    const QString lockPath = QDir(d.filePath()).filePath(kStagingLock);
+    if (!QFileInfo::exists(lockPath)) {
+      if (d.lastModified().secsTo(QDateTime::currentDateTime()) > 3600)
+        QDir(d.filePath()).removeRecursively();
+      continue;
+    }
+    QLockFile lock(lockPath);
+    lock.setStaleLockTime(0); // by its process alone, never by its age
+    if (!lock.tryLock(0))
+      continue; // in use, by this process or another
+    lock.unlock();
+    QDir(d.filePath()).removeRecursively();
+  }
+}
+} // namespace
 
 bool hasArchives(const QStringList &listed) {
   for (const QString &p : listed)
@@ -109,17 +157,27 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot,
         << p;
   if (zips.isEmpty())
     return in;
-  // Leftovers of interrupted runs whose process is gone.
+  // Leftovers of interrupted runs, then a folder of this call's own.
   const QDir root(stagingRoot);
-  for (const QString &d : root.entryList({QStringLiteral(".unzipped-*")},
-                                         QDir::Dirs | QDir::Hidden)) {
-    const qint64 pid = d.mid(10).toLongLong();
-    if (pid > 0 && !QFileInfo::exists(QStringLiteral("/proc/%1").arg(pid)))
-      QDir(root.filePath(d)).removeRecursively();
+  QDir().mkpath(stagingRoot);
+  removeDeadStaging(root);
+  {
+    QTemporaryDir made(root.filePath(QStringLiteral(".unzipped-XXXXXX")));
+    made.setAutoRemove(false);
+    if (!made.isValid())
+      throw std::runtime_error(
+          QStringLiteral("cannot create a folder to unpack the archives in "
+                         "under %1: %2")
+              .arg(stagingRoot, made.errorString())
+              .toStdString());
+    in.stagingDir = made.path();
   }
-  in.stagingDir = root.filePath(
-      QStringLiteral(".unzipped-%1").arg(QCoreApplication::applicationPid()));
-  QDir().mkpath(in.stagingDir);
+  in.lock = std::make_unique<QLockFile>(
+      QDir(in.stagingDir).filePath(kStagingLock));
+  in.lock->setStaleLockTime(0);
+  if (!in.lock->tryLock(0))
+    throw std::runtime_error(
+        ("cannot lock the unpacking folder " + in.stagingDir).toStdString());
   // How much there is to write, for the progress: the archives' directories
   // say it without reading the members.
   Unpack unpack;
@@ -152,7 +210,10 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot,
       char nameBuf[1024];
       mz_zip_reader_get_filename(&zip, i, nameBuf, sizeof nameBuf);
       const QString name = QFileInfo(QString::fromUtf8(nameBuf)).fileName();
-      const QString dest = in.stagingDir + '/' + stem + "__" + name;
+      // The member's number keeps apart members of one name in different
+      // folders of the archive (2023/036/X.mseed and 2023/037/X.mseed).
+      const QString dest = in.stagingDir + '/' + stem + "__" +
+                           QString::number(i) + "__" + name;
       unpack.out.setFileName(dest);
       const bool opened = unpack.out.open(QIODevice::WriteOnly);
       const bool ok =
@@ -162,7 +223,7 @@ Inputs expandInputs(const QStringList &listed, const QString &stagingRoot,
       if (!ok) {
         mz_zip_reader_end(&zip);
         if (unpack.stopped)
-          throw std::runtime_error("stopped");
+          throw Stopped();
         throw std::runtime_error(
             ("failed to inflate " + name + " from " + zipPath).toStdString());
       }
@@ -212,6 +273,119 @@ processComponent(std::vector<double> data, double freqmin, double freqmax,
 }
 
 namespace {
+
+QString isoOfEpoch(double epoch) {
+  return QDateTime::fromMSecsSinceEpoch(qint64(std::llround(epoch * 1000.0)),
+                                        QTimeZone::UTC)
+      .toString(Qt::ISODate);
+}
+
+// "NET.STA.LOC.HH" as people write it: NET.STA.LOC.HH?
+QString familyText(const QString &family) {
+  return family + QLatin1Char('?');
+}
+
+// The one sensor a pass reads, of those the indexed records belong to.
+ChannelChoice chooseChannels(const std::vector<RecordRef> &index,
+                             const ChannelTable &table, const Config &cfg) {
+  struct Family {
+    double samples = 0;
+    QSet<char> components;
+    QStringList channels;
+  };
+  QMap<QString, Family> families;
+  for (const RecordRef &r : index) {
+    const ChannelTable::Channel &ch = table.channels[r.channel];
+    Family &f = families[ch.family()];
+    f.samples += double(r.count);
+    f.components.insert(ch.component);
+    if (!f.channels.contains(ch.id))
+      f.channels << ch.id;
+  }
+  const auto complete = [](const Family &f) {
+    return f.components.contains('E') && f.components.contains('N') &&
+           f.components.contains('Z');
+  };
+  QStringList all;
+  for (auto it = families.constBegin(); it != families.constEnd(); ++it)
+    all << familyText(it.key());
+
+  // The families the configuration allows: all of them, or those its
+  // `channels` names ("HH", "HH?", "00.HH?").
+  QStringList allowed;
+  QString wanted = cfg.channels.trimmed().toUpper();
+  while (wanted.endsWith(QLatin1Char('?')) || wanted.endsWith(QLatin1Char('*')))
+    wanted.chop(1);
+  if (wanted.isEmpty()) {
+    allowed = families.keys();
+  } else {
+    const QStringList parts = wanted.split(QLatin1Char('.'));
+    const QString code = parts.last().left(2);
+    const bool withLocation = parts.size() >= 2;
+    const QString location = withLocation ? parts[parts.size() - 2] : QString();
+    for (auto it = families.constBegin(); it != families.constEnd(); ++it) {
+      const QStringList f = it.key().split(QLatin1Char('.'));
+      if (f.value(3).compare(code, Qt::CaseInsensitive) != 0)
+        continue;
+      if (withLocation && f.value(2).compare(location, Qt::CaseInsensitive) != 0)
+        continue;
+      allowed << it.key();
+    }
+    if (allowed.isEmpty())
+      throw std::runtime_error(
+          QStringLiteral("no %1 channels in the input files: the data holds "
+                         "%2. Change the \"channels\" setting, or clear it")
+              .arg(cfg.channels, all.join(QStringLiteral(", ")))
+              .toStdString());
+  }
+  // Of those, the ones with all three components; the most data wins.
+  QString best;
+  int candidates = 0;
+  for (const QString &name : std::as_const(allowed)) {
+    const Family &f = families[name];
+    if (!complete(f))
+      continue;
+    ++candidates;
+    if (best.isEmpty() || f.samples > families[best].samples)
+      best = name;
+  }
+  if (best.isEmpty()) {
+    // The old message when there is one sensor with a component missing.
+    if (allowed.size() == 1)
+      for (char c : kComponents)
+        if (!families[allowed.first()].components.contains(c))
+          throw std::runtime_error(
+              QStringLiteral("component '%1' not found in the input files; "
+                             "need all of E, N, Z")
+                  .arg(c)
+                  .toStdString());
+    throw std::runtime_error(
+        QStringLiteral("no sensor in the input files has all of E, N and Z: "
+                       "the data holds %1")
+            .arg(all.join(QStringLiteral(", ")))
+            .toStdString());
+  }
+  ChannelChoice choice;
+  choice.family = best;
+  choice.used = families[best].channels;
+  choice.used.sort();
+  for (auto it = families.constBegin(); it != families.constEnd(); ++it)
+    if (it.key() != best)
+      choice.dropped << familyText(it.key());
+  choice.guessed = wanted.isEmpty() && candidates > 1;
+  choice.how = familyText(best);
+  if (!choice.dropped.isEmpty())
+    choice.how +=
+        (choice.guessed
+             ? QStringLiteral(" (the sensor with the most data; left out: %1 "
+                              "- name the one to read in the \"channels\" "
+                              "setting)")
+             : candidates > 1
+                   ? QStringLiteral(" (as set; left out: %1)")
+                   : QStringLiteral(" (left out: %1)"))
+            .arg(choice.dropped.join(QStringLiteral(", ")));
+  return choice;
+}
 
 struct Assembler {
   double startEpoch = kNaN;
@@ -316,10 +490,12 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
   }
   const Inputs &inputs = opt.prepared ? *opt.prepared : own;
 
-  // Index every record before any is read.
-  QList<RecordRef> index;
+  // Index every record before any is read: those of the station, inside
+  // the period asked for.
+  std::vector<RecordRef> index;
+  ChannelTable table;
   double nativeFs = 0;
-  QSet<char> seen;
+  qint64 outsidePeriod = 0;
   for (int fi = 0; fi < inputs.files.size(); ++fi) {
     if (stopping())
       return false;
@@ -336,34 +512,83 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
         continue;
       }
     }
-    for (RecordRef &r : indexFile(inputs.files[fi], fi)) {
+    // Which channels of the table are the station's, looked up once each.
+    std::vector<qint8> ofStation;
+    for (const RecordRef &r : indexFile(inputs.files[fi], fi, table)) {
+      const ChannelTable::Channel &ch = table.channels[r.channel];
       // A chosen file may hold other stations beside the one asked for.
-      if (chosen && r.channelId.section(QLatin1Char('.'), 1, 1)
-                            .compare(cfg.station, Qt::CaseInsensitive) != 0)
+      if (chosen) {
+        if (ofStation.size() <= size_t(r.channel))
+          ofStation.resize(size_t(r.channel) + 1, qint8(-1));
+        if (ofStation[r.channel] < 0)
+          ofStation[r.channel] =
+              ch.id.section(QLatin1Char('.'), 1, 1)
+                      .compare(cfg.station, Qt::CaseInsensitive) == 0
+                  ? 1
+                  : 0;
+        if (ofStation[r.channel] == 0)
+          continue;
+      }
+      // Outside the period: not read at all (a record across one of its
+      // ends is cut to it when it is read, below).
+      if ((cfg.endEpoch && r.startEpoch >= *cfg.endEpoch) ||
+          (cfg.startEpoch &&
+           r.startEpoch + double(r.count) / ch.rate <= *cfg.startEpoch)) {
+        ++outsidePeriod;
         continue;
-      if (nativeFs == 0)
-        nativeFs = r.rate;
-      else if (std::abs(nativeFs - r.rate) > 1e-6)
-        throw std::runtime_error(
-            QStringLiteral(
-                "mixed sample rates (%1 and %2 Hz) in the input; not supported")
-                .arg(nativeFs)
-                .arg(r.rate)
-                .toStdString());
-      seen.insert(r.component);
-      index << r;
+      }
+      index.push_back(r);
     }
   }
-  if (nativeFs == 0)
+  if (index.empty()) {
+    if (outsidePeriod > 0)
+      throw NoDataInPeriod(
+          QStringLiteral("the input files hold no data of %1 between %2 and "
+                         "%3: all of their %4 record(s) lie outside that "
+                         "period")
+              .arg(cfg.station,
+                   cfg.startEpoch ? isoOfEpoch(*cfg.startEpoch)
+                                  : QStringLiteral("their start"),
+                   cfg.endEpoch ? isoOfEpoch(*cfg.endEpoch)
+                                : QStringLiteral("their end"))
+              .arg(outsidePeriod)
+              .toStdString());
     throw std::runtime_error(
         "no E/N/Z component data found in the input files");
-  for (char c : kComponents)
-    if (!seen.contains(c))
-      throw std::runtime_error(
-          QStringLiteral("component '%1' not found in the input files; need "
-                         "all of E, N, Z")
-              .arg(c)
-              .toStdString());
+  }
+  // One sensor only. Records are placed by time alone, so two sensors of a
+  // station (a broadband and an accelerometer, or two location codes) would
+  // be written over each other, sample by sample.
+  const ChannelChoice choice = chooseChannels(index, table, cfg);
+  {
+    std::vector<char> keep(size_t(table.channels.size()), 0);
+    for (int i = 0; i < table.channels.size(); ++i)
+      keep[size_t(i)] = table.channels[i].family() == choice.family;
+    index.erase(std::remove_if(index.begin(), index.end(),
+                               [&keep](const RecordRef &r) {
+                                 return !keep[r.channel];
+                               }),
+                index.end());
+    index.shrink_to_fit();
+    for (int i = 0; i < table.channels.size(); ++i) {
+      if (!keep[size_t(i)])
+        continue;
+      const double rate = table.channels[i].rate;
+      if (nativeFs == 0)
+        nativeFs = rate;
+      else if (std::abs(nativeFs - rate) > 1e-6)
+        throw std::runtime_error(
+            QStringLiteral("mixed sample rates (%1 and %2 Hz) in the %3? "
+                           "channels; not supported")
+                .arg(nativeFs)
+                .arg(rate)
+                .arg(choice.family)
+                .toStdString());
+    }
+  }
+  say(QStringLiteral(" Channels: %1").arg(choice.how));
+  if (opt.channels)
+    *opt.channels = choice;
   std::sort(index.begin(), index.end(),
             [](const RecordRef &a, const RecordRef &b) {
               return a.startEpoch < b.startEpoch;
@@ -376,7 +601,7 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
   a.fs = nativeFs;
   for (char c : kComponents)
     a.comps[c] = {};
-  a.recordsTotal = index.size();
+  a.recordsTotal = int(index.size());
   const int decimation = std::max(1, int(nativeFs / cfg.fs));
   const double outFs = nativeFs / decimation;
   const int blockLen = int(kBlockSeconds * nativeFs);
@@ -385,10 +610,10 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
 
   int openFile = -1;
   QFile file;
-  for (int i = 0; i < index.size(); ++i) {
+  for (int i = 0; i < int(index.size()); ++i) {
     if (stopping())
       return false;
-    const RecordRef &r = index[i];
+    const RecordRef &r = index[size_t(i)];
     if (openFile != r.file) {
       file.close();
       file.setFileName(inputs.files[r.file]);
@@ -401,12 +626,25 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
     const QByteArray rec = file.read(r.length);
     const RecordHeader h = parseHeader(rec);
     const std::vector<double> samples = decodeRecord(rec, h);
-    const size_t count = std::min<size_t>(samples.size(), size_t(r.count));
-    if (count == 0)
+    size_t count = std::min<size_t>(samples.size(), size_t(r.count));
+    // A record across an end of the period is cut to it: nothing at or
+    // after `endEpoch`, nothing before `startEpoch`.
+    size_t first = 0;
+    if (cfg.startEpoch && r.startEpoch < *cfg.startEpoch)
+      first = size_t(
+          std::ceil((*cfg.startEpoch - r.startEpoch) * nativeFs - 1e-6));
+    if (cfg.endEpoch)
+      count = std::min<size_t>(
+          count, size_t(std::max(0.0, std::ceil((*cfg.endEpoch - r.startEpoch) *
+                                                    nativeFs -
+                                                1e-6))));
+    if (first >= count)
       continue;
+    const double recordStart = r.startEpoch + double(first) / nativeFs;
+    count -= first;
     if (std::isnan(a.startEpoch))
-      a.startEpoch = r.startEpoch;
-    if (r.startEpoch - a.startEpoch > 2.0 * kBlockSeconds) {
+      a.startEpoch = recordStart;
+    if (recordStart - a.startEpoch > 2.0 * kBlockSeconds) {
       // A jump of more than two blocks: finish this stretch and restart the
       // clock.
       bool any = true;
@@ -417,24 +655,25 @@ bool preprocessDirectory(const QString &dataDir, const Config &cfg,
         if (any)
           flushBlock(a, blockLen, cfg, decimation, outFs, sink);
       }
-      a.startEpoch = r.startEpoch;
+      a.startEpoch = recordStart;
       a.watermark = -std::numeric_limits<double>::infinity();
       a.context.clear();
       a.haveContext = false;
     }
     const qint64 idx =
-        qint64(std::llround((r.startEpoch - a.startEpoch) * nativeFs));
+        qint64(std::llround((recordStart - a.startEpoch) * nativeFs));
     if (idx < 0) {
       ++a.droppedLate;
       continue;
     }
-    std::vector<double> &dest = a.comps[r.component];
+    std::vector<double> &dest = a.comps[table.channels[r.channel].component];
     if (dest.size() < size_t(idx) + count)
       dest.resize(size_t(idx) + count, kNaN);
-    std::copy(samples.begin(), samples.begin() + count, dest.begin() + idx);
+    std::copy(samples.begin() + first, samples.begin() + first + count,
+              dest.begin() + idx);
     a.recordsDone = i + 1;
     a.watermark =
-        std::max(a.watermark, r.startEpoch + (double(count) - 1.0) / nativeFs);
+        std::max(a.watermark, recordStart + (double(count) - 1.0) / nativeFs);
     while (a.watermark >= a.startEpoch + kBlockSeconds + lag)
       flushBlock(a, blockLen, cfg, decimation, outFs, sink);
   }

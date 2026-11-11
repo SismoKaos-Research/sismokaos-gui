@@ -4,10 +4,13 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSaveFile>
+#include <QTimeZone>
 
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+
+#include "fx/csv.h"
 
 namespace skg::fx {
 
@@ -154,6 +157,9 @@ QStringList Config::validate() const {
                     .arg(fs);
   if (winSec <= 0 || stepSec <= 0)
     problems << QStringLiteral("win_sec and step_sec must both be positive");
+  if (startEpoch && endEpoch && *endEpoch <= *startEpoch)
+    problems << QStringLiteral("the period to read ends before it starts "
+                               "(\"from\" must be earlier than \"to\")");
   QStringList labels;
   for (const Band &b : bands)
     labels << b.label();
@@ -273,6 +279,17 @@ QJsonObject Config::toJson() const {
   }
   if (!band.isEmpty())
     o.insert("band", band);
+  const auto isoOf = [](double epoch) {
+    return QDateTime::fromMSecsSinceEpoch(qint64(std::llround(epoch * 1000.0)),
+                                          QTimeZone::UTC)
+        .toString(Qt::ISODate);
+  };
+  if (startEpoch)
+    o.insert("from", isoOf(*startEpoch));
+  if (endEpoch)
+    o.insert("to", isoOf(*endEpoch));
+  if (!channels.isEmpty())
+    o.insert("channels", channels);
   return o;
 }
 
@@ -326,6 +343,9 @@ Config Config::fromJson(const QJsonObject &o) {
     c.bands << b;
   }
   c.band = o.value("band").toString();
+  c.startEpoch = parseIsoUtc(o.value("from").toString());
+  c.endEpoch = parseIsoUtc(o.value("to").toString());
+  c.channels = o.value("channels").toString().trimmed();
   return c;
 }
 

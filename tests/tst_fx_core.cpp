@@ -167,8 +167,11 @@ private slots:
     for (const char *name : {"gapped_steim1", "gapped_steim2", "gapped_int32",
                              "gapped_float64", "gapped_steim2_le"}) {
       const QString path = kData + name + ".mseed";
-      const auto refs = indexFile(path, 0);
+      ChannelTable table;
+      const auto refs = indexFile(path, 0, table);
       QVERIFY2(refs.size() >= 5, name);
+      // The index is kept small: a number for the channel, not its text.
+      QVERIFY(sizeof(RecordRef) <= 32);
       QFile f(path);
       QVERIFY(f.open(QIODevice::ReadOnly));
       // Sum per channel across records, compared with obspy's per-trace sums.
@@ -183,8 +186,8 @@ private slots:
         const auto samples = decodeRecord(rec, h);
         QCOMPARE(int(samples.size()), h.sampleCount);
         for (double v : samples)
-          sums[r.channelId] += v;
-        counts[r.channelId] += int(samples.size());
+          sums[table.channels[r.channel].id] += v;
+        counts[table.channels[r.channel].id] += int(samples.size());
       }
       const QJsonObject channels = exp.value("channels").toObject();
       for (auto it = channels.begin(); it != channels.end(); ++it) {
@@ -205,12 +208,13 @@ private slots:
       }
     }
     // int16 fixture holds the data divided by 10
-    const auto refs16 = indexFile(kData + "gapped_int16.mseed", 0);
-    QVERIFY(!refs16.isEmpty());
+    ChannelTable table16;
+    const auto refs16 = indexFile(kData + "gapped_int16.mseed", 0, table16);
+    QVERIFY(!refs16.empty());
     QFile f16(kData + "gapped_int16.mseed");
     QVERIFY(f16.open(QIODevice::ReadOnly));
-    f16.seek(refs16.first().offset);
-    const QByteArray rec = f16.read(refs16.first().length);
+    f16.seek(refs16.front().offset);
+    const QByteArray rec = f16.read(refs16.front().length);
     const RecordHeader h = parseHeader(rec);
     QCOMPARE(h.encoding, 1);
     QCOMPARE(int(decodeRecord(rec, h).size()), h.sampleCount);
@@ -218,12 +222,15 @@ private slots:
 
   void recordTimesAndGaps() {
     const QJsonObject exp = loadJson("gapped_expected.json");
-    const auto refs = indexFile(kData + "gapped_steim2.mseed", 0);
+    ChannelTable table;
+    const auto refs = indexFile(kData + "gapped_steim2.mseed", 0, table);
     double hhzStart = 1e30, hhzEnd = -1e30;
     for (const RecordRef &r : refs)
-      if (r.channelId.endsWith("HHZ")) {
+      if (table.channels[r.channel].id.endsWith("HHZ")) {
         hhzStart = std::min(hhzStart, r.startEpoch);
-        hhzEnd = std::max(hhzEnd, r.startEpoch + (r.count - 1) / r.rate);
+        hhzEnd = std::max(hhzEnd, r.startEpoch +
+                                      (r.count - 1) /
+                                          table.channels[r.channel].rate);
       }
     // 2020-01-24T00:00:00Z
     QCOMPARE(hhzStart, double(daysFromCivil(2020, 1, 24)) * 86400.0);
@@ -231,7 +238,7 @@ private slots:
     QVERIFY(std::abs((hhzEnd - hhzStart) - (10 + 1 + 10 + 3 + 10 - 1.0 / 20)) <
             1e-6);
     QCOMPARE(exp.value("gaps").toArray().size(), 2);
-    QCOMPARE(refs.first().component, 'E');
+    QCOMPARE(table.channels[refs.front().channel].component, 'E');
   }
 
   // --- filter and FFT ------------------------------------------------------

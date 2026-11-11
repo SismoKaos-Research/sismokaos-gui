@@ -112,6 +112,8 @@ struct RunResult {
   int windows = 0;
   qint64 samples = 0;
   bool stopped = false;
+  // The sensor of the station that was read, and what was left out.
+  ChannelChoice channels;
 };
 
 // The output stem of a run: the data directory's name, as the Rust tool.

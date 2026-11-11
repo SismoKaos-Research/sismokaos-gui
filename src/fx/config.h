@@ -74,6 +74,21 @@ struct Config {
   QList<Band> bands;
   QString band; // the band this run is for, in its metadata
 
+  // The period that is read, in seconds since 1970 UTC: samples before
+  // `startEpoch` or at and after `endEpoch` are left out, whatever the files
+  // hold, in the calibration and in the extraction alike. A study run sets
+  // them to the case's span, so nothing recorded after the earthquake enters
+  // the features or the parameters fitted for them. Unset: no limit on that
+  // side. JSON: "from" and "to", ISO 8601 UTC.
+  std::optional<double> startEpoch, endEpoch;
+  // Which sensor of the station is read when its files hold several (a
+  // broadband HH? and an accelerometer HN?, or two location codes): the
+  // channel family as "HH", "HH?" or "00.HH?" (location first). Empty: the
+  // only family there is, or, with several, the one with the most data, and
+  // the run says which it took and which it left. Never two at once: their
+  // samples would be written over each other.
+  QString channels;
+
   // Derived and run-time fields, not in the JSON.
   QString dataDir;
   // When not empty, exactly these files (plain or zip) are read instead of

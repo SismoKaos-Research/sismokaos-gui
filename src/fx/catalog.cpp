@@ -2,10 +2,13 @@
 #include "fx/csv.h"
 
 #include <QFile>
+#include <QRegularExpression>
 #include <QStringList>
+#include <QTimeZone>
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 #include "fx/mseed.h"
@@ -15,49 +18,98 @@
 
 namespace skg::fx {
 
-QByteArray gunzip(const QByteArray &gz) {
-  if (gz.size() < 18 || quint8(gz[0]) != 0x1f || quint8(gz[1]) != 0x8b)
+namespace {
+// Where the deflate data of the gzip member starting at `pos` begins. Throws
+// on a header that is not gzip or runs past the end of the file.
+qsizetype gzipDataStart(const QByteArray &gz, qsizetype pos) {
+  const auto need = [&gz](qsizetype upTo) {
+    if (upTo > gz.size())
+      throw std::runtime_error("gzip: truncated header");
+  };
+  need(pos + 10);
+  if (quint8(gz[pos]) != 0x1f || quint8(gz[pos + 1]) != 0x8b)
     throw std::runtime_error("not a gzip file");
-  if (quint8(gz[2]) != 8)
+  if (quint8(gz[pos + 2]) != 8)
     throw std::runtime_error("gzip: unsupported compression method");
-  const quint8 flags = quint8(gz[3]);
-  int pos = 10;
+  const quint8 flags = quint8(gz[pos + 3]);
+  pos += 10;
   if (flags & 0x04) { // FEXTRA
+    need(pos + 2);
     const int xlen = quint8(gz[pos]) | (quint8(gz[pos + 1]) << 8);
     pos += 2 + xlen;
   }
-  if (flags & 0x08) { // FNAME
-    while (pos < gz.size() && gz[pos] != '\0')
+  for (const quint8 bit : {quint8(0x08), quint8(0x10)}) // FNAME, FCOMMENT
+    if (flags & bit) {
+      while (pos < gz.size() && gz[pos] != '\0')
+        ++pos;
       ++pos;
-    ++pos;
-  }
-  if (flags & 0x10) { // FCOMMENT
-    while (pos < gz.size() && gz[pos] != '\0')
-      ++pos;
-    ++pos;
-  }
+    }
   if (flags & 0x02) // FHCRC
     pos += 2;
-  if (pos >= gz.size() - 8)
-    throw std::runtime_error("gzip: truncated header");
-  // The trailer's ISIZE gives the uncompressed length modulo 2^32.
-  const uchar *tail =
-      reinterpret_cast<const uchar *>(gz.constData()) + gz.size() - 4;
-  const quint32 isize =
-      tail[0] | (tail[1] << 8) | (tail[2] << 16) | (quint32(tail[3]) << 24);
+  need(pos + 1);
+  return pos;
+}
+} // namespace
+
+QByteArray gunzip(const QByteArray &gz) {
+  // Member after member (a .gz may hold several, as `cat a.gz b.gz`, pigz
+  // and bgzip write them), each inflated to its own end. The length in a
+  // member's trailer is not used: it is modulo 2^32 and describes only that
+  // member, and a stream that stops short of its end is an error, not a
+  // shorter catalog.
+  constexpr qsizetype kMaxOut = qsizetype(1) << 31; // 2 GiB of text
+  const char *const kTruncated =
+      "gzip: the file ends before its data does (truncated)";
   QByteArray out;
-  out.resize(qsizetype(isize) + 1);
-  tinfl_decompressor inflator;
-  tinfl_init(&inflator);
-  size_t inLen = size_t(gz.size() - 8 - pos), outLen = size_t(out.size());
-  const tinfl_status status = tinfl_decompress(
-      &inflator, reinterpret_cast<const mz_uint8 *>(gz.constData() + pos),
-      &inLen, reinterpret_cast<mz_uint8 *>(out.data()),
-      reinterpret_cast<mz_uint8 *>(out.data()), &outLen,
-      TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF);
-  if (status < 0)
-    throw std::runtime_error("gzip: corrupt deflate stream");
-  out.resize(qsizetype(outLen));
+  qsizetype pos = 0;
+  bool any = false;
+  while (pos < gz.size()) {
+    if (any) {
+      // Zero padding after the last member is allowed.
+      qsizetype z = pos;
+      while (z < gz.size() && gz[z] == '\0')
+        ++z;
+      if (z == gz.size())
+        break;
+    }
+    pos = gzipDataStart(gz, pos);
+    mz_stream stream{};
+    if (mz_inflateInit2(&stream, -MZ_DEFAULT_WINDOW_BITS) != MZ_OK)
+      throw std::runtime_error("gzip: cannot start inflating");
+    const qsizetype given = std::min<qsizetype>(
+        gz.size() - pos, qsizetype(std::numeric_limits<int>::max()));
+    stream.next_in =
+        reinterpret_cast<const unsigned char *>(gz.constData()) + pos;
+    stream.avail_in = static_cast<unsigned int>(given);
+    QByteArray chunk(1 << 20, Qt::Uninitialized);
+    int status = MZ_OK;
+    while (status == MZ_OK) {
+      stream.next_out = reinterpret_cast<unsigned char *>(chunk.data());
+      stream.avail_out = static_cast<unsigned int>(chunk.size());
+      status = mz_inflate(&stream, MZ_NO_FLUSH);
+      const qsizetype got = chunk.size() - qsizetype(stream.avail_out);
+      if (out.size() + got > kMaxOut) {
+        mz_inflateEnd(&stream);
+        throw std::runtime_error("gzip: more than 2 GiB when inflated");
+      }
+      out.append(chunk.constData(), got);
+      if (status == MZ_OK && got == 0 && stream.avail_in == 0)
+        break; // the input is used up before the stream ends
+    }
+    const qsizetype used = given - qsizetype(stream.avail_in);
+    mz_inflateEnd(&stream);
+    if (status != MZ_STREAM_END)
+      throw std::runtime_error(status == MZ_OK || status == MZ_BUF_ERROR
+                                   ? kTruncated
+                                   : "gzip: corrupt deflate stream");
+    pos += used;
+    if (pos + 8 > gz.size())
+      throw std::runtime_error(kTruncated);
+    pos += 8; // this member's CRC32 and length
+    any = true;
+  }
+  if (!any)
+    throw std::runtime_error("not a gzip file");
   return out;
 }
 
@@ -149,14 +201,57 @@ std::optional<double> parseAfadTime(const QString &s) {
          sec;
 }
 
+std::optional<double> parseIsoUtc(const QString &text) {
+  static const QRegularExpression re(QStringLiteral(
+      "^(\\d{4})-(\\d{1,2})-(\\d{1,2})"
+      "(?:[T ]+(\\d{1,2}):(\\d{2})(?::(\\d{2})(?:[.,](\\d+))?)?"
+      "\\s*(Z|z|[+-]\\d{2}(?::?\\d{2})?)?)?$"));
+  const QRegularExpressionMatch m = re.match(text.trimmed());
+  if (!m.hasMatch())
+    return std::nullopt;
+  const int y = m.captured(1).toInt(), mo = m.captured(2).toInt(),
+            d = m.captured(3).toInt();
+  if (!QDate::isValid(y, mo, d))
+    return std::nullopt;
+  const int h = m.captured(4).toInt(), mi = m.captured(5).toInt(),
+            sec = m.captured(6).toInt();
+  if (h > 24 || mi > 59 || sec > 60 || (h == 24 && (mi != 0 || sec != 0)))
+    return std::nullopt;
+  double epoch =
+      double(daysFromCivil(y, mo, d) * 86400 + h * 3600 + mi * 60 + sec);
+  if (!m.captured(7).isEmpty())
+    epoch += (QStringLiteral("0.") + m.captured(7)).toDouble();
+  const QString zone = m.captured(8);
+  if (zone.size() > 1) { // an offset: the text's time is UTC plus it
+    QString digits = zone.mid(1);
+    digits.remove(QLatin1Char(':'));
+    const int off = digits.left(2).toInt() * 3600 + digits.mid(2).toInt() * 60;
+    epoch -= zone[0] == QLatin1Char('-') ? -off : off;
+  }
+  return epoch;
+}
+
+QDateTime isoUtcDateTime(const QString &text) {
+  const std::optional<double> epoch = parseIsoUtc(text);
+  if (!epoch)
+    return {};
+  return QDateTime::fromMSecsSinceEpoch(qint64(std::llround(*epoch * 1000.0)),
+                                        QTimeZone::UTC);
+}
+
 std::vector<CatalogEvent> loadCatalog(const QString &path) {
   const QStringList rows = lines(readMaybeGz(path));
   if (rows.isEmpty())
     throw std::runtime_error((path + " is empty").toStdString());
   const QStringList headers = splitCsv(rows.first());
-  const int t = column(headers, {"Date"}), mag = column(headers, {"Magnitude"}),
-            lat = column(headers, {"Latitude"}),
-            lon = column(headers, {"Longitude"});
+  // The columns and times the other reader of a catalog accepts
+  // (analysis::loadEvents): one file reads the same for every tool.
+  const int t = column(headers, {"Date", "DateTime", "Tarih", "Zaman", "time",
+                                 "origin_time"}),
+            mag = column(headers, {"Magnitude", "Buyukluk", "Büyüklük", "Mag",
+                                   "ML", "Mw", "mag"}),
+            lat = column(headers, {"Latitude", "Enlem", "lat"}),
+            lon = column(headers, {"Longitude", "Boylam", "lon"});
   if (t < 0 || mag < 0 || lat < 0 || lon < 0)
     throw std::runtime_error(
         QStringLiteral("%1 needs Date, Magnitude, Latitude and Longitude "
@@ -170,7 +265,9 @@ std::vector<CatalogEvent> loadCatalog(const QString &path) {
     const QStringList r = splitCsv(rows[i]);
     if (t >= r.size())
       continue;
-    const auto epoch = parseAfadTime(r[t]);
+    auto epoch = parseAfadTime(r[t]);
+    if (!epoch)
+      epoch = parseIsoUtc(r[t]); // without a zone: UTC, never local time
     const auto m = number(r, mag), la = number(r, lat), lo = number(r, lon);
     if (epoch && m && la && lo)
       events.push_back({*epoch, *m, *la, *lo});

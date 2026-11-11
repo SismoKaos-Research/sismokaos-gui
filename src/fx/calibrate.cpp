@@ -295,7 +295,22 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
   std::array<double, 3> secondsGood{};
   int windowsGaps = 0, windowsEvents = 0;
 
-  preprocessDirectory(cfg.dataDir, cfg, opt, [&](ChannelChunk &&chunk) {
+  const auto readThrough = [&](const ChunkSink &sink) {
+    try {
+      return preprocessDirectory(cfg.dataDir, cfg, opt, sink);
+    } catch (const NoDataInPeriod &e) {
+      // The same thing to say, and to do about it, as when the files could
+      // be read and held nothing usable: the station has no data to
+      // calibrate on in the period.
+      throw CalibrationError(CalibrationError::Reason::NoData,
+                             QStringLiteral("%1, so there is nothing to "
+                                            "calibrate on. Check the "
+                                            "station's coverage, or get its "
+                                            "waveforms for the period")
+                                 .arg(QString::fromUtf8(e.what())));
+    }
+  };
+  const bool readAll = readThrough([&](ChannelChunk &&chunk) {
     fs = chunk.fs;
     if (progress)
       progress(chunk.recordsDone, chunk.recordsTotal);
@@ -374,6 +389,10 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
       m.erase(m.begin(), m.begin() + cursor);
     bufEpoch += double(cursor) / fs;
   });
+  // Stopped part-way: what was read so far is no calibration, and too few
+  // windows of it would be reported as too little data. Neither.
+  if (!readAll)
+    throw Stopped();
 
   cal.fs = fs;
   cal.windowsSampled = int(reservoir.size());
@@ -487,7 +506,7 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
   cal.measured = int(segments.size());
   for (const Seg &s : segments) {
     if (opt.shouldStop && opt.shouldStop())
-      throw std::runtime_error("stopped");
+      throw Stopped();
     if (const auto t = amiTau(s.z, opts.maxTau))
       taus.push_back(double(*t));
     const double mf = meanFrequency(*s.raw, fs);
@@ -506,7 +525,7 @@ Calibration calibrate(const Config &cfg, const PreprocessOptions &opt,
   cal.tau = std::max(1, int(std::round(median(taus))));
   for (const Seg &s : segments) {
     if (opt.shouldStop && opt.shouldStop())
-      throw std::runtime_error("stopped");
+      throw Stopped();
     if (const auto d = fnnDim(s.z, cal.tau, opts.maxDim))
       dims.push_back(double(*d));
   }
