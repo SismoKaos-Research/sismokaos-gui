@@ -19,7 +19,7 @@ else you would not want everyone to read.
 **How to see it again**
 
 <!-- The page, the buttons pressed, in order. If it was a run: which tool, and
-     what the cell said (Failed, Blocked, …) with its reason. -->
+     what the cell said (Failed, Waiting, …) with its reason. -->
 
 1.
 2.

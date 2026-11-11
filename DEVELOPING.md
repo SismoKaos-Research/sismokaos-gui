@@ -34,7 +34,8 @@ src/text/      decoding catalog text (UTF-8, else Windows-1254) and restoring pl
                event service damaged (QtCore only; data/ holds the GeoNames place list)
 src/tools/     ToolDesc, ToolRegistry: descriptors and resolution of external CLIs
 src/tdvms/     the C++ port of tdvms-pull (library, no Widgets); data/ holds the built-in
-               station and earthquake lists (catalog.h), embedded as resources
+               station and earthquake lists (catalog.h), embedded as resources; guide.h
+               is what the Data page's "get waveforms for a case" panel is made of
 src/fx/        the C++ port of the feature extraction, after sismokaos-cli (library, no Widgets)
 src/analysis/  the SCAP port: catalogs, faults, labelling, figures (library, QtGui only),
                and the regions port, after earthquake-clustering-eafz: regions (SOM, Mean
@@ -48,24 +49,31 @@ src/ayzek/     the launcher logic for the bundled ayzek: command line, output pa
 src/study/     studies (library, no Widgets): study.toml, cases, recipes, the open study
                (study.h, store.h); the waveform index (waveindex.h); the built-in list and
                catalog download (catalogs.h); running a recipe on a case (runs.h: layout,
-               run.json, cell states); what Compare reads (compare.h)
+               run.json, cell states, span coverage); what ran and what a study takes on
+               disk (runinfo.h); the scan cache (scancache.h); what Compare reads
+               (compare.h)
 src/studyui/   widgets the study pages and the tool pages share: the map (geomap.h),
                station coverage (coveragemap.h), the study bar of the tool pages
                (studyinputs.h)
-src/core/      Module interface, AppContext, Navigator, ModuleRegistry, I18n, Theme,
-               ui helpers, shared defaults (defaults.h)
+src/core/      Module interface, AppContext, Navigator, WorkQueue, ModuleRegistry, I18n,
+               Theme, ui helpers (ui.h: help, file dialogs, the number format), shared
+               defaults (defaults.h), settings keys (appsettings.h), paths for the C
+               libraries (nativepath.h), KeepAwake
 src/modules/   one directory per page, each its own static library target
-src/app/       MainWindow, UpdateCheck, main()
+src/app/       the skg_shell library (MainWindow, UpdateCheck, JobNotifier, diagnostics)
+               and main()
 data/faults/   the two fault data files shipped beside the program, with LICENSE.txt and
                PROVENANCE.md (not Qt resources)
 third_party/   vendored libraries (miniz, libsvm, toml++) with a PROVENANCE.md each,
                and the XGBoost and ayzek submodules (*-PROVENANCE.md beside them)
 packaging/     desktop entry and icon; ayzek/ holds the Meson driver and zig cross file;
                naturalearth/ the script that made src/analysis/data/countries.geojson;
+               geonames/ the one that made src/text/data/places.tsv;
                efsm20/ the script that made data/faults/faults_tr.geojson;
                check_package.sh, which fails a package that lacks a data file or ayzek
 tests/         QtTest suites and their fixtures (tests/data)
-translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts
+translations/  sismokaos-gui_tr.ts, sismokaos-gui_en.ts, GLOSSARY.md (the Turkish terms)
+docs/          release notes of pre-releases
                install.sh / install.ps1 live at the root
 .github/       CI on every push; the release workflow on tags
 ```
@@ -254,6 +262,112 @@ built-in list and the download through a fake service; `tst_study_pages`,
 `StudySwitcher::setupAfterCreate` and `showPage`. Compare and the coverage
 dialog load on a worker thread: wait on `loading()` before asserting.
 
+### The lock, and a file changed on disk
+
+`StudyStore` (`study/store.h`) holds a `QLockFile`, `.study.lock`, in the
+study folder while a study is open. A second store on the same folder is
+refused with who holds it; a lock left by a crash on the same computer is
+taken over; one from another computer is only opened after a question.
+`holdsLock()` is false for a folder that takes no lock file (read-only
+media): a page must then start nothing and change nothing, and say why (the
+Cases, Runs and Data pages each have a reason line for it). `update()`
+refuses to save over a `study.toml` that something else wrote since it was
+read; `changedOnDisk()` and `reload(QString *error)` are for the banner and
+its *Reload* button.
+
+### Waveform folders, again
+
+- Folders are compared as the file system sees them: `study::sameFolder(a,
+  b)` and `folderInside(child, parent)` (`study/study.h`) ask the file
+  system for folders that exist (so letter case on a case-ignoring volume
+  and links are handled) and compare resolved text otherwise. Never compare
+  folder texts yourself.
+- Root ids are never reused: `study.toml` keeps `waveforms_last_id`, the
+  highest number ever given, because the index still holds a removed root's
+  files under its id until a scan drops them.
+- A root that exists but lists nothing, or cannot be read, keeps its index
+  entries and is named in `ScanStats::unavailable` (an unplugged drive's
+  mount point). `ScanOptions::forgetEmptyFolders` drops them; the dialog
+  sets it only after asking.
+- Roots can change under a running scan: `WaveScan` listens to the study and
+  restarts on the new list, and the dialog calls `WaveScan::stopAndWait()`
+  before it adds, re-points or removes a folder.
+- File times are compared with `study::sameFileTime(stored, onDisk)`, which
+  allows for the two-second times of FAT and exFAT. The scan cache follows a
+  file to another drive by name, size and a content fingerprint;
+  `ScanCache::identityLine(path)` gives `name|size|fingerprint` for a stamp
+  that must survive a move (the fingerprint is kept in memory after the
+  first read, so a repeated call costs a stat).
+
+### Spans and coverage
+
+`study::spanData(index, station, from, to)` (`study/runs.h`) is the one
+answer to "what does the study have of this station in this span": the days
+with data, whether that is exact or estimated, the station's whole range,
+and the notes "none in the span" and "little of the span". The Cases page,
+the Runs cells and the Data page's panel all call it; do not count days
+anywhere else. `spanCalendarDays(from, to)` is the number of UTC days a span
+touches (365 days from 14:00 to 14:00 touch 366), the denominator
+everywhere.
+
+### What ran, and what a study takes on disk
+
+`study/runinfo.h` only reads run folders and the index:
+
+- `activity(study)`: every attempt, latest first, with outcome, error and
+  duration (the Runs page's *Activity* tab; the diagnostics can use it).
+- `studyOnDisk(study)`, `folderBytes()`, `cleanUp(study, paths, …)`: the
+  sizes per result folder, which of them are leftovers, and their removal.
+  `cleanUp` refuses anything that is not a leftover of the run layout.
+- `LiveRuns`: a process-wide registry of the run folders in use, so the
+  clean-up can never take a folder from under a run.
+- `unpackedBytes(file)`, `peakNeed(needs, atOnce)`, `freeBytesAt(dir)`: what
+  the zip archives of a run unpack to, the most that is in use at once for a
+  given number of runs at a time, and the free space, for the check before a
+  run.
+
+On the page side, `RunsPage::menuFor(...)` builds the context menu of a
+cell, a row name or a column heading (tests call it instead of sending a
+right click), `RunWords` (`modules/study/runtext.h`) words durations and
+sizes, `skg::showStudyOnDisk(ctx, parent)` (`modules/study/studydisk.h`)
+opens the disk dialog, and `SeriesPlot::readout` is the guide's text on the
+Compare plot. The page reports how many cells wait through
+`reportQueue()` into `ctx.queue` (see "Shell services").
+
+### Adding cases
+
+`AddFromCatalogDialog` returns `results()`, a list of cases, and
+`setAdder(fn)` lets *Add and keep open* hand them over while the dialog
+stays open; it takes the settings to remember its filters per study.
+`Duplicates` says what happens to an earthquake that is already a case, and
+`stationsToStartWith()` is the rule that pre-ticks stations (nearest N with
+data in the span, else nearest N). Text filters and sort keys go through
+`text::fold()` / `text::foldedContains()` (`src/text/text.h`), which fold
+case, accents and the four Turkish i's without a locale; use them for any
+new search box.
+
+### Downloads for a case
+
+`tdvms/guide.h` holds the pieces with no widgets: `portalNetwork()` (the
+source rule: a station the portal lists with an instrument goes to AFAD),
+the requests for a set of days on a grid of `chunkDays`,
+`studyDownloadsRoot(studyDir)` (`<study>/downloads/campaigns/waveforms`,
+the layout the campaign library recognises), `RequestProgress`,
+`estimateBytes()` and `retryFailed()`. `CaseDownloads`
+(`modules/tdvms/casedownloads.h`) is the panel: `setCase(…)` for one case,
+`setSpans(perStation)` for several (each station the days of the spans of
+the cases that tick it); its `Hooks` replace the real run in tests.
+`TdvmsWidget::guide()` gives the panel to a test.
+
+- `HttpResult::ok()` now needs a 2xx status and an empty error: a connection
+  that drops after the headers, or a body shorter than its Content-Length,
+  carries an error. Check `ok()`, never the status alone.
+- `tdvms::maskAddress()` / `maskAddresses(text)` mask mailbox and slot
+  addresses; everything the Data page shows or logs goes through them.
+- `tdvms::naiveUtc(text)` reads a zone-less stamp as UTC (see "Dates").
+- `tdvms::kCompleteSuffix` marks the run's own "complete" note, which the
+  page drops when the main window announces the end of the job anyway.
+
 ## Adding a page (module)
 
 1. Create `src/modules/<name>/` with a `CMakeLists.txt` like
@@ -309,8 +423,9 @@ main window switches the page; a page that takes arguments connects to
 
 | target | args |
 |---|---|
-| `tdvms` (the Data page) | `stations` (QStringList), `start`, `end` (ISO UTC; the page adds a day to `end`, whole days are fetched), optional `network`, `case` (name shown in the bar), `lat`, `lon`, `zone_km` (drawn on the map) |
-| `cases` | `case`, `station` are sent by the Runs page; the Cases page does not read them yet |
+| `tdvms` (the Data page) | `stations` (QStringList), `start`, `end` (ISO UTC; whole UTC days are fetched), optional `network`, `case` (name shown), `lat`, `lon`, `zone_km` (drawn on the map; absent for several cases), `cases` (QStringList of names) and `requests`: a list of `{case, stations, start, end}`, one entry per case, from which each station gets the days of the spans of the cases that tick it. With a study open the page shows the panel of `CaseDownloads`; without one, the bar |
+| `cases` | `case` (id) and `station` (code), sent by the Runs page and the Data page: the Cases page selects them, clearing a filter that hides the case |
+| `runs`, `compare` | no arguments |
 | `kNavJobsPanel` (`"@jobs"`) | opens the jobs panel instead of a page; `job` is the row to select |
 
 **Shared defaults.** A starting value more than one page offers lives in
@@ -344,6 +459,91 @@ works).
 User-visible strings go through `tr()`; widgets re-read them in
 `changeEvent(QEvent::LanguageChange)`. Labels built in a loop can keep their
 source string with `QT_TR_NOOP` and re-translate from it.
+
+## Shell services
+
+What the main window provides, so that a page does not build its own:
+
+- **`skg_shell`** is the library of `src/app` without `main()`
+  (`MainWindow`, `UpdateCheck`, `JobNotifier`, the diagnostics), so tests
+  can link it (`tst_shell`, `tst_update`).
+- **The work queue.** `ctx.queue` (`WorkQueue` in `core/module.h`) counts
+  what waits outside the jobs table: `set(owner, waiting)`, `waiting()`,
+  `changed()`. The status strip, the end-of-work notification and the quit
+  question read it. A page that queues work before it becomes a job (the
+  Runs page) must report its count whenever it changes, and 0 when its study
+  closes or the page goes away; otherwise the notifier waits for ever.
+- **Notifications.** `JobNotifier` (`app/notifier.h`) announces the end of a
+  busy period (jobs plus the queue), and at once a long job that fails while
+  others go on. A page does not notify by itself: runs are ordinary jobs.
+  `KeepAwake` (`core/keepawake.h`) holds the computer awake while jobs run:
+  `SetThreadExecutionState` on Windows, a `caffeinate` child on macOS, a
+  `systemd-inhibit` child on Linux, and nothing where that is missing.
+- **File dialogs.** `ui::pickFolder`, `ui::pickFile` and `ui::pickSaveFile`
+  (`core/ui.h`; parent, settings, key, …) remember the last folder per key;
+  `ui::dialogFolder(settings, key, …)` gives it for a dialog of your own.
+  Use them for every file dialog. The tool pages still call `QFileDialog`
+  directly and are to be moved over.
+- **Numbers.** `ui::pinNumberFormat()` (called in `main()`) sets the default
+  locale to C and resets `LC_NUMERIC`, so numbers have a decimal point in
+  both languages and in every file, and the vendored libraries (XGBoost,
+  libsvm) parse as they expect. A comma typed into a `QDoubleSpinBox` is
+  turned into a point by an application-wide filter. Do not format a number
+  for a file with a locale.
+- **Qt's own translation** (`qtbase_tr.qm`, for the standard buttons) is
+  embedded at build time under `:/qt-i18n/` (`src/core/CMakeLists.txt`), so
+  no deploy tool has to copy it. `packaging/check_package.sh` warns when a
+  build has none; `SKG_REQUIRE_QT_I18N=1` makes that a failure.
+- **Diagnostics.** `app/diagnostics.h` builds the text of *Help → Copy
+  diagnostics*: version, system, Qt, language, theme, data files, the size
+  of the open study, recent failures. Home becomes `~`, addresses
+  `<address>`, the study's place `<study>`. Anything added there must be
+  scrubbed the same way. `.github/ISSUE_TEMPLATE/beta-report.md` asks for
+  it.
+- **Settings keys** shared by more than one file are named in
+  `core/appsettings.h`.
+- **The window itself**: `MainWindow::openDropped()` opens a dropped study
+  folder (a page that accepts drops must let a study folder pass),
+  `confirmQuit` is the hook tests use for the quit question, and the first
+  steps card and the no-study bar are drawn by the window on the Study
+  pages.
+
+## Paths, dates and text: three rules
+
+These three were each a real fault that the tests of one platform could not
+see.
+
+**Never `toLocal8Bit()` a path.** The vendored miniz decodes file names as
+UTF-8 on Windows, and the C libraries want something else again, so a path
+with letters outside the system's code page (`C:\Users\Oğuz\…`) could not
+be opened. `core/nativepath.h` has `minizPath(path)` for every
+`mz_zip_reader_init_file` and the like (UTF-8 on Windows, with the `\\?\`
+form for long paths, the file system's encoding elsewhere) and
+`cLibraryPath(path, &ok)` for `fopen()`-style libraries such as libsvm
+(ASCII, else the short 8.3 name, else the ANSI bytes). Everything else goes
+through `QFile`. `tst_paths` runs the whole chain (zip scan, unpacking, the
+TDVMS archive inspection, study, index, scan cache, feature table, catalog,
+model files) inside a folder named "İstasyon ğüşöç ı"; add to it when you
+add a way to open a file.
+
+**A time with no zone is UTC.** Never parse with `QDateTime::fromString` and
+then `toUTC()` or `setTimeZone(UTC)`: the first reads the string in the
+computer's zone, the second moves times that fall in a local daylight-saving
+gap. Build the time from its date and time parts with `QTimeZone::UTC`:
+`tdvms::naiveUtc()` in the download code and, in the analysis code,
+`fx::parseIsoUtc()` (the two do the same job in libraries that do not depend
+on each other). The catalog's `catalog_utc_offset_hours` is applied once, in
+`analysis::loadEvents`, and every tool reads the catalog through it. Tests
+that touch times must pass in any zone; the time-sensitive suites are also
+registered a second time with `TZ=Europe/Istanbul` (the `_istanbul` entries
+in `tests/CMakeLists.txt`), since the CI machines run in UTC.
+
+**Text from outside.** Catalog files are decoded with `text::decode()`
+(UTF-8, else Windows-1254), never Latin-1. Place names an event service
+damaged ("Do?anyol") are restored with `text::repairPlace(place, lat, lon)`
+from `src/text/data/places.tsv` (generator in `packaging/geonames/`,
+provenance beside the file). Compare and search text with `text::fold()`. Std `toupper`/`tolower`
+depend on the locale and break on the Turkish i; use Qt's.
 
 ## Porting a tool
 
@@ -386,6 +586,27 @@ data only and never the network (a fake `Http` stands in).
 
 `tst_help` builds every page and dialog and fails when an option has no
 hover help; a new dialog must be added to it.
+
+**Written to pass on every platform.** The suites run on Linux, Windows and
+macOS in CI, and each of these has failed there once:
+
+- Wait for a state with `QTRY_VERIFY`/`QTRY_COMPARE`; never assume a layout,
+  a queued signal or a worker has finished.
+- Do not assert geometry right after `show()`, or a ratio that only holds
+  for one window shape; check what holds for any size and print the sizes in
+  the failure message.
+- Do not assert exact counts that depend on timing or on file times.
+- A test must pass in any time zone (see "Paths, dates and text"); the
+  time-sensitive suites have a second registration under
+  `TZ=Europe/Istanbul`.
+- Anything that opens a file gets a case in `tst_paths`, which works inside
+  a folder with Turkish letters in its name.
+- Questions a page asks are answered through a hook (`RunsPage::confirm`,
+  `CasesPage::confirm`, `MainWindow::confirmQuit`, `pickFoldersHook`), and a
+  menu is built through a function (`RunsPage::menuFor`), so no test waits
+  on a modal dialog.
+- Free space, the HTTP layer and the download run have fakes; no test
+  touches the network, a real mailbox or the user's settings.
 
 **Under load.** QtTest kills a test function after five minutes. The
 training-heavy suites (`tst_sfc_*`, `tst_study_runs`) pass in seconds on a
@@ -449,7 +670,15 @@ Several people (or agents) can work at once if the merges are kept trivial:
    is rebased onto the new `main`, rebuilt, run through the whole `ctest`,
    and then fast-forwarded. `main` only ever moves by fast-forward.
 5. A fresh worktree has empty submodules: initialise them (the first command
-   of "Build from source") before configuring.
+   of "Build from source") before configuring, or copy `third_party/` from a
+   tree that has them and delete the `.git` link files inside the copy.
+6. A worktree made by a tool may start at the last pushed commit, not at the
+   local `main`: `git reset --hard <main's commit>` before starting.
+7. Two streams that each pass alone can still fail together (two helpers of
+   the same name, say). Nothing is merged on the strength of a branch's own
+   test run: the rebased tree is built and tested as a whole first.
+8. Four builds at once overload a laptop and tests then hit QtTest's time
+   limit; see "Under load".
 
 ## ayzek
 
@@ -489,6 +718,17 @@ third_party/ayzek`, update `AYZEK-PROVENANCE.md`, and compare
 1. Set `project(sismokaos-gui VERSION X.Y.Z ...)` in `CMakeLists.txt` and
    commit.
 2. `git tag -a vX.Y.Z -m "..." && git push origin main vX.Y.Z`.
+
+**A pre-release** is a tag with a suffix, `vX.Y.Z-beta.N`: the number must
+match the CMake version, and the workflow hands the suffix to the build
+(`-DSKG_VERSION_SUFFIX=-beta.N`), so the application reports
+`X.Y.Z-beta.N`. It is published as a GitHub pre-release, which is never "the
+latest release": the install scripts and the update check of a stable
+version keep offering the last stable one. A beta is installed by its
+version (`install.sh --version X.Y.Z-beta.N`), and
+`UpdateCheck::isNewer` offers it a later pre-release of the same version or
+its final release. Write its notes in `docs/RELEASE-NOTES-<version>.md` and
+paste them into the release.
 
 The release workflow refuses a tag that does not match the CMake version,
 builds and tests on Linux, Windows and macOS, and publishes the AppImage,
