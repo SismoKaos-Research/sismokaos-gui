@@ -10,7 +10,6 @@
 #include <QComboBox>
 #include <QDir>
 #include <QEvent>
-#include <QFileDialog>
 #include <QFontDatabase>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -338,7 +337,10 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
   guide_->setFdsnDefaults(fdsn_->service(), fdsn_->channels());
   {
     QPointer<TdvmsWidget> self(this);
+    // The guided download always ends by itself: see startRun().
     guide_->setNotify([self](const QString &t, const QString &b, bool u) {
+      if (t.endsWith(kCompleteSuffix))
+        return;
       QMetaObject::invokeMethod(
           self.data(),
           [self, t, b, u] {
@@ -361,8 +363,9 @@ TdvmsWidget::TdvmsWidget(AppContext ctx, QWidget *parent)
 // --- campaigns ------------------------------------------------------------
 
 void TdvmsWidget::chooseRoot() {
-  const QString dir = QFileDialog::getExistingDirectory(
-      this, tr("Folder with the campaigns"), root_->text());
+  const QString dir =
+      ui::pickFolder(this, ctx_.settings, QStringLiteral("data/root"),
+                     tr("Folder with the campaigns"), root_->text());
   if (!dir.isEmpty())
     setRoot(dir);
 }
@@ -502,8 +505,9 @@ void TdvmsWidget::newCampaign() {
           .trimmed();
   if (!ok || name.isEmpty())
     return;
-  const QString target = QFileDialog::getExistingDirectory(
-      this, tr("Where to keep the downloads (cancel for the campaign folder)"),
+  const QString target = ui::pickFolder(
+      this, ctx_.settings, QStringLiteral("data/campaignTarget"),
+      tr("Where to keep the downloads (cancel for the campaign folder)"),
       root_->text());
   try {
     const Campaign c = tdvms::newCampaign(root_->text(), name, target);
@@ -544,8 +548,13 @@ void TdvmsWidget::setWanted(const QVariantMap &args) {
   // With a study open the guided panel takes the case; without one the bar
   // offers the two forms, as before.
   if (ctx_.study && ctx_.study->isOpen())
-    guide_->setCase(wantedCase_, wantedStations_, wantedStart_, wantedEnd_,
-                    wantedNetwork_);
+    guide_->setCase(
+        wantedCase_, wantedStations_,
+        QDateTime::fromString(args.value(QStringLiteral("start")).toString(),
+                              Qt::ISODate),
+        QDateTime::fromString(args.value(QStringLiteral("end")).toString(),
+                              Qt::ISODate),
+        wantedNetwork_);
   wantedBar_->setVisible(!wantedStations_.isEmpty() && !guide_->guiding());
   retranslate();
   applyWanted();
@@ -726,9 +735,10 @@ void TdvmsWidget::ingest() {
   const Campaign c = current();
   if (c.ledgerPath.isEmpty())
     return;
-  const QString file = QFileDialog::getOpenFileName(
-      this, tr("Archive to file against its window"), c.raw,
-      tr("Archives (*.zip *.part);;All files (*)"));
+  const QString file = ui::pickFile(
+      this, ctx_.settings, QStringLiteral("data/ingest"),
+      tr("Archive to file against its window"),
+      tr("Archives (*.zip *.part);;All files (*)"), c.raw);
   if (file.isEmpty())
     return;
   Ledger ledger(c.ledgerPath);
@@ -803,7 +813,15 @@ void TdvmsWidget::startRun() {
   if (!opt.supervisor.dryRun)
     registerDownloadFolder(c.raw);
   QPointer<TdvmsWidget> self(this);
-  Notify desktop = [self](const QString &t, const QString &b, bool u) {
+  // A run that ends by itself when everything is answered ends as a job,
+  // and the end of jobs is announced by the window (once, for all pages):
+  // its "complete" note is left to that. A run that keeps cycling has no
+  // such end, so its note is shown.
+  const bool endsItself = opt.exitWhenDone;
+  Notify desktop = [self, endsItself](const QString &t, const QString &b,
+                                      bool u) {
+    if (endsItself && t.endsWith(kCompleteSuffix))
+      return;
     QMetaObject::invokeMethod(
         self.data(),
         [self, t, b, u] {

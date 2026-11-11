@@ -27,6 +27,7 @@
 #include "modules/tdvms/casedownloads.h"
 #include "modules/tdvms/stationmap.h"
 #include "modules/tdvms/tdvmsmodule.h"
+#include "study/runs.h"
 #include "study/store.h"
 #include "study/waveindex.h"
 #include "tdvms/fdsn.h"
@@ -161,6 +162,8 @@ private slots:
   void cleanup();
   void thePiecesOfTheGuide();
   void aCaseListsStationsAndWhatIsMissing();
+  void theCountIsTheOneCasesAndRunsShow();
+  void aStudyThisWindowDoesNotHoldIsNotDownloadedInto();
   void oneClickKeepsADownloadAndAsksForEverything();
   void withoutAMailboxFdsnGoesAheadAndAfadWaits();
   void theAddressIsNeverShownInFull();
@@ -251,6 +254,17 @@ bool TstDataGuided::makeStudy() {
     if (!f.open(QIODevice::WriteOnly))
       return false;
     f.write(record(utc(day), "AAA", "TU", "HHZ"));
+  }
+  // EEE has data, but a year before the span; FFF has one day of the span.
+  for (const auto &[sta, day] :
+       {std::pair<QByteArray, QDate>{"EEE", QDate(2018, 1, 5)},
+        std::pair<QByteArray, QDate>{"EEE", QDate(2018, 1, 6)},
+        std::pair<QByteArray, QDate>{"FFF", QDate(2019, 3, 25)}}) {
+    QDir().mkpath(root + "/" + sta);
+    QFile f(root + "/" + sta + "/" + day.toString(Qt::ISODate) + ".mseed");
+    if (!f.open(QIODevice::WriteOnly))
+      return false;
+    f.write(record(utc(day), sta, "TU", "HHZ"));
   }
   QString id;
   if (!store_->update([&](Study &s) {
@@ -429,10 +443,11 @@ void TstDataGuided::aCaseListsStationsAndWhatIsMissing() {
   auto *table = child<QTableWidget>(page, "guideStations");
   QVERIFY(table);
   QCOMPARE(table->rowCount(), 2);
-  // AAA: five of the fourteen days are in the study; BBB: none.
-  QVERIFY2(cell(table, "AAA", 1).startsWith("5 of 14"),
+  // AAA: the study has four days of the span as the case has it (its
+  // first file ends before the span begins that day); BBB: none.
+  QVERIFY2(cell(table, "AAA", 1).startsWith("4 of 13"),
            qPrintable(cell(table, "AAA", 1)));
-  QVERIFY2(cell(table, "BBB", 1).startsWith("none of 14"),
+  QVERIFY2(cell(table, "BBB", 1).startsWith("none of 13"),
            qPrintable(cell(table, "BBB", 1)));
   // The source follows the rule: AAA is on the portal's list, BBB is not.
   auto *fromA = child<QComboBox>(page, "guideFrom_AAA");
@@ -441,8 +456,9 @@ void TstDataGuided::aCaseListsStationsAndWhatIsMissing() {
   QCOMPARE(fromA->currentData().toInt(), int(tdvms::Source::Portal));
   QCOMPARE(fromB->currentData().toInt(), int(tdvms::Source::Fdsn));
   QVERIFY(!fromA->toolTip().isEmpty());
-  // Nine days missing for AAA fit one request of three weeks; BBB needs
-  // fourteen days from the FDSN service.
+  // Whole days are downloaded: of the fourteen the span touches, nine have
+  // no file for AAA, which fit one request of three weeks; BBB needs all
+  // fourteen from the FDSN service.
   QVERIFY2(cell(table, "AAA", 3).contains("9 day") &&
                cell(table, "AAA", 3).contains("1 new request"),
            qPrintable(cell(table, "AAA", 3)));
@@ -493,6 +509,85 @@ void TstDataGuided::aCaseListsStationsAndWhatIsMissing() {
   QCOMPARE(int(guide->mode()), int(CaseDownloads::Mode::Idle));
   QVERIFY(advanced->isHidden());
   QVERIFY(child<StationPickMap>(page, "stationMap")->selected().isEmpty());
+}
+
+// "What the study has" is study::spanData on the case's own span: the
+// function the Cases page and the Runs cells count with.
+void TstDataGuided::theCountIsTheOneCasesAndRunsShow() {
+  QVERIFY(makeStudy());
+  TdvmsWidget page(ctx_);
+  CaseDownloads *guide = page.guide();
+  guide->setHooks(hooks());
+  guide->setPortalStations(portalList());
+  askFor({QStringLiteral("AAA"), QStringLiteral("EEE"), QStringLiteral("FFF"),
+          QStringLiteral("BBB")});
+  auto *table = child<QTableWidget>(page, "guideStations");
+  const QDateTime from = QDateTime::fromString(
+      QStringLiteral("2019-03-20T14:00:00Z"), Qt::ISODate);
+  const QDateTime to = QDateTime::fromString(
+      QStringLiteral("2019-04-02T14:00:00Z"), Qt::ISODate);
+  const auto index = WaveIndex::shared(store_->study().dir);
+  for (const char *code : {"AAA", "FFF"}) {
+    const SpanData d = spanData(*index, code, from, to);
+    QVERIFY(d.known && d.days > 0);
+    QVERIFY2(cell(table, code, 1)
+                 .contains(QStringLiteral("%1 of %2").arg(d.days).arg(d.spanDays)),
+             qPrintable(cell(table, code, 1)));
+  }
+  // One day of thirteen is too little to run on, and the row says so.
+  QVERIFY(spanData(*index, "FFF", from, to).thin());
+  QVERIFY2(cell(table, "FFF", 1).contains("too little"),
+           qPrintable(cell(table, "FFF", 1)));
+  QVERIFY(!cell(table, "AAA", 1).contains("too little"));
+  // Data, but none of it in the span: said as that, with where it lies.
+  const SpanData e = spanData(*index, "EEE", from, to);
+  QVERIFY(e.known);
+  QCOMPARE(e.days, 0);
+  QVERIFY2(cell(table, "EEE", 1).contains("none in the span") &&
+               cell(table, "EEE", 1).contains("2018-01-05") &&
+               cell(table, "EEE", 1).contains("2018-01-06"),
+           qPrintable(cell(table, "EEE", 1)));
+  // All fourteen days are still to get for it.
+  QVERIFY2(cell(table, "EEE", 3).startsWith("14 day"),
+           qPrintable(cell(table, "EEE", 3)));
+  // A station the study knows nothing of: plainly none.
+  QVERIFY(cell(table, "BBB", 1).startsWith("none of 13"));
+}
+
+// A study is held by the window that opened it (a lock file in its folder).
+// Where no lock can be taken, on read-only media, the study opens without
+// one and nothing may be run into it.
+void TstDataGuided::aStudyThisWindowDoesNotHoldIsNotDownloadedInto() {
+  QVERIFY(makeStudy());
+  const QString dir = store_->study().dir;
+  store_->close();
+  const auto writable = QFile::permissions(dir);
+  QVERIFY(QFile::setPermissions(dir, QFileDevice::ReadOwner |
+                                         QFileDevice::ExeOwner));
+  const auto restore = qScopeGuard([&] { QFile::setPermissions(dir, writable); });
+  const bool opened = store_->open(dir);
+  if (!opened || store_->holdsLock())
+    QSKIP("this system lets the folder be written to anyway (Windows, or "
+          "running as root), so the study is held");
+
+  TdvmsWidget page(ctx_);
+  CaseDownloads *guide = page.guide();
+  guide->setHooks(hooks());
+  guide->setPortalStations(portalList());
+  askFor({QStringLiteral("AAA"), QStringLiteral("BBB")});
+  // It can be looked at...
+  QCOMPARE(child<QTableWidget>(page, "guideStations")->rowCount(), 2);
+  // ...but nothing is started, and the button says why.
+  auto *go = child<QPushButton>(page, "guideGo");
+  QVERIFY(!go->isEnabled());
+  QVERIFY2(guide->blockedReason().contains("cannot be written"),
+           qPrintable(guide->blockedReason()));
+  QCOMPARE(guide->plan().portalRequests, 0);
+  guide->start();
+  QVERIFY(!guide->running());
+  QVERIFY(!QFileInfo::exists(dir + "/downloads"));
+  QCOMPARE(asked_->size(), 0);
+  QCOMPARE(*portalRuns_, 0);
 }
 
 void TstDataGuided::oneClickKeepsADownloadAndAsksForEverything() {
@@ -690,7 +785,7 @@ void TstDataGuided::buttonsThatAreOffSayWhy() {
   nav_->show(QStringLiteral("tdvms"),
              {{QStringLiteral("stations"), QStringList{QStringLiteral("AAA")}},
               {QStringLiteral("start"), QStringLiteral("2019-03-20T00:00:00Z")},
-              {QStringLiteral("end"), QStringLiteral("2019-03-22T10:00:00Z")},
+              {QStringLiteral("end"), QStringLiteral("2019-03-23T00:00:00Z")},
               {QStringLiteral("case"), QStringLiteral("Case A")}});
   auto *table = child<QTableWidget>(page, "guideStations");
   QVERIFY2(cell(table, "AAA", 1).startsWith("3 of 3"),
@@ -815,7 +910,7 @@ void TstDataGuided::theMapAddsStationsToTheList() {
   QCOMPARE(guide->stations(),
            (QStringList{QStringLiteral("AAA"), QStringLiteral("CCC")}));
   QCOMPARE(table->rowCount(), 2);
-  QVERIFY(cell(table, "CCC", 1).startsWith("none of 14"));
+  QVERIFY(cell(table, "CCC", 1).startsWith("none of 13"));
   QCOMPARE(map->selected().size(), 2);
   // A second click takes it out again.
   emit map->toggled(QStringLiteral("CCC"));

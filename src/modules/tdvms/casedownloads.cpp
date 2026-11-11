@@ -21,6 +21,7 @@
 
 #include "core/ui.h"
 #include "jobs/jobmodel.h"
+#include "study/runs.h"
 #include "study/store.h"
 #include "study/waveindex.h"
 #include "tdvms/disk.h"
@@ -181,6 +182,7 @@ CaseDownloads::CaseDownloads(AppContext ctx, QWidget *parent)
         stations_.clear();
         chosen_.clear();
         first_ = end_ = QDate();
+        from_ = to_ = QDateTime();
         finished_.clear();
         setProperty("studyDir", studyOpen() ? studyDir() : QString());
       }
@@ -250,8 +252,18 @@ int CaseDownloads::spanDays() const {
 }
 
 void CaseDownloads::setCase(const QString &name, const QStringList &stations,
-                            const QDate &first, const QDate &dayAfterLast,
+                            const QDateTime &from, const QDateTime &to,
                             const QString &network) {
+  from_ = from.toUTC();
+  to_ = to.toUTC();
+  // Whole days are downloaded: from the day the span starts on to the day
+  // it ends on, that one included.
+  const QDate first = from_.isValid() ? from_.date() : QDate();
+  const QDate dayAfterLast =
+      to_.isValid()
+          ? (to_.time() == QTime(0, 0) && to_ > from_ ? to_.date()
+                                                      : to_.date().addDays(1))
+          : QDate();
   case_ = name;
   stations_.clear();
   for (const QString &s : stations) {
@@ -284,6 +296,7 @@ void CaseDownloads::dismiss() {
   stations_.clear();
   chosen_.clear();
   first_ = end_ = QDate();
+  from_ = to_ = QDateTime();
   finished_.clear();
   refresh();
   emit dismissed();
@@ -326,8 +339,8 @@ void CaseDownloads::compute() {
 
   const auto index = study::WaveIndex::shared(studyDir());
   const QString key = studyDir() + QLatin1Char('|') +
-                      first_.toString(Qt::ISODate) + QLatin1Char('|') +
-                      end_.toString(Qt::ISODate);
+                      from_.toString(Qt::ISODate) + QLatin1Char('|') +
+                      to_.toString(Qt::ISODate);
   if (indexSeen_ != index || coverKey_ != key) {
     indexSeen_ = index;
     coverKey_ = key;
@@ -360,13 +373,22 @@ void CaseDownloads::compute() {
                                                       : QString());
     if (haveCase) {
       if (!cover_.contains(code)) {
+        // What the study has of the span: study::spanData, the function
+        // the Cases page and the Runs cells count with, on the same span.
         Cover cv;
-        cv.have = index->daysCovered(code, dayStartUtc(first_),
-                                     dayStartUtc(end_), &cv.approximate,
-                                     &cv.atLeast);
+        const study::SpanData span = study::spanData(*index, code, from_, to_);
+        cv.have = span.days;
+        cv.spanDays = span.spanDays;
+        cv.approximate = span.approximate;
+        cv.atLeast = span.atLeast;
+        cv.indexed = span.known;
+        cv.thin = span.thin();
+        cv.dataFirst = span.first;
+        cv.dataLast = span.last;
+        // Which whole days to ask for: the ones of the span with no data.
         if (cv.have == 0)
           cv.missing = days;
-        else if (cv.have < days.size())
+        else
           for (const QDate &d : days)
             if (index->daysCovered(code, dayStartUtc(d),
                                    dayStartUtc(d.addDays(1))) == 0)
@@ -375,8 +397,13 @@ void CaseDownloads::compute() {
       }
       const Cover &cv = cover_[code];
       row.have = cv.have;
+      row.spanDays = cv.spanDays;
       row.approximate = cv.approximate;
       row.atLeast = cv.atLeast;
+      row.indexed = cv.indexed;
+      row.thin = cv.thin;
+      row.dataFirst = cv.dataFirst;
+      row.dataLast = cv.dataLast;
       row.missing = cv.missing;
       // What would be new: days nothing asks for yet. A request that
       // failed is not written a second time; Retry failed puts it back.
@@ -431,6 +458,12 @@ QString CaseDownloads::blockedReason() const {
     return {};
   if (running())
     return tr("The download is running. Stop it to change what is asked for.");
+  // A study this window does not hold (its folder cannot be written to, so
+  // no lock could be taken) is looked at here, not downloaded into.
+  if (!holdsStudy())
+    return tr("This study's folder cannot be written to, so the "
+              "application does not hold the study and nothing is "
+              "downloaded into it. Open it from a place you can write to.");
   int toPlan = 0, open = 0, portalOpen = 0, fdsnWork = 0;
   for (const Row &r : rows_) {
     if (r.source == Source::None)
@@ -475,9 +508,13 @@ QString CaseDownloads::blockedReason() const {
 
 // --- the one click --------------------------------------------------------------
 
+bool CaseDownloads::holdsStudy() const {
+  return studyOpen() && ctx_.study->holdsLock();
+}
+
 CaseDownloads::Planned CaseDownloads::plan() {
   Planned out;
-  if (!studyOpen())
+  if (!holdsStudy())
     return out;
   compute();
   bool any = false;
@@ -504,7 +541,7 @@ void CaseDownloads::nudgeStudy() {
   // Saving the study, even unchanged, is what makes the Cases page look at
   // them again and read the new files.
   const Campaign c = download();
-  if (c.ledgerPath.isEmpty() || !studyOpen())
+  if (c.ledgerPath.isEmpty() || !holdsStudy())
     return;
   QStringList dirs;
   if (!Ledger(c.ledgerPath).rows().isEmpty())
@@ -520,7 +557,7 @@ void CaseDownloads::nudgeStudy() {
 }
 
 void CaseDownloads::start() {
-  if (!studyOpen() || running())
+  if (!holdsStudy() || running())
     return;
   const Campaign c = download();
   if (c.ledgerPath.isEmpty())
@@ -630,7 +667,7 @@ void CaseDownloads::stop() {
 
 void CaseDownloads::retry() {
   const Campaign c = download();
-  if (c.ledgerPath.isEmpty() || running())
+  if (c.ledgerPath.isEmpty() || running() || !holdsStudy())
     return;
   Ledger portal(c.ledgerPath);
   Ledger fdsn(fdsnStatePath(c));
@@ -720,7 +757,6 @@ QString CaseDownloads::stateText(const Row &row) const {
 void CaseDownloads::fillTable() {
   const QSignalBlocker block(table_);
   table_->setRowCount(int(rows_.size()));
-  const int total = spanDays();
   for (int i = 0; i < int(rows_.size()); ++i) {
     const Row &r = rows_[i];
     auto *name = new QTableWidgetItem(
@@ -734,20 +770,36 @@ void CaseDownloads::fillTable() {
     table_->setItem(i, Station, name);
 
     QString have = QStringLiteral("—");
+    QString haveTip;
     if (mode_ == Mode::Case) {
-      have = r.have == 0 ? tr("none of %n day(s)", nullptr, total)
-             : r.atLeast ? tr("at least %1 of %n day(s)", nullptr, total)
-                               .arg(r.have)
-             : r.approximate
-                   ? tr("about %1 of %n day(s)", nullptr, total).arg(r.have)
-                   : tr("%1 of %n day(s)", nullptr, total).arg(r.have);
+      const int of = r.spanDays;
+      if (r.have == 0 && !r.atLeast && r.dataFirst.isValid()) {
+        // Data, but none of it in the span: not the same as no data.
+        have = tr("⚠ none in the span (it has %1 to %2)")
+                   .arg(r.dataFirst.toString(Qt::ISODate),
+                        r.dataLast.toString(Qt::ISODate));
+      } else {
+        have = r.have == 0 ? tr("none of %n day(s)", nullptr, of)
+               : r.atLeast ? tr("at least %1 of %n day(s)", nullptr, of)
+                                 .arg(r.have)
+               : r.approximate
+                     ? tr("about %1 of %n day(s)", nullptr, of).arg(r.have)
+                     : tr("%1 of %n day(s)", nullptr, of).arg(r.have);
+        if (r.thin) {
+          have = tr("⚠ %1: too little to run on").arg(have);
+          haveTip = tr("The station has data on only a small part of the "
+                       "span; a run on it would rest on very little.");
+        }
+      }
+      if (r.approximate || r.atLeast)
+        haveTip += (haveTip.isEmpty() ? QString() : QStringLiteral(" ")) +
+                   tr("Some of this station's files have only been looked at "
+                      "quickly; the exact count follows when the study has "
+                      "read them.");
     }
     auto *haveItem = new QTableWidgetItem(have);
-    if (r.approximate || r.atLeast)
-      haveItem->setToolTip(ui::helpText(
-          tr("Some of this station's files have only been looked at "
-             "quickly; the exact count follows when the study has read "
-             "them.")));
+    if (!haveTip.isEmpty())
+      haveItem->setToolTip(ui::helpText(haveTip));
     table_->setItem(i, Have, haveItem);
 
     auto *from = qobject_cast<QComboBox *>(table_->cellWidget(i, From));
@@ -783,21 +835,27 @@ void CaseDownloads::fillTable() {
     else if (r.missing.isEmpty())
       toGet = tr("nothing: all there");
     else if (r.windows.isEmpty() && r.fdsnDays.isEmpty() &&
+             r.progress.failed == 0 && r.progress.open() == 0 &&
+             r.progress.fetched > 0)
+      // Downloaded; the count on the left follows when the study has read
+      // the new files.
+      toGet = tr("fetched; the study has not read the files yet");
+    else if (r.windows.isEmpty() && r.fdsnDays.isEmpty() &&
              r.progress.failed > 0)
-      toGet = tr("%n day(s) missing; what failed can be asked for again",
+      toGet = tr("%n day(s) to get; what failed can be asked for again",
                  nullptr, int(r.missing.size()));
     else if (r.source == Source::Portal)
       toGet = r.windows.isEmpty()
-                  ? tr("%n day(s) missing, asked for already", nullptr,
+                  ? tr("%n day(s) to get, asked for already", nullptr,
                        int(r.missing.size()))
-                  : tr("%1 day(s) missing: %n new request(s)", nullptr,
+                  : tr("%1 day(s) to get: %n new request(s)", nullptr,
                        int(r.windows.size()))
                         .arg(r.missing.size());
     else
       toGet = r.fdsnDays.isEmpty()
-                  ? tr("%n day(s) missing, asked for already", nullptr,
+                  ? tr("%n day(s) to get, asked for already", nullptr,
                        int(r.missing.size()))
-                  : tr("%1 day(s) missing: %n new day(s) to ask for", nullptr,
+                  : tr("%1 day(s) to get: %n new day(s) to ask for", nullptr,
                        int(r.fdsnDays.size()))
                         .arg(r.missing.size());
     table_->setItem(i, ToGet, new QTableWidgetItem(toGet));
@@ -959,7 +1017,7 @@ void CaseDownloads::updateTexts() {
   stop_->setEnabled(isRunning);
   retry_->setText(tr("Retry failed"));
   retry_->setVisible(failed > 0);
-  retry_->setEnabled(!isRunning);
+  retry_->setEnabled(!isRunning && holdsStudy());
   why_->setText(isRunning ? tr("Downloading. The table follows the "
                                "requests; the full log is in the Jobs "
                                "panel.")

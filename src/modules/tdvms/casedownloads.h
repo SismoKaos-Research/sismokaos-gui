@@ -12,6 +12,7 @@
 #pragma once
 
 #include <QDate>
+#include <QDateTime>
 #include <QFrame>
 #include <QList>
 #include <QPair>
@@ -73,9 +74,11 @@ public:
   void setFdsnDefaults(const QString &service, const QString &channels);
   void setNotify(const tdvms::Notify &notify) { notify_ = notify; }
 
-  // What a case needs: its stations and the days [first, dayAfterLast).
+  // What a case needs: its stations and its span [from, to), as the Cases
+  // and Runs pages count it. Whole days are downloaded: every UTC day the
+  // span touches.
   void setCase(const QString &name, const QStringList &stations,
-               const QDate &first, const QDate &dayAfterLast,
+               const QDateTime &from, const QDateTime &to,
                const QString &network);
   // The station list changed from outside (a click on the map).
   void setStations(const QStringList &stations);
@@ -119,8 +122,12 @@ private:
     QString code, network;
     tdvms::Source source = tdvms::Source::Portal;
     bool known = false; // the portal's list holds it
-    int have = 0;       // days of the span the study has
+    // What the study has of the span, from study::spanData: the same count
+    // the Cases page and the Runs cells show.
+    int have = 0, spanDays = 0;
     bool approximate = false, atLeast = false;
+    bool indexed = false, thin = false;
+    QDate dataFirst, dataLast; // the station's data anywhere
     QList<QDate> missing;
     // What pressing the button would add.
     QList<QPair<QString, QString>> windows; // portal requests
@@ -140,6 +147,8 @@ private:
   void jobEnded();
   void nudgeStudy();
   bool studyOpen() const;
+  // Open, and this window is the one that may write into it.
+  bool holdsStudy() const;
   QString studyDir() const;
   bool mailboxReady() const;
   QString stateText(const Row &row) const;
@@ -155,7 +164,8 @@ private:
   Mode mode_ = Mode::Off;
   QString case_;
   QStringList stations_;
-  QDate first_, end_; // end exclusive
+  QDateTime from_, to_; // the span as the case has it
+  QDate first_, end_;   // the UTC days it touches; end exclusive
   QString network_;
   QMap<QString, tdvms::Source> chosen_; // the user's choice per station
   QList<Row> rows_;
@@ -164,8 +174,10 @@ private:
   // What the study's index says about each station of the case, kept until
   // the index or the question changes: asking it day by day is not cheap.
   struct Cover {
-    int have = 0;
+    int have = 0, spanDays = 0;
     bool approximate = false, atLeast = false;
+    bool indexed = false, thin = false;
+    QDate dataFirst, dataLast;
     QList<QDate> missing;
   };
   std::shared_ptr<const void> indexSeen_;
