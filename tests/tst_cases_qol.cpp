@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QDoubleSpinBox>
 #include <QDropEvent>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QHeaderView>
 #include <QLabel>
@@ -39,6 +40,7 @@
 #include "jobs/jobmodel.h"
 #include "modules/study/casedialogs.h"
 #include "modules/study/casespage.h"
+#include "modules/tdvms/casedownloads.h"
 #include "study/catalogs.h"
 #include "study/runs.h"
 #include "study/store.h"
@@ -194,6 +196,11 @@ private slots:
   void droppedFiles();
   void referenceDateGuards();
   void stationTableTools();
+  void thirtyCasesRefresh();
+  void daysASpanTouches();
+  void lockedOrChangedElsewhere();
+  void studyDropsAndFilteredTargets();
+  void severalCasesEachTheirOwnDays();
 
 private:
   std::unique_ptr<Bench> bench(const QByteArray &catalog = {}) {
@@ -847,6 +854,23 @@ void TstCasesQol::bulkChangesAndWaveforms() {
                            b->study().cases[1].spanStart()));
   QCOMPARE(end, std::max(b->study().cases[0].time, b->study().cases[1].time));
   QVERIFY(!args.contains("lat")); // no single place
+  // And what each case needs on its own, for a station to be asked for the
+  // spans of the cases that tick it only.
+  const QVariantList requests = args.value("requests").toList();
+  QCOMPARE(requests.size(), 2);
+  for (int i = 0; i < 2; ++i) {
+    const QVariantMap one = requests[i].toMap();
+    const Case &c = b->study().cases[i];
+    QCOMPARE(one.value("case").toString(), c.name);
+    QStringList own;
+    for (const StationRef &st : c.stations)
+      own << st.code;
+    QCOMPARE(one.value("stations").toStringList(), own);
+    QCOMPARE(QDateTime::fromString(one.value("start").toString(), Qt::ISODate),
+             c.spanStart());
+    QCOMPARE(QDateTime::fromString(one.value("end").toString(), Qt::ISODate),
+             c.time);
+  }
   // A selection with no station says so instead of going anywhere.
   went.clear();
   page.getWaveformsFor({three.last()});
@@ -1180,12 +1204,17 @@ void TstCasesQol::stationTableTools() {
         return i;
     return -1;
   };
+  // Out of the days the span touches (one more than its length when it
+  // does not start at midnight).
+  const Case &made = b->study().cases[0];
+  const int touched = spanCalendarDays(made.spanStart(), made.time);
+  QVERIFY(touched == 70 || touched == 71);
   QCOMPARE(stations->item(rowOf(third.code), 4)->data(Qt::UserRole + 2).toDouble(),
-           0.1);
+           7.0 / touched);
   QCOMPARE(stations->item(rowOf(fifth.code), 4)->data(Qt::UserRole + 2).toDouble(),
-           0.3);
+           21.0 / touched);
   QVERIFY(stations->item(rowOf(third.code), 4)->text().contains(
-      QStringLiteral("7 of 70")));
+      QStringLiteral("7 of %1").arg(touched)));
   // A station nothing is known of has no bar.
   const StationRef nearest = stationNear(b->study(), e.lat, e.lon, 0);
   QVERIFY(!stations->item(rowOf(nearest.code), 4)
@@ -1207,6 +1236,311 @@ void TstCasesQol::stationTableTools() {
   untick->click();
   QVERIFY(b->study().cases[0].stations.isEmpty());
   shot(page, QStringLiteral("cases_station_tools"));
+}
+
+void TstCasesQol::thirtyCasesRefresh() {
+  // A study of the size a lab works on: 30 cases of 4 stations each, three
+  // recipes. The page must come up, and follow an edit, without a pause.
+  auto b = bench();
+  const std::vector<analysis::Station> list = b->study().stations();
+  std::vector<analysis::Event> all = study::pickingEvents(b->study());
+  std::sort(all.begin(), all.end(),
+            [](const analysis::Event &x, const analysis::Event &y) {
+              return x.mag > y.mag;
+            });
+  QVERIFY(all.size() >= 30);
+  QVERIFY(b->store->update([&](Study &s) {
+    for (int i = 0; i < 30; ++i) {
+      Case c = caseFromEvent(all[size_t(i)]);
+      c.name += QStringLiteral(" %1").arg(i);
+      c.id = s.freeCaseId(c.name);
+      c.stations = nearestStations(list, c.lat, c.lon, 150.0).mid(0, 4);
+      s.cases << c;
+    }
+    for (const QString &tool :
+         {kToolIndicators, kToolFeatures, kToolClassification}) {
+      Recipe r = defaultRecipe(tool);
+      r.name = tool;
+      r.id = s.freeRecipeId(r.name);
+      if (tool == kToolClassification)
+        r.settings.insert(QStringLiteral("features_recipe"),
+                          s.recipes.value(1).id);
+      s.recipes << r;
+    }
+  }));
+  QCOMPARE(b->study().cases.size(), 30);
+  // Every indicators cell has a run record to read: one made for real, and
+  // copies of it for the other 29 cases (they read as runs of another case,
+  // which costs the same to find out). Each is read for four station rows.
+  const Recipe ind = b->study().recipes.first();
+  const Case &c0 = b->study().cases.first();
+  const QString st0 = c0.stations.first().code;
+  try {
+    QVERIFY(runCell(b->study(), c0, st0, ind, QStringLiteral("test"), {}));
+  } catch (const std::exception &e) {
+    QFAIL(e.what());
+  }
+  const QString made = cellOf(b->study(), c0, st0, ind).dir;
+  QVERIFY(QFile::exists(made + "/run.json"));
+  int records = 1;
+  for (const Case &c : b->study().cases)
+    for (const StationRef &st : c.stations) {
+      const QString dir = cellOf(b->study(), c, st.code, ind).dir;
+      if (dir == made || dir.isEmpty())
+        continue;
+      QDir().mkpath(dir);
+      records += QFile::copy(made + "/run.json", dir + "/run.json") ? 1 : 0;
+    }
+  QCOMPARE(records, 30); // the indicators run once per case
+  QElapsedTimer timer;
+  timer.start();
+  CasesPage page(b->ctx);
+  const qint64 first = timer.elapsed();
+  auto *cases = child<QTableWidget>(page, "caseTable");
+  QCOMPARE(cases->rowCount(), 30);
+  QVERIFY(cases->item(0, 8)->text().endsWith(QStringLiteral("of 12")));
+  QVERIFY(cases->item(0, 8)->text() != QStringLiteral("0 of 12"));
+  // An edit of one case: the page is filled again.
+  timer.restart();
+  QVERIFY(b->store->update([](Study &s) { s.cases[3].spanDays = 200; }));
+  const qint64 again = timer.elapsed();
+  // The same without a change to any run: what a refresh costs when the
+  // counts are already known.
+  timer.restart();
+  QVERIFY(b->store->update([](Study &s) { s.cases[3].name += QLatin1Char('!'); }));
+  const qint64 third = timer.elapsed();
+  qInfo() << "30 cases x 4 stations x 3 recipes: first fill" << first
+          << "ms, after an edit" << again << "ms, after a rename" << third
+          << "ms";
+  // Loose: a slow, busy machine must still pass; a page that reads every
+  // run folder on every refresh for seconds must not.
+  QVERIFY2(again < 3000, qPrintable(QString::number(again)));
+}
+
+void TstCasesQol::daysASpanTouches() {
+  // The denominator of "N of M days": the UTC days the span touches.
+  QCOMPARE(spanCalendarDays(utc(2019, 1, 1), utc(2020, 1, 1)), 365);
+  QCOMPARE(spanCalendarDays(utc(2020, 1, 1), utc(2021, 1, 1)), 366); // leap
+  // 365 days from 14:00 to 14:00 touch 366 days.
+  QCOMPARE(spanCalendarDays(utc(2019, 4, 2, 14), utc(2019, 4, 2, 14).addDays(365)),
+           366);
+  QCOMPARE(spanCalendarDays(utc(2021, 3, 5, 10), utc(2021, 3, 5, 11)), 1);
+  QCOMPARE(spanCalendarDays(utc(2021, 3, 5, 23), utc(2021, 3, 6, 1)), 2);
+  QCOMPARE(spanCalendarDays(utc(2021, 3, 5), utc(2021, 3, 6)), 1);
+  QCOMPARE(spanCalendarDays(utc(2021, 3, 5), utc(2021, 3, 5)), 0);
+  QCOMPARE(spanCalendarDays(utc(2021, 3, 6), utc(2021, 3, 5)), 0);
+  QCOMPARE(spanCalendarDays(QDateTime(), utc(2021, 3, 5)), 0);
+  // A station with data on every day of such a span is never "366 of 365".
+  auto b = bench();
+  const QString root = b->dir.filePath("waves");
+  const QDateTime to = utc(2019, 4, 2, 14);
+  const QDateTime from = to.addDays(-365);
+  write(root + "/FULL/a.mseed",
+        days("FULL", utc(from.date().year(), from.date().month(),
+                         from.date().day()),
+             366));
+  QVERIFY(b->store->update([&root](Study &s) { s.addWaveformRoot(root); }));
+  b->scan();
+  const SpanData d =
+      spanData(*WaveIndex::shared(b->studyDir()), "FULL", from, to);
+  QCOMPARE(d.days, 366);
+  QCOMPARE(d.spanDays, 366);
+  StationRef full;
+  full.code = QStringLiteral("FULL");
+  QCOMPARE(waveformNote(b->study(), full, from, to),
+           QStringLiteral("found: 366 of 366 days in span"));
+  // Under a day.
+  const SpanData hour = spanData(*WaveIndex::shared(b->studyDir()), "FULL",
+                                 utc(2019, 1, 5, 10), utc(2019, 1, 5, 11));
+  QCOMPARE(hour.days, 1);
+  QCOMPARE(hour.spanDays, 1);
+}
+
+void TstCasesQol::lockedOrChangedElsewhere() {
+  auto b = bench();
+  const std::vector<analysis::Event> all = study::pickingEvents(b->study());
+  QVERIFY(b->store->update([&](Study &s) {
+    for (int i = 0; i < 2; ++i) {
+      Case c = caseFromEvent(all[size_t(i)]);
+      c.id = s.freeCaseId(c.name);
+      s.cases << c;
+    }
+  }));
+  const QString dir = b->studyDir();
+  {
+    // Changed by something else since this window read it: the change here
+    // is refused, said, and Reload brings the other one in.
+    CasesPage page(b->ctx);
+    page.resize(1360, 900);
+    page.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&page));
+    auto *banner = child<QLabel>(page, "banner");
+    auto *reload = child<QPushButton>(page, "reloadStudy");
+    QVERIFY(banner && reload);
+    QVERIFY(!reload->isVisible());
+    Study other = Study::load(dir);
+    other.cases[1].name = QStringLiteral("Changed elsewhere");
+    other.cases[1].spanDays = 111;
+    QTest::qWait(1100); // a later time stamp, whatever the file system keeps
+    other.save();
+    QVERIFY(b->store->changedOnDisk());
+    QVERIFY(!page.setSpanOf({b->study().cases[0].id}, 77));
+    QVERIFY(banner->isVisible());
+    QVERIFY(banner->text().contains(QStringLiteral("changed on disk")));
+    QVERIFY(reload->isVisible());
+    QVERIFY(b->study().cases[0].spanDays != 77);
+    reload->click();
+    QVERIFY(!reload->isVisible());
+    QCOMPARE(b->study().cases[1].name, QStringLiteral("Changed elsewhere"));
+    QCOMPARE(b->study().cases[1].spanDays, 111);
+    // And now the change goes through.
+    QVERIFY(page.setSpanOf({b->study().cases[0].id}, 77));
+    QCOMPARE(b->study().cases[0].spanDays, 77);
+  }
+  // A folder that cannot be written: the study opens without its lock, and
+  // the page offers nothing that could not be saved.
+  b->store->close();
+  const QFile::Permissions was = QFile::permissions(dir);
+  QVERIFY(QFile::setPermissions(dir, QFile::ReadOwner | QFile::ExeOwner));
+  const bool opened = b->store->open(dir);
+  if (!opened || b->store->holdsLock()) {
+    QFile::setPermissions(dir, was);
+    QSKIP("this system lets the folder be written all the same");
+  }
+  {
+    CasesPage page(b->ctx);
+    page.resize(1360, 900);
+    page.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&page));
+    auto *note = child<QLabel>(page, "lockNote");
+    auto *cases = child<QTableWidget>(page, "caseTable");
+    auto *name = child<QLineEdit>(page, "caseTitle");
+    QVERIFY(note && cases && name);
+    QVERIFY(note->isVisible());
+    QVERIFY(note->text().contains(QStringLiteral("Nothing can be changed")));
+    QCOMPARE(cases->rowCount(), 2); // still to look at
+    QVERIFY(!name->isEnabled());
+    for (const char *button : {"caseMore", "catalogOwn", "catalogGet",
+                               "studyInputs", "waveformsButton"})
+      QVERIFY2(!child<QPushButton>(page, button)->isEnabled(), button);
+    cases->selectRow(1);
+    QVERIFY(!name->isEnabled());
+    const QString csv = b->dir.filePath("c.csv");
+    write(csv, turkishCatalog());
+    page.handleDrop({csv});
+    QVERIFY(asked_.isEmpty());
+    QVERIFY(child<QLabel>(page, "banner")->text().contains(
+        QStringLiteral("cannot be changed")));
+  }
+  b->store->close();
+  QFile::setPermissions(dir, was);
+}
+
+void TstCasesQol::studyDropsAndFilteredTargets() {
+  auto b = bench();
+  const std::vector<analysis::Event> all = study::pickingEvents(b->study());
+  QVERIFY(b->store->update([&](Study &s) {
+    for (int i = 0; i < 3; ++i) {
+      Case c = caseFromEvent(all[size_t(i)]);
+      c.name = QStringLiteral("Case %1").arg(QChar('A' + i));
+      c.id = s.freeCaseId(c.name);
+      s.cases << c;
+    }
+  }));
+  auto other = bench(); // another study, in its own folder
+  CasesPage page(b->ctx);
+  page.resize(1360, 900);
+  page.show();
+  QVERIFY(QTest::qWaitForWindowExposed(&page));
+  // A study folder, or a study file, is the window's to open: the page does
+  // not take it for a waveform folder.
+  for (const QString &path :
+       {other->studyDir(), QDir(other->studyDir()).filePath("study.toml")}) {
+    QMimeData mime;
+    mime.setUrls({QUrl::fromLocalFile(path)});
+    QDragEnterEvent enter(QPoint(40, 40), Qt::CopyAction, &mime,
+                          Qt::LeftButton, Qt::NoModifier);
+    QCoreApplication::sendEvent(&page, &enter);
+    QVERIFY2(!enter.isAccepted(), qPrintable(path));
+    QDropEvent drop(QPointF(40, 40), Qt::CopyAction, &mime, Qt::LeftButton,
+                    Qt::NoModifier);
+    drop.ignore();
+    QCoreApplication::sendEvent(&page, &drop);
+    QVERIFY(!drop.isAccepted());
+  }
+  QVERIFY(asked_.isEmpty());
+  QVERIFY(b->study().waveRoots.isEmpty());
+  // Sent here for a case the filter hides: the filter gives way.
+  auto *cases = child<QTableWidget>(page, "caseTable");
+  auto *filter = child<QLineEdit>(page, "caseFilter");
+  filter->setText(QStringLiteral("case a"));
+  QCOMPARE(column(cases, 0), QStringList{QStringLiteral("Case A")});
+  const QString target = b->study().cases[2].id;
+  b->nav.show(QStringLiteral("cases"), {{QStringLiteral("case"), target}});
+  QVERIFY(filter->text().isEmpty());
+  QCOMPARE(page.selectedIds(), QStringList{target});
+  // One the filter shows is selected with the filter left alone.
+  filter->setText(QStringLiteral("case"));
+  b->nav.show(QStringLiteral("cases"),
+              {{QStringLiteral("case"), b->study().cases[0].id}});
+  QCOMPARE(filter->text(), QStringLiteral("case"));
+  QCOMPARE(page.selectedIds(), QStringList{b->study().cases[0].id});
+  // Sorted, the target is still found.
+  cases->horizontalHeader()->setSortIndicator(0, Qt::DescendingOrder);
+  b->nav.show(QStringLiteral("cases"), {{QStringLiteral("case"), target}});
+  QCOMPARE(page.selectedIds(), QStringList{target});
+}
+
+void TstCasesQol::severalCasesEachTheirOwnDays() {
+  // Two cases years apart share one station; a second station belongs to
+  // the later case only. The Data page's panel must ask for each station's
+  // own days, not for everything from the first span to the last event.
+  auto b = bench();
+  CaseDownloads panel(b->ctx);
+  const QDateTime a0 = utc(2015, 3, 1), a1 = utc(2015, 3, 11);     // 10 days
+  const QDateTime b0 = utc(2021, 6, 1, 12), b1 = utc(2021, 6, 6, 12); // 6 touched
+  const auto toGet = [&panel](const QString &code) {
+    auto *t = panel.findChild<QTableWidget *>(QStringLiteral("guideStations"));
+    for (int row = 0; t && row < t->rowCount(); ++row) {
+      if (t->item(row, 0)->data(Qt::UserRole).toString() != code)
+        continue;
+      for (int col = 0; col < t->columnCount(); ++col)
+        if (t->item(row, col) &&
+            t->item(row, col)->text().contains(QStringLiteral("to get")))
+          return t->item(row, col)->text();
+    }
+    return QString();
+  };
+  // The frame alone: every day from the first span to the last event.
+  panel.setCase(QStringLiteral("A, B"), {"SHRD", "LATR"}, a0, b1,
+                QStringLiteral("KO"));
+  const int frame = spanCalendarDays(a0, b1);
+  QVERIFY(frame > 2000);
+  QVERIFY(toGet("SHRD").startsWith(QString::number(frame)));
+  // With what each case needs: 10 + 6 days for the shared station, 6 for
+  // the other.
+  QMap<QString, CaseDownloads::Spans> spans;
+  spans["SHRD"] << qMakePair(a0, a1) << qMakePair(b0, b1);
+  spans["LATR"] << qMakePair(b0, b1);
+  panel.setSpans(spans);
+  QVERIFY2(toGet("SHRD").startsWith(QStringLiteral("16 ")),
+           qPrintable(toGet("SHRD")));
+  QVERIFY2(toGet("LATR").startsWith(QStringLiteral("6 ")),
+           qPrintable(toGet("LATR")));
+  // Days the study already has are not asked for again.
+  const QString root = b->dir.filePath("waves");
+  write(root + "/SHRD/a.mseed", days("SHRD", utc(2015, 3, 1), 4));
+  QVERIFY(b->store->update([&root](Study &s) { s.addWaveformRoot(root); }));
+  b->scan();
+  panel.setCase(QStringLiteral("A, B"), {"SHRD", "LATR"}, a0, b1,
+                QStringLiteral("KO"));
+  panel.setSpans(spans);
+  QVERIFY2(toGet("SHRD").startsWith(QStringLiteral("12 ")),
+           qPrintable(toGet("SHRD")));
+  // A new case forgets the spans of the last request.
+  panel.setCase(QStringLiteral("B"), {"LATR"}, b0, b1, QStringLiteral("KO"));
+  QVERIFY2(toGet("LATR").startsWith(QStringLiteral("6 ")),
+           qPrintable(toGet("LATR")));
 }
 
 QTEST_MAIN(TstCasesQol)
