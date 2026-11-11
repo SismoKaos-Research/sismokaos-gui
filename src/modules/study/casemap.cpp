@@ -456,8 +456,11 @@ void CasePreview::setCase(
   const QColor color = palette.isEmpty() ? QColor() : palette.first();
   GeoContent out;
   GeoMarker m;
-  m.kind = GeoMarker::Kind::Earthquake;
-  m.label = !(c.magnitude > 0)
+  // A reference date has a place, not an epicentre.
+  m.kind = c.reference ? GeoMarker::Kind::Reference
+                       : GeoMarker::Kind::Earthquake;
+  m.label = c.reference ? tr("Reference place")
+            : !(c.magnitude > 0)
                 ? tr("Epicentre")
                 : tr("Epicentre · M %1").arg(c.magnitude, 0, 'f', 1);
   m.lat = c.lat;
@@ -532,12 +535,19 @@ void CasePreview::setCase(
                 .arg(c.zone.radiusKm, 0, 'f', 0)
                 .arg(outside.join(QStringLiteral(", "))));
   warning_->setVisible(!outside.isEmpty());
-  hint_->setText(tr("The preview follows what you tick. Click a station to "
-                    "tick or untick it, or another earthquake (grey) to "
-                    "choose that one."));
+  hint_->setText(
+      c.reference
+          ? tr("The preview follows what you tick. Click a station to tick "
+               "or untick it.")
+          : tr("The preview follows what you tick. Click a station to "
+               "tick or untick it, or another earthquake (grey) to "
+               "choose that one."));
   QList<GeoLegend::Entry> key;
-  key << markerEntry(GeoMarker::Kind::Earthquake, GeoMarker::State::Used,
-                     tr("Epicentre"));
+  key << (c.reference
+              ? markerEntry(GeoMarker::Kind::Reference, GeoMarker::State::Used,
+                            tr("Reference place"))
+              : markerEntry(GeoMarker::Kind::Earthquake,
+                            GeoMarker::State::Used, tr("Epicentre")));
   key << markerEntry(GeoMarker::Kind::Station, GeoMarker::State::Used,
                      tr("Station in use"));
   key << markerEntry(GeoMarker::Kind::Station, GeoMarker::State::Candidate,

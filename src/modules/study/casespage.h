@@ -92,6 +92,7 @@ private:
   void applyFilter();
   void fillMenu(QMenu *menu);
   void saveTableState();
+  void fitColumns();
   void tickNearest();
   void untickAll();
   int staleAfter(const std::function<void(study::Study &)> &edit,
@@ -132,7 +133,7 @@ private:
   QPushButton *catalogGet_, *catalogUpdate_, *setup_;
   QComboBox *catalogTime_;
   QPushButton *add_, *addRef_, *remove_, *coverageButton_;
-  QToolButton *more_;
+  QPushButton *more_;
   QLineEdit *filter_;
   QPushButton *scanJob_, *tickNearest_, *untickAll_;
   // Removed in this session, the last first; cleared with the study.

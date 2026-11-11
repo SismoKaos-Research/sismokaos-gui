@@ -27,6 +27,7 @@
 #include <QTemporaryDir>
 #include <QTimeZone>
 #include <QToolButton>
+#include <QTranslator>
 #include <QUrl>
 #include <QtTest>
 
@@ -234,6 +235,13 @@ void TstCasesQol::initTestCase() {
                           : QStringLiteral("light"));
   theme_ = std::make_unique<Theme>(settings_.get());
   theme_->apply();
+  // For pictures in another language: SKG_SHOTS_QM names the .qm file.
+  const QString qm = qEnvironmentVariable("SKG_SHOTS_QM");
+  if (!qm.isEmpty()) {
+    auto *translator = new QTranslator(qApp);
+    if (translator->load(qm))
+      qApp->installTranslator(translator);
+  }
   jobs_ = std::make_unique<JobModel>();
   tools_ = std::make_unique<ToolRegistry>(settings_.get());
   oldConfirm_ = CasesPage::confirm;
@@ -780,7 +788,7 @@ void TstCasesQol::bulkChangesAndWaveforms() {
   QVERIFY(QTest::qWaitForWindowExposed(&page));
   auto *cases = child<QTableWidget>(page, "caseTable");
   auto *name = child<QLineEdit>(page, "caseTitle");
-  auto *more = child<QToolButton>(page, "caseMore");
+  auto *more = child<QPushButton>(page, "caseMore");
   QVERIFY(cases && name && more && more->menu());
   QCOMPARE(page.selectedIds().size(), 1);
   QVERIFY(name->isEnabled());

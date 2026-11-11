@@ -1,6 +1,7 @@
 #include "modules/study/casespage.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -42,6 +43,7 @@
 
 #include <cmath>
 #include <exception>
+#include <memory>
 
 #include "core/defaults.h"
 #include "core/theme.h"
@@ -130,12 +132,15 @@ public:
       QStyledItemDelegate::paint(p, option, index);
       return;
     }
-    // The row's background over the whole cell, then the text moved right.
-    QStyleOptionViewItem blank = option;
-    QStyledItemDelegate::paint(p, blank, QModelIndex());
-    QStyleOptionViewItem text = option;
-    text.rect.adjust(kBar + kGap, 0, 0, 0);
-    QStyledItemDelegate::paint(p, text, index);
+    // The cell as the style draws it, without its text; then the bar, and
+    // the text to the right of it.
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+    const QString words = opt.text;
+    opt.text.clear();
+    const QWidget *w = option.widget;
+    QStyle *style = w ? w->style() : QApplication::style();
+    style->drawControl(QStyle::CE_ItemViewItem, &opt, p, w);
     const double f = qBound(0.0, v.toDouble(), 1.0);
     QRectF bar(option.rect.left() + 4, option.rect.center().y() - 3.0,
                kBar - 4, 7);
@@ -143,6 +148,12 @@ public:
         option.state & QStyle::State_Selected ? QPalette::HighlightedText
                                               : QPalette::Text);
     p->save();
+    p->setPen(ink);
+    p->setFont(opt.font);
+    const QRect textRect = option.rect.adjusted(kBar + kGap, 0, -4, 0);
+    p->drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft,
+                opt.fontMetrics.elidedText(words, Qt::ElideRight,
+                                           textRect.width()));
     p->setRenderHint(QPainter::Antialiasing);
     QColor frame = ink;
     frame.setAlphaF(0.45f);
@@ -312,9 +323,8 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   bar->addWidget(add_);
   bar->addWidget(addRef_);
   bar->addWidget(remove_);
-  more_ = new QToolButton(main);
+  more_ = new QPushButton(main);
   more_->setObjectName(QStringLiteral("caseMore"));
-  more_->setPopupMode(QToolButton::InstantPopup);
   auto *moreMenu = new QMenu(more_);
   more_->setMenu(moreMenu);
   connect(moreMenu, &QMenu::aboutToShow, this,
@@ -472,7 +482,7 @@ CasesPage::CasesPage(AppContext &ctx, QWidget *parent)
   top->setStretchFactor(1, 1);
   top->setChildrenCollapsible(false);
   table_->setMinimumWidth(380);
-  top->setSizes({520, 560});
+  top->setSizes({640, 480});
   auto *split = new QSplitter(Qt::Vertical, main);
   split->addWidget(top);
   split->addWidget(card);
@@ -993,13 +1003,13 @@ void CasesPage::refresh() {
     const QByteArray state = ctx_.settings->value(stateKey).toByteArray();
     if (state.isEmpty() || !table_->horizontalHeader()->restoreState(state)) {
       table_->horizontalHeader()->setSortIndicator(-1, Qt::AscendingOrder);
-      table_->resizeColumnsToContents();
+      fitColumns();
     }
     table_->horizontalHeader()->setStretchLastSection(true);
     table_->horizontalHeader()->setSortIndicatorClearable(true);
     table_->horizontalHeader()->setSectionsClickable(true);
   } else if (!ctx_.settings->contains(stateKey)) {
-    table_->resizeColumnsToContents();
+    fitColumns();
   }
   table_->setSortingEnabled(true);
   // The same cases selected as before; the first one when there was none.
@@ -1023,6 +1033,15 @@ void CasesPage::refresh() {
   updating_ = false;
   applyFilter();
   showCase();
+}
+
+void CasesPage::fitColumns() {
+  // To their contents, but a long name or a long list of stations does not
+  // push what the case still needs out of sight; the full text is in the
+  // cell's tooltip.
+  table_->resizeColumnsToContents();
+  table_->setColumnWidth(0, std::min(table_->columnWidth(0), 190));
+  table_->setColumnWidth(5, std::min(table_->columnWidth(5), 110));
 }
 
 void CasesPage::saveTableState() {
@@ -1308,7 +1327,11 @@ void CasesPage::showBanner(const QString &text) {
                      "%3; border-radius: 6px; padding: 6px 10px; }")
           .arg(ctx_.theme->color(QStringLiteral("surface2")).name(),
                ctx_.theme->color(QStringLiteral("text")).name(),
-               ctx_.theme->statusColor(QStringLiteral("serious")).name()));
+               // A problem is framed as one; a plain note is not.
+               (text.contains(QStringLiteral("⚠"))
+                    ? ctx_.theme->statusColor(QStringLiteral("serious"))
+                    : ctx_.theme->color(QStringLiteral("accent")))
+                   .name()));
   banner_->setText(text);
   banner_->setVisible(!text.isEmpty());
 }
@@ -1385,8 +1408,18 @@ void CasesPage::addFromCatalog() { addNear({}); }
 
 void CasesPage::addNear(const QStringList &stations) {
   try {
+    // A large catalog takes a moment to read: say so while it does.
+    showBanner(tr("Reading the earthquake catalog…"));
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    struct Restore {
+      ~Restore() { QApplication::restoreOverrideCursor(); }
+    };
+    std::unique_ptr<Restore> busy = std::make_unique<Restore>();
     AddFromCatalogDialog dialog(ctx_.study->study(), this, stations,
                                 ctx_.settings);
+    busy.reset();
+    showBanner(QString());
     // "Add and keep open" adds through the page while the dialog stays.
     dialog.setAdder(
         [this](const QList<Case> &cases) { return addCases(cases); });

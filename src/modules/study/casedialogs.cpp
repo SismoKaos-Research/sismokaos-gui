@@ -481,9 +481,10 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   planTable_->setColumnCount(4);
   planTable_->setHorizontalHeaderLabels(
       {tr("Earthquake"), tr("Name"), tr("Stations"), tr("Note")});
-  planTable_->setColumnWidth(0, 150);
-  planTable_->setColumnWidth(1, 220);
-  planTable_->setColumnWidth(2, 170);
+  planTable_->setColumnWidth(0, 140);
+  planTable_->setColumnWidth(1, 180);
+  planTable_->setColumnWidth(2, 120);
+  planTable_->setWordWrap(true);
   lower_ = new QStackedWidget(this);
   lower_->addWidget(stationTable_);
   lower_->addWidget(planTable_);
@@ -514,6 +515,11 @@ AddFromCatalogDialog::AddFromCatalogDialog(const study::Study &study,
   ok_->setObjectName(QStringLiteral("addCases"));
   ok_->setText(tr("Add case"));
   ui::setPrimary(ok_);
+  // Wide enough for "Add 88 cases" from the start: the box does not lay its
+  // buttons out again when a text grows.
+  ok_->setMinimumWidth(
+      ok_->fontMetrics().horizontalAdvance(tr("Add %n case(s)", nullptr, 88)) +
+      56);
   keep_ = buttons->addButton(tr("Add and keep open"),
                              QDialogButtonBox::ActionRole);
   keep_->setObjectName(QStringLiteral("addAndStay"));
@@ -1576,9 +1582,7 @@ void ReferenceDateDialog::updateNotes() {
     QStringList codes;
     for (const study::StationRef &s : ticked)
       codes << s.code;
-    study::Case shown = c;
-    shown.magnitude = 0; // drawn as a place, not sized as an earthquake
-    preview_->setCase(shown, near_, codes, [this](const study::StationRef &s) {
+    preview_->setCase(c, near_, codes, [this](const study::StationRef &s) {
       return hasWaveformsOf(study_, s);
     });
   }
