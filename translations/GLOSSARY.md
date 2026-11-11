@@ -13,8 +13,9 @@ translations).
 | case | vaka | ? "olgu" or "örnek olay" are alternatives |
 | recipe | tarif | ? "ayar seti" is an alternative |
 | span (look-back of a case) | süre | ? "geriye bakış süresi" is more exact but long |
-| run (of a recipe on a case) | çalıştırma | ? the tool pages say "koşu" for their own runs |
-| run (button on a tool page, run name) | koşu / Koşu adı | ? see above; two words for one English word |
+| run (noun: of a recipe on a case, or of a tool on its own page) | çalıştırma | ? one word on every page since 0.4.0; the tool pages said "koşu" before ("koşu" is common in machine-learning talk, "çalıştırma" in software) |
+| Run (button) / Run name | Çalıştır / Çalıştırma adı | |
+| run again / Stop this run | yeniden çalıştır / bu çalıştırmayı durdur | |
 | Runs (page) | Çalıştırmalar | |
 | Compare (page) | Karşılaştır | |
 | done / missing / stale / waiting / failed | tamam / eksik / eskimiş / bekliyor / başarısız | ? "eskimiş" for stale |
@@ -31,6 +32,19 @@ translations).
 | baseline (model) | temel (model) | ? "karşılaştırma tabanı", "referans model" |
 | series | seri | |
 | reference date | referans tarih | |
+| Data / Runs (columns of the cases table) | Veri / Çalıştırmalar | |
+| duplicate (a case, a recipe) | çoğalt | |
+| put back (a removed case) | geri koy | |
+| More (menu of further actions) | Diğer | ? "Daha fazla" |
+| leave out / replace / add again (an earthquake that is already a case) | dışarıda bırak / değiştir / yeniden ekle | |
+| Activity (what ran, when) | Etkinlik | |
+| took (duration of a run) / ended | sürdü / bitti | |
+| leftover (files no result needs) | artık | ? "kalıntı" |
+| Study on disk | Diskteki çalışma | |
+| temporary space | geçici alan | |
+| made by an earlier version | önceki bir sürümle yapıldı | |
+| the study is held by / open in another window | başka bir pencerede açık; "elinde tutmuyor" | ? "held" has no neat word |
+| Reload (the study from disk) | Yeniden yükle | |
 
 ## Seismology
 
@@ -57,6 +71,8 @@ translations).
 | station | istasyon | |
 | network | ağ | |
 | channel | kanal | |
+| sensor (one instrument of a station: HH, HN) | algılayıcı | ? "sensör" is also used; "cihaz" is kept for the portal's instrument list |
+| broadband / accelerometer | geniş bant / ivmeölçer | |
 | instruments | cihazlar | |
 | sample rate | örnekleme hızı | ("Örnekleme" as a column heading) |
 | waveform | dalga formu | |
@@ -114,6 +130,19 @@ translations).
 | log / Show log | günlük / Günlüğü göster | |
 | Stop | Durdur | |
 | campaign | kampanya | |
+| request (to AFAD) / request slot | istek / istek yuvası | ? "yuva" for slot |
+| still to get / asked for already | alınacak / zaten istendi | |
+| Retry failed / Resume the download | Başarısızları yeniden dene / İndirmeyi sürdür | |
+| All downloads (advanced) | Tüm indirmeler (gelişmiş) | |
+| notification / keep awake | bildirim / uyanık tut | |
+| diagnostics | tanılama bilgisi | |
+| manual | kılavuz | |
+| clipboard | pano | |
+| Follow (the log) | İzle | |
+| guide (line under the pointer on a plot) | kılavuz çizgi | |
+| legend (of a plot or map) | açıklama | ? "lejant" is the map-maker's word; not "gösterge", which is an indicator |
+| Stopping… / Quit now | Durduruluyor… / Şimdi çık | |
+| first time here? / Got it | İlk kez mi buradasınız? / Anladım | |
 | mailbox | posta kutusu | |
 | ingest (an archive) | içe al | |
 | plan (a station) | planla | |

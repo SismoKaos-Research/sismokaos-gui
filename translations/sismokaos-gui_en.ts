@@ -3360,451 +3360,496 @@ A study is a folder that holds the cases, the recipes and every result. Start or
 <context>
     <name>skg::ConfigPane</name>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="56"/>
+        <location filename="../src/modules/features/configpane.cpp" line="64"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="57"/>
+        <location filename="../src/modules/features/configpane.cpp" line="65"/>
+        <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="66"/>
+        <source>Read from (UTC)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="67"/>
+        <source>Read up to (UTC)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="68"/>
         <source>Sampling rate after decimation (Hz)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="58"/>
+        <location filename="../src/modules/features/configpane.cpp" line="69"/>
         <source>Window (s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="59"/>
+        <location filename="../src/modules/features/configpane.cpp" line="70"/>
         <source>Step (s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="60"/>
+        <location filename="../src/modules/features/configpane.cpp" line="71"/>
         <source>STA (s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="61"/>
+        <location filename="../src/modules/features/configpane.cpp" line="72"/>
         <source>LTA (s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="62"/>
+        <location filename="../src/modules/features/configpane.cpp" line="73"/>
         <source>Bandpass low (Hz)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="63"/>
+        <location filename="../src/modules/features/configpane.cpp" line="74"/>
         <source>Bandpass high (Hz)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="64"/>
+        <location filename="../src/modules/features/configpane.cpp" line="75"/>
         <source>Spectral split (Hz)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="82"/>
+        <location filename="../src/modules/features/configpane.cpp" line="93"/>
         <source>Embedding delay tau (samples)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="83"/>
+        <location filename="../src/modules/features/configpane.cpp" line="94"/>
         <source>Embedding dimension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="84"/>
+        <location filename="../src/modules/features/configpane.cpp" line="95"/>
         <source>Wolf evolve steps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="85"/>
+        <location filename="../src/modules/features/configpane.cpp" line="96"/>
         <source>Minimum samples</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="86"/>
+        <location filename="../src/modules/features/configpane.cpp" line="97"/>
         <source>Mean period (s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="87"/>
+        <location filename="../src/modules/features/configpane.cpp" line="98"/>
         <source>Rosenstein rise from</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="88"/>
+        <location filename="../src/modules/features/configpane.cpp" line="99"/>
         <source>Rosenstein rise to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="89"/>
+        <location filename="../src/modules/features/configpane.cpp" line="100"/>
         <source>Rosenstein horizon (mean periods)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="90"/>
+        <location filename="../src/modules/features/configpane.cpp" line="101"/>
         <source>SampEn m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="91"/>
+        <location filename="../src/modules/features/configpane.cpp" line="102"/>
         <source>SampEn r</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="92"/>
+        <location filename="../src/modules/features/configpane.cpp" line="103"/>
         <source>SampEn tolerance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="116"/>
+        <location filename="../src/modules/features/configpane.cpp" line="127"/>
         <source>Earthquake catalog (CSV, .gz)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="118"/>
+        <location filename="../src/modules/features/configpane.cpp" line="129"/>
         <source>Station list (CSV)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="121"/>
+        <location filename="../src/modules/features/configpane.cpp" line="132"/>
         <source>Latitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="122"/>
+        <location filename="../src/modules/features/configpane.cpp" line="133"/>
         <source>Longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="123"/>
+        <location filename="../src/modules/features/configpane.cpp" line="134"/>
         <source>Minimum magnitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="124"/>
+        <location filename="../src/modules/features/configpane.cpp" line="135"/>
         <source>Maximum distance (km)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="125"/>
+        <location filename="../src/modules/features/configpane.cpp" line="136"/>
         <source>Seconds before an event</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="126"/>
+        <location filename="../src/modules/features/configpane.cpp" line="137"/>
         <source>Minimum seconds after</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="127"/>
+        <location filename="../src/modules/features/configpane.cpp" line="138"/>
         <source>Coda factor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="128"/>
+        <location filename="../src/modules/features/configpane.cpp" line="139"/>
         <source>Quiet windows sampled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="129"/>
+        <location filename="../src/modules/features/configpane.cpp" line="140"/>
         <source>Loudness factor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="130"/>
+        <location filename="../src/modules/features/configpane.cpp" line="141"/>
         <source>Seed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="131"/>
+        <location filename="../src/modules/features/configpane.cpp" line="142"/>
         <source>Maximum tau</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="132"/>
+        <location filename="../src/modules/features/configpane.cpp" line="143"/>
         <source>Maximum dimension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="170"/>
+        <location filename="../src/modules/features/configpane.cpp" line="181"/>
         <source>Catalogs (*.csv *.csv.gz);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="173"/>
+        <location filename="../src/modules/features/configpane.cpp" line="184"/>
         <source>Station lists (*.csv);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="232"/>
+        <location filename="../src/modules/features/configpane.cpp" line="243"/>
         <source>Choose a file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="263"/>
+        <location filename="../src/modules/features/configpane.cpp" line="283"/>
         <source>E %1, N %2, Z %3 (absolute, from a calibration)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="268"/>
+        <location filename="../src/modules/features/configpane.cpp" line="288"/>
         <source>r times the quiet std of each component, set by the calibration of the run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="344"/>
+        <location filename="../src/modules/features/configpane.cpp" line="369"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="345"/>
+        <location filename="../src/modules/features/configpane.cpp" line="370"/>
         <source>Chaos features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="346"/>
+        <location filename="../src/modules/features/configpane.cpp" line="371"/>
         <source>Calibration on quiet periods</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="347"/>
+        <location filename="../src/modules/features/configpane.cpp" line="372"/>
         <source>Bands (each is a run of its own; empty = one run with the settings above)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="351"/>
+        <location filename="../src/modules/features/configpane.cpp" line="376"/>
         <source>chaos features only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="352"/>
+        <location filename="../src/modules/features/configpane.cpp" line="377"/>
         <source>set the station position directly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="353"/>
+        <location filename="../src/modules/features/configpane.cpp" line="378"/>
         <source>Add band</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="355"/>
+        <location filename="../src/modules/features/configpane.cpp" line="380"/>
         <source>empty: the built-in AFAD station list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="357"/>
+        <location filename="../src/modules/features/configpane.cpp" line="382"/>
         <source>needed for a full run unless a calibration is reused</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="358"/>
+        <location filename="../src/modules/features/configpane.cpp" line="383"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="359"/>
-        <location filename="../src/modules/features/configpane.cpp" line="360"/>
-        <location filename="../src/modules/features/configpane.cpp" line="361"/>
-        <location filename="../src/modules/features/configpane.cpp" line="362"/>
+        <location filename="../src/modules/features/configpane.cpp" line="384"/>
+        <location filename="../src/modules/features/configpane.cpp" line="385"/>
+        <location filename="../src/modules/features/configpane.cpp" line="386"/>
+        <location filename="../src/modules/features/configpane.cpp" line="387"/>
         <source> Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="364"/>
-        <location filename="../src/modules/features/configpane.cpp" line="366"/>
+        <location filename="../src/modules/features/configpane.cpp" line="389"/>
+        <location filename="../src/modules/features/configpane.cpp" line="391"/>
         <source> s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="367"/>
+        <location filename="../src/modules/features/configpane.cpp" line="392"/>
         <source> km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="369"/>
+        <location filename="../src/modules/features/configpane.cpp" line="394"/>
         <source>The station code. It only labels the outputs and looks the station up in the station list for the calibration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="373"/>
-        <source>The sampling rate the data is reduced to before the features are computed. The recorded rate must be a whole multiple of it. Default 5 Hz.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="376"/>
-        <source>Length of one analysis window in seconds. Each window gives one row of features. Default 200 s.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="380"/>
-        <source>How far the window moves between two rows, in seconds. A step shorter than the window makes the windows overlap. Default 50 s.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="384"/>
-        <source>Length of the short-term average in the STA/LTA feature (the ratio of recent to background signal level), in seconds. Default 0.5 s.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="387"/>
-        <source>Length of the long-term (background) average in the STA/LTA feature, in seconds. Default 60 s.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="389"/>
-        <source>Lower corner of the bandpass filter applied before the features: slower motion is removed. Default 0.1 Hz.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="393"/>
-        <source>Upper corner of the bandpass filter: faster motion is removed. It must stay below half the sampling rate. Default 2 Hz.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="397"/>
-        <source>The frequency that separates &quot;low&quot; from &quot;high&quot; in the low- and high-frequency energy features. Default 1 Hz.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="400"/>
-        <source>Computes only the chaotic features (Lyapunov exponents, sample entropy and the like) and writes them to a separate file, &lt;name&gt;_chaos_features.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="398"/>
+        <source>Which sensor of the station is read when the files hold several: the first two letters of the channel code, such as HH (broadband) or HN (accelerometer), with a location code in front when needed (00.HH). Empty: the only sensor there is; with several, the one with the most data, and the log says which was taken. Two are never mixed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="404"/>
-        <source>The embedding delay: how many samples apart the values are that are combined into one point of the reconstructed state space. In a full run it is calibrated from the data and this is only the starting value.</source>
+        <source>automatic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="410"/>
-        <source>The embedding dimension: how many delayed values make up one point of the reconstructed state space. Calibrated in a full run; this is the starting value.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="406"/>
+        <source>Only data recorded at or after this time is read, as a date or a date and time in UTC (2020-01-24 or 2020-01-24T17:55:00). Empty: from the start of the files. The calibration reads the same period.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="414"/>
-        <source>For the Wolf Lyapunov exponent: how many samples two neighbouring trajectories are followed before their separation is measured and a new neighbour is chosen. Default 5.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="411"/>
+        <source>Only data recorded before this time is read (UTC, as above). Empty: to the end of the files. Set it to an earthquake&apos;s time to keep everything after it out of the features and of the calibration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="419"/>
-        <source>A window with fewer samples than this gets no Lyapunov exponents (the values are left empty). Default 500.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="415"/>
+        <source>the start of the files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="422"/>
-        <source>The typical period of the signal in seconds. It keeps neighbours in the Rosenstein method apart in time and is its time unit. Calibrated in a full run; this is the starting value.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="416"/>
+        <source>the end of the files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="427"/>
-        <source>The Rosenstein exponent is the slope of the divergence curve between these two fractions of its total rise. Defaults 0.1 and 0.9: the middle of the rise, without its start and its flattening end.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="418"/>
+        <source>The sampling rate the data is reduced to before the features are computed. The recorded rate must be a whole multiple of it. Default 5 Hz.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="421"/>
+        <source>Length of one analysis window in seconds. Each window gives one row of features. Default 200 s.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="425"/>
+        <source>How far the window moves between two rows, in seconds. A step shorter than the window makes the windows overlap. Default 50 s.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="429"/>
+        <source>Length of the short-term average in the STA/LTA feature (the ratio of recent to background signal level), in seconds. Default 0.5 s.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="432"/>
-        <source>How long neighbouring trajectories are followed for the Rosenstein divergence curve, in mean periods. Default 20.</source>
+        <source>Length of the long-term (background) average in the STA/LTA feature, in seconds. Default 60 s.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="436"/>
-        <source>Sample entropy compares runs of this many consecutive samples (the pattern length m). Default 2.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="434"/>
+        <source>Lower corner of the bandpass filter applied before the features: slower motion is removed. Default 0.1 Hz.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="439"/>
-        <source>Sample entropy counts two patterns as alike when they differ by less than r times the signal&apos;s standard deviation. In a full run the tolerance is set from the quiet periods. Default 0.2.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="438"/>
+        <source>Upper corner of the bandpass filter: faster motion is removed. It must stay below half the sampling rate. Default 2 Hz.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="444"/>
-        <source>The AFAD earthquake catalog (CSV or .csv.gz). The calibration uses it to find the periods without earthquakes. Needed for a full run unless a calibration is reused.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="442"/>
+        <source>The frequency that separates &quot;low&quot; from &quot;high&quot; in the low- and high-frequency energy features. Default 1 Hz.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="445"/>
+        <source>Computes only the chaotic features (Lyapunov exponents, sample entropy and the like) and writes them to a separate file, &lt;name&gt;_chaos_features.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="449"/>
-        <source>A CSV with station codes, latitudes and longitudes, to find the station&apos;s position. Empty uses the AFAD list built into the application.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="452"/>
-        <source>Type the station&apos;s latitude and longitude below instead of looking the code up in the station list.</source>
+        <source>The embedding delay: how many samples apart the values are that are combined into one point of the reconstructed state space. In a full run it is calibrated from the data and this is only the starting value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="455"/>
-        <source>Latitude of the station in degrees, north positive.</source>
+        <source>The embedding dimension: how many delayed values make up one point of the reconstructed state space. Calibrated in a full run; this is the starting value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="457"/>
-        <source>Longitude of the station in degrees, east positive.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="460"/>
-        <source>Only earthquakes of at least this magnitude make a period &quot;not quiet&quot; for the calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="462"/>
-        <source>Only earthquakes within this distance of the station make a period &quot;not quiet&quot;, in km.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="459"/>
+        <source>For the Wolf Lyapunov exponent: how many samples two neighbouring trajectories are followed before their separation is measured and a new neighbour is chosen. Default 5.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="464"/>
-        <source>The time excluded as not quiet starts this many seconds before an earthquake&apos;s origin time.</source>
+        <source>A window with fewer samples than this gets no Lyapunov exponents (the values are left empty). Default 500.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="467"/>
-        <source>The time after an earthquake that is excluded at least, in seconds. The larger of this and the coda duration counts.</source>
+        <source>The typical period of the signal in seconds. It keeps neighbours in the Rosenstein method apart in time and is its time unit. Calibrated in a full run; this is the starting value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="471"/>
-        <source>Multiplies the estimated coda duration (how long the shaking takes to die down, after Lee) to get the time excluded after an earthquake. Larger excludes more.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="472"/>
+        <source>The Rosenstein exponent is the slope of the divergence curve between these two fractions of its total rise. Defaults 0.1 and 0.9: the middle of the rise, without its start and its flattening end.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="475"/>
-        <source>How many quiet, gap-free windows are drawn at random for the calibration. More is slower and steadier.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/modules/features/configpane.cpp" line="478"/>
-        <source>Of the sampled quiet windows, those louder than this factor times the median level are dropped, per component, as probably not quiet after all.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="477"/>
+        <source>How long neighbouring trajectories are followed for the Rosenstein divergence curve, in mean periods. Default 20.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="481"/>
-        <source>Starting value of the random draw of quiet windows. The same seed repeats the same calibration.</source>
+        <source>Sample entropy compares runs of this many consecutive samples (the pattern length m). Default 2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="485"/>
-        <source>The largest embedding delay the calibration tries. Tau is the first minimum of the average mutual information up to this value.</source>
+        <location filename="../src/modules/features/configpane.cpp" line="484"/>
+        <source>Sample entropy counts two patterns as alike when they differ by less than r times the signal&apos;s standard deviation. In a full run the tolerance is set from the quiet periods. Default 0.2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/features/configpane.cpp" line="489"/>
+        <source>The AFAD earthquake catalog (CSV or .csv.gz). The calibration uses it to find the periods without earthquakes. Needed for a full run unless a calibration is reused.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="494"/>
+        <source>A CSV with station codes, latitudes and longitudes, to find the station&apos;s position. Empty uses the AFAD list built into the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="497"/>
+        <source>Type the station&apos;s latitude and longitude below instead of looking the code up in the station list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="500"/>
+        <source>Latitude of the station in degrees, north positive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="502"/>
+        <source>Longitude of the station in degrees, east positive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="505"/>
+        <source>Only earthquakes of at least this magnitude make a period &quot;not quiet&quot; for the calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="507"/>
+        <source>Only earthquakes within this distance of the station make a period &quot;not quiet&quot;, in km.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="509"/>
+        <source>The time excluded as not quiet starts this many seconds before an earthquake&apos;s origin time.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="512"/>
+        <source>The time after an earthquake that is excluded at least, in seconds. The larger of this and the coda duration counts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="516"/>
+        <source>Multiplies the estimated coda duration (how long the shaking takes to die down, after Lee) to get the time excluded after an earthquake. Larger excludes more.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="520"/>
+        <source>How many quiet, gap-free windows are drawn at random for the calibration. More is slower and steadier.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="523"/>
+        <source>Of the sampled quiet windows, those louder than this factor times the median level are dropped, per component, as probably not quiet after all.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="526"/>
+        <source>Starting value of the random draw of quiet windows. The same seed repeats the same calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="530"/>
+        <source>The largest embedding delay the calibration tries. Tau is the first minimum of the average mutual information up to this value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/features/configpane.cpp" line="534"/>
         <source>The largest embedding dimension the calibration tries with the false-nearest-neighbours test.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="492"/>
+        <location filename="../src/modules/features/configpane.cpp" line="537"/>
         <source>Optional frequency bands. Each row is a complete run of its own (band corners, rate, window, step, STA, LTA, split), written to a sub-folder named after the band. Edit a cell in place.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="496"/>
+        <location filename="../src/modules/features/configpane.cpp" line="541"/>
         <source>Adds a band row filled with the settings shown above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/features/configpane.cpp" line="498"/>
+        <location filename="../src/modules/features/configpane.cpp" line="543"/>
         <source>Removes the selected band row.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6736,47 +6781,47 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
 <context>
     <name>skg::MainWindow</name>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="459"/>
+        <location filename="../src/app/mainwindow.cpp" line="465"/>
         <source>About sismokaos-gui</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="460"/>
+        <location filename="../src/app/mainwindow.cpp" line="466"/>
         <source>&lt;b&gt;sismokaos-gui %1&lt;/b&gt;&lt;br&gt;A desktop front end for the sismokaos tools: feature extraction, classification and AFAD/TDVMS downloads.&lt;br&gt;Qt %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="465"/>
+        <location filename="../src/app/mainwindow.cpp" line="471"/>
         <source>&lt;br&gt;&lt;br&gt;Copyright (C) 2026 H. Oğuz Bolat.&lt;br&gt;This program comes with ABSOLUTELY NO WARRANTY. It is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, version 3 or (at your option) any later version: &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;gnu.org/licenses/gpl-3.0&lt;/a&gt;. Source: &lt;a href=&quot;https://github.com/SismoKaos-Research/sismokaos-gui&quot;&gt;github.com/SismoKaos-Research/sismokaos-gui&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="234"/>
+        <location filename="../src/app/mainwindow.cpp" line="240"/>
         <source>Started: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="240"/>
+        <location filename="../src/app/mainwindow.cpp" line="246"/>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="440"/>
+        <location filename="../src/app/mainwindow.cpp" line="446"/>
         <source>Diagnostics copied to the clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="553"/>
+        <location filename="../src/app/mainwindow.cpp" line="559"/>
         <source>No study has been opened yet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="675"/>
+        <location filename="../src/app/mainwindow.cpp" line="681"/>
         <source>• %1, running for %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="682"/>
+        <location filename="../src/app/mainwindow.cpp" line="688"/>
         <source>… and %n more</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6784,7 +6829,7 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="686"/>
+        <location filename="../src/app/mainwindow.cpp" line="692"/>
         <source>%n job(s) are still running:</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6792,7 +6837,7 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="690"/>
+        <location filename="../src/app/mainwindow.cpp" line="696"/>
         <source>%n more are queued and will not run.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6800,22 +6845,22 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="694"/>
+        <location filename="../src/app/mainwindow.cpp" line="700"/>
         <source>Quitting stops them. What a run has not finished is lost and starts again next time; finished runs are kept.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="729"/>
+        <location filename="../src/app/mainwindow.cpp" line="735"/>
         <source>Jobs ▾</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="729"/>
+        <location filename="../src/app/mainwindow.cpp" line="735"/>
         <source>Jobs ▴</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="736"/>
+        <location filename="../src/app/mainwindow.cpp" line="742"/>
         <source>%n job(s) running</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6823,7 +6868,7 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/mainwindow.cpp" line="739"/>
+        <location filename="../src/app/mainwindow.cpp" line="745"/>
         <source>%n queued</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6831,258 +6876,283 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="754"/>
+        <location filename="../src/app/mainwindow.cpp" line="760"/>
         <source>No jobs running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="760"/>
+        <location filename="../src/app/mainwindow.cpp" line="766"/>
         <source>show what went wrong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="803"/>
+        <location filename="../src/app/mainwindow.cpp" line="809"/>
         <source>Jobs still running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="806"/>
+        <location filename="../src/app/mainwindow.cpp" line="812"/>
         <source>Stop them and quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="808"/>
+        <location filename="../src/app/mainwindow.cpp" line="814"/>
         <source>Keep running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="858"/>
-        <source>STUDY</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="860"/>
-        <source>TOOLS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="861"/>
-        <source>Seismology toolkit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/app/mainwindow.cpp" line="863"/>
-        <source>No study is open. A study is a folder that keeps the earthquakes you compare, their settings and their results.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="865"/>
-        <source>New study…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="867"/>
-        <location filename="../src/app/mainwindow.cpp" line="906"/>
-        <source>Starts a study in a folder you choose; its results are written there.</source>
+        <source>Stopping…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="869"/>
-        <source>Open study…</source>
+        <source>Quit now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="871"/>
-        <source>Opens an existing study folder (the one holding study.toml).</source>
+        <location filename="../src/app/mainwindow.cpp" line="872"/>
+        <source>Ends the application without waiting for the step to finish. Results that were finished are safe; the temporary files of the stopped runs stay on disk until &quot;Clean up leftovers&quot; on the Runs page removes them.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="873"/>
-        <source>Dismiss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="878"/>
-        <source>Jobs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="885"/>
-        <source>First time here?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="886"/>
-        <source>New study… and choose an empty folder: the study and all its results live there.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+    <message numerus="yes">
         <location filename="../src/app/mainwindow.cpp" line="889"/>
-        <source>On Cases, add an earthquake from the built-in list and tick the stations near it; then add the folder with your waveforms, or get them on the Data page.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="893"/>
-        <source>On Runs, create a recipe and run it; Compare shows the results side by side. Every option explains itself when the pointer rests on it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="898"/>
-        <source>The manual walks through a first study in ten minutes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="900"/>
-        <source>Got it</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="902"/>
-        <source>Hides these first steps for good. The manual stays under Help.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="903"/>
-        <source>&amp;File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="904"/>
-        <source>&amp;New study…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="908"/>
-        <source>&amp;Open study…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="910"/>
-        <source>Opens an existing study folder (the one holding study.toml). A study folder can also be dropped on the window.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="912"/>
-        <source>Open &amp;recent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="913"/>
-        <source>Study &amp;inputs…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="915"/>
-        <source>The earthquake catalog and the waveform folders of the open study.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="917"/>
-        <source>Open the study &amp;folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="919"/>
-        <source>Shows the open study&apos;s folder, with its results, in the file manager.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="921"/>
-        <source>Re&amp;load the study from disk</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="923"/>
-        <source>Reads study.toml again, after it was edited outside the application.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="925"/>
-        <source>&amp;Close study</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="926"/>
-        <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="927"/>
-        <source>Open the &amp;manual</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="929"/>
-        <source>The manual of this version, on the web, at the first-study walk-through.</source>
-        <translation type="unfinished"></translation>
+        <source>Waiting for %n job(s) to stop: %1.
+
+A job stops at the end of the step it is in. Most steps end within seconds; fitting one model can take minutes.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="931"/>
-        <source>&amp;Report a problem…</source>
+        <source>STUDY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="933"/>
-        <source>Opens the report form on the web and copies the diagnostics, so they can be pasted into it.</source>
+        <source>TOOLS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="935"/>
-        <source>Copy &amp;diagnostics</source>
+        <location filename="../src/app/mainwindow.cpp" line="934"/>
+        <source>Seismology toolkit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="937"/>
-        <source>Copies the version, the system and the size of the open study to the clipboard, for a problem report. It holds no personal paths and no addresses.</source>
+        <location filename="../src/app/mainwindow.cpp" line="936"/>
+        <source>No study is open. A study is a folder that keeps the earthquakes you compare, their settings and their results.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="938"/>
+        <source>New study…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="940"/>
-        <source>&amp;View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="941"/>
-        <source>&amp;Language</source>
+        <location filename="../src/app/mainwindow.cpp" line="979"/>
+        <source>Starts a study in a folder you choose; its results are written there.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="942"/>
-        <source>&amp;Theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="943"/>
-        <source>Follow the system</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/app/mainwindow.cpp" line="943"/>
-        <source>Light</source>
+        <source>Open study…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/app/mainwindow.cpp" line="944"/>
+        <source>Opens an existing study folder (the one holding study.toml).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="946"/>
+        <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="951"/>
+        <source>Jobs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="958"/>
+        <source>First time here?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="959"/>
+        <source>New study… and choose an empty folder: the study and all its results live there.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="962"/>
+        <source>On Cases, add an earthquake from the built-in list and tick the stations near it; then add the folder with your waveforms, or get them on the Data page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="966"/>
+        <source>On Runs, create a recipe and run it; Compare shows the results side by side. Every option explains itself when the pointer rests on it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="971"/>
+        <source>The manual walks through a first study in ten minutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="973"/>
+        <source>Got it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="975"/>
+        <source>Hides these first steps for good. The manual stays under Help.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="976"/>
+        <source>&amp;File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="977"/>
+        <source>&amp;New study…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="981"/>
+        <source>&amp;Open study…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="983"/>
+        <source>Opens an existing study folder (the one holding study.toml). A study folder can also be dropped on the window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="985"/>
+        <source>Open &amp;recent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="986"/>
+        <source>Study &amp;inputs…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="988"/>
+        <source>The earthquake catalog and the waveform folders of the open study.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="990"/>
+        <source>Open the study &amp;folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="992"/>
+        <source>Shows the open study&apos;s folder, with its results, in the file manager.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="994"/>
+        <source>Re&amp;load the study from disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="996"/>
+        <source>Reads study.toml again, after it was edited outside the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="998"/>
+        <source>&amp;Close study</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="999"/>
+        <source>&amp;Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1000"/>
+        <source>Open the &amp;manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1002"/>
+        <source>The manual of this version, on the web, at the first-study walk-through.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1004"/>
+        <source>&amp;Report a problem…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1006"/>
+        <source>Opens the report form on the web and copies the diagnostics, so they can be pasted into it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1008"/>
+        <source>Copy &amp;diagnostics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1010"/>
+        <source>Copies the version, the system and the size of the open study to the clipboard, for a problem report. It holds no personal paths and no addresses.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1013"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1014"/>
+        <source>&amp;Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1015"/>
+        <source>&amp;Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1016"/>
+        <source>Follow the system</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1016"/>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/mainwindow.cpp" line="1017"/>
         <source>Dark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="947"/>
+        <location filename="../src/app/mainwindow.cpp" line="1020"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="948"/>
+        <location filename="../src/app/mainwindow.cpp" line="1021"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="949"/>
+        <location filename="../src/app/mainwindow.cpp" line="1022"/>
         <source>Check for &amp;updates…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/mainwindow.cpp" line="950"/>
+        <location filename="../src/app/mainwindow.cpp" line="1023"/>
         <source>Check for updates at start</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7238,77 +7308,82 @@ Run the indicators, or open an earlier run&apos;s folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="658"/>
+        <location filename="../src/modules/study/runspage.cpp" line="664"/>
+        <source>automatic: the only sensor, or the one with the most data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/runspage.cpp" line="675"/>
         <source>Values keep their kind: true/false, a number, text, or a list separated by commas. Changing a setting makes the recipe&apos;s earlier runs stale.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="664"/>
+        <location filename="../src/modules/study/runspage.cpp" line="681"/>
         <source>&quot;Features recipe&quot; is the recipe whose feature table is classified. Classes are ranges of days before the event.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="667"/>
+        <location filename="../src/modules/study/runspage.cpp" line="684"/>
         <source>The study has no features recipe yet, and a classification needs one to take its table from: add a Features recipe, then choose it here. Classes are ranges of days before the event.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="673"/>
+        <location filename="../src/modules/study/runspage.cpp" line="690"/>
         <source>&quot;Features configuration&quot; is a config.json of the Features page; load it with the button below. Empty uses the defaults.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="681"/>
+        <location filename="../src/modules/study/runspage.cpp" line="698"/>
         <source>Load a file into the selected setting…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="683"/>
+        <location filename="../src/modules/study/runspage.cpp" line="700"/>
         <source>Reads a text file (a config.json, a project.toml) into the selected setting. Only settings that hold text take a file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="692"/>
+        <location filename="../src/modules/study/runspage.cpp" line="709"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="708"/>
+        <location filename="../src/modules/study/runspage.cpp" line="725"/>
         <source>Use the study&apos;s catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="711"/>
+        <location filename="../src/modules/study/runspage.cpp" line="728"/>
         <source>Takes the configuration&apos;s own calibration catalog out, so that this recipe reads the study&apos;s catalog like every other.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="727"/>
+        <location filename="../src/modules/study/runspage.cpp" line="744"/>
         <source>The recipe&apos;s name: the column heading on the Runs page and the entry in the Compare lists. The result folders use an id made from the first name, which does not change on a rename.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="755"/>
+        <location filename="../src/modules/study/runspage.cpp" line="772"/>
         <source>Calibration catalog: the study&apos;s.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="756"/>
+        <location filename="../src/modules/study/runspage.cpp" line="773"/>
         <source>⚠  Calibration catalog: the configuration&apos;s own, %1. This recipe does not read the study&apos;s catalog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="799"/>
+        <location filename="../src/modules/study/runspage.cpp" line="816"/>
         <source>Select the setting the file is for first (a setting that holds text).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="807"/>
+        <location filename="../src/modules/study/runspage.cpp" line="824"/>
         <source>Only a text setting can take a file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="828"/>
+        <location filename="../src/modules/study/runspage.cpp" line="845"/>
         <source>This configuration names a calibration catalog of its own:
 %1
 
@@ -7316,17 +7391,17 @@ In a study every case is normally calibrated on the study&apos;s catalog. Which 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="835"/>
+        <location filename="../src/modules/study/runspage.cpp" line="852"/>
         <source>The study&apos;s catalog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="836"/>
+        <location filename="../src/modules/study/runspage.cpp" line="853"/>
         <source>The configuration&apos;s own</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="866"/>
+        <location filename="../src/modules/study/runspage.cpp" line="887"/>
         <source>%1: &quot;%2&quot; is not the kind of value this setting takes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8215,140 +8290,140 @@ numpy: np.memmap(path, dtype=&apos;&lt;f4&apos;, mode=&apos;r&apos;).reshape(-1,
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1171"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1175"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1721"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1192"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1196"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1742"/>
         <source>Run the selected cell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1219"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1240"/>
         <source>New recipe  ▾</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1220"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1697"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2408"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1241"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1718"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2429"/>
         <source>Edit recipe…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1221"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1915"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1242"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1936"/>
         <source>Remove recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1223"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2369"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1244"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2390"/>
         <source>Open folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1224"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1245"/>
         <source>A recipe is one tool&apos;s saved settings; the same recipe on every case is the same analysis.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1159"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1180"/>
         <source>No study is open.
 A study is a folder that holds the cases, the recipes and every result. Start or open one with the buttons above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1162"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1183"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1222"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2356"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1243"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2377"/>
         <source>Show log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1244"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1265"/>
         <source>Adds a recipe: one tool&apos;s settings under a name, run on every case. Indicators run once per case; Features and Classification once per station. A classification needs a features recipe.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1248"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1269"/>
         <source>Changes the settings of the selected column&apos;s recipe. A changed setting raises the revision and marks its finished runs stale; you are asked first when there are any.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1252"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1273"/>
         <source>Takes the selected column&apos;s recipe out of the study. The result folders stay on disk.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1255"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1276"/>
         <source>Shows what the selected cell&apos;s last run wrote (run.log in its folder), also for a run that failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1258"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1279"/>
         <source>Opens the selected cell&apos;s result folder in the file manager.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1260"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1281"/>
         <source>Opens the page where the next step is done.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1262"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1283"/>
         <source>Setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1262"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1283"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1262"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1283"/>
         <source>Across cases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1478"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1499"/>
         <source>Run missing and stale (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1495"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1516"/>
         <source>%1 running, %2 queued (%3 at a time; the number is on the Settings page).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1520"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1541"/>
         <source>This study has no cases yet. A case is an earthquake (or a reference date) and the stations it is studied from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1523"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1544"/>
         <source>Add cases…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1525"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1546"/>
         <source>No recipes yet. Use New recipe to save one tool&apos;s settings; the recipe is then run on every case.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1528"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1549"/>
         <source>Every cell has a finished run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1530"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1551"/>
         <source>Compare the results</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1532"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1553"/>
         <source>%n cell(s) are waiting for something. Select one to see what it needs and where that is set.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8356,60 +8431,60 @@ A study is a folder that holds the cases, the recipes and every result. Start or
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1633"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1654"/>
         <source>⋯  Queued, number %1 of %2: it starts when a run before it has ended (%3 run at a time)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1682"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1703"/>
         <source>No recipes yet. Use New recipe to add one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1684"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1705"/>
         <source>No cases yet: the rows of this table are the study&apos;s cases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1686"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1707"/>
         <source>Select a cell to see why it is waiting, what its last run said, or where its files are. The arrow keys move, Enter runs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1492"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1692"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2380"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2396"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1513"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1713"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2401"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2417"/>
         <source>Go to Cases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1693"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1714"/>
         <source>Opens the Cases page, where the catalog, the stations and the waveform folder are set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1698"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1719"/>
         <source>Opens this recipe&apos;s settings, where what it waits for is chosen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1702"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1723"/>
         <source>Select the cell it needs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1703"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1724"/>
         <source>Selects the features cell this classification waits for, so that it can be run or looked at.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1875"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1896"/>
         <source>Edit recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1876"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1897"/>
         <source>Changing a setting of &quot;%1&quot; makes %n finished run(s) stale (its own, and those that build on them). They stay on disk until they are run again.
 
 Save the change?</source>
@@ -8419,12 +8494,12 @@ Save the change?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1907"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1928"/>
         <source>Remove the recipe &quot;%1&quot;? The folders of its runs stay on disk.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1911"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1932"/>
         <source>%n recipe(s) take their feature table from it and will wait until they are given another features recipe: %1.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8432,71 +8507,71 @@ Save the change?</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1948"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1969"/>
         <source>recipe &quot;%1&quot; on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1949"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1970"/>
         <source>recipe &quot;%1&quot; on %2, station %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2132"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2153"/>
         <source>None of those cells can be run now: they are running, queued, or waiting for something.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2139"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2160"/>
         <source>Run again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2140"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2161"/>
         <source>&quot;%1&quot; already has a finished run on %2. Run it again?
 
 The finished results stay as they are until the new run has succeeded; a run that is stopped or fails leaves them untouched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1741"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1762"/>
         <source>RECIPE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1163"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2346"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1184"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2367"/>
         <source>Recalibrate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1138"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1159"/>
         <source>⚠  Nothing can be run into this study now: its folder is not held by this window. Either the folder cannot be written (read-only media, a drive that is full or was unplugged), or the study is open in another window, which is where runs are started. Results that are there can still be looked at.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1165"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1186"/>
         <source>Runs the selected features cell with a new calibration. A features run keeps its calibration (the chaos parameters fitted on the station&apos;s quiet periods) and a later run of the same cell uses it again as long as the data, the catalog, the station, the span and the calibration settings are the same; this button makes it afresh all the same.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1177"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1720"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2336"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1198"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1741"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2357"/>
         <source>Take out of the queue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1178"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1719"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2333"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1199"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1740"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2354"/>
         <source>Stop this run</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1180"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1718"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2326"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1201"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1739"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2347"/>
         <source>Run the %n selected cell(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8504,168 +8579,168 @@ The finished results stay as they are until the new run has succeeded; a run tha
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1182"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1203"/>
         <source>show rows with… (case or station)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1184"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1205"/>
         <source>Shows only the rows whose case name or station contains this text. The buttons then act on the rows shown; runs of hidden rows go on.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1190"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1211"/>
         <source>All rows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1191"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
         <source>Rows with a failed or waiting cell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1192"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1213"/>
         <source>Rows with a cell that is not done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1193"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1214"/>
         <source>Rows that are running or queued</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1196"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1217"/>
         <source>Which rows are shown: all of them, or only those that need attention. &quot;Not done&quot; is missing, stale, failed or waiting.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1199"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1220"/>
         <source>Study on disk…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1201"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1222"/>
         <source>Shows what the study&apos;s results take on disk, per case and recipe, and what is left over (working folders of runs that crashed, files of failed runs, results of removed cases and recipes), with a way to remove the leftovers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1206"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1399"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1227"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1420"/>
         <source>Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1208"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1229"/>
         <source>What ran, when, for how long and how it ended, read from the run folders: also what ran while you were away. A stopped run leaves nothing and is not listed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1233"/>
         <source>Ended</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1233"/>
         <source>Case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1212"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1233"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1213"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1234"/>
         <source>Outcome</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1214"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1235"/>
         <source>Took</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1214"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1235"/>
         <source>Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1216"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1237"/>
         <source>Latest first; click a heading to sort. A double click selects the run&apos;s cell in the table above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1227"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1248"/>
         <source>Queues every cell that is missing or stale. A few run at a time (the number is on the Settings page), the others show Queued; it goes on to the cells they unblock (a classification after its features).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1232"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1253"/>
         <source>Stops the runs this page started and empties the queue: the waiting cells are what they were before. A stopped run leaves nothing behind; what was finished before stays as it was.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1236"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1257"/>
         <source>Runs the recipe of the selected cell on its case and station. A cell that is already done is run again only after you confirm; its results are replaced when the new run has succeeded. On a cell that is running the button stops that one run, on a queued one it takes it out of the queue; the other runs go on. With several cells selected (Ctrl or Shift and a click) it runs them all. A right click on a cell, a row or a heading has more.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1339"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1360"/>
         <source>%1 of %2 rows shown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1369"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1390"/>
         <source>✓  Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1369"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1390"/>
         <source>✓  Done  ⚠</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1370"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1391"/>
         <source>✕  Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1385"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1406"/>
         <source>started %1, ended %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1400"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1421"/>
         <source>Activity (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1504"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1525"/>
         <source>Started %1: %2 of %3 done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1510"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1531"/>
         <source>, about %1 left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1646"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1667"/>
         <source>running for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1656"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1677"/>
         <source>last run ended %1, took %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1659"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1680"/>
         <source>last run ended %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="1713"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1734"/>
         <source>%n cell(s) selected. Run them with the button, or right-click for more (stop, open the folders).</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8673,61 +8748,61 @@ The finished results stay as they are until the new run has succeeded; a run tha
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1745"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1766"/>
         <source>RECIPE · %1 · %2 · REVISION %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1756"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1777"/>
         <source>⚠  none chosen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1757"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1778"/>
         <source>⚠  %1 (no longer in the study)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1762"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1783"/>
         <source>the defaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1764"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1779"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1785"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1800"/>
         <source>fitted per case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1765"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1775"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1786"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1796"/>
         <source>fixed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1772"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1793"/>
         <source>the study&apos;s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1773"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1794"/>
         <source>⚠  the configuration&apos;s own: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1807"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1828"/>
         <source>New recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1808"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1829"/>
         <source>A classification is trained on the feature table of a features recipe, and this study has none yet.
 
 Add a features recipe with the default settings first? (It can be edited afterwards.)</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="2155"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2176"/>
         <source>Run %n cell(s)?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8735,7 +8810,7 @@ Add a features recipe with the default settings first? (It can be edited afterwa
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/modules/study/runspage.cpp" line="2158"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2179"/>
         <source>%n of them already have a finished run and are run again; their results stay as they are until the new run has succeeded.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8743,120 +8818,120 @@ Add a features recipe with the default settings first? (It can be edited afterwa
         </translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2163"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2184"/>
         <source>%1 run at a time; the others wait in the queue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2166"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2187"/>
         <source>While they run they need about %1 of temporary space for unpacked archives.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2169"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2190"/>
         <source>Run cells</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2201"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2222"/>
         <source>needs about %1 of temporary space for unpacked archives, and %2 are free on the study&apos;s disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2206"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2227"/>
         <source>⚠  Not started: this %1. Free some space (&quot;Study on disk…&quot; lists leftovers), or run fewer cells at a time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2213"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2234"/>
         <source>Little disk space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2214"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2235"/>
         <source>This %1. That leaves little room for the results themselves.
 
 Run all the same?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2272"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2293"/>
         <source>Duplicate recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2273"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2294"/>
         <source>A copy of &quot;%1&quot; with the same settings, to change one of them in. Its name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2276"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2297"/>
         <source>%1 (copy)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2328"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2349"/>
         <source>Stop the selected cells</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2339"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2360"/>
         <source>Run again…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2340"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2361"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2373"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2394"/>
         <source>Copy the folder&apos;s path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2390"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2411"/>
         <source>Run this row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2392"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2413"/>
         <source>Run this case (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2405"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2426"/>
         <source>Run this recipe on every row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2412"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2433"/>
         <source>Duplicate recipe…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2416"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2437"/>
         <source>Remove recipe…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2589"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2610"/>
         <source>⚠  %1 waits for disk space: it needs about %2 of temporary space, %3 are free.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="2596"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2617"/>
         <source>⚠  %1 was not started: it needs about %2 of temporary space and %3 are free on the study&apos;s disk.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/runspage.cpp" line="1205"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1213"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1820"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1842"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1889"/>
-        <location filename="../src/modules/study/runspage.cpp" line="1923"/>
-        <location filename="../src/modules/study/runspage.cpp" line="2292"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1226"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1234"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1841"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1863"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1910"/>
+        <location filename="../src/modules/study/runspage.cpp" line="1944"/>
+        <location filename="../src/modules/study/runspage.cpp" line="2313"/>
         <source>Recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9172,176 +9247,186 @@ Run an indicators or a features recipe on the Runs page, then choose it above.</
     </message>
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="111"/>
-        <source>Calibration catalog</source>
+        <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/modules/study/settinghelp.cpp" line="112"/>
+        <source>Which sensor of a station is read when its files hold several: the first two letters of the channel code, such as HH (broadband) or HN (accelerometer), with a location code in front when needed (00.HH). Empty: the only sensor there is; with several, the one with the most data in the span, and the run says which it took. Never two at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/settinghelp.cpp" line="120"/>
+        <source>Calibration catalog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/modules/study/settinghelp.cpp" line="121"/>
         <source>The earthquake catalog the quiet periods for the calibration are found with: the study&apos;s, unless the configuration names one of its own, which then overrides the study&apos;s for this recipe.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="117"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="126"/>
         <source>Chaos parameters (calibration)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="118"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="127"/>
         <source>The embedding delay, embedding dimension, mean period and sample-entropy tolerances, estimated for each station on its own quiet periods.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="126"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="135"/>
         <source>Features recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="127"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="136"/>
         <source>The features recipe whose feature table is classified, chosen from the study&apos;s features recipes. The classification of a case waits until that recipe has run on it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="132"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="141"/>
         <source>Band</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="133"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="142"/>
         <source>For a features recipe with frequency bands: the name of the band whose table is used. Empty uses the table of the run without bands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="137"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="146"/>
         <source>Classes (days before the event)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="138"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="147"/>
         <source>Each class is a range of days before the event, e.g. 1-30, 31-90. The windows recorded on those days get that class; the models learn to tell the classes apart. At least two.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="143"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="152"/>
         <source>Days per class</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="144"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="153"/>
         <source>At most this many days are taken from each class&apos;s range, spread evenly over it (every day of a 30-day range, every second day of a 60-day one at 30).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="148"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="157"/>
         <source>Models</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="149"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="158"/>
         <source>What to train: logistic, svm_linear, svm_poly, svm_rbf, ann, random_forest, gradient_boosting, xgboost. Logistic regression and the SVMs are the baseline in the comparison.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="154"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="163"/>
         <source>Feature columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="155"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="164"/>
         <source>The columns of the feature table given to the models. Empty uses every numeric column.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="158"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="167"/>
         <source>Train share of days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="159"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="168"/>
         <source>Share of each class&apos;s days used for training (0 to 1). Whole days go to one set, never single windows.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="162"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="171"/>
         <source>Validation share of days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="163"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="172"/>
         <source>Share of each class&apos;s days used to choose the parameters and the best model. The rest after training and validation is the test set the scores are reported on.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="168"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="177"/>
         <source>Scaler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="169"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="178"/>
         <source>How feature values are brought to a common scale, fitted on the training days: robust (median and quartiles), standard (mean and standard deviation) or minmax.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="174"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="183"/>
         <source>Random seed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="175"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="184"/>
         <source>Starting value of the random numbers (the split of days, the models). The same seed repeats the same run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="179"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="188"/>
         <source>Cross-validation folds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="180"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="189"/>
         <source>With 2 or more, parameters are tuned by k-fold cross-validation over the training and validation days instead of the fixed validation days. 0 or 1 turns it off.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="185"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="194"/>
         <source>Quick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="186"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="195"/>
         <source>Tries one small parameter setting per model instead of the full grids. For a first look; the scores are not tuned.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="190"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="199"/>
         <source>Other classification settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="191"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="200"/>
         <source>Anything else, in the layout of the Classification page&apos;s project.toml (parameter grids, class weights). The settings above take precedence.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="195"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="204"/>
         <source>Minimum hours per day</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="196"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="205"/>
         <source>A day with fewer hours of windows than this is not used.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="199"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="208"/>
         <source>Feature table (calibration)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="200"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="209"/>
         <source>The feature table comes from the features recipe, whose chaos parameters were calibrated for each station.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/modules/study/settinghelp.cpp" line="212"/>
+        <location filename="../src/modules/study/settinghelp.cpp" line="221"/>
         <source>In study.toml: %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11747,13 +11832,13 @@ Forget what the study knows of these folders?</source>
 <context>
     <name>skg::study::CompareText</name>
     <message>
-        <location filename="../src/study/compare.cpp" line="271"/>
-        <location filename="../src/study/compare.cpp" line="329"/>
+        <location filename="../src/study/compare.cpp" line="283"/>
+        <location filename="../src/study/compare.cpp" line="341"/>
         <source>its table has no column %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/compare.cpp" line="340"/>
+        <location filename="../src/study/compare.cpp" line="352"/>
         <source>no value falls in the case&apos;s span</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11761,314 +11846,366 @@ Forget what the study knows of these folders?</source>
 <context>
     <name>skg::study::RunText</name>
     <message>
-        <location filename="../src/study/runs.cpp" line="129"/>
+        <location filename="../src/study/runs.cpp" line="139"/>
         <source>the study has no earthquake catalog of its own: the built-in list holds only the large earthquakes (magnitude 5 and above), too few for this analysis. Choose a full catalog or download one on the Cases page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="135"/>
+        <location filename="../src/study/runs.cpp" line="145"/>
         <source>catalog not found: %1 (choose it again on the Cases page)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="156"/>
+        <location filename="../src/study/runs.cpp" line="166"/>
         <source>the catalog lists earthquakes from about magnitude %1 up (%2 events), but the recipe counts them from the completeness magnitude %3: the b-value needs the earthquakes in between. Use a full catalog (Cases page), or edit the recipe: raise its completeness magnitude or let it be estimated per case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="243"/>
+        <location filename="../src/study/runs.cpp" line="298"/>
         <source>warning: the catalog places this earthquake at %1, the case at %2. The catalog&apos;s time offset on the Cases page may be wrong; events are used up to the earlier of the two.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="254"/>
+        <location filename="../src/study/runs.cpp" line="311"/>
+        <source>the catalog does not list this earthquake at the case&apos;s time (%1), but has a magnitude %2 event near it at %3: taken to be the earthquake itself, and events are used only up to it. Check the catalog&apos;s time offset on the Cases page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="328"/>
         <source>%1 catalog events from %2 to %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="258"/>
+        <location filename="../src/study/runs.cpp" line="332"/>
         <source>the catalog has no events in the case&apos;s span (%1 to %2): check the span and the dates the catalog covers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="304"/>
+        <location filename="../src/study/runs.cpp" line="378"/>
         <source>only %1 events in the zone: too few to estimate the completeness magnitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="310"/>
+        <location filename="../src/study/runs.cpp" line="384"/>
         <source>completeness magnitude estimated: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="396"/>
+        <location filename="../src/study/runs.cpp" line="475"/>
         <source>none is kept for this cell yet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="409"/>
-        <location filename="../src/study/runs.cpp" line="420"/>
+        <location filename="../src/study/runs.cpp" line="488"/>
+        <location filename="../src/study/runs.cpp" line="499"/>
         <source>the one kept cannot be read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="411"/>
+        <location filename="../src/study/runs.cpp" line="490"/>
         <source>the catalog changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="413"/>
+        <location filename="../src/study/runs.cpp" line="492"/>
         <source>the station&apos;s position changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="415"/>
+        <location filename="../src/study/runs.cpp" line="494"/>
         <source>the span changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="417"/>
+        <location filename="../src/study/runs.cpp" line="496"/>
         <source>the waveform files changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="419"/>
+        <location filename="../src/study/runs.cpp" line="498"/>
         <source>the calibration settings changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="460"/>
+        <location filename="../src/study/runs.cpp" line="539"/>
         <source>%1 has waveforms from %2 to %3, none in this case&apos;s span (%4 to %5): untick the station on the Cases page, or get its waveforms for the span on the Data page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="467"/>
+        <location filename="../src/study/runs.cpp" line="546"/>
         <source>no waveform files for %1 in this case&apos;s span (%2 to %3): add or scan its waveform folder on the Cases page, or get the waveforms on the Data page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="478"/>
+        <location filename="../src/study/runs.cpp" line="557"/>
         <source>the case has no station %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="491"/>
+        <location filename="../src/study/runs.cpp" line="570"/>
         <source> Waveforms from %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="501"/>
+        <location filename="../src/study/runs.cpp" line="580"/>
         <source>the recipe&apos;s config is not valid JSON: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="530"/>
+        <location filename="../src/study/runs.cpp" line="610"/>
         <source>calibration catalog: %1 events moved to UTC (the study&apos;s catalog is %2 h from UTC)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="540"/>
+        <location filename="../src/study/runs.cpp" line="619"/>
         <source>the recipe&apos;s own calibration catalog is not found: %1 (edit the recipe; clearing it there uses the study&apos;s catalog)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="545"/>
+        <location filename="../src/study/runs.cpp" line="624"/>
         <source>calibration catalog: the recipe&apos;s own, %1 (not the study&apos;s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="584"/>
+        <location filename="../src/study/runs.cpp" line="676"/>
         <source> Calibration reused: the one this cell made on %1 for the same data, catalog and settings (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="594"/>
+        <location filename="../src/study/runs.cpp" line="686"/>
         <source> Calibration redone: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="596"/>
+        <location filename="../src/study/runs.cpp" line="688"/>
         <source>asked for</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="602"/>
+        <location filename="../src/study/runs.cpp" line="694"/>
         <source> warning: the calibration could not be kept in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="620"/>
+        <location filename="../src/study/runs.cpp" line="712"/>
         <source>band %1 of %2 (%3) · </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="631"/>
+        <location filename="../src/study/runs.cpp" line="723"/>
         <source>the feature run wrote no table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="663"/>
+        <location filename="../src/study/runs.cpp" line="730"/>
+        <source>the files of %1 hold several sensors: %2 was read, as the one with the most data in the span, and %3 left out. Name the one to read in the recipe (Channels)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="770"/>
         <source>&quot;%1&quot; is not a range of days such as 31-90</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="676"/>
+        <location filename="../src/study/runs.cpp" line="783"/>
         <source>the recipe names no features recipe: choose one with Edit recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="678"/>
+        <location filename="../src/study/runs.cpp" line="785"/>
         <source>its features recipe &quot;%1&quot; is no longer in the study: choose another with Edit recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="687"/>
+        <location filename="../src/study/runs.cpp" line="794"/>
         <source>needs the features of &quot;%1&quot; first: run that cell (Run missing and stale does it in order)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="701"/>
+        <location filename="../src/study/runs.cpp" line="808"/>
         <source>the features run has no table %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="734"/>
+        <location filename="../src/study/runs.cpp" line="841"/>
         <source>the recipe needs at least two classes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="833"/>
+        <location filename="../src/study/runs.cpp" line="935"/>
+        <source>the features run has no readable %1, which says how long its windows are: run the features again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="975"/>
         <source>no window is left to train on (%1 dropped for missing values)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="859"/>
+        <location filename="../src/study/runs.cpp" line="1002"/>
         <source>step %1 failed: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="861"/>
+        <location filename="../src/study/runs.cpp" line="1004"/>
         <source>the run trained no model</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1126"/>
+        <location filename="../src/study/runs.cpp" line="1337"/>
         <source>the case has no stations: tick them on the Cases page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1157"/>
+        <location filename="../src/study/runs.cpp" line="1368"/>
         <source>no waveforms for %1: add a waveform folder on the Cases page, or get them on the Data page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1160"/>
+        <location filename="../src/study/runs.cpp" line="1371"/>
         <source>no waveforms for %1: %2 does not exist and no scanned waveform folder holds the station (the folders are set on the Cases page)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1197"/>
+        <location filename="../src/study/runs.cpp" line="1411"/>
         <source>recorded with an earlier version of the application, which noted less about a run: run it again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1201"/>
+        <location filename="../src/study/runs.cpp" line="1415"/>
         <source>the recipe was edited after this run (revision %1, now %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1206"/>
+        <location filename="../src/study/runs.cpp" line="1426"/>
+        <source>made by an earlier version, which read the whole waveform files (also what they hold after the earthquake) and every sensor in them: features are now limited to the case&apos;s span and to one sensor of the station. Run it again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1433"/>
+        <source>made by an earlier version: times in the catalog are now read as UTC whatever this computer&apos;s time zone, and the earthquake itself is kept out of the span whichever catalog it was picked from. Run it again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1439"/>
+        <source>made by an earlier version: windows that end after the earthquake are no longer counted as before it, and the window length is taken from the features run. Run it again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1445"/>
         <source>the case, its station or the catalog&apos;s time offset was changed after this run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1214"/>
+        <location filename="../src/study/runs.cpp" line="1453"/>
         <source>the catalog file has changed since this run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1218"/>
+        <location filename="../src/study/runs.cpp" line="1457"/>
         <source>the waveform files for the case&apos;s span have changed since this run (new or replaced files)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1222"/>
+        <location filename="../src/study/runs.cpp" line="1461"/>
         <source>the features it was trained on are no longer current</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1225"/>
+        <location filename="../src/study/runs.cpp" line="1464"/>
         <source>its features were run again after this run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1251"/>
+        <location filename="../src/study/runs.cpp" line="1490"/>
         <source>a later run failed and was set aside: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1335"/>
+        <location filename="../src/study/runs.cpp" line="1574"/>
         <source>its features: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1348"/>
+        <location filename="../src/study/runs.cpp" line="1587"/>
         <source>the catalog lists earthquakes from about magnitude %1 up (%2 events): the completeness magnitude will be estimated near that, and the indicators describe the large earthquakes only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1355"/>
+        <location filename="../src/study/runs.cpp" line="1594"/>
         <source>the catalog thins out below about magnitude %1, above the recipe&apos;s completeness magnitude %2: the b-value is computed on a range the catalog does not fill</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1365"/>
+        <location filename="../src/study/runs.cpp" line="1604"/>
         <source>the catalog lists earthquakes from about magnitude %1 up (%2 events): the quiet windows of the calibration only avoid earthquakes of that size and larger; smaller local ones are not excluded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1375"/>
+        <location filename="../src/study/runs.cpp" line="1614"/>
         <source>%1 has waveforms on about %2 of the %3 days of the span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1377"/>
+        <location filename="../src/study/runs.cpp" line="1616"/>
         <source>%1 has waveforms on only %2 of the %3 days of the span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1419"/>
+        <location filename="../src/study/runs.cpp" line="1712"/>
+        <source>the run finished, but cannot replace the earlier one in %1: %2. The finished run is kept, complete, in %3; close the file and run the cell again, and it is put in place without being computed again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1718"/>
+        <source>the folder cannot be renamed (is one of its files open in another program?)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1720"/>
+        <source>%1 is open in another program</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1727"/>
+        <source>the run finished, but cannot be moved from %1 into place; it is kept there, complete. Run the cell again to put it in place</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1759"/>
+        <source>the study is open in another instance of the application (%1): nothing is run into it from here. Close it there, or run from there</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1781"/>
+        <source>A finished run of this cell (%1) was waiting in %2, where it stayed when it could not replace the folder. It is moved into place now; nothing is computed again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/study/runs.cpp" line="1793"/>
         <source>cannot create %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1435"/>
+        <location filename="../src/study/runs.cpp" line="1798"/>
         <source>warning: the run log cannot be written: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1463"/>
+        <location filename="../src/study/runs.cpp" line="321"/>
+        <location filename="../src/study/runs.cpp" line="737"/>
+        <location filename="../src/study/runs.cpp" line="1826"/>
         <source>warning: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1472"/>
+        <location filename="../src/study/runs.cpp" line="1835"/>
         <source>unknown tool %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/runs.cpp" line="1499"/>
+        <location filename="../src/study/runs.cpp" line="1873"/>
         <source>cannot write %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/study/runs.cpp" line="1508"/>
-        <source>cannot replace %1 with the new run, which is kept in %2 (is a file of the folder open?)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/study/runs.cpp" line="1514"/>
-        <source>cannot move the finished run from %1 into place</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12114,47 +12251,47 @@ Forget what the study knows of these folders?</source>
 <context>
     <name>skg::study::StudyText</name>
     <message>
-        <location filename="../src/study/study.cpp" line="213"/>
+        <location filename="../src/study/study.cpp" line="214"/>
         <source>the study has no folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="215"/>
+        <location filename="../src/study/study.cpp" line="216"/>
         <source>cannot create %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="661"/>
+        <location filename="../src/study/study.cpp" line="662"/>
         <source>study.toml, line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="668"/>
+        <location filename="../src/study/study.cpp" line="669"/>
         <source>study.toml has schema %1; this version reads 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="718"/>
+        <location filename="../src/study/study.cpp" line="719"/>
         <source>study.toml: a case has no id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="720"/>
+        <location filename="../src/study/study.cpp" line="721"/>
         <source>study.toml: two cases have the id %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="724"/>
+        <location filename="../src/study/study.cpp" line="726"/>
         <source>study.toml: case %1 has no valid time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="778"/>
+        <location filename="../src/study/study.cpp" line="779"/>
         <source>study.toml: a recipe has no id or no tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/study/study.cpp" line="781"/>
+        <location filename="../src/study/study.cpp" line="782"/>
         <source>study.toml: two recipes have the id %1</source>
         <translation type="unfinished"></translation>
     </message>
