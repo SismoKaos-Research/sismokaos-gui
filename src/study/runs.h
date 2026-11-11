@@ -106,6 +106,10 @@ struct RunRecord {
   // cell (see "Calibrations are kept" below) or computed by this run.
   QString calibrationKey;
   bool calibrationReused = false;
+  // Features: the channels of the station that were read (NET.STA.LOC.CHA),
+  // and the sensors of it that were left out ("NET.STA.LOC.HN?"). A run
+  // reads one sensor; see fx::Config::channels.
+  QStringList channelsUsed, channelsDropped;
   QVariantMap settings; // the recipe's settings as run
   QVariantMap inputs;   // path -> sha256
   QVariantMap fitted;   // what this case fitted for itself
@@ -203,10 +207,24 @@ int runsMadeStale(const Study &before, const Study &after);
 // The catalog event a case was made from: same place and magnitude, within
 // 15 hours of the case's time (a wrong time offset moves it by hours, not
 // more). nullptr for a reference date or when the catalog has none.
+// When the case came from another catalog than the one given (the built-in
+// list, then an agency's), place and magnitude differ a little: it is then
+// the largest event within 15 hours, a degree and a magnitude unit.
 const analysis::Event *eventOfCase(const Case &c,
                                    const std::vector<analysis::Event> &events);
+// For a case eventOfCase() does not find: the earliest event of at least
+// the case's magnitude minus one, within a degree, in the 15 hours before
+// the case's time. Such an event is most likely the earthquake itself under
+// a wrong time offset, and a run must not count it as a forerunner.
+const analysis::Event *
+largeEventJustBefore(const Case &c, const std::vector<analysis::Event> &events);
 // The catalog a features recipe names for itself in its config, or empty.
 QString calibrationOverride(const Recipe &features);
+// The sensors the scanned waveforms hold for the stations of the study's
+// cases, as a features recipe's "channels" setting names them: "HH", "HN",
+// or "00.HH" where a station has a location code. For the recipe dialog to
+// offer; empty when nothing is scanned yet.
+QStringList sensorChoices(const Study &s);
 
 struct RunHooks {
   std::function<void(const QString &)> log;
@@ -214,6 +232,10 @@ struct RunHooks {
   std::function<void(double fraction, const QString &what)> progress;
   // Features: compute the calibration anew although a valid one is kept.
   bool freshCalibration = false;
+  // For tests: stands in for renaming a folder when a finished run takes
+  // its folder's place (a rename fails on Windows while a file of the
+  // folder is open elsewhere, which a test cannot arrange portably).
+  std::function<bool(const QString &from, const QString &to)> renameFolder;
 };
 
 // Calibrations are kept. The calibration of a Features run is a pass over

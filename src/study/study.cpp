@@ -15,6 +15,7 @@
 #include <string>
 
 #include "analysis/geo.h"
+#include "fx/csv.h"
 #include "text/text.h"
 #include "toml.hpp"
 
@@ -719,10 +720,10 @@ Study Study::fromToml(const QString &text, const QString &dir) {
       if (s.findCase(c.id))
         fail(StudyText::tr("study.toml: two cases have the id %1").arg(c.id));
       c.reference = str(*t, "kind") == QLatin1String("reference");
-      c.time = QDateTime::fromString(str(*t, "time"), Qt::ISODate);
+      // A time written without a zone (by hand) is UTC, not local time.
+      c.time = fx::isoUtcDateTime(str(*t, "time"));
       if (!c.time.isValid())
         fail(StudyText::tr("study.toml: case %1 has no valid time").arg(c.id));
-      c.time = c.time.toUTC();
       c.lat = num(*t, "latitude", 0);
       c.lon = num(*t, "longitude", 0);
       c.depthKm = num(*t, "depth_km", c.depthKm);

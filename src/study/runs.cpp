@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonArray>
@@ -12,8 +13,11 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QPair>
+#include <QRegularExpression>
 #include <QSaveFile>
+#include <QSet>
 #include <QTextStream>
+#include <QThread>
 #include <QTimeZone>
 
 #include <algorithm>
@@ -28,6 +32,7 @@
 #include "core/defaults.h"
 #include "fx/calibrate.h"
 #include "fx/config.h"
+#include "fx/csv.h"
 #include "fx/engine.h"
 #include "sfc/dataset.h"
 #include "sfc/experiments.h"
@@ -246,6 +251,25 @@ void runIndicators(const Study &s, const Case &c, const Recipe &r,
                       "earlier of the two.")
               .arg(iso(utcOf(own->epoch)), iso(c.time)));
     t1 = std::min(t1, own->epoch);
+  } else if (const analysis::Event *big = largeEventJustBefore(c, events)) {
+    // The case's earthquake is not recognised in the catalog, and yet an
+    // event of about its size lies there within the hours before it: most
+    // likely the earthquake itself under a wrong time offset. It is not
+    // taken for a forerunner in silence: the events stop before it, and the
+    // run says so wherever its results are shown.
+    const QString w =
+        RunText::tr("the catalog does not list this earthquake at the "
+                    "case's time (%1), but has a magnitude %2 event near it "
+                    "at %3: taken to be the earthquake itself, and events "
+                    "are used only up to it. Check the catalog's time offset "
+                    "on the Cases page")
+            .arg(iso(c.time))
+            .arg(big->mag, 0, 'f', 1)
+            .arg(iso(utcOf(big->epoch)));
+    rec.warnings << w;
+    if (hooks.log)
+      hooks.log(RunText::tr("warning: %1").arg(w));
+    t1 = std::min(t1, big->epoch);
   }
   const QDateTime from = c.spanStart().addMonths(-windowMonths);
   const int n =
@@ -358,6 +382,11 @@ CalibrationKey calibrationKey(const fx::Config &run, const QString &catalogId,
   settings.insert(QStringLiteral("seed"), QString::number(k.seed));
   settings.insert(QStringLiteral("max_tau"), k.maxTau);
   settings.insert(QStringLiteral("max_dim"), k.maxDim);
+  // The calibration reads the span alone and one sensor of the station:
+  // one made before that (on whole files, on whatever channels they held)
+  // has another key and is not taken again.
+  settings.insert(QStringLiteral("reads"), QStringLiteral("span only"));
+  settings.insert(QStringLiteral("channels"), run.channels);
   CalibrationKey key;
   key.parts.insert(QStringLiteral("settings"), settings);
   key.parts.insert(QStringLiteral("catalog"),
@@ -517,22 +546,22 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
     rec.inputs.insert(s.catalogPath(), rec.catalogSha);
     catalogId = rec.catalogSha;
     catalogOffset = s.catalogUtcOffsetHours;
-    if (s.catalogUtcOffsetHours == 0.0) {
-      cfg.calibration.catalog = s.catalogPath();
-    } else {
-      // fx reads the catalog's times as UTC, so it is given a UTC copy.
-      const QString utc = QDir(dir).filePath(QStringLiteral("catalog_utc.csv"));
-      const int n = writeEvents(
-          analysis::loadEvents(s.catalogPath(), s.catalogUtcOffsetHours),
-          -std::numeric_limits<double>::infinity(),
-          std::numeric_limits<double>::infinity(), utc);
-      if (hooks.log)
-        hooks.log(RunText::tr("calibration catalog: %1 events moved to UTC "
-                              "(the study's catalog is %2 h from UTC)")
-                      .arg(n)
-                      .arg(s.catalogUtcOffsetHours, 0, 'g', 3));
-      cfg.calibration.catalog = utc;
-    }
+    // The calibration is given the catalog as every other tool of the study
+    // reads it (analysis::loadEvents: its columns, its date formats, its
+    // offset from UTC applied once), written out in UTC. Handing it the
+    // file itself would make it a second reader of the same catalog, and
+    // one that could disagree with the first.
+    const QString utc = QDir(dir).filePath(QStringLiteral("catalog_utc.csv"));
+    const int n = writeEvents(
+        analysis::loadEvents(s.catalogPath(), s.catalogUtcOffsetHours),
+        -std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(), utc);
+    if (hooks.log && s.catalogUtcOffsetHours != 0.0)
+      hooks.log(RunText::tr("calibration catalog: %1 events moved to UTC "
+                            "(the study's catalog is %2 h from UTC)")
+                    .arg(n)
+                    .arg(s.catalogUtcOffsetHours, 0, 'g', 3));
+    cfg.calibration.catalog = utc;
   } else {
     // The recipe's config names a catalog of its own: an explicit override
     // of the study's, read as it is (fx takes its times as UTC).
@@ -550,6 +579,16 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
   }
   cfg.calibration.stationLat = st->lat;
   cfg.calibration.stationLon = st->lon;
+  // Only the case's span is read, to the second: the files are whole
+  // archives that run past both its ends (weeks past the earthquake, for the
+  // one that holds it), and neither the features nor the parameters fitted
+  // for them may see what was recorded after the event.
+  cfg.startEpoch = double(c.spanStart().toSecsSinceEpoch());
+  cfg.endEpoch = double(c.time.toSecsSinceEpoch());
+  // One sensor of the station: the recipe's, or the only one, or the one
+  // with the most data (the run then says so).
+  if (!strOf(r, "channels").trimmed().isEmpty())
+    cfg.channels = strOf(r, "channels").trimmed();
   const QStringList problems = cfg.validate();
   if (!problems.isEmpty())
     fail(problems.join(QStringLiteral("; ")));
@@ -629,6 +668,21 @@ void runFeatures(const Study &s, const Case &c, const QString &station,
       return;
     if (res.featuresNpy.isEmpty())
       fail(RunText::tr("the feature run wrote no table"));
+    // Which sensor was read, and what was left aside. When the run had to
+    // choose among several, that is said wherever its results are shown.
+    rec.channelsUsed = res.channels.used;
+    rec.channelsDropped = res.channels.dropped;
+    if (res.channels.guessed && i == 0) {
+      const QString w =
+          RunText::tr("the files of %1 hold several sensors: %2 was read, as "
+                      "the one with the most data in the span, and %3 left "
+                      "out. Name the one to read in the recipe (Channels)")
+              .arg(station, res.channels.family + QLatin1Char('?'),
+                   res.channels.dropped.join(QStringLiteral(", ")));
+      rec.warnings << w;
+      if (hooks.log)
+        hooks.log(RunText::tr("warning: %1").arg(w));
+    }
     const QString suffix =
         run.band.isEmpty() ? QString() : QLatin1Char('_') + run.band;
     rec.outputs.insert(QStringLiteral("features") + suffix,
@@ -804,6 +858,33 @@ sfc::Settings sfcSettings(const Case &c, const QString &station,
   return s;
 }
 
+// The window length, in seconds, of the feature table at `tablePath`: from
+// the metadata its run wrote beside it (<stem>_run_metadata.json for
+// <stem>_features.npy). Fails when that is missing: a guess would place
+// every window wrongly in time.
+double featureWindowSeconds(const QString &tablePath) {
+  QString stem = tablePath;
+  stem.remove(QRegularExpression(QStringLiteral("_(chaos_)?features\\.npy$")));
+  QString metaPath = stem + QStringLiteral("_run_metadata.json");
+  if (!QFileInfo::exists(metaPath)) {
+    // A table under another name: the one metadata file of its folder.
+    const QFileInfoList others = QFileInfo(tablePath).dir().entryInfoList(
+        {QStringLiteral("*_run_metadata.json")}, QDir::Files);
+    if (others.size() == 1)
+      metaPath = others.first().filePath();
+  }
+  QFile f(metaPath);
+  const QJsonObject o = f.open(QIODevice::ReadOnly)
+                            ? QJsonDocument::fromJson(f.readAll()).object()
+                            : QJsonObject();
+  const int win = o.value(QStringLiteral("win_sec")).toInt();
+  if (win <= 0)
+    fail(RunText::tr("the features run has no readable %1, which says how "
+                     "long its windows are: run the features again")
+             .arg(QDir::toNativeSeparators(metaPath)));
+  return double(win);
+}
+
 void runClassification(const Study &s, const Case &c, const QString &station,
                        const Recipe &r, const QString &dir,
                        const RunHooks &hooks, RunRecord &rec) {
@@ -813,8 +894,15 @@ void runClassification(const Study &s, const Case &c, const QString &station,
   if (tablePath.isEmpty())
     fail(why);
   const fx::NpyTable table = analysis::loadTable(tablePath);
-  const sfc::Settings st = sfcSettings(c, station, r, table);
-  const QMap<QDate, int> perDay = sfc::fxWindowsPerDay(table);
+  sfc::Settings st = sfcSettings(c, station, r, table);
+  // The table gives each window's end; where it starts follows from the
+  // window length the features were made with, which their run wrote down.
+  // (200 s was assumed here once, whatever the recipe said.)
+  const double winSec = featureWindowSeconds(tablePath);
+  // The event's own time, to the second: no window that ends after it is
+  // among those "before" it.
+  st.eqEpoch = double(c.time.toSecsSinceEpoch());
+  const QMap<QDate, int> perDay = sfc::fxWindowsPerDay(table, winSec);
   int typical = 0;
   for (int n : perDay)
     typical = std::max(typical, n);
@@ -823,7 +911,8 @@ void runClassification(const Study &s, const Case &c, const QString &station,
   if (hooks.log)
     for (const QString &l : sel.log)
       hooks.log(l);
-  sfc::Dataset d = sfc::fromFxTable(table, st, sel, st.featureColumns);
+  sfc::Dataset d =
+      sfc::fromFxTable(table, st, sel, st.featureColumns, winSec);
   QStringList prep;
   const int dropped = sfc::prepareClasses(d, st, &prep);
   if (hooks.log)
@@ -836,7 +925,8 @@ void runClassification(const Study &s, const Case &c, const QString &station,
   QDir().mkpath(sfc::resultsDir(dir, st));
   sfc::saveSfcCsv(sfc::resultsDir(dir, st) + QLatin1Char('/') + st.station +
                       QStringLiteral("_N_features_labeled.csv"),
-                  d, st);
+                  d, st, winSec);
+  rec.fitted.insert(QStringLiteral("window_seconds"), winSec);
   // A run starts from an empty experiments table, so the table holds this
   // run only.
   const QString experiments =
@@ -908,7 +998,8 @@ Recipe defaultRecipe(const QString &tool) {
     r.fitted = {QStringLiteral("mc")};
   } else if (tool == kToolFeatures) {
     r.name = QStringLiteral("Features");
-    r.settings = {{QStringLiteral("config_json"), QString()}};
+    r.settings = {{QStringLiteral("config_json"), QString()},
+                  {QStringLiteral("channels"), QString()}};
     r.fitted = {QStringLiteral("chaos parameters (calibration)")};
   } else if (tool == kToolClassification) {
     r.name = QStringLiteral("Days before the event");
@@ -972,6 +1063,32 @@ QString calibrationOverride(const Recipe &features) {
       .toString();
 }
 
+QStringList sensorChoices(const Study &s) {
+  QSet<QString> wanted;
+  for (const Case &c : s.cases)
+    for (const StationRef &st : c.stations)
+      wanted.insert(st.code.toUpper());
+  QStringList out;
+  for (const WaveStation &ws : WaveIndex::shared(s.dir)->stations()) {
+    if (!wanted.contains(ws.code.toUpper()))
+      continue;
+    for (const QString &channel : ws.channels) {
+      // "HHZ", or "00.HHZ" with a location code: the sensor is that without
+      // the component's letter, and only E/N/Z (or 1/2) channels count.
+      if (channel.size() < 3)
+        continue;
+      const QChar last = channel.back().toUpper();
+      if (QStringLiteral("ZNE12").indexOf(last) < 0)
+        continue;
+      const QString sensor = channel.left(channel.size() - 1).toUpper();
+      if (!out.contains(sensor))
+        out << sensor;
+    }
+  }
+  out.sort();
+  return out;
+}
+
 QString runSignature(const Study &s, const Case &c, const QString &station,
                      const QString &tool) {
   const QString offset = QString::number(s.catalogUtcOffsetHours, 'f', 2);
@@ -989,8 +1106,10 @@ QString runSignature(const Study &s, const Case &c, const QString &station,
         .arg(c.zone.faultGeoJson, c.zone.strands.join(QLatin1Char(',')), offset);
   const StationRef *st = stationOf(c, station);
   if (tool == kToolFeatures) {
-    // The zone is not used; the span is (only its days are processed).
-    QString sig = QStringLiteral("features|%1|%2|utc%3")
+    // The zone is not used; the span is: only what was recorded inside it is
+    // read. "v2" marks runs made since that holds to the second and since a
+    // run reads one sensor of the station; cellOf says so of older runs.
+    QString sig = QStringLiteral("features|v2|%1|%2|utc%3")
                       .arg(iso(c.time))
                       .arg(c.spanDays)
                       .arg(offset);
@@ -1037,6 +1156,12 @@ bool RunRecord::write(const QString &dir) const {
     o.insert(QStringLiteral("calibration_key"), calibrationKey);
     o.insert(QStringLiteral("calibration_reused"), calibrationReused);
   }
+  if (!channelsUsed.isEmpty())
+    o.insert(QStringLiteral("channels_used"),
+             QJsonArray::fromStringList(channelsUsed));
+  if (!channelsDropped.isEmpty())
+    o.insert(QStringLiteral("channels_dropped"),
+             QJsonArray::fromStringList(channelsDropped));
   o.insert(QStringLiteral("settings"), QJsonObject::fromVariantMap(settings));
   o.insert(QStringLiteral("inputs"), QJsonObject::fromVariantMap(inputs));
   o.insert(QStringLiteral("fitted"), QJsonObject::fromVariantMap(fitted));
@@ -1070,10 +1195,14 @@ std::optional<RunRecord> RunRecord::read(const QString &dir) {
     r.waveFiles << v.toString();
   r.waveEstimated = o.value(QStringLiteral("waveforms_estimated")).toBool();
   r.appVersion = o.value(QStringLiteral("app_version")).toString();
-  r.started = QDateTime::fromString(
-      o.value(QStringLiteral("started")).toString(), Qt::ISODate);
-  r.finished = QDateTime::fromString(
-      o.value(QStringLiteral("finished")).toString(), Qt::ISODate);
+  r.started = fx::isoUtcDateTime(o.value(QStringLiteral("started")).toString());
+  r.finished =
+      fx::isoUtcDateTime(o.value(QStringLiteral("finished")).toString());
+  for (const QJsonValue v : o.value(QStringLiteral("channels_used")).toArray())
+    r.channelsUsed << v.toString();
+  for (const QJsonValue v :
+       o.value(QStringLiteral("channels_dropped")).toArray())
+    r.channelsDropped << v.toString();
   r.ok = o.value(QStringLiteral("ok")).toBool();
   r.error = o.value(QStringLiteral("error")).toString();
   r.errorReason = o.value(QStringLiteral("error_reason")).toString();
@@ -1105,17 +1234,41 @@ eventOfCase(const Case &c, const std::vector<analysis::Event> &events) {
   if (best)
     return best;
   // A case picked from another catalog than the one in use (the built-in
-  // list, then a denser catalog of another agency) differs a little in time,
-  // place and magnitude. The same earthquake is then the largest event within
-  // two minutes and about a degree of the case.
+  // list, then a denser catalog of another agency) differs in place and
+  // magnitude, and in time by seconds, or by hours when that catalog's
+  // offset from UTC is set wrong. The same earthquake is then the largest
+  // event within fifteen hours, about a degree and one magnitude unit of
+  // the case. (Two minutes were allowed here once: a catalog three hours
+  // off was then not recognised, and its mainshock, with the aftershocks of
+  // those hours, was counted among the events before the case.)
   for (const analysis::Event &e : events) {
-    if (std::abs(e.epoch - t) > 120.0 || std::abs(e.lat - c.lat) > 1.0 ||
+    if (std::abs(e.epoch - t) > 15 * 3600.0 || std::abs(e.lat - c.lat) > 1.0 ||
         std::abs(e.lon - c.lon) > 1.0 || std::abs(e.mag - c.magnitude) > 1.0)
       continue;
-    if (!best || e.mag > best->mag)
+    if (!best || e.mag > best->mag ||
+        (e.mag == best->mag &&
+         std::abs(e.epoch - t) < std::abs(best->epoch - t)))
       best = &e;
   }
   return best;
+}
+
+const analysis::Event *
+largeEventJustBefore(const Case &c,
+                     const std::vector<analysis::Event> &events) {
+  if (c.reference || std::isnan(c.magnitude))
+    return nullptr;
+  const double t = double(c.time.toSecsSinceEpoch());
+  const analysis::Event *first = nullptr;
+  for (const analysis::Event &e : events) {
+    if (e.epoch >= t || e.epoch < t - 15 * 3600.0 ||
+        std::abs(e.lat - c.lat) > 1.0 || std::abs(e.lon - c.lon) > 1.0 ||
+        e.mag < c.magnitude - 1.0)
+      continue;
+    if (!first || e.epoch < first->epoch)
+      first = &e;
+  }
+  return first;
 }
 
 Cell cellOf(const Study &s, const Case &c, const QString &station,
@@ -1202,6 +1355,16 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
                           "%1, now %2)")
                   .arg(rec.revision)
                   .arg(r.revision);
+    } else if (r.tool == kToolFeatures &&
+               QString(rec.caseSignature)
+                       .replace(0, 9, QStringLiteral("features|v2|")) == sig &&
+               !rec.caseSignature.startsWith(QStringLiteral("features|v2|"))) {
+      // Nothing about the case changed; what a features run reads did.
+      stale = RunText::tr("made by an earlier version, which read the whole "
+                          "waveform files (also what they hold after the "
+                          "earthquake) and every sensor in them: features "
+                          "are now limited to the case's span and to one "
+                          "sensor of the station. Run it again");
     } else if (rec.caseSignature != sig) {
       stale = RunText::tr("the case, its station or the catalog's time "
                           "offset was changed after this run");
@@ -1407,16 +1570,75 @@ int runsMadeStale(const Study &before, const Study &after) {
   return n;
 }
 
+namespace {
+
+// A file of the folder that cannot be opened for writing: on Windows, one
+// another program has open (a results table in a spreadsheet). Empty when
+// every file can.
+QString lockedFileIn(const QString &dir) {
+  QDirIterator it(dir, QDir::Files, QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+    const QString path = it.next();
+    QFile f(path);
+    if (!f.open(QIODevice::ReadWrite))
+      return path;
+  }
+  return {};
+}
+
+// Moves the finished run in `tmp` to `dir`, the earlier run there stepping
+// aside first and removed after. A folder with a file open in another
+// program cannot be renamed on Windows: that is tried again for a few
+// seconds, and then the run stays in `tmp`, complete, and the error says
+// which file is in the way. Throws on failure.
+void putRunInPlace(const QString &tmp, const QString &dir,
+                   const QString &failedDir, const RunHooks &hooks) {
+  const auto move = [&hooks](const QString &from, const QString &to) {
+    for (int attempt = 0;; ++attempt) {
+      if (hooks.renameFolder ? hooks.renameFolder(from, to)
+                             : QDir().rename(from, to))
+        return true;
+      if (attempt >= 9)
+        return false;
+      QThread::msleep(hooks.renameFolder ? 1 : 300);
+    }
+  };
+  const QString old = dir + QStringLiteral(".old");
+  QDir(old).removeRecursively();
+  const bool had = QDir(dir).exists();
+  if (had && !move(dir, old)) {
+    const QString locked = lockedFileIn(dir);
+    fail(RunText::tr("the run finished, but cannot replace the earlier one "
+                     "in %1: %2. The finished run is kept, complete, in %3; "
+                     "close the file and run the cell again, and it is put "
+                     "in place without being computed again")
+             .arg(QDir::toNativeSeparators(dir),
+                  locked.isEmpty()
+                      ? RunText::tr("the folder cannot be renamed (is one of "
+                                    "its files open in another program?)")
+                      : RunText::tr("%1 is open in another program")
+                            .arg(QDir::toNativeSeparators(locked)),
+                  QDir::toNativeSeparators(tmp)));
+  }
+  if (!move(tmp, dir)) {
+    if (had)
+      move(old, dir);
+    fail(RunText::tr("the run finished, but cannot be moved from %1 into "
+                     "place; it is kept there, complete. Run the cell again "
+                     "to put it in place")
+             .arg(QDir::toNativeSeparators(tmp)));
+  }
+  QDir(old).removeRecursively();
+  QDir(failedDir).removeRecursively();
+}
+
+} // namespace
+
 bool runCell(const Study &s, const Case &c, const QString &station,
              const Recipe &r, const QString &appVersion,
              const RunHooks &hooks) {
   const QString dir = runDir(s, c, station, r);
   const QString tmp = runTmpDir(dir), failedDir = runFailedDir(dir);
-  // The run works beside the folder; what an earlier, unfinished run left
-  // there is cleared first.
-  QDir(tmp).removeRecursively();
-  if (!QDir().mkpath(tmp))
-    fail(RunText::tr("cannot create %1").arg(QDir::toNativeSeparators(tmp)));
 
   RunRecord rec;
   rec.tool = r.tool;
@@ -1428,6 +1650,30 @@ bool runCell(const Study &s, const Case &c, const QString &station,
   rec.appVersion = appVersion;
   rec.settings = r.settings;
   rec.started = QDateTime::currentDateTimeUtc();
+
+  // A run that finished but could not take the folder's place (a file of
+  // the old run was open in another program, on Windows) still waits beside
+  // it, whole. It is moved into place now, not thrown away and computed
+  // again: that would be hours of work lost to an open spreadsheet.
+  if (const std::optional<RunRecord> waiting = RunRecord::read(tmp);
+      waiting && waiting->ok && waiting->tool == r.tool &&
+      waiting->revision == r.revision &&
+      waiting->caseSignature == rec.caseSignature &&
+      waiting->settings == r.settings) {
+    if (hooks.log)
+      hooks.log(RunText::tr("A finished run of this cell (%1) was waiting in "
+                            "%2, where it stayed when it could not replace "
+                            "the folder. It is moved into place now; nothing "
+                            "is computed again.")
+                    .arg(iso(waiting->finished), QDir::toNativeSeparators(tmp)));
+    putRunInPlace(tmp, dir, failedDir, hooks);
+    return true;
+  }
+  // The run works beside the folder; what an earlier, unfinished run left
+  // there is cleared first.
+  QDir(tmp).removeRecursively();
+  if (!QDir().mkpath(tmp))
+    fail(RunText::tr("cannot create %1").arg(QDir::toNativeSeparators(tmp)));
 
   // Everything the tool says also goes to run.log, from whichever thread.
   QFile logFile(QDir(tmp).filePath(kRunLogName));
@@ -1471,6 +1717,14 @@ bool runCell(const Study &s, const Case &c, const QString &station,
     else
       fail(RunText::tr("unknown tool %1").arg(r.tool));
   } catch (const std::exception &e) {
+    if (hooks.shouldStop && hooks.shouldStop()) {
+      // Asked to stop: whatever the tool threw on its way out (a
+      // calibration cut short has too few windows, say) is not a failure
+      // of the cell. Nothing is kept, the cell stays as it was.
+      logFile.close();
+      QDir(tmp).removeRecursively();
+      return false;
+    }
     // A failed run is set aside with its files, log and reason; the
     // finished run in the folder, if there is one, stays.
     rec.finished = QDateTime::currentDateTimeUtc();
@@ -1478,6 +1732,9 @@ bool runCell(const Study &s, const Case &c, const QString &station,
     rec.error = QString::fromUtf8(e.what());
     if (const auto *cal = dynamic_cast<const fx::CalibrationError *>(&e))
       rec.errorReason = fx::CalibrationError::code(cal->reason());
+    else if (dynamic_cast<const fx::NoDataInPeriod *>(&e))
+      rec.errorReason =
+          fx::CalibrationError::code(fx::CalibrationError::Reason::NoData);
     toFile(QStringLiteral("error: %1").arg(rec.error));
     logFile.close();
     rec.write(tmp);
@@ -1500,22 +1757,9 @@ bool runCell(const Study &s, const Case &c, const QString &station,
              .arg(QDir::toNativeSeparators(
                  QDir(tmp).filePath(RunRecord::kFileName))));
 
-  // The finished run takes the folder's place.
-  const QString old = dir + QStringLiteral(".old");
-  QDir(old).removeRecursively();
-  const bool had = QDir(dir).exists();
-  if (had && !QDir().rename(dir, old))
-    fail(RunText::tr("cannot replace %1 with the new run, which is kept in "
-                     "%2 (is a file of the folder open?)")
-             .arg(QDir::toNativeSeparators(dir), QDir::toNativeSeparators(tmp)));
-  if (!QDir().rename(tmp, dir)) {
-    if (had)
-      QDir().rename(old, dir);
-    fail(RunText::tr("cannot move the finished run from %1 into place")
-             .arg(QDir::toNativeSeparators(tmp)));
-  }
-  QDir(old).removeRecursively();
-  QDir(failedDir).removeRecursively();
+  // The finished run takes the folder's place. When it cannot, it stays in
+  // `tmp` with its record, and the next run of the cell puts it in place.
+  putRunInPlace(tmp, dir, failedDir, hooks);
   return true;
 }
 

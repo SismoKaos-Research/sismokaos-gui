@@ -146,10 +146,22 @@ QList<ScoreRow> scoreRows(const Study &s, const Recipe &classification) {
             Scores out;
             const std::vector<sfc::Trial> trials = sfc::loadTrials(csv, true);
             const sfc::Trial *best = nullptr, *base = nullptr;
+            // The best on the validation days. A trial without a validation
+            // score (NaN: a class had no validation day) is never better
+            // than one with a score, and no comparison with NaN is true: the
+            // first trial used to stay "best" for good when its score was
+            // missing.
+            const auto better = [](const sfc::Trial &t, const sfc::Trial *cur) {
+              if (!cur)
+                return true;
+              if (std::isnan(t.valF1))
+                return false;
+              return std::isnan(cur->valF1) || t.valF1 > cur->valF1;
+            };
             for (const sfc::Trial &t : trials) {
-              if (!best || t.valF1 > best->valF1)
+              if (better(t, best))
                 best = &t;
-              if (isBaselineModel(t.model) && (!base || t.valF1 > base->valF1))
+              if (isBaselineModel(t.model) && better(t, base))
                 base = &t;
             }
             if (best) {

@@ -21,6 +21,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QSignalBlocker>
+#include <QTimeZone>
+#include "fx/csv.h"
 #include <algorithm>
 
 namespace skg {
@@ -44,6 +46,12 @@ ConfigPane::ConfigPane(QWidget *parent) : QWidget(parent) {
   general_ = new QGroupBox(this);
   auto *g = new QFormLayout(general_);
   station_ = new QLineEdit(this);
+  from_ = new QLineEdit(this);
+  to_ = new QLineEdit(this);
+  channels_ = new QLineEdit(this);
+  from_->setObjectName(QStringLiteral("periodFrom"));
+  to_->setObjectName(QStringLiteral("periodTo"));
+  channels_->setObjectName(QStringLiteral("channels"));
   fs_ = dspin(0.01, 10000, 3, 1);
   winSec_ = ispin(1, 864000);
   stepSec_ = ispin(1, 864000);
@@ -54,6 +62,9 @@ ConfigPane::ConfigPane(QWidget *parent) : QWidget(parent) {
   splitHz_ = dspin(0.0, 10000, 3, 0.1);
   chaosOnly_ = new QCheckBox(this);
   addRow(g, QT_TR_NOOP("Station"), station_);
+  addRow(g, QT_TR_NOOP("Channels"), channels_);
+  addRow(g, QT_TR_NOOP("Read from (UTC)"), from_);
+  addRow(g, QT_TR_NOOP("Read up to (UTC)"), to_);
   addRow(g, QT_TR_NOOP("Sampling rate after decimation (Hz)"), fs_);
   addRow(g, QT_TR_NOOP("Window (s)"), winSec_);
   addRow(g, QT_TR_NOOP("Step (s)"), stepSec_);
@@ -200,7 +211,7 @@ ConfigPane::ConfigPane(QWidget *parent) : QWidget(parent) {
   for (auto *w : {winSec_, stepSec_, ltaSec_, tau_, dim_, evolve_, minSamples_,
                   sampentM_, maxWindows_, seed_, maxTau_, maxDim_})
     connect(w, &QSpinBox::valueChanged, this, [this] { emit edited(); });
-  for (auto *w : {station_, catalog_, stationCoords_})
+  for (auto *w : {station_, catalog_, stationCoords_, from_, to_, channels_})
     connect(w, &QLineEdit::textEdited, this, [this] { emit edited(); });
   for (auto *w : {chaosOnly_, useCoords_})
     connect(w, &QCheckBox::toggled, this, [this] { emit edited(); });
@@ -240,6 +251,15 @@ void ConfigPane::setConfig(const fx::Config &cfg) {
   base_ = cfg;
   const QSignalBlocker b(this);
   station_->setText(cfg.station);
+  const auto isoOf = [](const std::optional<double> &epoch) {
+    return epoch ? QDateTime::fromMSecsSinceEpoch(qint64(*epoch * 1000.0),
+                                                  QTimeZone::UTC)
+                       .toString(Qt::ISODate)
+                 : QString();
+  };
+  from_->setText(isoOf(cfg.startEpoch));
+  to_->setText(isoOf(cfg.endEpoch));
+  channels_->setText(cfg.channels);
   fs_->setValue(cfg.fs);
   winSec_->setValue(cfg.winSec);
   stepSec_->setValue(cfg.stepSec);
@@ -292,6 +312,11 @@ void ConfigPane::setConfig(const fx::Config &cfg) {
 fx::Config ConfigPane::config() const {
   fx::Config cfg = base_;
   cfg.station = station_->text().trimmed().toUpper();
+  // Empty or unreadable: no limit on that side (validate() says when the
+  // two are the wrong way round).
+  cfg.startEpoch = fx::parseIsoUtc(from_->text());
+  cfg.endEpoch = fx::parseIsoUtc(to_->text());
+  cfg.channels = channels_->text().trimmed().toUpper();
   cfg.fs = fs_->value();
   cfg.winSec = winSec_->value();
   cfg.stepSec = stepSec_->value();
@@ -369,6 +394,26 @@ void ConfigPane::retranslate() {
   ui::setHelp(station_, tr("The station code. It only labels the outputs "
                            "and looks the station up in the station list "
                            "for the calibration."));
+  ui::setHelp(channels_,
+              tr("Which sensor of the station is read when the files hold "
+                 "several: the first two letters of the channel code, such "
+                 "as HH (broadband) or HN (accelerometer), with a location "
+                 "code in front when needed (00.HH). Empty: the only sensor "
+                 "there is; with several, the one with the most data, and "
+                 "the log says which was taken. Two are never mixed."));
+  channels_->setPlaceholderText(tr("automatic"));
+  ui::setHelp(from_,
+              tr("Only data recorded at or after this time is read, as a "
+                 "date or a date and time in UTC (2020-01-24 or "
+                 "2020-01-24T17:55:00). Empty: from the start of the "
+                 "files. The calibration reads the same period."));
+  ui::setHelp(to_,
+              tr("Only data recorded before this time is read (UTC, as "
+                 "above). Empty: to the end of the files. Set it to an "
+                 "earthquake's time to keep everything after it out of the "
+                 "features and of the calibration."));
+  from_->setPlaceholderText(tr("the start of the files"));
+  to_->setPlaceholderText(tr("the end of the files"));
   ui::setHelp(fs_,
               tr("The sampling rate the data is reduced to before the "
                  "features are computed. The recorded rate must be a whole "

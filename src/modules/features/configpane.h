@@ -51,6 +51,8 @@ private:
   QGroupBox *general_, *chaos_, *calibration_, *bandsBox_;
 
   QLineEdit *station_;
+  // Optional: the period read (ISO dates, UTC) and the sensor read.
+  QLineEdit *from_, *to_, *channels_;
   QDoubleSpinBox *fs_, *staSec_, *freqmin_, *freqmax_, *splitHz_;
   QSpinBox *winSec_, *stepSec_, *ltaSec_;
   QCheckBox *chaosOnly_;

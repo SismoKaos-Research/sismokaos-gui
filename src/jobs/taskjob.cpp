@@ -60,14 +60,25 @@ TaskJob::TaskJob(QString name, QString tool, QString description, Work work,
 
 TaskJob::~TaskJob() {
   if (thread_.isRunning()) {
+    // Ask the work to stop, whatever state the job is in by now, and wait
+    // for it for as long as it takes. A QThread that is destroyed while its
+    // thread still runs aborts the whole process, and the work may be in a
+    // step that cannot be interrupted (one model fit, say): waiting is slow,
+    // aborting loses the user's other work and leaves temporary files.
     cancel();
+    if (context_)
+      context_->cancelled_.store(true);
     thread_.quit();
-    thread_.wait(5000);
+    int waited = 0;
+    while (!thread_.wait(5000)) {
+      waited += 5;
+      qWarning("job \"%s\" is still stopping after %d s; waiting for it",
+               qPrintable(name()), waited);
+    }
   }
   // The context is the job's to delete (see start()). Its thread has ended,
   // so nothing is delivered to it any more.
-  if (!thread_.isRunning())
-    delete context_;
+  delete context_;
 }
 
 void TaskJob::start() {

@@ -107,6 +107,15 @@ SettingInfo features(const QString &key) {
                      "defaults. Load it with the button below; the station, "
                      "the folders and the calibration are set by the "
                      "study for each case.")};
+  if (key == QLatin1String("channels"))
+    return {Help::tr("Channels"),
+            Help::tr("Which sensor of a station is read when its files hold "
+                     "several: the first two letters of the channel code, "
+                     "such as HH (broadband) or HN (accelerometer), with a "
+                     "location code in front when needed (00.HH). Empty: the "
+                     "only sensor there is; with several, the one with the "
+                     "most data in the span, and the run says which it took. "
+                     "Never two at once.")};
   if (key == QLatin1String("calibration catalog"))
     return {Help::tr("Calibration catalog"),
             Help::tr("The earthquake catalog the quiet periods for the "

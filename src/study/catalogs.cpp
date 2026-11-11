@@ -19,6 +19,7 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "fx/csv.h"
 #include "tdvms/catalog.h"
 #include "text/text.h"
 
@@ -75,10 +76,11 @@ BuiltInCatalog builtInCatalog() {
 std::vector<analysis::Event> builtInEvents() {
   std::vector<analysis::Event> out;
   for (const tdvms::CatalogEvent &c : tdvms::loadEvents()) {
-    QDateTime t = QDateTime::fromString(c.time, Qt::ISODate);
+    // The list's times are UTC and carry no zone: read as UTC, not as local
+    // time relabelled (fx/csv.h).
+    const QDateTime t = fx::isoUtcDateTime(c.time);
     if (!t.isValid())
       continue;
-    t.setTimeZone(QTimeZone::UTC);
     analysis::Event e;
     e.epoch = double(t.toSecsSinceEpoch());
     e.lat = c.latitude;
@@ -230,10 +232,8 @@ std::vector<analysis::Event> parseFdsnText(const QByteArray &body, int *bad) {
       ++unread;
       continue;
     }
-    QString when = f[1].trimmed();
-    if (!when.endsWith('Z') && !when.contains('+'))
-      when += 'Z';
-    const QDateTime t = QDateTime::fromString(when, Qt::ISODateWithMs);
+    // FDSN text times are UTC, with or without a "Z".
+    const QDateTime t = fx::isoUtcDateTime(f[1]);
     bool okLat, okLon, okMag;
     const double lat = f[2].toDouble(&okLat), lon = f[3].toDouble(&okLon),
                  mag = f[10].toDouble(&okMag);
