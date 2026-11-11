@@ -93,6 +93,10 @@ struct Inputs {
   Inputs &operator=(Inputs &&) noexcept;
   Inputs(const Inputs &) = delete;
 };
+// Whether a staging folder (`.unzipped-…`) is in use: its lock is held, by
+// this process or another one that is alive. False for a folder a crashed
+// run left, and for one without a lock file (an older version's).
+bool stagingInUse(const QString &stagingDir);
 // `unpacking` is called as the members are written; a true `shouldStop`
 // ends the unpacking with Stopped. A member is written under its archive's
 // name, its number in the archive and its own name, so two members of the

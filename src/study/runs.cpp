@@ -14,8 +14,10 @@
 #include <QMutexLocker>
 #include <QPair>
 #include <QRegularExpression>
+#include <QLockFile>
 #include <QSaveFile>
 #include <QSet>
+#include <QSysInfo>
 #include <QTextStream>
 #include <QThread>
 #include <QTimeZone>
@@ -39,6 +41,9 @@
 #include "sfc/run.h"
 #include "sfc/settings.h"
 #include "study/catalogs.h"
+#include "study/runinfo.h"
+#include "study/scancache.h"
+#include "study/store.h"
 #include "study/waveindex.h"
 
 namespace skg::study {
@@ -176,11 +181,16 @@ QString indicatorsCatalogProblem(const Study &s, const Recipe &r) {
 QStringList linesOfFiles(const QStringList &files) {
   QStringList lines;
   for (const QString &f : files) {
-    const QFileInfo fi(f);
-    lines << QStringLiteral("%1|%2|%3")
-                 .arg(fi.fileName())
-                 .arg(fi.size())
-                 .arg(fi.lastModified().toSecsSinceEpoch());
+    // By content, not by modification time: the same data copied to another
+    // drive (FAT rounds times to two seconds) or restored with new times is
+    // the same input, and a run or a kept calibration made on it stays good.
+    const QString byContent = ScanCache::identityLine(f);
+    if (!byContent.isEmpty()) {
+      lines << byContent;
+      continue;
+    }
+    const QFileInfo fi(f); // unreadable now: what can still be said of it
+    lines << QStringLiteral("%1|%2|?").arg(fi.fileName()).arg(fi.size());
   }
   lines.sort();
   return lines;
@@ -204,17 +214,57 @@ QString stampOfFiles(const QStringList &files) {
 // nothing either way: a run is not called stale for a file that only may
 // overlap its span, nor for having read, on such an estimate, more than the
 // exact scan later says it needed.
+//
+// This is asked for every cell at every refresh of a page, so it reads no
+// file: a file's content is compared only when its identity is already in
+// memory (a run or a scan of this session read it). Otherwise name and size
+// decide, and a file replaced by another of the same name and size is
+// noticed when it is next read: by the scan, or by the run itself, whose
+// calibration key is always by content.
+QStringList quickLinesOfFiles(const QStringList &files) {
+  QStringList lines;
+  for (const QString &f : files) {
+    const QString known = ScanCache::identityLine(f, true);
+    if (!known.isEmpty()) {
+      lines << known;
+      continue;
+    }
+    const QFileInfo fi(f);
+    lines << QStringLiteral("%1|%2|~").arg(fi.fileName()).arg(fi.size());
+  }
+  return lines;
+}
+
+// Whether two lines name the same file: the same text, or, when the content
+// of one is not known ("~", "?"), the same name and size.
+bool sameFile(const QString &a, const QString &b) {
+  if (a == b)
+    return true;
+  const auto open = [](const QString &l) {
+    return l.endsWith(QLatin1String("|~")) || l.endsWith(QLatin1String("|?"));
+  };
+  return (open(a) || open(b)) &&
+         a.section(QLatin1Char('|'), 0, 1) == b.section(QLatin1Char('|'), 0, 1);
+}
+
+bool anySame(const QStringList &lines, const QString &line) {
+  for (const QString &l : lines)
+    if (sameFile(l, line))
+      return true;
+  return false;
+}
+
 bool filesChanged(const RunRecord &rec, const WaveChoice &now) {
   if (rec.waveFiles.isEmpty())
     return true; // recorded before the files were listed: only the stamp
-  const QStringList nowLines = linesOfFiles(now.files);
-  const QStringList unsure = linesOfFiles(now.uncertain);
+  const QStringList nowLines = quickLinesOfFiles(now.files);
+  const QStringList unsure = quickLinesOfFiles(now.uncertain);
   for (const QString &line : nowLines)
-    if (!unsure.contains(line) && !rec.waveFiles.contains(line))
+    if (!anySame(unsure, line) && !anySame(rec.waveFiles, line))
       return true; // a file known to hold the span that the run did not read
   if (!rec.waveEstimated)
     for (const QString &line : rec.waveFiles)
-      if (!nowLines.contains(line))
+      if (!anySame(nowLines, line))
         return true; // a file the run read is gone or was replaced
   return false;
 }
@@ -1092,8 +1142,11 @@ QStringList sensorChoices(const Study &s) {
 QString runSignature(const Study &s, const Case &c, const QString &station,
                      const QString &tool) {
   const QString offset = QString::number(s.catalogUtcOffsetHours, 'f', 2);
+  // "v2" marks runs made since catalog times without a zone are read as UTC
+  // and the earthquake is kept out of its own span whichever catalog it was
+  // picked from; cellOf says so of older runs.
   if (tool == kToolIndicators)
-    return QStringLiteral("indicators|%1|%2|%3|%4|%5|%6|%7|%8|utc%9")
+    return QStringLiteral("indicators|v2|%1|%2|%3|%4|%5|%6|%7|%8|utc%9")
         .arg(iso(c.time))
         .arg(c.lat, 0, 'f', 5)
         .arg(c.lon, 0, 'f', 5)
@@ -1123,7 +1176,9 @@ QString runSignature(const Study &s, const Case &c, const QString &station,
   }
   // Classification: the classes are days before the case's time, on one
   // station's table. Neither the zone nor the span enters.
-  return QStringLiteral("%1|%2|%3")
+  // ("v2": since no window that ends after the earthquake is among those
+  // before it.)
+  return QStringLiteral("%1|v2|%2|%3")
       .arg(tool, iso(c.time), st ? st->code : QString());
 }
 
@@ -1325,7 +1380,10 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
         // other ones.
         waveChoice = chooseWaveFiles(s, *WaveIndex::shared(s.dir), *st,
                                      c.spanStart(), c.time);
-        waveNow = stampOfFiles(waveChoice.files);
+        // (No stamp is computed here: it would read every file, at every
+        // refresh. filesChanged() compares without reading.)
+        waveNow = waveChoice.files.isEmpty() ? QString()
+                                             : QStringLiteral("some");
         // The station has data, but none of it in this case's span (it
         // started recording after the earthquake, say): a run would fail at
         // once, so it is not offered. With only estimates in the index the
@@ -1355,16 +1413,31 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
                           "%1, now %2)")
                   .arg(rec.revision)
                   .arg(r.revision);
-    } else if (r.tool == kToolFeatures &&
-               QString(rec.caseSignature)
-                       .replace(0, 9, QStringLiteral("features|v2|")) == sig &&
-               !rec.caseSignature.startsWith(QStringLiteral("features|v2|"))) {
-      // Nothing about the case changed; what a features run reads did.
-      stale = RunText::tr("made by an earlier version, which read the whole "
-                          "waveform files (also what they hold after the "
-                          "earthquake) and every sensor in them: features "
-                          "are now limited to the case's span and to one "
-                          "sensor of the station. Run it again");
+    } else if (!rec.caseSignature.startsWith(r.tool +
+                                             QStringLiteral("|v2|"))) {
+      // Made by a version that computed something else from the same
+      // inputs. Said once, for each tool with what changed for it, so that
+      // nobody sets old numbers beside new ones without knowing.
+      stale =
+          r.tool == kToolFeatures
+              ? RunText::tr("made by an earlier version, which read the "
+                            "whole waveform files (also what they hold "
+                            "after the earthquake) and every sensor in "
+                            "them: features are now limited to the case's "
+                            "span and to one sensor of the station. Run it "
+                            "again")
+              : r.tool == kToolIndicators
+                    ? RunText::tr("made by an earlier version: times in the "
+                                  "catalog are now read as UTC whatever "
+                                  "this computer's time zone, and the "
+                                  "earthquake itself is kept out of the "
+                                  "span whichever catalog it was picked "
+                                  "from. Run it again")
+                    : RunText::tr("made by an earlier version: windows that "
+                                  "end after the earthquake are no longer "
+                                  "counted as before it, and the window "
+                                  "length is taken from the features run. "
+                                  "Run it again");
     } else if (rec.caseSignature != sig) {
       stale = RunText::tr("the case, its station or the catalog's time "
                           "offset was changed after this run");
@@ -1376,7 +1449,7 @@ Cell cellOf(const Study &s, const Case &c, const QString &station,
       // (A catalog that cannot be read now proves nothing either way.)
       stale = RunText::tr("the catalog file has changed since this run");
     } else if (r.tool == kToolFeatures && !rec.waveStamp.isEmpty() &&
-               !waveNow.isEmpty() && rec.waveStamp != waveNow &&
+               !waveNow.isEmpty() &&
                filesChanged(rec, waveChoice)) {
       stale = RunText::tr("the waveform files for the case's span have "
                           "changed since this run (new or replaced files)");
@@ -1586,6 +1659,31 @@ QString lockedFileIn(const QString &dir) {
   return {};
 }
 
+// Who holds the study's lock when it is not this process: "process 1234 on
+// host". Empty when nobody does (a study no store has open: a test, a
+// script) or when this process does. The lock is the store's (store.h); it
+// is read here, never taken, so the guard holds whoever calls runCell.
+QString studyHeldElsewhere(const QString &studyDir) {
+  const QString path = QDir(studyDir).filePath(StudyStore::kLockFileName);
+  if (!QFileInfo::exists(path))
+    return {};
+  QLockFile probe(path);
+  probe.setStaleLockTime(0);
+  qint64 pid = 0;
+  QString host, app;
+  if (!probe.getLockInfo(&pid, &host, &app))
+    return {}; // not readable as a lock: nothing to go by
+  if (pid == QCoreApplication::applicationPid() &&
+      host == QSysInfo::machineHostName())
+    return {};
+  // A lock a crashed instance left is nobody's.
+  if (probe.tryLock(0)) {
+    probe.unlock();
+    return {};
+  }
+  return QStringLiteral("process %1 on %2").arg(pid).arg(host);
+}
+
 // Moves the finished run in `tmp` to `dir`, the earlier run there stepping
 // aside first and removed after. A folder with a file open in another
 // program cannot be renamed on Windows: that is tried again for a few
@@ -1650,6 +1748,22 @@ bool runCell(const Study &s, const Case &c, const QString &station,
   rec.appVersion = appVersion;
   rec.settings = r.settings;
   rec.started = QDateTime::currentDateTimeUtc();
+
+  // Not into a study another instance of the application has open: its
+  // runs and this one would clear each other's working folders.
+  const QString heldBy = studyHeldElsewhere(s.dir);
+  if (!heldBy.isEmpty())
+    fail(RunText::tr("the study is open in another instance of the "
+                     "application (%1): nothing is run into it from here. "
+                     "Close it there, or run from there")
+             .arg(heldBy));
+  // The run's folders are in use from here on: the study's clean-up leaves
+  // them alone, also when the run was not started from the Runs page.
+  struct Live {
+    QString dir;
+    explicit Live(const QString &d) : dir(d) { LiveRuns::enter(dir); }
+    ~Live() { LiveRuns::leave(dir); }
+  } const live(dir);
 
   // A run that finished but could not take the folder's place (a file of
   // the old run was open in another program, on Windows) still waits beside

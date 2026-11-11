@@ -62,7 +62,10 @@ public:
   // a kept calibration). The fingerprint is read once per file and kept in
   // memory by path, size and time, so asking again costs a stat. Empty when
   // the file cannot be read. Any thread.
-  static QString identityLine(const QString &absolutePath);
+  // With `onlyIfKnown`, nothing is read: the line when this session already
+  // has the file's fingerprint, else empty (for callers on the GUI thread).
+  static QString identityLine(const QString &absolutePath,
+                              bool onlyIfKnown = false);
 
   // The exact result for the file at this path, if it was scanned before
   // with the same size, time and content.

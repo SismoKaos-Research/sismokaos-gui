@@ -199,7 +199,8 @@ QString ScanCache::fingerprint(const QString &path) {
   return QString::fromLatin1(hash.result().toHex());
 }
 
-QString ScanCache::identityLine(const QString &absolutePath) {
+QString ScanCache::identityLine(const QString &absolutePath,
+                                bool onlyIfKnown) {
   struct Entry {
     qint64 size = -1, mtime = 0;
     QString print;
@@ -218,6 +219,8 @@ QString ScanCache::identityLine(const QString &absolutePath) {
     if (it != known.constEnd() && it->size == size && it->mtime == mtime)
       print = it->print;
   }
+  if (print.isEmpty() && onlyIfKnown)
+    return {};
   if (print.isEmpty()) {
     print = fingerprint(absolutePath);
     if (print.isEmpty())

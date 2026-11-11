@@ -8,6 +8,9 @@
 #include <QCloseEvent>
 #include <QCryptographicHash>
 #include <QDesktopServices>
+#include <QDialog>
+#include <QElapsedTimer>
+#include <QThread>
 #include <QDir>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -33,6 +36,8 @@
 #include <QUrl>
 #include <QVBoxLayout>
 
+#include <cstdlib>
+
 #include "app/diagnostics.h"
 #include "core/keepawake.h"
 #include "app/notifier.h"
@@ -44,6 +49,7 @@
 #include "core/ui.h"
 #include "jobs/jobmodel.h"
 #include "jobs/jobspanel.h"
+#include "jobs/taskjob.h"
 #include "study/store.h"
 
 namespace skg {
@@ -828,7 +834,74 @@ void MainWindow::closeEvent(QCloseEvent *e) {
   if (current_ >= 0 && current_ < int(mods.size()))
     ctx_.settings->setValue("ui/page",
                             mods[static_cast<size_t>(current_)]->id());
+  // The settings are safe; now the jobs are let come to their stop.
+  ctx_.settings->sync();
+  waitForStoppingJobs();
   QMainWindow::closeEvent(e);
+}
+
+QStringList MainWindow::stoppingJobs() const {
+  QStringList names;
+  for (int i = 0; i < ctx_.jobs->rowCount(); ++i)
+    if (auto *task = qobject_cast<TaskJob *>(ctx_.jobs->jobAt(i));
+        task && !task->wait(0))
+      names << task->name();
+  return names;
+}
+
+void MainWindow::waitForStoppingJobs() {
+  // A job that was told to stop is still in the step it was in: a file
+  // being unpacked ends at once, a model being fitted only when the fit
+  // does. Its thread cannot be taken away from it (that ends the whole
+  // process, uncleanly), so it is waited for, where the user can see what
+  // for. After ten seconds the wait can be given up: the application then
+  // ends at once and leaves the job's temporary files, which the study's
+  // clean-up removes.
+  if (stoppingJobs().isEmpty())
+    return;
+  QDialog box(this);
+  box.setWindowTitle(tr("Stopping…"));
+  box.setModal(true);
+  box.setWindowFlag(Qt::WindowCloseButtonHint, false);
+  auto *text = new QLabel(&box);
+  text->setWordWrap(true);
+  text->setMinimumWidth(420);
+  auto *now = new QPushButton(tr("Quit now"), &box);
+  now->setEnabled(false);
+  now->setToolTip(ui::helpText(
+      tr("Ends the application without waiting for the step to finish. "
+         "Results that were finished are safe; the temporary files of the "
+         "stopped runs stay on disk until \"Clean up leftovers\" on the "
+         "Runs page removes them.")));
+  auto *layout = new QVBoxLayout(&box);
+  layout->addWidget(text);
+  layout->addWidget(now, 0, Qt::AlignRight);
+  bool giveUp = false;
+  connect(now, &QPushButton::clicked, &box, [&giveUp] { giveUp = true; });
+  QElapsedTimer waited;
+  waited.start();
+  box.show();
+  for (;;) {
+    const QStringList names = stoppingJobs();
+    if (names.isEmpty())
+      break;
+    text->setText(
+        tr("Waiting for %n job(s) to stop: %1.\n\nA job stops at the end of "
+           "the step it is in. Most steps end within seconds; fitting one "
+           "model can take minutes.",
+           nullptr, int(names.size()))
+            .arg(names.join(QStringLiteral(", "))));
+    now->setEnabled(waited.elapsed() > 10000);
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    QThread::msleep(30);
+    if (giveUp) {
+      if (quitWithoutWaiting)
+        quitWithoutWaiting(); // tests
+      else
+        std::_Exit(0); // no destructors: a running thread cannot be destroyed
+      return;
+    }
+  }
 }
 
 void MainWindow::retranslate() {

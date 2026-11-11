@@ -159,6 +159,7 @@ private:
   QLineEdit *name_;
   QTableWidget *table_;
   QComboBox *featuresBox_ = nullptr; // classification: the features recipe
+  QComboBox *channelsBox_ = nullptr; // features: the sensor to read
   QLabel *override_ = nullptr;       // features: the catalog override, if any
   QPushButton *clearOverride_ = nullptr;
 };

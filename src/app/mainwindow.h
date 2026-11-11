@@ -73,6 +73,12 @@ public:
   int queuedWork() const;
   // Asks it; true means "stop them and quit". Tests replace it.
   std::function<bool(const QString &question)> confirmQuit;
+  // Jobs told to stop on quitting that are still in their step (by name),
+  // and the wait for them, shown in a "Stopping…" window. The hook stands
+  // in, in tests, for ending the process when the user gives the wait up.
+  QStringList stoppingJobs() const;
+  void waitForStoppingJobs();
+  std::function<void()> quitWithoutWaiting;
   // Closes the window for an update: the jobs are stopped without a second
   // question. False when the window did not close.
   bool closeForUpdate();

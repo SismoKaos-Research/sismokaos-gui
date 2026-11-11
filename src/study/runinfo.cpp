@@ -15,6 +15,7 @@
 
 #include "miniz.h"
 
+#include "fx/preprocess.h"
 #include "study/waveindex.h"
 
 namespace skg::study {
@@ -216,8 +217,10 @@ QList<DiskItem> studyOnDisk(const Study &s) {
         for (const QString &entry : subFolders(toolDir)) {
           const QString path = toolDir + QLatin1Char('/') + entry;
           if (entry.startsWith(kUnpackedPrefix)) {
+            // In use while its lock is held (fx/preprocess.h), by a run of
+            // this instance or of another one.
             add(path, DiskKind::Unpacked, c->name, shown, tool, {}, true,
-                false);
+                fx::stagingInUse(path));
             continue;
           }
           QString suffix;
@@ -230,7 +233,14 @@ QList<DiskItem> studyOnDisk(const Study &s) {
           if (!mine) { // a recipe that was removed from the study
             add(path, DiskKind::Orphan, c->name, shown, tool, name, true, live);
           } else if (suffix == kTmp) {
-            add(path, DiskKind::Working, c->name, shown, tool, name, true, live);
+            // A working folder that holds a FINISHED run is no leftover: the
+            // run could not take its folder's place (a file of the old one
+            // was open elsewhere) and waits here, complete, for the next run
+            // of the cell to put it there (runs.h). Removing it would throw
+            // the result away.
+            const std::optional<RunRecord> waiting = RunRecord::read(path);
+            add(path, DiskKind::Working, c->name, shown, tool, name,
+                !(waiting && waiting->ok), live);
           } else if (suffix == kFailed) {
             add(path, DiskKind::Failed, c->name, shown, tool, name, true, live);
           } else if (suffix == kCalibration) {
@@ -244,7 +254,9 @@ QList<DiskItem> studyOnDisk(const Study &s) {
             for (const QString &inner : subFolders(path))
               if (inner.startsWith(kUnpackedPrefix)) {
                 add(path + QLatin1Char('/') + inner, DiskKind::Unpacked,
-                    c->name, shown, tool, name, true, live);
+                    c->name, shown, tool, name, true,
+                    live ||
+                        fx::stagingInUse(path + QLatin1Char('/') + inner));
                 out[result].bytes -= out.last().bytes;
               }
           }

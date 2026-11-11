@@ -75,15 +75,24 @@ void removeDeadStaging(const QDir &root) {
         QDir(d.filePath()).removeRecursively();
       continue;
     }
-    QLockFile lock(lockPath);
-    lock.setStaleLockTime(0); // by its process alone, never by its age
-    if (!lock.tryLock(0))
-      continue; // in use, by this process or another
-    lock.unlock();
+    if (stagingInUse(d.filePath()))
+      continue; // by this process or another
     QDir(d.filePath()).removeRecursively();
   }
 }
 } // namespace
+
+bool stagingInUse(const QString &stagingDir) {
+  const QString lockPath = QDir(stagingDir).filePath(kStagingLock);
+  if (!QFileInfo::exists(lockPath))
+    return false;
+  QLockFile lock(lockPath);
+  lock.setStaleLockTime(0); // by its process alone, never by its age
+  if (!lock.tryLock(0))
+    return true;
+  lock.unlock();
+  return false;
+}
 
 bool hasArchives(const QStringList &listed) {
   for (const QString &p : listed)

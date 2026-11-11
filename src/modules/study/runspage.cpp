@@ -651,6 +651,23 @@ RecipeDialog::RecipeDialog(const Study &s, const Recipe &r, QWidget *parent)
       v->setFlags(Qt::ItemIsEnabled);
       table_->setCellWidget(row, 1, featuresBox_);
     }
+    if (r.tool == study::kToolFeatures &&
+        it.key() == QLatin1String("channels")) {
+      // The sensors the scanned waveforms hold for the cases' stations are
+      // offered; another one can still be typed (a location code, say).
+      channelsBox_ = new QComboBox(table_);
+      channelsBox_->setObjectName(QStringLiteral("channels"));
+      channelsBox_->setEditable(true);
+      channelsBox_->addItem(QString());
+      channelsBox_->addItems(study::sensorChoices(s));
+      channelsBox_->lineEdit()->setPlaceholderText(
+          tr("automatic: the only sensor, or the one with the most data"));
+      channelsBox_->setCurrentText(it.value().toString());
+      ui::setHelp(channelsBox_, info.help);
+      v->setText(QString());
+      v->setFlags(Qt::ItemIsEnabled);
+      table_->setCellWidget(row, 1, channelsBox_);
+    }
   }
   table_->setColumnWidth(0, 250);
 
@@ -852,6 +869,10 @@ void RecipeDialog::accept() {
     const QVariant old = v->data(Qt::UserRole);
     if (featuresBox_ && table_->cellWidget(row, 1) == featuresBox_) {
       next.settings.insert(k, featuresBox_->currentData().toString());
+      continue;
+    }
+    if (channelsBox_ && table_->cellWidget(row, 1) == channelsBox_) {
+      next.settings.insert(k, channelsBox_->currentText().trimmed().toUpper());
       continue;
     }
     if (isLongText(old) || v->text() == valueText(old)) {

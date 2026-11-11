@@ -211,7 +211,8 @@ void TstPaths::zipArchivesAreUnpackedForFeatures() {
              qPrintable(in.files.first()));
     QVERIFY(in.files.first().startsWith(staging));
     // The unpacked member reads as miniSEED: six records.
-    QCOMPARE(fx::indexFile(in.files.first(), 0).size(), 6);
+    fx::ChannelTable channels;
+    QCOMPARE(int(fx::indexFile(in.files.first(), 0, channels).size()), 6);
     files = in.files;
   }
   // The staging folder goes with the Inputs.
@@ -416,7 +417,8 @@ void TstPaths::recordLengthMustBeSane() {
   QVERIFY(writeFile(bad, record(utc(2021, 1, 1), "AAA", "HHZ", 31)));
   bool threw = false;
   try {
-    fx::indexFile(bad, 0);
+    fx::ChannelTable badChannels;
+    fx::indexFile(bad, 0, badChannels);
   } catch (const std::runtime_error &e) {
     threw = QByteArray(e.what()).contains("not miniSEED");
   }

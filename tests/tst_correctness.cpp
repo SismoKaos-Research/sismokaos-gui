@@ -17,7 +17,12 @@
 #include <QRandomGenerator>
 #include <QTemporaryDir>
 #include <QTimeZone>
+#include <QLockFile>
+#include <QSysInfo>
 #include <QtTest>
+#ifdef Q_OS_LINUX
+#include <unistd.h>
+#endif
 
 #include <cmath>
 #include <ctime>
@@ -37,6 +42,8 @@
 #include "sfc/dataset.h"
 #include "sfc/settings.h"
 #include "study/runs.h"
+#include "study/runinfo.h"
+#include "study/store.h"
 #include "study/study.h"
 #include "study/waveindex.h"
 
@@ -322,6 +329,10 @@ private slots:
   void aFinishedRunIsPutInPlaceNotMadeAgain();
   void stoppingTheCalibrationLeavesNothing();
   void aJobIsWaitedForNotAborted();
+  void olderRunsOfEveryToolSayWhatChanged();
+  void aCopiedArchiveIsTheSameInput();
+  void aStudyOpenElsewhereIsNotRunInto();
+  void aFinishedRunThatWaitsIsNoLeftover();
 
 private:
   QTemporaryDir tmp_;
@@ -1350,6 +1361,207 @@ void TstCorrectness::aJobIsWaitedForNotAborted() {
   }
   QVERIFY(done);
   QVERIFY(timer.elapsed() >= 5000);
+}
+
+void TstCorrectness::olderRunsOfEveryToolSayWhatChanged() {
+  // Runs of the version before were computed differently from the same
+  // inputs. Each is stale once, and says what changed for its tool.
+  Study s;
+  s.dir = tmp_.filePath("older-tools");
+  QVERIFY(QDir().mkpath(s.dir));
+  s.catalog = kSynthetic;
+  Case c = caseAt(s, QStringLiteral("B"), utc(2020, 7, 7, 7, 7, 7), 38.5001,
+                  39.4906, 6.4);
+  s.cases << c;
+  const Recipe r = quickIndicators(s);
+  s.recipes << r;
+  QVERIFY(runCell(s, c, QString(), r, QStringLiteral("test"), {}));
+  const QString dir = runDir(s, c, QString(), r);
+  QCOMPARE(cellOf(s, c, QString(), r).state, CellState::Done);
+  RunRecord rec = RunRecord::read(dir).value();
+  QVERIFY(rec.caseSignature.startsWith(QStringLiteral("indicators|v2|")));
+  rec.caseSignature.remove(QStringLiteral("v2|"));
+  QVERIFY(rec.write(dir));
+  const Cell cell = cellOf(s, c, QString(), r);
+  QCOMPARE(cell.state, CellState::Stale);
+  QVERIFY2(cell.why.contains(QStringLiteral("read as UTC")) &&
+               cell.why.contains(QStringLiteral("kept out of the span")),
+           qPrintable(cell.why));
+  QVERIFY(runSignature(s, c, QStringLiteral("SYN1"), kToolClassification)
+              .startsWith(QStringLiteral("classification|v2|")));
+  QVERIFY(runSignature(s, c, QStringLiteral("SYN1"), kToolFeatures)
+              .startsWith(QStringLiteral("features|v2|")));
+}
+
+void TstCorrectness::aCopiedArchiveIsTheSameInput() {
+  // The waveform files of a finished run get other modification times (a
+  // copy to a FAT drive rounds them, a restore sets new ones). The data is
+  // the same: the run stays finished, and its calibration stays good.
+  FxStudy f = fxStudy(tmp_.filePath("copied"), utc(2024, 3, 6));
+  QVERIFY(runCell(f.s, f.c, f.station, f.features, QStringLiteral("test"), {}));
+  QCOMPARE(cellOf(f.s, f.c, f.station, f.features).state, CellState::Done);
+  const QString key =
+      RunRecord::read(runDir(f.s, f.c, f.station, f.features))->calibrationKey;
+  const QDir waves(QDir(f.s.dir).filePath("waves/" + f.station));
+  for (const QFileInfo &fi : waves.entryInfoList(QDir::Files)) {
+    QFile file(fi.filePath());
+    QVERIFY(file.open(QIODevice::ReadWrite));
+    QVERIFY(file.setFileTime(fi.lastModified().addSecs(-7201),
+                             QFileDevice::FileModificationTime));
+  }
+  const Cell cell = cellOf(f.s, f.c, f.station, f.features);
+  QVERIFY2(cell.state == CellState::Done, qPrintable(cell.why));
+  QStringList log;
+  RunHooks hooks;
+  hooks.log = [&log](const QString &l) { log << l; };
+  QVERIFY(runCell(f.s, f.c, f.station, f.features, QStringLiteral("test"),
+                  hooks));
+  QVERIFY2(log.join('\n').contains(QStringLiteral("Calibration reused")),
+           qPrintable(log.join('\n')));
+  QCOMPARE(RunRecord::read(runDir(f.s, f.c, f.station, f.features))
+               ->calibrationKey,
+           key);
+  // Other content under the same name and size is another input.
+  const QFileInfo first = waves.entryInfoList({QStringLiteral("*HHZ*.mseed")},
+                                              QDir::Files)
+                              .first();
+  QFile file(first.filePath());
+  QVERIFY(file.open(QIODevice::ReadWrite));
+  QVERIFY(file.seek(first.size() - 1));
+  char last = 0;
+  QVERIFY(file.getChar(&last));
+  QVERIFY(file.seek(first.size() - 1));
+  QVERIFY(file.putChar(char(last ^ 0x55)));
+  file.close();
+  // The cell is asked at every refresh and reads no file for it, so this is
+  // noticed once the file has been read (by the scan, or by a run): then
+  // the run is stale, and a run would calibrate again.
+  waveFileLines({first.filePath()});
+  QCOMPARE(cellOf(f.s, f.c, f.station, f.features).state, CellState::Stale);
+  log.clear();
+  QVERIFY(runCell(f.s, f.c, f.station, f.features, QStringLiteral("test"),
+                  hooks));
+  QVERIFY2(log.join('\n').contains(QStringLiteral("Calibration redone")),
+           qPrintable(log.join('\n')));
+}
+
+void TstCorrectness::aStudyOpenElsewhereIsNotRunInto() {
+  Study s;
+  s.dir = tmp_.filePath("held");
+  QVERIFY(QDir().mkpath(s.dir));
+  s.catalog = kSynthetic;
+  Case c = caseAt(s, QStringLiteral("B"), utc(2020, 7, 7, 7, 7, 7), 38.5001,
+                  39.4906, 6.4);
+  s.cases << c;
+  const Recipe r = quickIndicators(s);
+  s.recipes << r;
+  const QString lockPath = QDir(s.dir).filePath(StudyStore::kLockFileName);
+  // Held by this process (the store of this instance): runs. While it
+  // runs, its folder is known as in use, so a clean-up leaves it alone.
+  {
+    QLockFile mine(lockPath);
+    mine.setStaleLockTime(0);
+    QVERIFY(mine.tryLock(0));
+    bool wasLive = false;
+    RunHooks hooks;
+    const QString dir = runDir(s, c, QString(), r);
+    hooks.log = [&wasLive, dir](const QString &) {
+      wasLive = wasLive || LiveRuns::contains(dir);
+    };
+    QVERIFY(runCell(s, c, QString(), r, QStringLiteral("test"), hooks));
+    QVERIFY(wasLive);
+    QVERIFY(!LiveRuns::contains(dir));
+  }
+  // What a crashed instance left is nobody's: runs.
+  write(lockPath, "999999999\nsismokaos-gui\n" +
+                      QSysInfo::machineHostName().toUtf8() + "\n");
+  QVERIFY(runCell(s, c, QString(), r, QStringLiteral("test"), {}));
+#ifdef Q_OS_LINUX
+  // Held by another process that is alive (this test's parent stands in
+  // for a second instance): refused, with who holds it.
+  const qint64 parent = qint64(getppid());
+  const QString exe =
+      QFileInfo(QFile::symLinkTarget(QStringLiteral("/proc/%1/exe").arg(parent)))
+          .fileName();
+  if (exe.isEmpty())
+    QSKIP("the parent process's name cannot be read here");
+  write(lockPath, QByteArray::number(parent) + "\n" + exe.toUtf8() + "\n" +
+                      QSysInfo::machineHostName().toUtf8() + "\n");
+  try {
+    runCell(s, c, QString(), r, QStringLiteral("test"), {});
+    QFAIL("a run went into a study another process holds");
+  } catch (const std::exception &e) {
+    QVERIFY2(QString::fromUtf8(e.what()).contains(
+                 QStringLiteral("open in another instance")),
+             e.what());
+  }
+  QFile::remove(lockPath);
+#endif
+}
+
+void TstCorrectness::aFinishedRunThatWaitsIsNoLeftover() {
+  // The working folder of a run that finished but could not take its
+  // folder's place holds a result: the study's clean-up must not offer it,
+  // and must not remove it when asked. Nor unpacked archives a run is using.
+  Study s;
+  s.dir = tmp_.filePath("leftovers");
+  QVERIFY(QDir().mkpath(s.dir));
+  s.catalog = kSynthetic;
+  Case c = caseAt(s, QStringLiteral("B"), utc(2020, 7, 7, 7, 7, 7), 38.5001,
+                  39.4906, 6.4);
+  s.cases << c;
+  const Recipe r = quickIndicators(s);
+  s.recipes << r;
+  QVERIFY(runCell(s, c, QString(), r, QStringLiteral("first"), {}));
+  const QString dir = runDir(s, c, QString(), r), tmp = runTmpDir(dir);
+  RunHooks blocked;
+  blocked.renameFolder = [&](const QString &from, const QString &to) {
+    return from != dir && QDir().rename(from, to);
+  };
+  QVERIFY_THROWS_EXCEPTION(
+      std::runtime_error,
+      runCell(s, c, QString(), r, QStringLiteral("second"), blocked));
+  QVERIFY(QFileInfo::exists(tmp));
+  bool listed = false;
+  for (const DiskItem &d : studyOnDisk(s))
+    if (QDir::cleanPath(d.path) == QDir::cleanPath(tmp)) {
+      listed = true;
+      QVERIFY(!d.leftover);
+    }
+  QVERIFY(listed);
+  QStringList failed;
+  cleanUp(s, {tmp}, &failed);
+  QVERIFY(QFileInfo::exists(tmp));
+  QCOMPARE(failed.size(), 1);
+
+  // Unpacked archives whose lock is held are in use; released, they are not.
+  const QString toolDir = QFileInfo(dir).absolutePath();
+  const QString zipPath = QDir(s.dir).filePath("a.zip");
+  const QByteArray data = sensor(utc(2023, 2, 5), "SYN6", "HH", 112, 10.0);
+  mz_zip_archive zip{};
+  QVERIFY(mz_zip_writer_init_file(&zip, QFile::encodeName(zipPath).constData(),
+                                  0));
+  QVERIFY(mz_zip_writer_add_mem(&zip, "a.mseed", data.constData(),
+                                size_t(data.size()), MZ_DEFAULT_COMPRESSION));
+  QVERIFY(mz_zip_writer_finalize_archive(&zip));
+  QVERIFY(mz_zip_writer_end(&zip));
+  QString staging;
+  {
+    const fx::Inputs in = fx::expandInputs({zipPath}, toolDir);
+    staging = in.stagingDir;
+    QVERIFY(fx::stagingInUse(staging));
+    bool seen = false;
+    for (const DiskItem &d : studyOnDisk(s))
+      if (QDir::cleanPath(d.path) == QDir::cleanPath(staging)) {
+        seen = true;
+        QVERIFY(d.live);
+      }
+    QVERIFY(seen);
+    failed.clear();
+    cleanUp(s, {staging}, &failed);
+    QVERIFY(QFileInfo::exists(in.files.first()));
+  }
+  QVERIFY(!QFileInfo::exists(staging));
 }
 
 QTEST_MAIN(TstCorrectness)
