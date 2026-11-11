@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QEvent>
 #include <QHBoxLayout>
+#include <QFontMetrics>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLocale>
@@ -921,6 +922,16 @@ void CaseDownloads::fillTable() {
   table_->resizeColumnToContents(Have);
   table_->resizeColumnToContents(ToGet);
   table_->setColumnWidth(From, 170);
+  // A heading is never cut off (bold, and longer in some languages).
+  for (int c : {int(Station), int(Have), int(ToGet)}) {
+    const QString heading =
+        table_->model()->headerData(c, Qt::Horizontal).toString();
+    QFont bold = table_->horizontalHeader()->font();
+    bold.setBold(true);
+    const int need = QFontMetrics(bold).horizontalAdvance(heading) + 28;
+    if (table_->columnWidth(c) < need)
+      table_->setColumnWidth(c, need);
+  }
 }
 
 void CaseDownloads::sourceChosen(const QString &code, int index) {

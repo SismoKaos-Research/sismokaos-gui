@@ -27,6 +27,7 @@
 #include <QHash>
 #include <QHBoxLayout>
 #include <QPointer>
+#include <QFontMetrics>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QKeyEvent>
@@ -1027,6 +1028,17 @@ void CasesPage::fitColumns() {
   table_->resizeColumnsToContents();
   table_->setColumnWidth(0, std::min(table_->columnWidth(0), 190));
   table_->setColumnWidth(5, std::min(table_->columnWidth(5), 110));
+  // A heading is never cut off: it is bold, carries the sort mark, and is
+  // longer in some languages than any cell under it.
+  for (int c = 0; c < table_->columnCount(); ++c) {
+    const QString heading =
+        table_->model()->headerData(c, Qt::Horizontal).toString();
+    QFont bold = table_->horizontalHeader()->font();
+    bold.setBold(true);
+    const int need = QFontMetrics(bold).horizontalAdvance(heading) + 34;
+    if (table_->columnWidth(c) < need)
+      table_->setColumnWidth(c, need);
+  }
 }
 
 bool CasesPage::editable() const {
