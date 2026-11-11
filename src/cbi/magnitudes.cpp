@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include "cbi/decluster.h"
+#include "fx/csv.h"
 
 // The embedded data lives in a static library: register it on first use.
 static void initCbiResources() { Q_INIT_RESOURCE(cbi); }
@@ -20,10 +21,10 @@ namespace skg::cbi {
 
 namespace {
 QDateTime isoUtc(const QString &s) {
-  QDateTime dt = QDateTime::fromString(s.trimmed(), Qt::ISODate);
+  // A date without a zone is UTC, whatever this machine's zone (fx/csv.h).
+  const QDateTime dt = fx::isoUtcDateTime(s);
   if (!dt.isValid())
     throw std::runtime_error(("bad date " + s).toStdString());
-  dt.setTimeZone(QTimeZone::utc());
   return dt;
 }
 

@@ -205,8 +205,11 @@ void XgbModel::fit(const Matrix &m, const std::vector<double> &weights) {
     rounds_ = std::max(1, params.value("max_iter", 200).toInt() / 10);
   else
     rounds_ = params.value("n_estimators", 100).toInt();
-  for (int it = 0; it < rounds_; ++it)
+  for (int it = 0; it < rounds_; ++it) {
+    if (stop && stop())
+      break; // asked to stop: the caller drops what was fitted so far
     check(XGBoosterUpdateOneIter(booster_, it, d.h), "XGBoosterUpdateOneIter");
+  }
 }
 
 std::vector<double> XgbModel::proba(const Matrix &m) const {
@@ -430,7 +433,7 @@ void MlpModel::epoch(const Matrix &m) {
 void MlpModel::fit(const Matrix &m, const std::vector<double> &) {
   reset(m.cols,
         nClasses ? nClasses : *std::max_element(m.y.begin(), m.y.end()) + 1);
-  for (int e = 0; e < std::max(1, epochs); ++e)
+  for (int e = 0; e < std::max(1, epochs) && !(stop && stop()); ++e)
     net_.epoch(m.X, m.y);
 }
 

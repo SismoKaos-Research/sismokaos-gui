@@ -149,9 +149,7 @@ bool saveSfcCsv(const QString &path, const Dataset &d, const Settings &s,
     const QString start = d.windowStart[static_cast<size_t>(r)];
     QString end;
     if (!start.isEmpty()) {
-      QDateTime dt =
-          QDateTime::fromString(start, QStringLiteral("yyyy-MM-dd HH:mm:ss"));
-      dt.setTimeZone(QTimeZone::utc());
+      const QDateTime dt = fx::isoUtcDateTime(start); // UTC, never local
       end = dt.addSecs(qint64(winSec))
                 .toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
     }
@@ -316,6 +314,16 @@ Dataset fromFxTable(const fx::NpyTable &table, const Settings &s,
   QMap<QDate, const DaySelection::Row *> byDay;
   for (const DaySelection::Row &r : selection.rows)
     byDay.insert(r.date, &r);
+  // Nothing recorded at or after the event is "before" it. The cut is on
+  // where a window ENDS: one that starts before the event and ends after it
+  // holds the shaking itself. It is the event's own time when that is known,
+  // else the start of the cutoff hour on the event day.
+  const double cutoff =
+      s.eqEpoch ? *s.eqEpoch
+                : double(QDateTime(s.eqDate,
+                                   QTime(std::clamp(s.eqCutoffHour, 0, 23), 0),
+                                   QTimeZone::utc())
+                             .toSecsSinceEpoch());
   for (int r = 0; r < table.rows; ++r) {
     const auto span = analysis::windowSpan(table, r, winSec);
     if (!span)
@@ -326,8 +334,9 @@ Dataset fromFxTable(const fx::NpyTable &table, const Settings &s,
     const auto it = byDay.find(day);
     if (it == byDay.end())
       continue;
-    // The event day: only the hours before the cutoff.
-    if (day == s.eqDate && start.time().hour() >= s.eqCutoffHour)
+    // Only what ends before the event (on the event day and, with the
+    // event's time known, on whatever day the selection holds).
+    if ((s.eqEpoch || day == s.eqDate) && span->end > cutoff)
       continue;
     d.date.push_back(day);
     d.label.push_back(it.value()->label);

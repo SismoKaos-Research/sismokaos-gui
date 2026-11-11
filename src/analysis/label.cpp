@@ -79,11 +79,17 @@ std::optional<WindowSpan> windowSpan(const fx::NpyTable &t, int row,
   // SCAP ids carry the hour: YYYY_MM_DD_HH_wNN, Zaman_Dk minutes into it.
   if (idCol >= 0) {
     const QString id = t.value(row, idCol).toString();
-    const QDateTime hour =
-        QDateTime::fromString(id.left(13), QStringLiteral("yyyy_MM_dd_HH"));
-    if (hour.isValid() && minutes < 1e6) {
-      QDateTime base = hour;
-      base.setTimeZone(QTimeZone::utc());
+    // Built from its parts as UTC: parsed as local time and relabelled, an
+    // hour inside a daylight-saving gap of this machine's zone would move.
+    const QStringList parts = id.left(13).split(QLatin1Char('_'));
+    bool okY = false, okM = false, okD = false, okH = false;
+    const int y = parts.value(0).toInt(&okY), mo = parts.value(1).toInt(&okM),
+              d = parts.value(2).toInt(&okD), h = parts.value(3).toInt(&okH);
+    const QDateTime base =
+        parts.size() == 4 && okY && okM && okD && okH && h >= 0 && h < 24
+            ? QDateTime(QDate(y, mo, d), QTime(h, 0), QTimeZone::UTC)
+            : QDateTime();
+    if (base.isValid() && minutes < 1e6) {
       const double b = double(base.toMSecsSinceEpoch()) / 1000.0;
       const double end = b + std::round(minutes * 60.0);
       return WindowSpan{std::max(b, end - 200.0), end};

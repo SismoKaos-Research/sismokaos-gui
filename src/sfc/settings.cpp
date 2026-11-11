@@ -10,6 +10,7 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "fx/csv.h"
 #include "toml.hpp"
 
 namespace skg::sfc {
@@ -134,9 +135,11 @@ QVariant fromNode(const toml::node &n) {
   }
   if (auto v = n.as_date_time()) {
     const toml::date_time dt = v->get();
-    return QDateTime(QDate(dt.date.year, dt.date.month, dt.date.day),
-                     QTime(dt.time.hour, dt.time.minute, dt.time.second),
-                     QTimeZone::utc());
+    // Without an offset the time is UTC; with one, the offset is taken off.
+    const QDateTime utc(QDate(dt.date.year, dt.date.month, dt.date.day),
+                        QTime(dt.time.hour, dt.time.minute, dt.time.second),
+                        QTimeZone::utc());
+    return dt.offset ? utc.addSecs(-qint64(dt.offset->minutes) * 60) : utc;
   }
   if (auto v = n.as_array()) {
     QVariantList list;
@@ -320,8 +323,7 @@ Settings Settings::fromToml(const QString &text, const Settings &base) {
     const QVariant v = values.take("eq_time");
     QDateTime dt = v.typeId() == QMetaType::QDateTime
                        ? v.toDateTime()
-                       : QDateTime::fromString(
-                             v.toString().replace('Z', "+00:00"), Qt::ISODate);
+                       : fx::isoUtcDateTime(v.toString()); // no zone: UTC
     if (!dt.isValid())
       throw std::runtime_error(
           "eq_time: expected a date and UTC time like 2020-01-24T17:55:00Z");

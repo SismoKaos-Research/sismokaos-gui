@@ -40,6 +40,11 @@ struct Settings {
   QString earthquakeName = QStringLiteral("event");
   QDate eqDate{2000, 1, 1};
   int eqCutoffHour = 12;
+  // The event's time to the second (seconds since 1970 UTC), when the caller
+  // knows it: no window that ends after it is used, on any day. Without it
+  // the cut is at the start of `eqCutoffHour` on the event day. Not in the
+  // settings file; a study run sets it from the case.
+  std::optional<double> eqEpoch;
   QVariant maxShiftDays = QStringLiteral("step"); // "step" or an int
   double minDayHours = 20;
   QList<ClassRow> classTable{{0, 1, 30, 1, 30},

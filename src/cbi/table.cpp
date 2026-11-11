@@ -377,12 +377,9 @@ IndicatorTable readTableCsv(const QString &path) {
     t.values.push_back({});
   }
   auto parseTime = [](const QString &s) {
-    QDateTime dt = QDateTime::fromString(s.trimmed(),
-                                         QStringLiteral("yyyy-MM-dd HH:mm:ss"));
-    if (!dt.isValid())
-      dt = QDateTime::fromString(s.trimmed(), Qt::ISODateWithMs);
-    dt.setTimeZone(QTimeZone::utc());
-    return dt;
+    // The table's times are UTC; read as such, not as local time relabelled
+    // (which moves a time inside a daylight-saving gap of this machine).
+    return fx::isoUtcDateTime(s);
   };
   for (int i = 1; i < rows.size(); ++i) {
     if (rows[i].trimmed().isEmpty())

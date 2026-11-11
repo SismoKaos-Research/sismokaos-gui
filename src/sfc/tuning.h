@@ -91,6 +91,7 @@ private:
 // A fit function for a model name with class weights per sfc's rules
 // (balanced sample weights for trees, SVM subsampling).
 Validation::FitFn fitFor(const QString &name, const QVariantMap &params,
-                         const Settings &s, int nClasses);
+                         const Settings &s, int nClasses,
+                         const StopFn &stop = {});
 
 } // namespace skg::sfc

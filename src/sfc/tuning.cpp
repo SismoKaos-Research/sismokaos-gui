@@ -272,9 +272,10 @@ std::unique_ptr<Model> Validation::refitAnn(TuneResult &best) {
 }
 
 Validation::FitFn fitFor(const QString &name, const QVariantMap &params,
-                         const Settings &s, int nClasses) {
-  return [name, params, &s, nClasses](const Matrix &X) {
+                         const Settings &s, int nClasses, const StopFn &stop) {
+  return [name, params, &s, nClasses, stop](const Matrix &X) {
     auto m = makeModel(name, params, s);
+    m->stop = stop;
     m->nClasses = nClasses;
     if (name.startsWith(QLatin1String("svm_"))) {
       Matrix sub = X;

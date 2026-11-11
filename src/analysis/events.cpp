@@ -48,12 +48,10 @@ std::vector<Event> loadEvents(const QString &path,
     if (t >= r.size())
       continue;
     std::optional<double> epoch = fx::parseAfadTime(r[t]);
-    if (!epoch) { // ISO 8601 as a second chance
-      const QDateTime dt =
-          QDateTime::fromString(r[t].trimmed(), Qt::ISODateWithMs);
-      if (dt.isValid())
-        epoch = double(dt.toUTC().toMSecsSinceEpoch()) / 1000.0;
-    }
+    // ISO 8601 as a second chance. A time without a zone is UTC (the
+    // catalog's own offset is applied below), not this machine's time zone.
+    if (!epoch)
+      epoch = fx::parseIsoUtc(r[t]);
     const auto m = fx::number(r, mag), la = fx::number(r, lat),
                lo = fx::number(r, lon);
     if (!epoch || !m || !la || !lo)

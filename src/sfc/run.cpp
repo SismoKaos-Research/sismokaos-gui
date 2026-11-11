@@ -696,7 +696,7 @@ void stepModels(const QString &projectDir, const Settings &s, const Dataset &d,
               dir + QStringLiteral("/ann_loss_curve.png"));
     } else {
       auto makeFit = [&](const QVariantMap &p) {
-        return fitFor(c.name, p, s, k);
+        return fitFor(c.name, p, s, k, hooks.shouldStop);
       };
       TuneResult best =
           v.tune(c.name, makeFit, c.grid, rep.fn(), hooks.shouldStop);

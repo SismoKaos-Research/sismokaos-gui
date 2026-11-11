@@ -9,6 +9,7 @@
 #include <QString>
 #include <QVariantMap>
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -28,6 +29,11 @@ public:
   QString name; // sfc's model name: logistic, svm_rbf, random_forest, ann, ...
   QVariantMap params; // the tuned parameters
   int nClasses = 0;
+  // Asked between the steps of a fit that has steps (boosting rounds,
+  // epochs): true ends the fit early, and the model is then not a result.
+  // One step cannot be interrupted: a random forest is built in a single
+  // one, and libsvm's training offers no way in at all.
+  std::function<bool()> stop;
   // `weights` may be empty. Throws std::runtime_error on a library error.
   virtual void fit(const Matrix &m, const std::vector<double> &weights) = 0;
   // rows x nClasses probabilities (SVMs: Platt estimates).
