@@ -1,5 +1,7 @@
 #include "modules/tdvms/casedownloads.h"
 
+#include "core/defaults.h"
+
 #include <QComboBox>
 #include <QDir>
 #include <QFileInfo>
@@ -275,6 +277,22 @@ void CaseDownloads::setCase(const QString &name, const QStringList &stations,
   end_ = dayAfterLast;
   network_ = network.trimmed().toUpper();
   finished_.clear();
+  spans_.clear();
+  refresh();
+}
+
+void CaseDownloads::setSpans(const QMap<QString, Spans> &perStation) {
+  spans_.clear();
+  for (auto it = perStation.begin(); it != perStation.end(); ++it) {
+    const QString code = normaliseStation(it.key());
+    if (code.isEmpty())
+      continue;
+    for (const auto &span : it.value())
+      if (span.first.isValid() && span.second.isValid() &&
+          span.second > span.first)
+        spans_[code] << qMakePair(span.first.toUTC(), span.second.toUTC());
+  }
+  cover_.clear();
   refresh();
 }
 
@@ -297,6 +315,7 @@ void CaseDownloads::dismiss() {
   chosen_.clear();
   first_ = end_ = QDate();
   from_ = to_ = QDateTime();
+  spans_.clear();
   finished_.clear();
   refresh();
   emit dismissed();
@@ -386,7 +405,33 @@ void CaseDownloads::compute() {
         cv.dataFirst = span.first;
         cv.dataLast = span.last;
         // Which whole days to ask for: the ones of the span with no data.
-        if (cv.have == 0)
+        if (spans_.contains(code)) {
+          // Several cases: the days of the spans of those that tick this
+          // station, each day once, and nothing between them.
+          QList<QDate> own;
+          cv.approximate = cv.atLeast = false;
+          for (const auto &one : spans_.value(code)) {
+            const study::SpanData d =
+                study::spanData(*index, code, one.first, one.second);
+            cv.approximate = cv.approximate || d.approximate;
+            cv.atLeast = cv.atLeast || d.atLeast;
+            const QDate last = one.second.addMSecs(-1).date();
+            for (QDate day = one.first.date(); day <= last;
+                 day = day.addDays(1))
+              if (!own.contains(day))
+                own << day;
+          }
+          std::sort(own.begin(), own.end());
+          for (const QDate &d : std::as_const(own))
+            if (index->daysCovered(code, dayStartUtc(d),
+                                   dayStartUtc(d.addDays(1))) == 0)
+              cv.missing << d;
+          cv.spanDays = int(own.size());
+          cv.have = cv.spanDays - int(cv.missing.size());
+          cv.thin = cv.have > 0 &&
+                    double(cv.have) <
+                        defaults::kMinSpanCoverage * double(cv.spanDays);
+        } else if (cv.have == 0)
           cv.missing = days;
         else
           for (const QDate &d : days)

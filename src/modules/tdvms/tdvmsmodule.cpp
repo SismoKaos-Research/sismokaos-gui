@@ -555,6 +555,24 @@ void TdvmsWidget::setWanted(const QVariantMap &args) {
         QDateTime::fromString(args.value(QStringLiteral("end")).toString(),
                               Qt::ISODate),
         wantedNetwork_);
+  // Several cases: "requests" says what each needs, so that a station is
+  // asked for the spans of the cases that tick it, not for everything from
+  // the earliest span to the latest event.
+  const QVariantList requests = args.value(QStringLiteral("requests")).toList();
+  if (ctx_.study && ctx_.study->isOpen() && requests.size() > 1) {
+    QMap<QString, CaseDownloads::Spans> spans;
+    for (const QVariant &v : requests) {
+      const QVariantMap one = v.toMap();
+      const QDateTime from = QDateTime::fromString(
+          one.value(QStringLiteral("start")).toString(), Qt::ISODate);
+      const QDateTime to = QDateTime::fromString(
+          one.value(QStringLiteral("end")).toString(), Qt::ISODate);
+      for (const QString &code :
+           one.value(QStringLiteral("stations")).toStringList())
+        spans[code] << qMakePair(from, to);
+    }
+    guide_->setSpans(spans);
+  }
   wantedBar_->setVisible(!wantedStations_.isEmpty() && !guide_->guiding());
   retranslate();
   applyWanted();

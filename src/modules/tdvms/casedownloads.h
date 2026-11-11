@@ -80,6 +80,12 @@ public:
   void setCase(const QString &name, const QStringList &stations,
                const QDateTime &from, const QDateTime &to,
                const QString &network);
+  // Several cases at once: each station is wanted for the spans of the
+  // cases that tick it, not for one period over all of them. Call after
+  // setCase(), which gives the frame and forgets earlier spans. A station
+  // without an entry keeps the frame.
+  using Spans = QList<QPair<QDateTime, QDateTime>>; // [from, to) each
+  void setSpans(const QMap<QString, Spans> &perStation);
   // The station list changed from outside (a click on the map).
   void setStations(const QStringList &stations);
   QStringList stations() const { return stations_; }
@@ -166,6 +172,7 @@ private:
   QStringList stations_;
   QDateTime from_, to_; // the span as the case has it
   QDate first_, end_;   // the UTC days it touches; end exclusive
+  QMap<QString, Spans> spans_; // per station, when several cases ask
   QString network_;
   QMap<QString, tdvms::Source> chosen_; // the user's choice per station
   QList<Row> rows_;
